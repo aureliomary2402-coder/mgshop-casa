@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect } from 'react'
-import { Package, Tag, Image, ShoppingBag, LogOut, Lock, ArrowRightLeft, LayoutDashboard } from 'lucide-react'
+import { Package, Tag, Image, ShoppingBag, LogOut, Lock, ArrowRightLeft, LayoutDashboard, Megaphone } from 'lucide-react'
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -12,7 +12,7 @@ import { OrdersManager } from '@/components/admin/orders-manager'
 import { DashboardStats }
 import { PromoManager } from '@/components/admin/promo-manager' from '@/components/admin/dashboard-stats'
 
-type Tab = 'dashboard' | 'products' | 'categories' | 'banners' | 'orders'
+type Tab = 'dashboard' | 'products' | 'categories' | 'banners' | 'orders' | 'promo'
 
 const TABS = [
   { id: 'dashboard' as Tab, label: 'Dashboard', icon: LayoutDashboard },
@@ -20,6 +20,7 @@ const TABS = [
   { id: 'categories' as Tab, label: 'Categorie', icon: Tag },
   { id: 'banners' as Tab, label: 'Banner', icon: Image },
   { id: 'orders' as Tab, label: 'Ordini', icon: ShoppingBag },
+  { id: 'promo' as Tab, label: 'Promo', icon: Megaphone },
 ]
 
 export default function AdminPage() {
@@ -101,6 +102,7 @@ export default function AdminPage() {
         {activeTab === 'categories' && <CategoriesManager />}
         {activeTab === 'banners' && <BannersManager />}
         {activeTab === 'orders' && <OrdersManager />}
+        {activeTab === 'promo' && <PromoManager />}
       </div>
     </div>
   )
