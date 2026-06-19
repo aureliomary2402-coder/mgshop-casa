@@ -9,8 +9,8 @@ import { ProductsManager } from '@/components/admin/products-manager'
 import { CategoriesManager } from '@/components/admin/categories-manager'
 import { BannersManager } from '@/components/admin/banners-manager'
 import { OrdersManager } from '@/components/admin/orders-manager'
-import { DashboardStats }
-import { PromoManager } from '@/components/admin/promo-manager' from '@/components/admin/dashboard-stats'
+import { DashboardStats } from '@/components/admin/dashboard-stats'
+import { PromoManager } from '@/components/admin/promo-manager'
 
 type Tab = 'dashboard' | 'products' | 'categories' | 'banners' | 'orders' | 'promo'
 
@@ -54,14 +54,14 @@ export default function AdminPage() {
   if (checking) return <div className="min-h-screen flex items-center justify-center text-stone-400">Caricamento...</div>
 
   if (!authenticated) return (
-    <div className="min-h-screen bg-stone-50 flex items-center justify-center px-4">
-      <div className="bg-white rounded-2xl shadow-md p-8 w-full max-w-sm">
+    <div className="min-h-screen flex items-center justify-center px-4" style={{ background: '#faf7f2' }}>
+      <div className="bg-white rounded-2xl shadow-md p-8 w-full max-w-sm" style={{ border: '1px solid rgba(217,119,6,0.1)' }}>
         <div className="flex justify-center mb-6">
-          <div className="w-14 h-14 bg-amber-100 rounded-full flex items-center justify-center">
-            <Lock className="w-7 h-7 text-amber-600" />
+          <div className="w-14 h-14 rounded-full flex items-center justify-center" style={{ background: 'linear-gradient(135deg, #d97706, #f59e0b)' }}>
+            <Lock className="w-7 h-7 text-white" />
           </div>
         </div>
-        <h1 className="text-xl font-bold text-stone-800 text-center mb-6">Accesso Admin</h1>
+        <h1 className="text-xl font-bold text-center mb-6" style={{ color: '#1a0800' }}>Accesso Admin</h1>
         <form onSubmit={handleLogin} className="space-y-3">
           <Input type="password" placeholder="Password" value={password} onChange={e => setPassword(e.target.value)} autoFocus />
           {error && <p className="text-red-500 text-sm text-center">{error}</p>}
@@ -74,9 +74,9 @@ export default function AdminPage() {
   )
 
   return (
-    <div className="min-h-screen bg-stone-50">
-      <div className="bg-white border-b border-stone-200 px-4 h-14 flex items-center justify-between">
-        <span className="font-bold text-stone-800">MG<span className="text-amber-600">Shop</span> Admin</span>
+    <div className="min-h-screen" style={{ background: '#faf7f2' }}>
+      <div className="bg-white border-b px-4 h-14 flex items-center justify-between" style={{ borderColor: 'rgba(217,119,6,0.1)' }}>
+        <span className="font-bold" style={{ color: '#1a0800' }}>MG<span style={{ color: '#d97706' }}>Shop</span> Admin</span>
         <div className="flex items-center gap-3">
           <Link href="/mgadmin-panel/migra-immagini" className="flex items-center gap-1 text-sm text-amber-600 hover:text-amber-800 font-medium">
             <ArrowRightLeft className="w-4 h-4" /> Migra immagini
@@ -87,7 +87,7 @@ export default function AdminPage() {
         </div>
       </div>
 
-      <div className="bg-white border-b border-stone-200 px-4 flex gap-1 overflow-x-auto">
+      <div className="bg-white border-b px-4 flex gap-1 overflow-x-auto scrollbar-hide" style={{ borderColor: 'rgba(217,119,6,0.1)' }}>
         {TABS.map(({ id, label, icon: Icon }) => (
           <button key={id} onClick={() => setActiveTab(id)}
             className={`flex items-center gap-2 px-4 py-3 text-sm font-medium border-b-2 transition-colors whitespace-nowrap ${activeTab === id ? 'border-amber-600 text-amber-700' : 'border-transparent text-stone-500 hover:text-stone-700'}`}>
