@@ -9,7 +9,8 @@ import { ProductsManager } from '@/components/admin/products-manager'
 import { CategoriesManager } from '@/components/admin/categories-manager'
 import { BannersManager } from '@/components/admin/banners-manager'
 import { OrdersManager } from '@/components/admin/orders-manager'
-import { DashboardStats } from '@/components/admin/dashboard-stats'
+import { DashboardStats }
+import { PromoManager } from '@/components/admin/promo-manager' from '@/components/admin/dashboard-stats'
 
 type Tab = 'dashboard' | 'products' | 'categories' | 'banners' | 'orders'
 
