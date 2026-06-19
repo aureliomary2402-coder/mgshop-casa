@@ -46,3 +46,4 @@ Inserisci la password che hai scelto.
   - Gestione ordini con cambio stato
   - Galleria immagini per prodotto (upload file + URL)
 - 💾 Immagini su Supabase Storage (niente Vercel Blob)
+# test
