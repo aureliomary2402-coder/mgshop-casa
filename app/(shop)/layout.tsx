@@ -3,7 +3,7 @@ import { Suspense } from 'react'
 
 export default function ShopLayout({ children }: { children: React.ReactNode }) {
   return (
-    <div className="min-h-screen bg-stone-50">
+    <div className="min-h-screen" style={{ background: '#faf7f2' }}>
       <Suspense>
         <ShopHeader />
       </Suspense>
