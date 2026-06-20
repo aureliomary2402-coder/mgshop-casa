@@ -31,9 +31,17 @@ function Countdown({ expiresAt }: { expiresAt: string }) {
 export default function PromoPage() {
   const [promo, setPromo] = useState<PromoData|null>(null)
   const [loading, setLoading] = useState(true)
-  useEffect(()=>{fetch('/api/promo').then(r=>r.json()).then(d=>{setPromo(d);setLoading(false)})},[])
+
+  useEffect(()=>{
+    fetch('/api/promo', { cache: 'no-store' })
+      .then(r=>r.json())
+      .then(d=>{setPromo(d);setLoading(false)})
+      .catch(()=>setLoading(false))
+  },[])
+
   if(loading) return <div className="min-h-screen flex items-center justify-center" style={{background:'#faf7f2'}}><div className="w-10 h-10 rounded-full border-2 border-amber-200 border-t-amber-600 animate-spin"/></div>
-  if(!promo||!promo.is_active) return (
+
+  if(!promo || promo.is_active !== true) return (
     <div className="min-h-screen flex items-center justify-center px-4" style={{background:'#faf7f2'}}>
       <div className="text-center max-w-md">
         <div className="w-24 h-24 rounded-full flex items-center justify-center mx-auto mb-6" style={{background:'rgba(217,119,6,0.08)',border:'2px dashed rgba(217,119,6,0.2)'}}><ShoppingBag className="w-12 h-12" style={{color:'rgba(217,119,6,0.4)'}}/></div>
@@ -43,6 +51,7 @@ export default function PromoPage() {
       </div>
     </div>
   )
+
   return (
     <div className="min-h-screen" style={{background:'#faf7f2'}}>
       <div className="relative overflow-hidden" style={{background:'linear-gradient(135deg,#1a0800,#2d1500)'}}>
