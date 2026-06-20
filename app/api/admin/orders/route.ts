@@ -26,3 +26,12 @@ export async function PUT(request: NextRequest) {
   if (error) return NextResponse.json({ error: error.message }, { status: 500 })
   return NextResponse.json(data)
 }
+
+export async function DELETE(request: NextRequest) {
+  if (!(await isAuthenticated())) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+  const { id } = await request.json()
+  const supabase = createAdminClient()
+  const { error } = await supabase.from('orders').delete().eq('id', id)
+  if (error) return NextResponse.json({ error: error.message }, { status: 500 })
+  return NextResponse.json({ success: true })
+}
