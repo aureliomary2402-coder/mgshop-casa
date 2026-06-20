@@ -8,7 +8,7 @@ export async function GET() {
   return NextResponse.json(data)
 }
 
-export async function PUT(request: NextRequest) {
+export async function POST(request: NextRequest) {
   const body = await request.json()
   const supabase = createAdminClient()
   const { data: existing } = await supabase.from('promo_page').select('id').limit(1).single()
