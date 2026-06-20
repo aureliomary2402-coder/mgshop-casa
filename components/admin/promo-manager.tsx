@@ -21,7 +21,7 @@ export function PromoManager() {
   const [error, setError] = useState('')
 
   useEffect(() => {
-    fetch('/api/admin/promo')
+    fetch('/api/admin/promo', { credentials: 'include' })
       .then(r => r.json())
       .then(d => {
         setIsActive(d.is_active === true)
@@ -36,31 +36,34 @@ export function PromoManager() {
       .catch(() => { setError('Errore caricamento'); setLoading(false) })
   }, [])
 
-  const handleSave = async () => {
-    setSaving(true)
-    const body = { is_active: isActive, title, subtitle, content, image_url: imageUrl, badge_text: badgeText, expires_at: expiresAt || null }
+  const saveData = async (data: object) => {
     const res = await fetch('/api/admin/promo', {
       method: 'PUT',
+      credentials: 'include',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(body)
+      body: JSON.stringify(data)
     })
-    if (res.ok) {
-      setSaved(true)
-      setTimeout(() => setSaved(false), 2000)
-    } else {
-      setError('Errore salvataggio')
-    }
+    return res.ok
+  }
+
+  const handleSave = async () => {
+    setSaving(true)
+    setError('')
+    const ok = await saveData({
+      is_active: isActive, title, subtitle, content,
+      image_url: imageUrl, badge_text: badgeText,
+      expires_at: expiresAt || null
+    })
+    if (ok) { setSaved(true); setTimeout(() => setSaved(false), 2000) }
+    else setError('Errore salvataggio — riprova')
     setSaving(false)
   }
 
   const handleToggle = async () => {
     const newValue = !isActive
     setIsActive(newValue)
-    await fetch('/api/admin/promo', {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ is_active: newValue })
-    })
+    const ok = await saveData({ is_active: newValue })
+    if (!ok) setIsActive(!newValue)
   }
 
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -70,7 +73,7 @@ export function PromoManager() {
     const formData = new FormData()
     formData.append('file', file)
     try {
-      const res = await fetch('/api/upload', { method: 'POST', body: formData })
+      const res = await fetch('/api/upload', { method: 'POST', credentials: 'include', body: formData })
       const data = await res.json()
       if (data.url) setImageUrl(data.url)
     } catch { console.error('Upload failed') }
@@ -78,7 +81,6 @@ export function PromoManager() {
   }
 
   if (loading) return <div className="text-center py-8 text-stone-400">Caricamento...</div>
-  if (error && !title) return <div className="text-center py-8 text-red-400 text-sm">{error} — esegui prima il promo_schema.sql su Supabase</div>
 
   return (
     <div className="space-y-5">
