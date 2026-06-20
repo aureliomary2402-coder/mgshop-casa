@@ -38,7 +38,7 @@ export function PromoManager() {
 
   const saveData = async (data: object) => {
     const res = await fetch('/api/admin/promo', {
-      method: 'PUT',
+      method: 'POST',
       credentials: 'include',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(data)
