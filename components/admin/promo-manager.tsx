@@ -8,11 +8,11 @@ import Link from 'next/link'
 
 export function PromoManager() {
   const [isActive, setIsActive] = useState(false)
-  const [title, setTitle] = useState('Le nostre promozioni')
+  const [title, setTitle] = useState('')
   const [subtitle, setSubtitle] = useState('')
   const [content, setContent] = useState('')
   const [imageUrl, setImageUrl] = useState('')
-  const [badgeText, setBadgeText] = useState('Offerta speciale')
+  const [badgeText, setBadgeText] = useState('')
   const [expiresAt, setExpiresAt] = useState('')
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
@@ -21,7 +21,7 @@ export function PromoManager() {
   const [error, setError] = useState('')
 
   useEffect(() => {
-    fetch('/api/admin/promo', { credentials: 'include' })
+    fetch('/api/admin/promo')
       .then(r => r.json())
       .then(d => {
         setIsActive(d.is_active === true)
@@ -33,37 +33,32 @@ export function PromoManager() {
         setExpiresAt(d.expires_at ? d.expires_at.slice(0, 16) : '')
         setLoading(false)
       })
-      .catch(() => { setError('Errore caricamento'); setLoading(false) })
+      .catch(() => setLoading(false))
   }, [])
-
-  const saveData = async (data: object) => {
-    const res = await fetch('/api/admin/promo', {
-      method: 'POST',
-      credentials: 'include',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(data)
-    })
-    return res.ok
-  }
 
   const handleSave = async () => {
     setSaving(true)
     setError('')
-    const ok = await saveData({
-      is_active: isActive, title, subtitle, content,
-      image_url: imageUrl, badge_text: badgeText,
-      expires_at: expiresAt || null
+    const res = await fetch('/api/admin/promo', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        is_active: isActive,
+        title,
+        subtitle,
+        content,
+        image_url: imageUrl || null,
+        badge_text: badgeText,
+        expires_at: expiresAt || null
+      })
     })
-    if (ok) { setSaved(true); setTimeout(() => setSaved(false), 2000) }
-    else setError('Errore salvataggio — riprova')
+    if (res.ok) {
+      setSaved(true)
+      setTimeout(() => setSaved(false), 2000)
+    } else {
+      setError('Errore salvataggio')
+    }
     setSaving(false)
-  }
-
-  const handleToggle = async () => {
-    const newValue = !isActive
-    setIsActive(newValue)
-    const ok = await saveData({ is_active: newValue })
-    if (!ok) setIsActive(!newValue)
   }
 
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -73,7 +68,7 @@ export function PromoManager() {
     const formData = new FormData()
     formData.append('file', file)
     try {
-      const res = await fetch('/api/upload', { method: 'POST', credentials: 'include', body: formData })
+      const res = await fetch('/api/upload', { method: 'POST', body: formData })
       const data = await res.json()
       if (data.url) setImageUrl(data.url)
     } catch { console.error('Upload failed') }
@@ -90,8 +85,8 @@ export function PromoManager() {
           <p className="font-semibold text-stone-800">Pagina Promo</p>
           <p className="text-xs mt-0.5">
             {isActive
-              ? <span className="text-amber-600 font-medium">✅ Attiva — visibile su /promo</span>
-              : <span className="text-stone-400">❌ Disattivata</span>}
+              ? <span className="text-amber-600 font-medium">✅ Attiva — ricordati di salvare!</span>
+              : <span className="text-stone-400">❌ Disattivata — ricordati di salvare!</span>}
           </p>
         </div>
         <div className="flex items-center gap-3">
@@ -100,10 +95,14 @@ export function PromoManager() {
               <Eye className="w-3.5 h-3.5" /> Vedi pagina
             </Link>
           )}
-          <button onClick={handleToggle} className="focus:outline-none hover:scale-110 transition-transform">
+          <button onClick={() => setIsActive(v => !v)} className="focus:outline-none hover:scale-110 transition-transform">
             {isActive ? <ToggleRight className="w-10 h-10 text-amber-600" /> : <ToggleLeft className="w-10 h-10 text-stone-300" />}
           </button>
         </div>
+      </div>
+
+      <div className="p-3 rounded-xl text-xs text-amber-700 font-medium" style={{ background: 'rgba(217,119,6,0.08)', border: '1px solid rgba(217,119,6,0.15)' }}>
+        ⚠️ Dopo ogni modifica clicca sempre <strong>Salva modifiche</strong>
       </div>
 
       <div className="space-y-4">
@@ -112,7 +111,7 @@ export function PromoManager() {
           <Input value={badgeText} onChange={e => setBadgeText(e.target.value)} placeholder="Offerta speciale" />
         </div>
         <div>
-          <label className="text-xs font-medium text-stone-500 mb-1 block">Titolo *</label>
+          <label className="text-xs font-medium text-stone-500 mb-1 block">Titolo</label>
           <Input value={title} onChange={e => setTitle(e.target.value)} placeholder="Es. Saldi estivi 🔥" />
         </div>
         <div>
@@ -132,18 +131,24 @@ export function PromoManager() {
             <ImageIcon className="w-4 h-4" /> {uploading ? 'Caricamento...' : 'Carica file'}
             <input type="file" accept="image/*" className="hidden" onChange={handleImageUpload} disabled={uploading} />
           </label>
-          {imageUrl && <div className="mt-2 rounded-xl overflow-hidden h-32 bg-stone-100"><img src={imageUrl} alt="preview" className="w-full h-full object-cover" /></div>}
+          {imageUrl && (
+            <div className="mt-2 relative">
+              <div className="rounded-xl overflow-hidden h-32 bg-stone-100"><img src={imageUrl} alt="preview" className="w-full h-full object-cover" /></div>
+              <button onClick={() => setImageUrl('')} className="absolute top-2 right-2 bg-red-500 text-white text-xs px-2 py-1 rounded-lg">Rimuovi</button>
+            </div>
+          )}
         </div>
         <div>
           <label className="text-xs font-medium text-stone-500 mb-1 flex items-center gap-1"><Clock className="w-3.5 h-3.5" /> Scadenza (conto alla rovescia)</label>
           <Input type="datetime-local" value={expiresAt} onChange={e => setExpiresAt(e.target.value)} />
+          {expiresAt && <button onClick={() => setExpiresAt('')} className="text-xs text-red-500 mt-1">Rimuovi scadenza</button>}
         </div>
       </div>
 
       {error && <p className="text-red-500 text-xs">{error}</p>}
 
-      <Button onClick={handleSave} disabled={saving} className="w-full gap-2 bg-amber-600 hover:bg-amber-700">
-        <Save className="w-4 h-4" />
+      <Button onClick={handleSave} disabled={saving} className="w-full gap-2 bg-amber-600 hover:bg-amber-700 text-base py-6">
+        <Save className="w-5 h-5" />
         {saved ? '✓ Salvato!' : saving ? 'Salvataggio...' : 'Salva modifiche'}
       </Button>
     </div>
