@@ -1,11 +1,21 @@
 "use client"
 
 import Link from 'next/link'
+import Image from 'next/image'
 import { ImageIcon, ShoppingCart, Eye } from 'lucide-react'
 import { toast } from 'sonner'
 import type { Product } from '@/lib/types'
 import { useCartStore } from '@/lib/cart-store'
 import { useState, useRef } from 'react'
+
+function getOptimizedUrl(url: string | null): string | null {
+  if (!url) return null
+  if (url.includes('supabase.co/storage')) {
+    const base = url.split('?')[0]
+    return `${base}?width=400&height=400&resize=cover&quality=75&format=webp`
+  }
+  return url
+}
 
 export function ProductCard({ product, index = 0 }: { product: Product; index?: number }) {
   const addItem = useCartStore((state) => state.addItem)
@@ -32,6 +42,8 @@ export function ProductCard({ product, index = 0 }: { product: Product; index?: 
     })
   }
 
+  const optimizedUrl = getOptimizedUrl(product.cover_image)
+
   return (
     <div
       ref={cardRef}
@@ -56,42 +68,35 @@ export function ProductCard({ product, index = 0 }: { product: Product; index?: 
     >
       <Link href={`/prodotto/${product.id}`} className="block">
         <div className="relative aspect-square overflow-hidden" style={{ background: 'linear-gradient(135deg, #faf7f2, #fef3c7)' }}>
-          {product.cover_image && !imgError ? (
-            <img
-              src={product.cover_image}
+          {optimizedUrl && !imgError ? (
+            <Image
+              src={optimizedUrl}
               alt={product.name}
-              className="w-full h-full object-cover transition-transform duration-500 ease-out"
+              fill
+              sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 20vw"
+              className="object-cover transition-transform duration-500 ease-out"
               style={{ transform: isHovered ? 'scale(1.08)' : 'scale(1)' }}
               onError={() => setImgError(true)}
+              loading={index < 6 ? 'eager' : 'lazy'}
+              quality={75}
             />
           ) : (
             <div className="w-full h-full flex items-center justify-center">
               <ImageIcon className="w-10 h-10" style={{ color: 'rgba(217,119,6,0.3)' }} />
             </div>
           )}
-
-          {/* Overlay */}
           <div className="absolute inset-0 flex items-center justify-center transition-all duration-300"
-            style={{ background: isHovered ? 'rgba(26,8,0,0.15)' : 'rgba(26,8,0,0)', backdropFilter: isHovered ? 'blur(1px)' : 'none' }}>
+            style={{ background: isHovered ? 'rgba(26,8,0,0.15)' : 'rgba(26,8,0,0)' }}>
             <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold transition-all duration-300"
               style={{
                 background: 'rgba(250,247,242,0.95)',
                 color: '#92400e',
                 opacity: isHovered ? 1 : 0,
                 transform: isHovered ? 'translateY(0) scale(1)' : 'translateY(6px) scale(0.9)',
-                boxShadow: '0 4px 12px rgba(0,0,0,0.1)'
               }}>
               <Eye className="w-3.5 h-3.5" /> Vedi dettagli
             </div>
           </div>
-
-          {/* Shine effect */}
-          {isHovered && (
-            <div className="absolute inset-0 pointer-events-none"
-              style={{
-                background: `radial-gradient(circle at ${(tilt.y / 12 + 0.5) * 100}% ${(tilt.x / 12 + 0.5) * 100}%, rgba(255,255,255,0.15), transparent 60%)`,
-              }} />
-          )}
         </div>
       </Link>
 
@@ -107,9 +112,7 @@ export function ProductCard({ product, index = 0 }: { product: Product; index?: 
           <button
             onClick={handleAddToCart}
             className="flex items-center gap-1 text-white text-xs font-semibold px-3 py-1.5 rounded-full btn-press transition-all"
-            style={{ background: 'linear-gradient(135deg, #d97706, #f59e0b)', boxShadow: '0 2px 8px rgba(217,119,6,0.3)' }}
-            onMouseEnter={e => (e.currentTarget.style.boxShadow = '0 4px 16px rgba(217,119,6,0.5)')}
-            onMouseLeave={e => (e.currentTarget.style.boxShadow = '0 2px 8px rgba(217,119,6,0.3)')}>
+            style={{ background: 'linear-gradient(135deg, #d97706, #f59e0b)', boxShadow: '0 2px 8px rgba(217,119,6,0.3)' }}>
             <ShoppingCart className="w-3.5 h-3.5" />
             <span className="hidden sm:inline">Aggiungi</span>
           </button>
