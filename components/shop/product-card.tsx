@@ -1,21 +1,12 @@
 "use client"
 
 import Link from 'next/link'
-import Image from 'next/image'
 import { ImageIcon, ShoppingCart, Eye } from 'lucide-react'
 import { toast } from 'sonner'
 import type { Product } from '@/lib/types'
 import { useCartStore } from '@/lib/cart-store'
 import { useState, useRef } from 'react'
-
-function getOptimizedUrl(url: string | null): string | null {
-  if (!url) return null
-  if (url.includes('supabase.co/storage')) {
-    const base = url.split('?')[0]
-    return `${base}?width=400&height=400&resize=cover&quality=75&format=webp`
-  }
-  return url
-}
+import { optimizeImage } from '@/lib/image'
 
 export function ProductCard({ product, index = 0 }: { product: Product; index?: number }) {
   const addItem = useCartStore((state) => state.addItem)
@@ -42,7 +33,7 @@ export function ProductCard({ product, index = 0 }: { product: Product; index?: 
     })
   }
 
-  const optimizedUrl = getOptimizedUrl(product.cover_image)
+  const imgUrl = optimizeImage(product.cover_image, 400)
 
   return (
     <div
@@ -68,17 +59,15 @@ export function ProductCard({ product, index = 0 }: { product: Product; index?: 
     >
       <Link href={`/prodotto/${product.id}`} className="block">
         <div className="relative aspect-square overflow-hidden" style={{ background: 'linear-gradient(135deg, #faf7f2, #fef3c7)' }}>
-          {optimizedUrl && !imgError ? (
-            <Image
-              src={optimizedUrl}
+          {imgUrl && !imgError ? (
+            <img
+              src={imgUrl}
               alt={product.name}
-              fill
-              sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 20vw"
-              className="object-cover transition-transform duration-500 ease-out"
+              loading={index < 8 ? 'eager' : 'lazy'}
+              decoding="async"
+              className="w-full h-full object-cover transition-transform duration-500 ease-out"
               style={{ transform: isHovered ? 'scale(1.08)' : 'scale(1)' }}
               onError={() => setImgError(true)}
-              loading={index < 6 ? 'eager' : 'lazy'}
-              quality={75}
             />
           ) : (
             <div className="w-full h-full flex items-center justify-center">

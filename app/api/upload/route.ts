@@ -13,22 +13,12 @@ export async function POST(request: NextRequest) {
 
     const { error } = await supabase.storage
       .from('images')
-      .upload(fileName, file, {
-        contentType: file.type,
-        upsert: false,
-        duplex: 'half',
-      })
+      .upload(fileName, file, { contentType: file.type, upsert: false })
 
     if (error) return NextResponse.json({ error: 'Upload failed' }, { status: 500 })
 
     const { data: urlData } = supabase.storage.from('images').getPublicUrl(fileName, {
-      transform: {
-        width: 800,
-        height: 800,
-        resize: 'contain',
-        quality: 80,
-        format: 'webp',
-      }
+      transform: { width: 800, height: 800, resize: 'contain', quality: 80, format: 'webp' }
     })
 
     return NextResponse.json({ url: urlData.publicUrl })
