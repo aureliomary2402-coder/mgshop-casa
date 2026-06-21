@@ -63,8 +63,6 @@ export function ProductCard({ product, index = 0 }: { product: Product; index?: 
             <img
               src={imgUrl}
               alt={product.name}
-              loading={index < 8 ? 'eager' : 'lazy'}
-              decoding="async"
               className="w-full h-full object-cover transition-transform duration-500 ease-out"
               style={{ transform: isHovered ? 'scale(1.08)' : 'scale(1)' }}
               onError={() => setImgError(true)}
