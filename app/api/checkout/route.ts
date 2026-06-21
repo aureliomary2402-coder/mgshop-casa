@@ -26,18 +26,22 @@ export async function POST(request: NextRequest) {
     if (itemsError) return NextResponse.json({ error: itemsError.message }, { status: 500 })
 
     if (coupon_code) {
-      const { data: coupon } = await supabase
-        .from('coupons')
-        .select('id, uses_count')
-        .eq('code', coupon_code)
-        .single()
-      if (coupon) {
-        await supabase
-          .from('coupons')
-          .update({ uses_count: coupon.uses_count + 1 })
-          .eq('id', coupon.id)
-      }
+      const { data: coupon } = await supabase.from('coupons').select('id, uses_count').eq('code', coupon_code).single()
+      if (coupon) await supabase.from('coupons').update({ uses_count: coupon.uses_count + 1 }).eq('id', coupon.id)
     }
+
+    // Manda notifica push
+    const itemsCount = items.reduce((s: number, i: { quantity: number }) => s + i.quantity, 0)
+    const baseUrl = request.headers.get('origin') || 'https://mgshop-2.vercel.app'
+    fetch(`${baseUrl}/api/push`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        title: 'Nuovo ordine ricevuto!',
+        body: `${phone_number} — ${itemsCount} articoli — €${total.toFixed(2)}`,
+        url: '/mgadmin-panel'
+      })
+    }).catch(() => {})
 
     return NextResponse.json({ success: true, order })
   } catch {

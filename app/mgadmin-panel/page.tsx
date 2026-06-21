@@ -12,6 +12,7 @@ import { OrdersManager } from '@/components/admin/orders-manager'
 import { DashboardStats } from '@/components/admin/dashboard-stats'
 import { PromoManager } from '@/components/admin/promo-manager'
 import { CouponsManager } from '@/components/admin/coupons-manager'
+import { PushNotifications } from '@/components/admin/push-notifications'
 
 type Tab = 'dashboard' | 'products' | 'categories' | 'banners' | 'orders' | 'promo' | 'coupons'
 
@@ -80,8 +81,6 @@ export default function AdminPage() {
 
   return (
     <div className="min-h-screen" style={{ background: '#faf7f2' }}>
-
-      {/* Top bar */}
       <div className="bg-white border-b px-4 h-14 flex items-center justify-between sticky top-0 z-40" style={{ borderColor: 'rgba(217,119,6,0.1)' }}>
         <div className="flex items-center gap-3">
           <button onClick={() => setMenuOpen(v => !v)}
@@ -97,20 +96,14 @@ export default function AdminPage() {
           </div>
         </div>
         <div className="flex items-center gap-2">
-          <Link href="/mgadmin-panel/migra-immagini"
-            className="flex items-center gap-1 text-xs text-amber-600 hover:text-amber-800 font-medium px-2 py-1.5 rounded-lg hover:bg-amber-50 transition-colors">
-            <ArrowRightLeft className="w-3.5 h-3.5" />
-            <span className="hidden sm:inline">Migra</span>
-          </Link>
-          <button onClick={handleLogout}
-            className="flex items-center gap-1 text-xs text-stone-500 hover:text-stone-800 px-2 py-1.5 rounded-lg hover:bg-stone-50 transition-colors">
+          <PushNotifications />
+          <button onClick={handleLogout} className="flex items-center gap-1 text-xs text-stone-500 hover:text-stone-800 px-2 py-1.5 rounded-lg hover:bg-stone-50">
             <LogOut className="w-3.5 h-3.5" />
             <span className="hidden sm:inline">Esci</span>
           </button>
         </div>
       </div>
 
-      {/* Slide-out menu */}
       {menuOpen && (
         <div className="fixed inset-0 z-50 flex">
           <div className="absolute inset-0 bg-black/30 backdrop-blur-sm" onClick={() => setMenuOpen(false)} />
@@ -124,7 +117,6 @@ export default function AdminPage() {
               </div>
               <p className="text-xs text-stone-400">Pannello di controllo</p>
             </div>
-
             <div className="flex-1 p-3 overflow-y-auto">
               <div className="space-y-1">
                 {TABS.map(({ id, label, icon: Icon, color }) => (
@@ -139,7 +131,6 @@ export default function AdminPage() {
                 ))}
               </div>
             </div>
-
             <div className="p-4 border-t border-stone-100 space-y-2">
               <Link href="/mgadmin-panel/migra-immagini" onClick={() => setMenuOpen(false)}
                 className="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-stone-600 hover:bg-stone-50 transition-colors">
@@ -160,7 +151,6 @@ export default function AdminPage() {
         </div>
       )}
 
-      {/* Content */}
       <div className="max-w-3xl mx-auto px-4 py-6">
         {activeTab === 'dashboard' && <DashboardStats />}
         {activeTab === 'products' && <ProductsManager />}
