@@ -20,9 +20,12 @@ export async function GET() {
 
 export async function PUT(request: NextRequest) {
   if (!(await isAuthenticated())) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-  const { id, status } = await request.json()
+  const body = await request.json()
   const supabase = createAdminClient()
-  const { data, error } = await supabase.from('orders').update({ status }).eq('id', id).select().single()
+  const updateData: Record<string, string> = {}
+  if (body.status !== undefined) updateData.status = body.status
+  if (body.customer_name !== undefined) updateData.customer_name = body.customer_name
+  const { data, error } = await supabase.from('orders').update(updateData).eq('id', body.id).select().single()
   if (error) return NextResponse.json({ error: error.message }, { status: 500 })
   return NextResponse.json(data)
 }

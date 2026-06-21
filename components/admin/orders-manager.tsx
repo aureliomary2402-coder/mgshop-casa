@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect } from 'react'
-import { ChevronDown, ChevronUp, Package, Trash2 } from 'lucide-react'
+import { ChevronDown, ChevronUp, Package, Trash2, Pencil, Check, X, User } from 'lucide-react'
 import type { Order, OrderItem } from '@/lib/types'
 
 const STATUS_LABELS: Record<string, string> = {
@@ -20,12 +20,17 @@ const STATUS_COLORS: Record<string, string> = {
   cancelled: 'bg-red-100 text-red-700',
 }
 
-interface OrderWithItems extends Order { order_items: OrderItem[] }
+interface OrderWithItems extends Order {
+  order_items: OrderItem[]
+  customer_name?: string
+}
 
 export function OrdersManager() {
   const [orders, setOrders] = useState<OrderWithItems[]>([])
   const [loading, setLoading] = useState(true)
   const [expanded, setExpanded] = useState<string | null>(null)
+  const [editingName, setEditingName] = useState<string | null>(null)
+  const [nameInput, setNameInput] = useState('')
 
   useEffect(() => { fetchOrders() }, [])
 
@@ -36,14 +41,37 @@ export function OrdersManager() {
   }
 
   const handleStatusChange = async (id: string, status: string) => {
-    await fetch('/api/admin/orders', { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id, status }) })
+    await fetch('/api/admin/orders', {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ id, status }),
+    })
     fetchOrders()
   }
 
   const handleDelete = async (id: string) => {
     if (!confirm('Eliminare questo ordine?')) return
-    await fetch('/api/admin/orders', { method: 'DELETE', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id }) })
+    await fetch('/api/admin/orders', {
+      method: 'DELETE',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ id }),
+    })
     if (expanded === id) setExpanded(null)
+    fetchOrders()
+  }
+
+  const startEditName = (order: OrderWithItems) => {
+    setEditingName(order.id)
+    setNameInput(order.customer_name || '')
+  }
+
+  const saveName = async (id: string) => {
+    await fetch('/api/admin/orders', {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ id, customer_name: nameInput.trim() }),
+    })
+    setEditingName(null)
     fetchOrders()
   }
 
@@ -64,17 +92,55 @@ export function OrdersManager() {
             <div className="flex items-center gap-3 p-4">
               <div className="flex-1 min-w-0 cursor-pointer" onClick={() => setExpanded(expanded === order.id ? null : order.id)}>
                 <div className="flex items-center gap-2 flex-wrap">
-                  <span className="font-medium text-sm text-stone-800">{order.phone_number}</span>
+                  {/* Nome cliente o numero */}
+                  {editingName === order.id ? (
+                    <div className="flex items-center gap-1" onClick={e => e.stopPropagation()}>
+                      <input
+                        value={nameInput}
+                        onChange={e => setNameInput(e.target.value)}
+                        onKeyDown={e => { if (e.key === 'Enter') saveName(order.id); if (e.key === 'Escape') setEditingName(null) }}
+                        placeholder="Nome cliente"
+                        autoFocus
+                        className="text-sm font-medium border border-amber-300 rounded-lg px-2 py-1 outline-none focus:ring-2 focus:ring-amber-400"
+                        style={{ color: '#1a0800' }}
+                      />
+                      <button onClick={() => saveName(order.id)} className="p-1 hover:bg-green-50 rounded-lg transition-colors">
+                        <Check className="w-4 h-4 text-green-500" />
+                      </button>
+                      <button onClick={() => setEditingName(null)} className="p-1 hover:bg-red-50 rounded-lg transition-colors">
+                        <X className="w-4 h-4 text-red-400" />
+                      </button>
+                    </div>
+                  ) : (
+                    <div className="flex items-center gap-1.5 group/name">
+                      <span className="font-medium text-sm text-stone-800">
+                        {order.customer_name || order.phone_number}
+                      </span>
+                      {order.customer_name && (
+                        <span className="text-xs text-stone-400">{order.phone_number}</span>
+                      )}
+                      <button
+                        onClick={e => { e.stopPropagation(); startEditName(order) }}
+                        className="p-0.5 opacity-0 group-hover/name:opacity-100 hover:bg-stone-100 rounded transition-all"
+                        title="Modifica nome">
+                        <Pencil className="w-3 h-3 text-stone-400" />
+                      </button>
+                    </div>
+                  )}
                   <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${STATUS_COLORS[order.status] || 'bg-stone-100 text-stone-600'}`}>
                     {STATUS_LABELS[order.status] || order.status}
                   </span>
                 </div>
                 <p className="text-xs text-stone-400 mt-0.5">
                   {new Date(order.created_at).toLocaleDateString('it-IT', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' })}
-                  {' - '}euro{order.total.toFixed(2)}
+                  {' · '}€{order.total.toFixed(2)}
                 </p>
               </div>
-              <div className="flex items-center gap-2 shrink-0">
+              <div className="flex items-center gap-1 shrink-0">
+                <button onClick={e => { e.stopPropagation(); startEditName(order) }}
+                  className="p-1.5 hover:bg-amber-50 rounded-lg transition-colors" title="Assegna nome">
+                  <User className="w-4 h-4 text-amber-500" />
+                </button>
                 <button onClick={() => handleDelete(order.id)} className="p-1.5 hover:bg-red-50 rounded-lg transition-colors" title="Elimina">
                   <Trash2 className="w-4 h-4 text-red-400" />
                 </button>
@@ -83,17 +149,19 @@ export function OrdersManager() {
                 </button>
               </div>
             </div>
+
             {expanded === order.id && (
               <div className="border-t border-stone-100 px-4 pb-4 pt-3 space-y-3">
                 <div className="space-y-1">
                   {order.order_items.map(item => (
                     <div key={item.id} className="flex justify-between text-sm">
-                      <span className="text-stone-700">{item.product_name} x{item.quantity}</span>
-                      <span className="font-medium text-stone-800">euro{(item.product_price * item.quantity).toFixed(2)}</span>
+                      <span className="text-stone-700">{item.product_name} <span className="text-stone-400">×{item.quantity}</span></span>
+                      <span className="font-medium text-stone-800">€{(item.product_price * item.quantity).toFixed(2)}</span>
                     </div>
                   ))}
                   <div className="border-t border-stone-100 pt-2 flex justify-between font-bold text-sm">
-                    <span>Totale</span><span className="text-amber-700">euro{order.total.toFixed(2)}</span>
+                    <span>Totale</span>
+                    <span className="text-amber-700">€{order.total.toFixed(2)}</span>
                   </div>
                 </div>
                 <div>
