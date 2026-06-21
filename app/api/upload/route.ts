@@ -18,7 +18,7 @@ export async function POST(request: NextRequest) {
     if (error) return NextResponse.json({ error: 'Upload failed' }, { status: 500 })
 
     const { data: urlData } = supabase.storage.from('images').getPublicUrl(fileName, {
-      transform: { width: 800, height: 800, resize: 'contain', quality: 80, format: 'webp' }
+      transform: { width: 800, height: 800, resize: 'contain', quality: 80 }
     })
 
     return NextResponse.json({ url: urlData.publicUrl })
