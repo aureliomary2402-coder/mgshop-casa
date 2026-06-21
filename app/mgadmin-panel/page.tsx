@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect } from 'react'
-import { Package, Tag, Image, ShoppingBag, LogOut, Lock, ArrowRightLeft, LayoutDashboard, Megaphone, Ticket } from 'lucide-react'
+import { Package, Tag, Image, ShoppingBag, LogOut, Lock, ArrowRightLeft, LayoutDashboard, Megaphone, Ticket, Menu, X } from 'lucide-react'
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -16,13 +16,13 @@ import { CouponsManager } from '@/components/admin/coupons-manager'
 type Tab = 'dashboard' | 'products' | 'categories' | 'banners' | 'orders' | 'promo' | 'coupons'
 
 const TABS = [
-  { id: 'dashboard' as Tab, label: 'Dashboard', icon: LayoutDashboard },
-  { id: 'products' as Tab, label: 'Prodotti', icon: Package },
-  { id: 'categories' as Tab, label: 'Categorie', icon: Tag },
-  { id: 'banners' as Tab, label: 'Banner', icon: Image },
-  { id: 'orders' as Tab, label: 'Ordini', icon: ShoppingBag },
-  { id: 'promo' as Tab, label: 'Promo', icon: Megaphone },
-  { id: 'coupons' as Tab, label: 'Coupon', icon: Ticket },
+  { id: 'dashboard' as Tab, label: 'Dashboard', icon: LayoutDashboard, color: 'text-blue-600 bg-blue-50' },
+  { id: 'products' as Tab, label: 'Prodotti', icon: Package, color: 'text-amber-600 bg-amber-50' },
+  { id: 'categories' as Tab, label: 'Categorie', icon: Tag, color: 'text-green-600 bg-green-50' },
+  { id: 'banners' as Tab, label: 'Banner', icon: Image, color: 'text-purple-600 bg-purple-50' },
+  { id: 'orders' as Tab, label: 'Ordini', icon: ShoppingBag, color: 'text-orange-600 bg-orange-50' },
+  { id: 'promo' as Tab, label: 'Promo', icon: Megaphone, color: 'text-rose-600 bg-rose-50' },
+  { id: 'coupons' as Tab, label: 'Coupon', icon: Ticket, color: 'text-indigo-600 bg-indigo-50' },
 ]
 
 export default function AdminPage() {
@@ -32,6 +32,7 @@ export default function AdminPage() {
   const [loading, setLoading] = useState(false)
   const [activeTab, setActiveTab] = useState<Tab>('dashboard')
   const [checking, setChecking] = useState(true)
+  const [menuOpen, setMenuOpen] = useState(false)
 
   useEffect(() => {
     fetch('/api/admin/auth').then(r => {
@@ -52,6 +53,8 @@ export default function AdminPage() {
     await fetch('/api/admin/auth', { method: 'DELETE' })
     setAuthenticated(false)
   }
+
+  const activeTabInfo = TABS.find(t => t.id === activeTab)!
 
   if (checking) return <div className="min-h-screen flex items-center justify-center text-stone-400">Caricamento...</div>
 
@@ -77,27 +80,87 @@ export default function AdminPage() {
 
   return (
     <div className="min-h-screen" style={{ background: '#faf7f2' }}>
-      <div className="bg-white border-b px-4 h-14 flex items-center justify-between" style={{ borderColor: 'rgba(217,119,6,0.1)' }}>
-        <span className="font-bold" style={{ color: '#1a0800' }}>MG<span style={{ color: '#d97706' }}>Shop</span> Admin</span>
+
+      {/* Top bar */}
+      <div className="bg-white border-b px-4 h-14 flex items-center justify-between sticky top-0 z-40" style={{ borderColor: 'rgba(217,119,6,0.1)' }}>
         <div className="flex items-center gap-3">
-          <Link href="/mgadmin-panel/migra-immagini" className="flex items-center gap-1 text-sm text-amber-600 hover:text-amber-800 font-medium">
-            <ArrowRightLeft className="w-4 h-4" /> Migra
+          <button onClick={() => setMenuOpen(v => !v)}
+            className="w-9 h-9 flex items-center justify-center rounded-xl hover:bg-amber-50 transition-colors"
+            style={{ color: '#d97706' }}>
+            {menuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+          </button>
+          <div className="flex items-center gap-2">
+            <div className={`w-7 h-7 rounded-lg flex items-center justify-center ${activeTabInfo.color}`}>
+              <activeTabInfo.icon className="w-4 h-4" />
+            </div>
+            <span className="font-bold text-stone-800">{activeTabInfo.label}</span>
+          </div>
+        </div>
+        <div className="flex items-center gap-2">
+          <Link href="/mgadmin-panel/migra-immagini"
+            className="flex items-center gap-1 text-xs text-amber-600 hover:text-amber-800 font-medium px-2 py-1.5 rounded-lg hover:bg-amber-50 transition-colors">
+            <ArrowRightLeft className="w-3.5 h-3.5" />
+            <span className="hidden sm:inline">Migra</span>
           </Link>
-          <button onClick={handleLogout} className="flex items-center gap-1 text-sm text-stone-500 hover:text-stone-800">
-            <LogOut className="w-4 h-4" /> Esci
+          <button onClick={handleLogout}
+            className="flex items-center gap-1 text-xs text-stone-500 hover:text-stone-800 px-2 py-1.5 rounded-lg hover:bg-stone-50 transition-colors">
+            <LogOut className="w-3.5 h-3.5" />
+            <span className="hidden sm:inline">Esci</span>
           </button>
         </div>
       </div>
 
-      <div className="bg-white border-b px-4 flex gap-1 overflow-x-auto scrollbar-hide" style={{ borderColor: 'rgba(217,119,6,0.1)' }}>
-        {TABS.map(({ id, label, icon: Icon }) => (
-          <button key={id} onClick={() => setActiveTab(id)}
-            className={`flex items-center gap-2 px-4 py-3 text-sm font-medium border-b-2 transition-colors whitespace-nowrap ${activeTab === id ? 'border-amber-600 text-amber-700' : 'border-transparent text-stone-500 hover:text-stone-700'}`}>
-            <Icon className="w-4 h-4" /> {label}
-          </button>
-        ))}
-      </div>
+      {/* Slide-out menu */}
+      {menuOpen && (
+        <div className="fixed inset-0 z-50 flex">
+          <div className="absolute inset-0 bg-black/30 backdrop-blur-sm" onClick={() => setMenuOpen(false)} />
+          <div className="relative w-72 max-w-[85vw] bg-white h-full shadow-2xl flex flex-col animate-slide-in-left">
+            <div className="p-5 border-b border-stone-100">
+              <div className="flex items-center justify-between mb-1">
+                <span className="font-bold text-stone-800">MG<span style={{ color: '#d97706' }}>Shop</span> Admin</span>
+                <button onClick={() => setMenuOpen(false)} className="p-1.5 hover:bg-stone-100 rounded-lg">
+                  <X className="w-4 h-4 text-stone-500" />
+                </button>
+              </div>
+              <p className="text-xs text-stone-400">Pannello di controllo</p>
+            </div>
 
+            <div className="flex-1 p-3 overflow-y-auto">
+              <div className="space-y-1">
+                {TABS.map(({ id, label, icon: Icon, color }) => (
+                  <button key={id} onClick={() => { setActiveTab(id); setMenuOpen(false) }}
+                    className={`w-full flex items-center gap-3 px-4 py-3.5 rounded-xl text-sm font-medium transition-all ${activeTab === id ? 'bg-amber-50 text-amber-700' : 'text-stone-600 hover:bg-stone-50'}`}>
+                    <div className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 ${activeTab === id ? color : 'bg-stone-100 text-stone-500'}`}>
+                      <Icon className="w-4 h-4" />
+                    </div>
+                    {label}
+                    {activeTab === id && <div className="ml-auto w-1.5 h-1.5 rounded-full bg-amber-500" />}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <div className="p-4 border-t border-stone-100 space-y-2">
+              <Link href="/mgadmin-panel/migra-immagini" onClick={() => setMenuOpen(false)}
+                className="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-stone-600 hover:bg-stone-50 transition-colors">
+                <div className="w-8 h-8 rounded-lg bg-stone-100 flex items-center justify-center">
+                  <ArrowRightLeft className="w-4 h-4 text-stone-500" />
+                </div>
+                Migra immagini
+              </Link>
+              <button onClick={handleLogout}
+                className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-red-500 hover:bg-red-50 transition-colors">
+                <div className="w-8 h-8 rounded-lg bg-red-50 flex items-center justify-center">
+                  <LogOut className="w-4 h-4 text-red-500" />
+                </div>
+                Esci
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Content */}
       <div className="max-w-3xl mx-auto px-4 py-6">
         {activeTab === 'dashboard' && <DashboardStats />}
         {activeTab === 'products' && <ProductsManager />}
