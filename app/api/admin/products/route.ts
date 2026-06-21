@@ -23,7 +23,15 @@ export async function POST(request: NextRequest) {
   const supabase = createAdminClient()
   const { data, error } = await supabase
     .from('products')
-    .insert({ name: body.name, description: body.description, price: body.price, category_id: body.category_id || null, cover_image: body.cover_image, is_active: body.is_active ?? true })
+    .insert({
+      name: body.name,
+      description: body.description,
+      price: body.price,
+      category_id: body.category_id || null,
+      cover_image: body.cover_image,
+      is_active: body.is_active ?? true,
+      stock: body.stock !== '' && body.stock !== null && body.stock !== undefined ? parseInt(body.stock) : null,
+    })
     .select().single()
   if (error) return NextResponse.json({ error: error.message }, { status: 500 })
   return NextResponse.json(data)
@@ -35,7 +43,16 @@ export async function PUT(request: NextRequest) {
   const supabase = createAdminClient()
   const { data, error } = await supabase
     .from('products')
-    .update({ name: body.name, description: body.description, price: body.price, category_id: body.category_id || null, cover_image: body.cover_image, is_active: body.is_active, updated_at: new Date().toISOString() })
+    .update({
+      name: body.name,
+      description: body.description,
+      price: body.price,
+      category_id: body.category_id || null,
+      cover_image: body.cover_image,
+      is_active: body.is_active,
+      stock: body.stock !== '' && body.stock !== null && body.stock !== undefined ? parseInt(body.stock) : null,
+      updated_at: new Date().toISOString(),
+    })
     .eq('id', body.id).select().single()
   if (error) return NextResponse.json({ error: error.message }, { status: 500 })
   return NextResponse.json(data)
