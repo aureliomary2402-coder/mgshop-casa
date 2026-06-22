@@ -13,6 +13,7 @@ export interface Product {
   category_id: string | null
   cover_image: string | null
   is_active: boolean
+  stock: number | null
   created_at: string
   updated_at: string
   category?: Category
@@ -42,6 +43,7 @@ export interface Order {
   phone_number: string
   status: string
   total: number
+  customer_name?: string
   created_at: string
 }
 
