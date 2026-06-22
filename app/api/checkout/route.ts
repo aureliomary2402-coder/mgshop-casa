@@ -25,12 +25,25 @@ export async function POST(request: NextRequest) {
     const { error: itemsError } = await supabase.from('order_items').insert(orderItems)
     if (itemsError) return NextResponse.json({ error: itemsError.message }, { status: 500 })
 
+    // Scala le quantità dal magazzino
+    for (const item of items) {
+      const { data: product } = await supabase
+        .from('products')
+        .select('stock')
+        .eq('id', item.product.id)
+        .single()
+      if (product && product.stock !== null) {
+        const newStock = Math.max(0, product.stock - item.quantity)
+        await supabase.from('products').update({ stock: newStock }).eq('id', item.product.id)
+      }
+    }
+
     if (coupon_code) {
       const { data: coupon } = await supabase.from('coupons').select('id, uses_count').eq('code', coupon_code).single()
       if (coupon) await supabase.from('coupons').update({ uses_count: coupon.uses_count + 1 }).eq('id', coupon.id)
     }
 
-    // Manda notifica push
+    // Notifica push
     const itemsCount = items.reduce((s: number, i: { quantity: number }) => s + i.quantity, 0)
     const baseUrl = request.headers.get('origin') || 'https://mgshop-2.vercel.app'
     fetch(`${baseUrl}/api/push`, {
