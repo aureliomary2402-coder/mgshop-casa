@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect } from 'react'
-import { Package, Tag, Image, ShoppingBag, LogOut, Lock, ArrowRightLeft, LayoutDashboard, Megaphone, Ticket, Menu, X } from 'lucide-react'
+import { Package, Tag, Image, ShoppingBag, LogOut, Lock, LayoutDashboard, Megaphone, Ticket, Menu, X, ExternalLink } from 'lucide-react'
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -97,6 +97,12 @@ export default function AdminPage() {
         </div>
         <div className="flex items-center gap-2">
           <PushNotifications />
+          <Link href="/shop" target="_blank"
+            className="flex items-center gap-1 text-xs font-medium px-3 py-1.5 rounded-lg transition-colors hover:bg-amber-50"
+            style={{ color: '#d97706', border: '1px solid rgba(217,119,6,0.2)' }}>
+            <ExternalLink className="w-3.5 h-3.5" />
+            <span className="hidden sm:inline">Negozio</span>
+          </Link>
           <button onClick={handleLogout} className="flex items-center gap-1 text-xs text-stone-500 hover:text-stone-800 px-2 py-1.5 rounded-lg hover:bg-stone-50">
             <LogOut className="w-3.5 h-3.5" />
             <span className="hidden sm:inline">Esci</span>
@@ -132,12 +138,13 @@ export default function AdminPage() {
               </div>
             </div>
             <div className="p-4 border-t border-stone-100 space-y-2">
-              <Link href="/mgadmin-panel/migra-immagini" onClick={() => setMenuOpen(false)}
-                className="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-stone-600 hover:bg-stone-50 transition-colors">
-                <div className="w-8 h-8 rounded-lg bg-stone-100 flex items-center justify-center">
-                  <ArrowRightLeft className="w-4 h-4 text-stone-500" />
+              <Link href="/shop" target="_blank" onClick={() => setMenuOpen(false)}
+                className="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-colors hover:bg-amber-50"
+                style={{ color: '#d97706' }}>
+                <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ background: 'rgba(217,119,6,0.1)' }}>
+                  <ExternalLink className="w-4 h-4" style={{ color: '#d97706' }} />
                 </div>
-                Migra immagini
+                Vai al negozio
               </Link>
               <button onClick={handleLogout}
                 className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-red-500 hover:bg-red-50 transition-colors">
