@@ -12,6 +12,7 @@ import { OrdersManager } from '@/components/admin/orders-manager'
 import { DashboardStats } from '@/components/admin/dashboard-stats'
 import { PromoManager } from '@/components/admin/promo-manager'
 import { CouponsManager } from '@/components/admin/coupons-manager'
+import { ClientiManager } from '@/components/admin/clienti-manager'
 import { PushNotifications } from '@/components/admin/push-notifications'
 
 type Tab = 'dashboard' | 'products' | 'categories' | 'banners' | 'orders' | 'promo' | 'coupons'
@@ -24,6 +25,7 @@ const TABS = [
   { id: 'orders' as Tab, label: 'Ordini', icon: ShoppingBag, color: 'text-orange-600 bg-orange-50' },
   { id: 'promo' as Tab, label: 'Promo', icon: Megaphone, color: 'text-rose-600 bg-rose-50' },
   { id: 'coupons' as Tab, label: 'Coupon', icon: Ticket, color: 'text-indigo-600 bg-indigo-50' },
+  { id: 'clienti' as Tab, label: 'Clienti', icon: Users, color: 'text-pink-600 bg-pink-50' },
 ]
 
 export default function AdminPage() {
@@ -166,6 +168,7 @@ export default function AdminPage() {
         {activeTab === 'orders' && <OrdersManager />}
         {activeTab === 'promo' && <PromoManager />}
         {activeTab === 'coupons' && <CouponsManager />}
+        {activeTab === 'clienti' && <ClientiManager />}
       </div>
     </div>
   )
