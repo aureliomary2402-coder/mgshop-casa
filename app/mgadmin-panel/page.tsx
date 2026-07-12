@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect } from 'react'
-import { Package, Tag, Image, ShoppingBag, LogOut, Lock, LayoutDashboard, Megaphone, Ticket, Menu, X, ExternalLink } from 'lucide-react'
+import { Package, Tag, Image, ShoppingBag, LogOut, Lock, LayoutDashboard, Megaphone, Ticket, Menu, X, ExternalLink, Users } from 'lucide-react'
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
