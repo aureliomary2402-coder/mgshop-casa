@@ -15,7 +15,7 @@ import { CouponsManager } from '@/components/admin/coupons-manager'
 import { ClientiManager } from '@/components/admin/clienti-manager'
 import { PushNotifications } from '@/components/admin/push-notifications'
 
-type Tab = 'dashboard' | 'products' | 'categories' | 'banners' | 'orders' | 'promo' | 'coupons'
+type Tab = 'dashboard' | 'products' | 'categories' | 'banners' | 'orders' | 'promo' | 'coupons' | 'clienti'
 
 const TABS = [
   { id: 'dashboard' as Tab, label: 'Dashboard', icon: LayoutDashboard, color: 'text-blue-600 bg-blue-50' },
