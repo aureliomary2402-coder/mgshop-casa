@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect } from 'react'
-import { Package, Tag, Image, ShoppingBag, LogOut, Lock, LayoutDashboard, Megaphone, Ticket, Menu, X, ExternalLink, Users } from 'lucide-react'
+import { Package, Tag, Image, ShoppingBag, LogOut, Lock, LayoutDashboard, Megaphone, Ticket, Menu, X, ExternalLink, Users, Gift } from 'lucide-react'
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -12,10 +12,11 @@ import { OrdersManager } from '@/components/admin/orders-manager'
 import { DashboardStats } from '@/components/admin/dashboard-stats'
 import { PromoManager } from '@/components/admin/promo-manager'
 import { CouponsManager } from '@/components/admin/coupons-manager'
-import { ClientiManager } from '@/components/admin/clienti-manager'
 import { PushNotifications } from '@/components/admin/push-notifications'
+import { ClientiManager } from '@/components/admin/clienti-manager'
+import { LoyaltySettingsManager } from '@/components/admin/loyalty-settings-manager'
 
-type Tab = 'dashboard' | 'products' | 'categories' | 'banners' | 'orders' | 'promo' | 'coupons' | 'clienti'
+type Tab = 'dashboard' | 'products' | 'categories' | 'banners' | 'orders' | 'promo' | 'coupons' | 'clienti' | 'fedelta'
 
 const TABS = [
   { id: 'dashboard' as Tab, label: 'Dashboard', icon: LayoutDashboard, color: 'text-blue-600 bg-blue-50' },
@@ -26,6 +27,7 @@ const TABS = [
   { id: 'promo' as Tab, label: 'Promo', icon: Megaphone, color: 'text-rose-600 bg-rose-50' },
   { id: 'coupons' as Tab, label: 'Coupon', icon: Ticket, color: 'text-indigo-600 bg-indigo-50' },
   { id: 'clienti' as Tab, label: 'Clienti', icon: Users, color: 'text-pink-600 bg-pink-50' },
+  { id: 'fedelta' as Tab, label: 'Fedeltà', icon: Gift, color: 'text-yellow-600 bg-yellow-50' },
 ]
 
 export default function AdminPage() {
@@ -38,25 +40,17 @@ export default function AdminPage() {
   const [menuOpen, setMenuOpen] = useState(false)
 
   useEffect(() => {
-    fetch('/api/admin/auth').then(r => {
-      if (r.ok) setAuthenticated(true)
-      setChecking(false)
-    }).catch(() => setChecking(false))
+    fetch('/api/admin/auth').then(r => { if (r.ok) setAuthenticated(true); setChecking(false) }).catch(() => setChecking(false))
   }, [])
 
   const handleLogin = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setLoading(true); setError('')
+    e.preventDefault(); setLoading(true); setError('')
     const res = await fetch('/api/admin/auth', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ password }) })
     if (res.ok) { setAuthenticated(true) } else { setError('Password errata') }
     setLoading(false)
   }
 
-  const handleLogout = async () => {
-    await fetch('/api/admin/auth', { method: 'DELETE' })
-    setAuthenticated(false)
-  }
-
+  const handleLogout = async () => { await fetch('/api/admin/auth', { method: 'DELETE' }); setAuthenticated(false) }
   const activeTabInfo = TABS.find(t => t.id === activeTab)!
 
   if (checking) return <div className="min-h-screen flex items-center justify-center text-stone-400">Caricamento...</div>
@@ -73,9 +67,7 @@ export default function AdminPage() {
         <form onSubmit={handleLogin} className="space-y-3">
           <Input type="password" placeholder="Password" value={password} onChange={e => setPassword(e.target.value)} autoFocus />
           {error && <p className="text-red-500 text-sm text-center">{error}</p>}
-          <Button type="submit" disabled={loading} className="w-full bg-amber-600 hover:bg-amber-700">
-            {loading ? 'Accesso...' : 'Accedi'}
-          </Button>
+          <Button type="submit" disabled={loading} className="w-full bg-amber-600 hover:bg-amber-700">{loading ? 'Accesso...' : 'Accedi'}</Button>
         </form>
       </div>
     </div>
@@ -85,9 +77,7 @@ export default function AdminPage() {
     <div className="min-h-screen" style={{ background: '#faf7f2' }}>
       <div className="bg-white border-b px-4 h-14 flex items-center justify-between sticky top-0 z-40" style={{ borderColor: 'rgba(217,119,6,0.1)' }}>
         <div className="flex items-center gap-3">
-          <button onClick={() => setMenuOpen(v => !v)}
-            className="w-9 h-9 flex items-center justify-center rounded-xl hover:bg-amber-50 transition-colors"
-            style={{ color: '#d97706' }}>
+          <button onClick={() => setMenuOpen(v => !v)} className="w-9 h-9 flex items-center justify-center rounded-xl hover:bg-amber-50 transition-colors" style={{ color: '#d97706' }}>
             {menuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
           </button>
           <div className="flex items-center gap-2">
@@ -99,15 +89,11 @@ export default function AdminPage() {
         </div>
         <div className="flex items-center gap-2">
           <PushNotifications />
-          <Link href="/shop" target="_blank"
-            className="flex items-center gap-1 text-xs font-medium px-3 py-1.5 rounded-lg transition-colors hover:bg-amber-50"
-            style={{ color: '#d97706', border: '1px solid rgba(217,119,6,0.2)' }}>
-            <ExternalLink className="w-3.5 h-3.5" />
-            <span className="hidden sm:inline">Negozio</span>
+          <Link href="/shop" target="_blank" className="flex items-center gap-1 text-xs font-medium px-3 py-1.5 rounded-lg transition-colors hover:bg-amber-50" style={{ color: '#d97706', border: '1px solid rgba(217,119,6,0.2)' }}>
+            <ExternalLink className="w-3.5 h-3.5" /><span className="hidden sm:inline">Negozio</span>
           </Link>
           <button onClick={handleLogout} className="flex items-center gap-1 text-xs text-stone-500 hover:text-stone-800 px-2 py-1.5 rounded-lg hover:bg-stone-50">
-            <LogOut className="w-3.5 h-3.5" />
-            <span className="hidden sm:inline">Esci</span>
+            <LogOut className="w-3.5 h-3.5" /><span className="hidden sm:inline">Esci</span>
           </button>
         </div>
       </div>
@@ -119,9 +105,7 @@ export default function AdminPage() {
             <div className="p-5 border-b border-stone-100">
               <div className="flex items-center justify-between mb-1">
                 <span className="font-bold text-stone-800">MG<span style={{ color: '#d97706' }}>Shop</span> Admin</span>
-                <button onClick={() => setMenuOpen(false)} className="p-1.5 hover:bg-stone-100 rounded-lg">
-                  <X className="w-4 h-4 text-stone-500" />
-                </button>
+                <button onClick={() => setMenuOpen(false)} className="p-1.5 hover:bg-stone-100 rounded-lg"><X className="w-4 h-4 text-stone-500" /></button>
               </div>
               <p className="text-xs text-stone-400">Pannello di controllo</p>
             </div>
@@ -140,19 +124,12 @@ export default function AdminPage() {
               </div>
             </div>
             <div className="p-4 border-t border-stone-100 space-y-2">
-              <Link href="/shop" target="_blank" onClick={() => setMenuOpen(false)}
-                className="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-colors hover:bg-amber-50"
-                style={{ color: '#d97706' }}>
-                <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ background: 'rgba(217,119,6,0.1)' }}>
-                  <ExternalLink className="w-4 h-4" style={{ color: '#d97706' }} />
-                </div>
+              <Link href="/shop" target="_blank" onClick={() => setMenuOpen(false)} className="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-colors hover:bg-amber-50" style={{ color: '#d97706' }}>
+                <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ background: 'rgba(217,119,6,0.1)' }}><ExternalLink className="w-4 h-4" style={{ color: '#d97706' }} /></div>
                 Vai al negozio
               </Link>
-              <button onClick={handleLogout}
-                className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-red-500 hover:bg-red-50 transition-colors">
-                <div className="w-8 h-8 rounded-lg bg-red-50 flex items-center justify-center">
-                  <LogOut className="w-4 h-4 text-red-500" />
-                </div>
+              <button onClick={handleLogout} className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-red-500 hover:bg-red-50 transition-colors">
+                <div className="w-8 h-8 rounded-lg bg-red-50 flex items-center justify-center"><LogOut className="w-4 h-4 text-red-500" /></div>
                 Esci
               </button>
             </div>
@@ -169,6 +146,7 @@ export default function AdminPage() {
         {activeTab === 'promo' && <PromoManager />}
         {activeTab === 'coupons' && <CouponsManager />}
         {activeTab === 'clienti' && <ClientiManager />}
+        {activeTab === 'fedelta' && <LoyaltySettingsManager />}
       </div>
     </div>
   )
