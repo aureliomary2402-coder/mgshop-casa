@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect } from 'react'
-import { ShoppingBag, Euro, Clock, CheckCircle, TrendingUp, Package, Eye, BarChart2, ArrowUp, ArrowDown } from 'lucide-react'
+import { ShoppingBag, Euro, Clock, CheckCircle, TrendingUp, Package, Eye, BarChart2, ArrowUp, ArrowDown, Gift } from 'lucide-react'
 
 interface OrderStats {
   totalOrders: number
@@ -20,6 +20,10 @@ interface AnalyticsData {
   last30: number
   topPages: { page: string; count: number }[]
   last7Days: { day: string; count: number }[]
+}
+
+interface Cliente {
+  loyaltyReady?: boolean
 }
 
 function MiniChart({ data }: { data: { day: string; count: number }[] }) {
@@ -54,13 +58,15 @@ function PageLabel({ page }: { page: string }) {
 export function DashboardStats() {
   const [orders, setOrders] = useState<OrderStats | null>(null)
   const [analytics, setAnalytics] = useState<AnalyticsData | null>(null)
+  const [loyaltyReadyCount, setLoyaltyReadyCount] = useState<number | null>(null)
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
     Promise.all([
       fetch('/api/admin/orders').then(r => r.json()),
       fetch('/api/admin/analytics').then(r => r.json()),
-    ]).then(([ordersData, analyticsData]) => {
+      fetch('/api/admin/clienti').then(r => r.json()),
+    ]).then(([ordersData, analyticsData, clientiData]) => {
       const today = new Date().toDateString()
       setOrders({
         totalOrders: ordersData.length,
@@ -71,6 +77,7 @@ export function DashboardStats() {
         todayRevenue: ordersData.filter((o: { created_at: string }) => new Date(o.created_at).toDateString() === today).reduce((s: number, o: { total: number }) => s + (o.total || 0), 0),
       })
       setAnalytics(analyticsData)
+      setLoyaltyReadyCount((clientiData as Cliente[]).filter(c => c.loyaltyReady).length)
       setLoading(false)
     })
   }, [])
@@ -171,6 +178,26 @@ export function DashboardStats() {
               <p className="text-xs text-stone-500 mt-0.5">{label}</p>
             </div>
           ))}
+        </div>
+      </div>
+
+      {/* Fedeltà */}
+      <div>
+        <h2 className="font-semibold text-stone-800 mb-3 flex items-center gap-2">
+          <Gift className="w-4 h-4 text-amber-600" /> Fedeltà
+        </h2>
+        <div className="bg-white border border-stone-100 rounded-xl p-4 shadow-sm flex items-center justify-between">
+          <div>
+            <p className="text-2xl font-bold text-stone-800">{loyaltyReadyCount ?? 0}</p>
+            <p className="text-xs text-stone-500 mt-0.5">
+              {loyaltyReadyCount === 1 ? 'cliente pronto per il premio' : 'clienti pronti per il premio'}
+            </p>
+          </div>
+          {loyaltyReadyCount !== null && loyaltyReadyCount > 0 && (
+            <span className="text-xs font-semibold px-3 py-1.5 rounded-full bg-green-100 text-green-700">
+              🎁 Vai alla tab Clienti
+            </span>
+          )}
         </div>
       </div>
     </div>
