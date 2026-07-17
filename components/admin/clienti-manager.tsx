@@ -12,6 +12,9 @@ interface Cliente {
   total: number
   last_order: string
   statuses: string[]
+  loyaltyPoints?: number
+  loyaltyReady?: boolean
+}
 }
 
 interface LoyaltyHistory {
