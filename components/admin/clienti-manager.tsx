@@ -15,7 +15,6 @@ interface Cliente {
   loyaltyPoints?: number
   loyaltyReady?: boolean
 }
-}
 
 interface LoyaltyHistory {
   id: string
@@ -222,6 +221,7 @@ export function ClientiManager() {
                   <p className="font-semibold text-stone-800">{c.customer_name || c.phone_number}</p>
                   {c.orders >= 2 && <span className="text-xs px-2 py-0.5 rounded-full font-medium bg-purple-100 text-purple-700">Abituale</span>}
                   {c.orders >= 5 && <span className="text-xs px-2 py-0.5 rounded-full font-medium bg-amber-100 text-amber-700">⭐ VIP</span>}
+                  {c.loyaltyReady && <span className="text-xs px-2 py-0.5 rounded-full font-medium bg-green-100 text-green-700">🎁 Pronto premio</span>}
                 </div>
                 {c.customer_name && <p className="text-xs text-stone-400 mt-0.5 flex items-center gap-1"><Phone className="w-3 h-3"/> {c.phone_number}</p>}
                 <p className="text-xs text-stone-400 mt-0.5">Ultimo ordine: {new Date(c.last_order).toLocaleDateString('it-IT',{day:'2-digit',month:'short',year:'numeric'})}</p>
@@ -230,6 +230,7 @@ export function ClientiManager() {
                 <div>
                   <p className="font-bold text-amber-700">€{c.total.toFixed(2)}</p>
                   <p className="text-xs text-stone-500">{c.orders} {c.orders===1?'ordine':'ordini'}</p>
+                  {typeof c.loyaltyPoints === 'number' && <p className="text-xs text-amber-600 font-medium">{c.loyaltyPoints} pt</p>}
                 </div>
                 {expanded===c.normalized ? <ChevronUp className="w-4 h-4 text-stone-400"/> : <ChevronDown className="w-4 h-4 text-stone-400"/>}
               </div>
