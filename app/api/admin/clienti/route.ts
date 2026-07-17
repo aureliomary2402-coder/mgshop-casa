@@ -73,6 +73,24 @@ export async function GET() {
     c.statuses.push(order.status)
   }
 
-  const clienti = Object.values(clientiMap).sort((a, b) => b.total - a.total)
+  // Aggiunge saldo punti fedeltà e stato "pronto premio"
+  const { data: loyaltyRows } = await supabase.from('loyalty_points').select('phone_normalized, points')
+  const { data: settingsRows } = await supabase
+    .from('loyalty_settings').select('points_threshold').eq('is_active', true)
+    .order('updated_at', { ascending: false }).limit(1)
+  const threshold = settingsRows?.[0]?.points_threshold ?? 10
+
+  const pointsMap: Record<string, number> = {}
+  for (const r of loyaltyRows || []) {
+    pointsMap[r.phone_normalized] = (pointsMap[r.phone_normalized] || 0) + r.points
+  }
+
+  const clienti = Object.values(clientiMap).map(c => ({
+    ...c,
+    loyaltyPoints: pointsMap[c.normalized] || 0,
+    loyaltyReady: (pointsMap[c.normalized] || 0) >= threshold,
+  })).sort((a, b) => b.total - a.total)
+
   return NextResponse.json(clienti)
+}
 }
