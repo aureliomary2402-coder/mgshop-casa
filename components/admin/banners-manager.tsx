@@ -5,6 +5,7 @@ import { Plus, Pencil, Trash2, ImageIcon, ToggleLeft, ToggleRight } from 'lucide
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import type { Banner } from '@/lib/types'
+import { ImageCropper } from './image-cropper'
 
 export function BannersManager() {
   const [banners, setBanners] = useState<Banner[]>([])
@@ -14,6 +15,7 @@ export function BannersManager() {
   const [form, setForm] = useState({ title: '', subtitle: '', image_url: '', link: '', is_active: true, display_order: 0 })
   const [saving, setSaving] = useState(false)
   const [uploading, setUploading] = useState(false)
+  const [cropFile, setCropFile] = useState<File | null>(null)
 
   useEffect(() => { fetchBanners() }, [])
 
@@ -33,19 +35,28 @@ export function BannersManager() {
     setEditing(b); setCreating(false)
   }
 
-  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleImageSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
     if (!file) return
+    setCropFile(file)
+    e.target.value = ''
+  }
+
+  const handleCropConfirm = async (blob: Blob) => {
+    setCropFile(null)
     setUploading(true)
-    const formData = new FormData()
-    formData.append('file', file)
     try {
+      const croppedFile = new File([blob], 'banner.jpg', { type: 'image/jpeg' })
+      const formData = new FormData()
+      formData.append('file', croppedFile)
       const res = await fetch('/api/upload', { method: 'POST', body: formData })
       const data = await res.json()
       if (data.url) setForm(f => ({ ...f, image_url: data.url }))
     } catch { console.error('Upload failed') }
     setUploading(false)
   }
+
+  const handleCropCancel = () => setCropFile(null)
 
   const handleSave = async () => {
     if (!form.image_url) return
@@ -93,7 +104,7 @@ export function BannersManager() {
           <label className="inline-flex items-center gap-2 cursor-pointer text-sm text-amber-700 font-medium">
             <ImageIcon className="w-4 h-4" />
             {uploading ? 'Caricamento...' : 'Carica file'}
-            <input type="file" accept="image/*" className="hidden" onChange={handleImageUpload} disabled={uploading} />
+            <input type="file" accept="image/*" className="hidden" onChange={handleImageSelect} disabled={uploading} />
           </label>
           {form.image_url && (
             <div className="mt-2 rounded-lg overflow-hidden h-32 bg-stone-100">
@@ -119,6 +130,14 @@ export function BannersManager() {
       <Button onClick={handleSave} disabled={saving || !form.image_url} className="w-full bg-amber-600 hover:bg-amber-700">
         {saving ? 'Salvataggio...' : 'Salva banner'}
       </Button>
+      {cropFile && (
+        <ImageCropper
+          file={cropFile}
+          aspectRatio={3}
+          onCancel={handleCropCancel}
+          onConfirm={handleCropConfirm}
+        />
+      )}
     </div>
   )
 

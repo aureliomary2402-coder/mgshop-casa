@@ -6,6 +6,7 @@ import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import Link from 'next/link'
 import type { Product } from '@/lib/types'
+import { ImageCropper } from './image-cropper'
 
 export function PromoManager() {
   const [isActive, setIsActive] = useState(false)
@@ -22,6 +23,7 @@ export function PromoManager() {
   const [uploading, setUploading] = useState(false)
   const [error, setError] = useState('')
   const [allProducts, setAllProducts] = useState<Product[]>([])
+  const [cropFile, setCropFile] = useState<File | null>(null)
   const [productSearch, setProductSearch] = useState('')
   const [showProductPicker, setShowProductPicker] = useState(false)
 
@@ -64,19 +66,28 @@ export function PromoManager() {
     setSaving(false)
   }
 
-  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleImageSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
     if (!file) return
+    setCropFile(file)
+    e.target.value = ''
+  }
+
+  const handleCropConfirm = async (blob: Blob) => {
+    setCropFile(null)
     setUploading(true)
-    const formData = new FormData()
-    formData.append('file', file)
     try {
+      const croppedFile = new File([blob], 'promo.jpg', { type: 'image/jpeg' })
+      const formData = new FormData()
+      formData.append('file', croppedFile)
       const res = await fetch('/api/upload', { method: 'POST', body: formData })
       const data = await res.json()
       if (data.url) setImageUrl(data.url)
     } catch { console.error('Upload failed') }
     setUploading(false)
   }
+
+  const handleCropCancel = () => setCropFile(null)
 
   const toggleProduct = (id: string) => {
     setFeaturedIds(prev => prev.includes(id) ? prev.filter(i => i !== id) : [...prev, id])
@@ -141,7 +152,7 @@ export function PromoManager() {
           <Input value={imageUrl} onChange={e => setImageUrl(e.target.value)} placeholder="URL immagine" className="mb-2" />
           <label className="inline-flex items-center gap-2 cursor-pointer text-sm text-amber-700 font-medium">
             <ImageIcon className="w-4 h-4" /> {uploading ? 'Caricamento...' : 'Carica file'}
-            <input type="file" accept="image/*" className="hidden" onChange={handleImageUpload} disabled={uploading} />
+            <input type="file" accept="image/*" className="hidden" onChange={handleImageSelect} disabled={uploading} />
           </label>
           {imageUrl && (
             <div className="mt-2 relative">
@@ -223,6 +234,14 @@ export function PromoManager() {
         <Save className="w-5 h-5" />
         {saved ? 'Salvato!' : saving ? 'Salvataggio...' : 'Salva modifiche'}
       </Button>
+      {cropFile && (
+        <ImageCropper
+          file={cropFile}
+          aspectRatio={3}
+          onCancel={handleCropCancel}
+          onConfirm={handleCropConfirm}
+        />
+      )}
     </div>
   )
 }

@@ -7,40 +7,75 @@ interface ImageCropperProps {
   file: File
   onCancel: () => void
   onConfirm: (blob: Blob) => void
-  outputSize?: number // risoluzione in pixel del lato del quadrato esportato
+  outputWidth?: number // risoluzione in pixel della larghezza esportata
+  aspectRatio?: number // larghezza/altezza del riquadro. 1 = quadrato, 3 = panoramico tipo banner
 }
 
-const VIEWPORT = 320 // dimensione in px del riquadro guida mostrato all'utente
+const VIEWPORT_W = 320
 const MIN_ZOOM = 0.2
 const MAX_ZOOM = 4
 const EDGE_MARGIN = 24 // px minimi di immagine che devono restare visibili, per non perderla trascinandola fuori
 
-export function ImageCropper({ file, onCancel, onConfirm, outputSize = 1200 }: ImageCropperProps) {
+// Rileva il colore medio ai bordi della foto, per usarlo come sfondo automatico
+function detectEdgeColor(img: HTMLImageElement): string {
+  try {
+    const sampleSize = 60
+    const canvas = document.createElement('canvas')
+    canvas.width = sampleSize
+    canvas.height = sampleSize
+    const ctx = canvas.getContext('2d')
+    if (!ctx) return '#ffffff'
+    ctx.drawImage(img, 0, 0, sampleSize, sampleSize)
+    const { data } = ctx.getImageData(0, 0, sampleSize, sampleSize)
+    let r = 0, g = 0, b = 0, count = 0
+    const border = Math.max(2, Math.round(sampleSize * 0.08))
+    for (let y = 0; y < sampleSize; y++) {
+      for (let x = 0; x < sampleSize; x++) {
+        const onEdge = x < border || x >= sampleSize - border || y < border || y >= sampleSize - border
+        if (!onEdge) continue
+        const i = (y * sampleSize + x) * 4
+        r += data[i]; g += data[i + 1]; b += data[i + 2]
+        count++
+      }
+    }
+    if (count === 0) return '#ffffff'
+    r = Math.round(r / count); g = Math.round(g / count); b = Math.round(b / count)
+    return `rgb(${r},${g},${b})`
+  } catch {
+    return '#ffffff'
+  }
+}
+
+export function ImageCropper({ file, onCancel, onConfirm, outputWidth = 1200, aspectRatio = 1 }: ImageCropperProps) {
   const [img, setImg] = useState<HTMLImageElement | null>(null)
   const [zoom, setZoom] = useState(1)
   const [offset, setOffset] = useState({ x: 0, y: 0 })
   const [processing, setProcessing] = useState(false)
+  const [bgColor, setBgColor] = useState('#ffffff')
   const dragState = useRef<{ dragging: boolean; startX: number; startY: number; offX: number; offY: number }>({
     dragging: false, startX: 0, startY: 0, offX: 0, offY: 0,
   })
 
-  // Carica l'immagine a piena risoluzione
+  const viewportH = Math.round(VIEWPORT_W / aspectRatio)
+
   useEffect(() => {
     const url = URL.createObjectURL(file)
     const image = new Image()
     image.onload = () => {
       setImg(image)
-      const bs = VIEWPORT / Math.min(image.naturalWidth, image.naturalHeight)
+      setBgColor(detectEdgeColor(image))
+      const bs = Math.max(VIEWPORT_W / image.naturalWidth, viewportH / image.naturalHeight)
       const dW = image.naturalWidth * bs
       const dH = image.naturalHeight * bs
       setZoom(1)
-      setOffset({ x: (VIEWPORT - dW) / 2, y: (VIEWPORT - dH) / 2 })
+      setOffset({ x: (VIEWPORT_W - dW) / 2, y: (viewportH - dH) / 2 })
     }
     image.src = url
     return () => URL.revokeObjectURL(url)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [file])
 
-  const baseScale = img ? VIEWPORT / Math.min(img.naturalWidth, img.naturalHeight) : 1
+  const baseScale = img ? Math.max(VIEWPORT_W / img.naturalWidth, viewportH / img.naturalHeight) : 1
   const displayScale = baseScale * zoom
   const dispW = img ? img.naturalWidth * displayScale : 0
   const dispH = img ? img.naturalHeight * displayScale : 0
@@ -48,15 +83,16 @@ export function ImageCropper({ file, onCancel, onConfirm, outputSize = 1200 }: I
   // Permette di spostare l'immagine anche oltre i bordi del riquadro,
   // lasciando comunque un margine minimo visibile per non perderla del tutto
   const clamp = useCallback((off: { x: number; y: number }, w: number, h: number) => {
-    const minX = Math.min(-(w - EDGE_MARGIN), VIEWPORT - EDGE_MARGIN)
-    const maxX = Math.max(-(w - EDGE_MARGIN), VIEWPORT - EDGE_MARGIN)
-    const minY = Math.min(-(h - EDGE_MARGIN), VIEWPORT - EDGE_MARGIN)
-    const maxY = Math.max(-(h - EDGE_MARGIN), VIEWPORT - EDGE_MARGIN)
+    const minX = Math.min(-(w - EDGE_MARGIN), VIEWPORT_W - EDGE_MARGIN)
+    const maxX = Math.max(-(w - EDGE_MARGIN), VIEWPORT_W - EDGE_MARGIN)
+    const minY = Math.min(-(h - EDGE_MARGIN), viewportH - EDGE_MARGIN)
+    const maxY = Math.max(-(h - EDGE_MARGIN), viewportH - EDGE_MARGIN)
     return {
       x: Math.max(minX, Math.min(maxX, off.x)),
       y: Math.max(minY, Math.min(maxY, off.y)),
     }
-  }, [])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [viewportH])
 
   const startDrag = (clientX: number, clientY: number) => {
     dragState.current = { dragging: true, startX: clientX, startY: clientY, offX: offset.x, offY: offset.y }
@@ -78,8 +114,8 @@ export function ImageCropper({ file, onCancel, onConfirm, outputSize = 1200 }: I
     const newW = img.naturalWidth * newScale
     const newH = img.naturalHeight * newScale
     setOffset(o => clamp({
-      x: VIEWPORT / 2 - (VIEWPORT / 2 - o.x) * ratio,
-      y: VIEWPORT / 2 - (VIEWPORT / 2 - o.y) * ratio,
+      x: VIEWPORT_W / 2 - (VIEWPORT_W / 2 - o.x) * ratio,
+      y: viewportH / 2 - (viewportH / 2 - o.y) * ratio,
     }, newW, newH))
     setZoom(newZoom)
   }
@@ -87,19 +123,20 @@ export function ImageCropper({ file, onCancel, onConfirm, outputSize = 1200 }: I
   const handleConfirm = () => {
     if (!img) return
     setProcessing(true)
+    const outH = Math.round(outputWidth / aspectRatio)
     const canvas = document.createElement('canvas')
-    canvas.width = outputSize
-    canvas.height = outputSize
+    canvas.width = outputWidth
+    canvas.height = outH
     const ctx = canvas.getContext('2d')
     if (!ctx) { setProcessing(false); return }
     ctx.imageSmoothingEnabled = true
     ctx.imageSmoothingQuality = 'high'
 
-    // Riempie prima di sfondo bianco, così lo spazio lasciato libero non è mai trasparente/nero
-    ctx.fillStyle = '#ffffff'
-    ctx.fillRect(0, 0, outputSize, outputSize)
+    // Riempie con il colore rilevato dalla foto, così lo spazio lasciato libero si intona invece di essere un bianco piatto
+    ctx.fillStyle = bgColor
+    ctx.fillRect(0, 0, outputWidth, outH)
 
-    const outputScale = outputSize / VIEWPORT
+    const outputScale = outputWidth / VIEWPORT_W
     const drawW = dispW * outputScale
     const drawH = dispH * outputScale
     const drawX = offset.x * outputScale
@@ -123,8 +160,8 @@ export function ImageCropper({ file, onCancel, onConfirm, outputSize = 1200 }: I
         </div>
 
         <div
-          className="relative mx-auto rounded-xl overflow-hidden bg-white border border-stone-200 select-none touch-none"
-          style={{ width: VIEWPORT, height: VIEWPORT, cursor: 'grab' }}
+          className="relative mx-auto rounded-xl overflow-hidden border border-stone-200 select-none touch-none"
+          style={{ width: VIEWPORT_W, height: viewportH, cursor: 'grab', background: bgColor }}
           onMouseDown={(e) => startDrag(e.clientX, e.clientY)}
           onMouseMove={(e) => moveDrag(e.clientX, e.clientY)}
           onMouseUp={endDrag}
@@ -146,7 +183,7 @@ export function ImageCropper({ file, onCancel, onConfirm, outputSize = 1200 }: I
           {/* Griglia guida */}
           <div className="absolute inset-0 pointer-events-none" style={{
             backgroundImage: 'linear-gradient(rgba(0,0,0,0.08) 1px, transparent 1px), linear-gradient(90deg, rgba(0,0,0,0.08) 1px, transparent 1px)',
-            backgroundSize: `${VIEWPORT / 3}px ${VIEWPORT / 3}px`,
+            backgroundSize: `${VIEWPORT_W / 3}px ${viewportH / 3}px`,
           }} />
         </div>
 
@@ -160,7 +197,7 @@ export function ImageCropper({ file, onCancel, onConfirm, outputSize = 1200 }: I
           />
         </div>
         <p className="text-xs text-stone-400 text-center -mt-2">
-          Trascina per spostare, usa lo slider per rimpicciolire o ingrandire. Lo spazio vuoto sarà bianco.
+          Trascina per spostare, usa lo slider per rimpicciolire o ingrandire. Lo spazio vuoto si riempie da solo con il colore della foto.
         </p>
 
         <div className="flex gap-2">
