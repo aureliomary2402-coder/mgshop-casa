@@ -68,17 +68,8 @@ export default function WelcomePage() {
           )}
         </div>
 
-        {/* WhatsApp channel link */}
-        <a href={SOCIAL_LINKS.whatsapp} target="_blank" rel="noopener noreferrer"
-          className="inline-flex items-center gap-2.5 px-6 py-3 rounded-2xl font-medium text-sm transition-all hover:scale-105 btn-press"
-          style={{ background: 'rgba(22,163,74,0.15)', border: '1px solid rgba(22,163,74,0.3)', color: '#4ade80' }}>
-          <WhatsAppIcon size={18} />
-          Seguici su WhatsApp per offerte esclusive
-          <ArrowRight className="w-4 h-4" />
-        </a>
-
         {/* Icone social */}
-        <div className="flex items-center justify-center gap-3 mt-5">
+        <div className="flex items-center justify-center gap-3 mt-2">
           <a href={SOCIAL_LINKS.instagram} target="_blank" rel="noopener noreferrer" aria-label="Instagram"
             className="w-11 h-11 rounded-full flex items-center justify-center transition-all hover:scale-110 btn-press"
             style={{ background: 'rgba(217,70,160,0.15)', border: '1px solid rgba(217,70,160,0.3)', color: '#f472b6' }}>
