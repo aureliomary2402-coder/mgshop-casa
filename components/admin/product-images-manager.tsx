@@ -3,21 +3,30 @@
 import { useState, useEffect } from 'react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { ArrowLeft, Upload, Trash2, ImageIcon, Link as LinkIcon } from 'lucide-react'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { ArrowLeft, Upload, Trash2, ImageIcon, Link } from 'lucide-react'
 import type { ProductImage } from '@/lib/types'
 
-export function ProductImagesManager({ productId, onBack }: { productId: string; onBack: () => void }) {
+interface ProductImagesManagerProps {
+  productId: string
+  onBack: () => void
+}
+
+export function ProductImagesManager({ productId, onBack }: ProductImagesManagerProps) {
   const [images, setImages] = useState<ProductImage[]>([])
   const [loading, setLoading] = useState(true)
   const [uploading, setUploading] = useState(false)
   const [urlInput, setUrlInput] = useState('')
   const [urlError, setUrlError] = useState('')
 
-  useEffect(() => { fetchImages() }, [productId])
+  useEffect(() => {
+    fetchImages()
+  }, [productId])
 
   const fetchImages = async () => {
     const res = await fetch(`/api/admin/product-images?product_id=${productId}`)
-    setImages(await res.json())
+    const data = await res.json()
+    setImages(data)
     setLoading(false)
   }
 
@@ -25,31 +34,56 @@ export function ProductImagesManager({ productId, onBack }: { productId: string;
     await fetch('/api/admin/product-images', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ product_id: productId, image_url: url, display_order: images.length }),
+      body: JSON.stringify({
+        product_id: productId,
+        image_url: url,
+        display_order: images.length,
+      }),
     })
   }
 
-  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  // Upload file → Vercel Blob (esistente)
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files
     if (!files || files.length === 0) return
+
     setUploading(true)
+
     for (const file of Array.from(files)) {
       const formData = new FormData()
       formData.append('file', file)
+
       try {
-        const res = await fetch('/api/upload', { method: 'POST', body: formData })
-        const data = await res.json()
-        if (data.url) await saveImageUrl(data.url)
-      } catch { console.error('Upload failed') }
+        const uploadRes = await fetch('/api/upload', {
+          method: 'POST',
+          body: formData,
+        })
+        const uploadData = await uploadRes.json()
+
+        if (uploadData.url) {
+          await saveImageUrl(uploadData.url)
+        }
+      } catch (error) {
+        console.error('Upload failed:', error)
+      }
     }
+
     setUploading(false)
     fetchImages()
   }
 
+  // Aggiunta tramite URL
   const handleAddUrl = async () => {
     const trimmed = urlInput.trim()
     if (!trimmed) return
-    try { new URL(trimmed) } catch { setUrlError('URL non valido'); return }
+
+    try {
+      new URL(trimmed)
+    } catch {
+      setUrlError('URL non valido. Assicurati che inizi con http:// o https://')
+      return
+    }
+
     setUrlError('')
     setUploading(true)
     await saveImageUrl(trimmed)
@@ -59,70 +93,109 @@ export function ProductImagesManager({ productId, onBack }: { productId: string;
   }
 
   const handleDelete = async (id: string) => {
-    await fetch('/api/admin/product-images', { method: 'DELETE', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id }) })
+    await fetch('/api/admin/product-images', {
+      method: 'DELETE',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ id }),
+    })
     fetchImages()
   }
 
-  if (loading) return <div className="text-center py-8 text-stone-400">Caricamento...</div>
+  if (loading) {
+    return <div className="text-center py-8 text-muted-foreground">Caricamento...</div>
+  }
 
   return (
     <div className="space-y-4">
-      <div className="flex items-center gap-3">
-        <button onClick={onBack} className="p-2 rounded-lg hover:bg-stone-100 transition-colors">
+      <div className="flex items-center gap-4">
+        <Button variant="ghost" size="icon" onClick={onBack}>
           <ArrowLeft className="w-4 h-4" />
-        </button>
-        <h2 className="font-semibold text-stone-800">Galleria immagini</h2>
+        </Button>
+        <h2 className="text-lg font-semibold">Galleria Immagini</h2>
       </div>
 
-      <div className="grid sm:grid-cols-2 gap-3">
-        {/* Upload file */}
-        <div className="border-2 border-dashed border-stone-200 rounded-xl p-5 text-center hover:border-amber-400 transition-colors">
-          <label className="cursor-pointer block">
-            <Upload className="w-7 h-7 mx-auto text-stone-400 mb-2" />
-            <p className="text-sm font-medium text-stone-600">{uploading ? 'Caricamento...' : 'Carica file'}</p>
-            <p className="text-xs text-stone-400 mt-1">Puoi selezionare più immagini</p>
-            <input type="file" accept="image/*" multiple className="hidden" onChange={handleFileUpload} disabled={uploading} />
+      {/* Upload file */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-base flex items-center gap-2">
+            <Upload className="w-4 h-4" /> Carica file
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <label className="block w-full p-8 border-2 border-dashed rounded-lg text-center cursor-pointer hover:border-primary transition-colors">
+            <Upload className="w-8 h-8 mx-auto text-muted-foreground mb-2" />
+            <p className="text-sm text-muted-foreground">
+              {uploading ? 'Caricamento in corso...' : 'Clicca o trascina le immagini qui'}
+            </p>
+            <p className="text-xs text-muted-foreground mt-1">Puoi selezionare più immagini</p>
+            <input
+              type="file"
+              accept="image/*"
+              multiple
+              className="hidden"
+              onChange={handleImageUpload}
+              disabled={uploading}
+            />
           </label>
-        </div>
+        </CardContent>
+      </Card>
 
-        {/* URL input */}
-        <div className="border border-stone-200 rounded-xl p-4 space-y-2">
-          <div className="flex items-center gap-2 text-sm font-medium text-stone-600 mb-1">
-            <LinkIcon className="w-4 h-4" /> Aggiungi tramite URL
-          </div>
+      {/* Aggiunta tramite URL */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-base flex items-center gap-2">
+            <Link className="w-4 h-4" /> Aggiungi tramite URL
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-2">
           <div className="flex gap-2">
             <Input
-              placeholder="https://..."
+              placeholder="https://esempio.com/immagine.jpg"
               value={urlInput}
-              onChange={(e) => { setUrlInput(e.target.value); setUrlError('') }}
+              onChange={(e) => {
+                setUrlInput(e.target.value)
+                setUrlError('')
+              }}
               onKeyDown={(e) => e.key === 'Enter' && handleAddUrl()}
               disabled={uploading}
-              className="text-sm"
             />
-            <Button onClick={handleAddUrl} disabled={uploading || !urlInput.trim()} size="sm" className="bg-amber-600 hover:bg-amber-700 shrink-0">
+            <Button onClick={handleAddUrl} disabled={uploading || !urlInput.trim()}>
               Aggiungi
             </Button>
           </div>
-          {urlError && <p className="text-xs text-red-500">{urlError}</p>}
-        </div>
-      </div>
+          {urlError && <p className="text-xs text-destructive">{urlError}</p>}
+          <p className="text-xs text-muted-foreground">
+            Incolla l'URL di un'immagine già online (es. da Vercel Blob, Google Drive, Imgur…)
+          </p>
+        </CardContent>
+      </Card>
 
-      {/* Gallery grid */}
-      <div className="grid grid-cols-3 sm:grid-cols-4 gap-3">
+      {/* Griglia immagini */}
+      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
         {images.length === 0 ? (
-          <div className="col-span-full text-center py-8 text-stone-400">
-            <ImageIcon className="w-10 h-10 mx-auto mb-2 opacity-40" />
-            <p className="text-sm">Nessuna immagine</p>
+          <div className="col-span-full text-center py-8 text-muted-foreground">
+            <ImageIcon className="w-12 h-12 mx-auto mb-2 opacity-50" />
+            <p>Nessuna immagine aggiuntiva</p>
           </div>
-        ) : images.map((img) => (
-          <div key={img.id} className="relative group aspect-square rounded-lg overflow-hidden bg-stone-50">
-            <img src={img.image_url} alt="" className="w-full h-full object-cover" />
-            <button onClick={() => handleDelete(img.id)}
-              className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-              <Trash2 className="w-5 h-5 text-white" />
-            </button>
-          </div>
-        ))}
+        ) : (
+          images.map((image) => (
+            <div key={image.id} className="relative group aspect-square">
+              <img
+                src={image.image_url}
+                alt=""
+                className="w-full h-full object-cover rounded-lg"
+              />
+              <Button
+                variant="destructive"
+                size="icon"
+                className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity w-8 h-8"
+                onClick={() => handleDelete(image.id)}
+              >
+                <Trash2 className="w-4 h-4" />
+              </Button>
+            </div>
+          ))
+        )}
       </div>
     </div>
   )
