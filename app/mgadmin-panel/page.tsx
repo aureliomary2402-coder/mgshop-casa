@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect } from 'react'
-import { Package, Tag, Image, ShoppingBag, LogOut, Lock, LayoutDashboard, Megaphone, Ticket, Menu, X, ExternalLink, Users, Gift } from 'lucide-react'
+import { Package, Tag, Image, ShoppingBag, LogOut, Lock, LayoutDashboard, Megaphone, Ticket, Menu, X, ExternalLink, Users, Gift, MessageCircle } from 'lucide-react'
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -15,8 +15,9 @@ import { CouponsManager } from '@/components/admin/coupons-manager'
 import { PushNotifications } from '@/components/admin/push-notifications'
 import { ClientiManager } from '@/components/admin/clienti-manager'
 import { LoyaltySettingsManager } from '@/components/admin/loyalty-settings-manager'
+import { ChatManager } from '@/components/admin/chat-manager'
 
-type Tab = 'dashboard' | 'products' | 'categories' | 'banners' | 'orders' | 'promo' | 'coupons' | 'clienti' | 'fedelta'
+type Tab = 'dashboard' | 'products' | 'categories' | 'banners' | 'orders' | 'promo' | 'coupons' | 'clienti' | 'fedelta' | 'chat'
 
 const TABS = [
   { id: 'dashboard' as Tab, label: 'Dashboard', icon: LayoutDashboard, color: 'text-blue-600 bg-blue-50' },
@@ -28,6 +29,7 @@ const TABS = [
   { id: 'coupons' as Tab, label: 'Coupon', icon: Ticket, color: 'text-indigo-600 bg-indigo-50' },
   { id: 'clienti' as Tab, label: 'Clienti', icon: Users, color: 'text-pink-600 bg-pink-50' },
   { id: 'fedelta' as Tab, label: 'Fedeltà', icon: Gift, color: 'text-yellow-600 bg-yellow-50' },
+  { id: 'chat' as Tab, label: 'Chat', icon: MessageCircle, color: 'text-teal-600 bg-teal-50' },
 ]
 
 export default function AdminPage() {
@@ -38,6 +40,21 @@ export default function AdminPage() {
   const [activeTab, setActiveTab] = useState<Tab>('dashboard')
   const [checking, setChecking] = useState(true)
   const [menuOpen, setMenuOpen] = useState(false)
+  const [chatUnread, setChatUnread] = useState(0)
+
+  useEffect(() => {
+    if (!authenticated) return
+    const fetchUnread = async () => {
+      try {
+        const res = await fetch('/api/admin/chat')
+        const data: { unread: number }[] = await res.json()
+        setChatUnread(data.reduce((s, c) => s + c.unread, 0))
+      } catch {}
+    }
+    fetchUnread()
+    const interval = setInterval(fetchUnread, 8000)
+    return () => clearInterval(interval)
+  }, [authenticated])
 
   useEffect(() => {
     fetch('/api/admin/auth').then(r => { if (r.ok) setAuthenticated(true); setChecking(false) }).catch(() => setChecking(false))
@@ -118,7 +135,10 @@ export default function AdminPage() {
                       <Icon className="w-4 h-4" />
                     </div>
                     {label}
-                    {activeTab === id && <div className="ml-auto w-1.5 h-1.5 rounded-full bg-amber-500" />}
+                    {id === 'chat' && chatUnread > 0 && (
+                      <span className="ml-auto text-xs font-bold px-1.5 py-0.5 rounded-full bg-red-500 text-white">{chatUnread}</span>
+                    )}
+                    {activeTab === id && id !== 'chat' && <div className="ml-auto w-1.5 h-1.5 rounded-full bg-amber-500" />}
                   </button>
                 ))}
               </div>
@@ -147,6 +167,7 @@ export default function AdminPage() {
         {activeTab === 'coupons' && <CouponsManager />}
         {activeTab === 'clienti' && <ClientiManager />}
         {activeTab === 'fedelta' && <LoyaltySettingsManager />}
+        {activeTab === 'chat' && <ChatManager />}
       </div>
     </div>
   )
