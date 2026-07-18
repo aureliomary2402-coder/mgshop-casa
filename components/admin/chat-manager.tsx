@@ -31,16 +31,22 @@ export function ChatManager() {
   const scrollRef = useRef<HTMLDivElement>(null)
 
   const fetchConversations = useCallback(async () => {
-    const res = await fetch('/api/admin/chat')
-    const data = await res.json()
-    setConversations(data)
+    try {
+      const res = await fetch('/api/admin/chat')
+      if (!res.ok) { setLoading(false); return }
+      const data = await res.json()
+      if (Array.isArray(data)) setConversations(data)
+    } catch {}
     setLoading(false)
   }, [])
 
   const fetchThread = useCallback(async (phone_normalized: string) => {
-    const res = await fetch(`/api/admin/chat?phone=${encodeURIComponent(phone_normalized)}`)
-    const data = await res.json()
-    setMessages(data)
+    try {
+      const res = await fetch(`/api/admin/chat?phone=${encodeURIComponent(phone_normalized)}`)
+      if (!res.ok) return
+      const data = await res.json()
+      if (Array.isArray(data)) setMessages(data)
+    } catch {}
   }, [])
 
   useEffect(() => {

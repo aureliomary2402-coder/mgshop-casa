@@ -47,8 +47,11 @@ export default function AdminPage() {
     const fetchUnread = async () => {
       try {
         const res = await fetch('/api/admin/chat')
-        const data: { unread: number }[] = await res.json()
-        setChatUnread(data.reduce((s, c) => s + c.unread, 0))
+        if (!res.ok) return
+        const data = await res.json()
+        if (Array.isArray(data)) {
+          setChatUnread(data.reduce((s: number, c: { unread: number }) => s + (c.unread || 0), 0))
+        }
       } catch {}
     }
     fetchUnread()

@@ -43,7 +43,9 @@ export function ChatWidget() {
     if (!identity) return
     try {
       const res = await fetch(`/api/chat?phone=${encodeURIComponent(identity.phone)}`)
-      const data: ChatMessage[] = await res.json()
+      if (!res.ok) return
+      const data = await res.json()
+      if (!Array.isArray(data)) return
       setMessages(data)
       const lastAdmin = [...data].reverse().find(m => m.sender === 'admin')
       if (lastAdmin) {
