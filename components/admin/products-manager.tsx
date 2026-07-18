@@ -5,6 +5,7 @@ import { Plus, Pencil, Trash2, Images, ToggleLeft, ToggleRight, ImageIcon, Searc
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { ProductImagesManager } from './product-images-manager'
+import { ImageCropper } from './image-cropper'
 import type { Product, Category } from '@/lib/types'
 
 function StockBadge({ stock }: { stock: number | null }) {
@@ -34,6 +35,7 @@ export function ProductsManager() {
   const [form, setForm] = useState({ name: '', description: '', price: '', category_id: '', cover_image: '', is_active: true, stock: '' })
   const [saving, setSaving] = useState(false)
   const [uploadingCover, setUploadingCover] = useState(false)
+  const [coverCropFile, setCoverCropFile] = useState<File | null>(null)
   const [search, setSearch] = useState('')
   const [filterCategory, setFilterCategory] = useState('')
   const [filterStock, setFilterStock] = useState<'all' | 'low' | 'out'>('all')
@@ -77,19 +79,28 @@ export function ProductsManager() {
     setEditing(p); setCreating(false)
   }
 
-  const handleCoverUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleCoverSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
     if (!file) return
+    setCoverCropFile(file)
+    e.target.value = ''
+  }
+
+  const handleCoverCropConfirm = async (blob: Blob) => {
+    setCoverCropFile(null)
     setUploadingCover(true)
-    const formData = new FormData()
-    formData.append('file', file)
     try {
+      const croppedFile = new File([blob], 'copertina.jpg', { type: 'image/jpeg' })
+      const formData = new FormData()
+      formData.append('file', croppedFile)
       const res = await fetch('/api/upload', { method: 'POST', body: formData })
       const data = await res.json()
       if (data.url) setForm(f => ({ ...f, cover_image: data.url }))
     } catch { console.error('Upload failed') }
     setUploadingCover(false)
   }
+
+  const handleCoverCropCancel = () => setCoverCropFile(null)
 
   const handleSave = async () => {
     setSaving(true)
@@ -166,7 +177,7 @@ export function ProductsManager() {
           <label className="inline-flex items-center gap-2 cursor-pointer text-sm text-amber-700 font-medium">
             <ImageIcon className="w-4 h-4" />
             {uploadingCover ? 'Caricamento...' : 'Carica file'}
-            <input type="file" accept="image/*" className="hidden" onChange={handleCoverUpload} disabled={uploadingCover} />
+            <input type="file" accept="image/*" className="hidden" onChange={handleCoverSelect} disabled={uploadingCover} />
           </label>
           {form.cover_image && (
             <div className="mt-2 w-24 h-24 rounded-lg overflow-hidden border border-stone-200">
@@ -184,6 +195,13 @@ export function ProductsManager() {
       <Button onClick={handleSave} disabled={saving || !form.name} className="w-full bg-amber-600 hover:bg-amber-700">
         {saving ? 'Salvataggio...' : 'Salva prodotto'}
       </Button>
+      {coverCropFile && (
+        <ImageCropper
+          file={coverCropFile}
+          onCancel={handleCoverCropCancel}
+          onConfirm={handleCoverCropConfirm}
+        />
+      )}
     </div>
   )
 
