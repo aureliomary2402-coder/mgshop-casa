@@ -5,6 +5,7 @@ import { ArrowLeft, Clock, Tag, ShoppingBag, ShoppingCart, ImageIcon } from 'luc
 import { useCartStore } from '@/lib/cart-store'
 import { toast } from 'sonner'
 import type { Product } from '@/lib/types'
+import { Reveal } from '@/components/shop/reveal'
 
 interface PromoData {
   is_active: boolean; title: string; subtitle: string; content: string
@@ -93,7 +94,17 @@ export default function PromoPage() {
       .catch(()=>setLoading(false))
   },[])
 
-  if(loading) return <div className="min-h-screen flex items-center justify-center" style={{background:'#faf7f2'}}><div className="w-10 h-10 rounded-full border-2 border-amber-200 border-t-amber-600 animate-spin"/></div>
+  if(loading) return (
+    <div className="min-h-screen" style={{background:'#faf7f2'}}>
+      <div className="max-w-4xl mx-auto px-4 py-12 space-y-6">
+        <div className="skeleton h-40 rounded-3xl" />
+        <div className="skeleton h-10 w-2/3 mx-auto rounded-lg" />
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+          {Array.from({ length: 4 }).map((_, i) => <div key={i} className="skeleton aspect-square rounded-2xl" />)}
+        </div>
+      </div>
+    </div>
+  )
 
   if(!promo||!promo.is_active) return (
     <div className="min-h-screen flex items-center justify-center px-4" style={{background:'#faf7f2'}}>
@@ -131,15 +142,15 @@ export default function PromoPage() {
       {/* Content */}
       <div className="max-w-5xl mx-auto px-4 py-10 space-y-10">
         {(promo.image_url||promo.content)&&(
-          <div className={`grid gap-6 ${promo.image_url&&promo.content?'md:grid-cols-2':''}`}>
+          <Reveal className={`grid gap-6 ${promo.image_url&&promo.content?'md:grid-cols-2':''}`}>
             {promo.image_url&&<div className="rounded-2xl overflow-hidden" style={{boxShadow:'0 16px 40px rgba(217,119,6,0.12)'}}><img src={promo.image_url} alt="Promo" className="w-full h-full object-cover max-h-72"/></div>}
             {promo.content&&<div className="flex items-center"><div className="bg-white rounded-2xl p-6 w-full" style={{border:'1px solid rgba(217,119,6,0.1)'}}><p className="text-stone-600 leading-relaxed whitespace-pre-line">{promo.content}</p></div></div>}
-          </div>
+          </Reveal>
         )}
 
         {/* Prodotti in promo */}
         {products.length > 0 && (
-          <div>
+          <Reveal delay={100}>
             <h2 className="text-2xl font-bold mb-6" style={{color:'#1a0800'}}>Prodotti in promozione</h2>
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 stagger-children">
               {products.map(p => <PromoProductCard key={p.id} product={p}/>)}
@@ -155,14 +166,14 @@ export default function PromoPage() {
                 </Link>
               </div>
             )}
-          </div>
+          </Reveal>
         )}
 
-        <div className="text-center py-6">
+        <Reveal delay={150} className="text-center py-6">
           <Link href="/shop" className="inline-flex items-center gap-2 font-bold px-10 py-4 rounded-2xl text-white" style={{background:'linear-gradient(135deg,#d97706,#f59e0b)',boxShadow:'0 12px 32px rgba(217,119,6,0.35)'}}>
             <ShoppingBag className="w-5 h-5"/> Vai al negozio completo
           </Link>
-        </div>
+        </Reveal>
       </div>
     </div>
   )

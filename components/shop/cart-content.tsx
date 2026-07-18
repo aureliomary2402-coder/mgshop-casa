@@ -57,12 +57,40 @@ export function CartContent({ scope = 'shop' }: { scope?: string }) {
     finally { setSubmitting(false) }
   }
 
-  if (!mounted) return <div className="max-w-4xl mx-auto px-4 py-12 flex justify-center"><div className="w-8 h-8 rounded-full border-2 border-amber-200 border-t-amber-600 animate-spin"/></div>
+  if (!mounted) return (
+    <div className="max-w-4xl mx-auto px-4 py-12 grid md:grid-cols-3 gap-6">
+      <div className="md:col-span-2 space-y-3">
+        {Array.from({ length: 3 }).map((_, i) => (
+          <div key={i} className="flex gap-3 p-3 rounded-2xl bg-white border border-stone-100">
+            <div className="skeleton w-20 h-20 rounded-xl shrink-0" />
+            <div className="flex-1 space-y-2 py-1">
+              <div className="skeleton h-4 w-3/4 rounded-full" />
+              <div className="skeleton h-4 w-1/3 rounded-full" />
+            </div>
+          </div>
+        ))}
+      </div>
+      <div className="skeleton rounded-2xl h-64" />
+    </div>
+  )
 
   if (submitted) return (
     <div className="max-w-md mx-auto px-4 py-20 text-center animate-scale-in">
-      <div className="w-24 h-24 rounded-full flex items-center justify-center mx-auto mb-6" style={{background:'linear-gradient(135deg,#d97706,#f59e0b)',boxShadow:'0 20px 40px rgba(217,119,6,0.3)'}}>
-        <CheckCircle className="w-12 h-12 text-white"/>
+      <div className="relative w-24 h-24 mx-auto mb-6">
+        {['#d97706','#f59e0b','#fbbf24','#16a34a','#ef4444','#3b82f6'].map((color, i) => (
+          <div key={i} className="confetti-piece"
+            style={{
+              left: `${50 + (i % 2 === 0 ? -1 : 1) * (10 + i * 6)}%`,
+              top: '10%',
+              width: 6, height: 6,
+              background: color,
+              borderRadius: i % 3 === 0 ? '50%' : '2px',
+              animationDelay: `${i * 40}ms`,
+            }} />
+        ))}
+        <div className="w-24 h-24 rounded-full flex items-center justify-center animate-check-pop" style={{background:'linear-gradient(135deg,#d97706,#f59e0b)',boxShadow:'0 20px 40px rgba(217,119,6,0.3)'}}>
+          <CheckCircle className="w-12 h-12 text-white"/>
+        </div>
       </div>
       <h2 className="text-3xl font-bold mb-3" style={{color:'#1a0800'}}>Ordine inviato!</h2>
       <p className="text-stone-500 mb-2">Ti contatteremo presto su WhatsApp per confermare.</p>

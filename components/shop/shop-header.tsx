@@ -14,7 +14,9 @@ export function ShopHeader() {
   const [categories, setCategories] = useState<Category[]>([])
   const [catOpen, setCatOpen] = useState(false)
   const [promoActive, setPromoActive] = useState(false)
+  const [cartBump, setCartBump] = useState(false)
   const getTotalItems = useCartStore(s => s.getTotalItems)
+  const lastAdded = useCartStore(s => s.lastAdded)
   const router = useRouter()
   const searchParams = useSearchParams()
   const pathname = usePathname()
@@ -35,6 +37,13 @@ export function ShopHeader() {
   }, [])
 
   useEffect(() => { if (searchOpen) setTimeout(() => inputRef.current?.focus(), 50) }, [searchOpen])
+
+  useEffect(() => {
+    if (lastAdded === 0) return
+    setCartBump(true)
+    const t = setTimeout(() => setCartBump(false), 500)
+    return () => clearTimeout(t)
+  }, [lastAdded])
 
   const itemCount = mounted ? getTotalItems() : 0
   const activeCategory = searchParams.get('categoria')
@@ -128,9 +137,9 @@ export function ShopHeader() {
             {searchOpen ? <X className="w-5 h-5" /> : <Search className="w-5 h-5" />}
           </button>
           <Link href="/carrello" className="relative flex items-center gap-2 px-3 py-2 rounded-xl transition-all hover:bg-amber-50 btn-press group">
-            <ShoppingBag className="w-5 h-5 text-amber-700 group-hover:scale-110 transition-transform" />
+            <ShoppingBag className={`w-5 h-5 text-amber-700 group-hover:scale-110 transition-transform ${cartBump ? 'animate-cart-bounce' : ''}`} />
             {itemCount > 0 && (
-              <span className="absolute -top-1 -right-1 w-5 h-5 text-white text-xs rounded-full flex items-center justify-center font-bold"
+              <span className={`absolute -top-1 -right-1 w-5 h-5 text-white text-xs rounded-full flex items-center justify-center font-bold ${cartBump ? 'animate-badge-pop' : ''}`}
                 style={{ background: 'linear-gradient(135deg, #d97706, #f59e0b)' }}>
                 {itemCount > 9 ? '9+' : itemCount}
               </span>
