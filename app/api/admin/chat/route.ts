@@ -101,3 +101,16 @@ export async function PUT(request: NextRequest) {
   if (error) return NextResponse.json({ error: error.message }, { status: 500 })
   return NextResponse.json({ success: true })
 }
+
+export async function DELETE(request: NextRequest) {
+  if (!(await isAuthenticated())) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+  const { phone_normalized } = await request.json()
+  if (!phone_normalized) return NextResponse.json({ error: 'phone_normalized richiesto' }, { status: 400 })
+  const supabase = createAdminClient()
+  const { error } = await supabase
+    .from('chat_messages')
+    .delete()
+    .eq('phone_normalized', phone_normalized)
+  if (error) return NextResponse.json({ error: error.message }, { status: 500 })
+  return NextResponse.json({ success: true })
+}

@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect, useRef, useCallback } from 'react'
-import { MessageCircle, Send, ArrowLeft, Phone } from 'lucide-react'
+import { MessageCircle, Send, ArrowLeft, Phone, Trash2 } from 'lucide-react'
 
 interface Conversation {
   phone_normalized: string
@@ -28,6 +28,8 @@ export function ChatManager() {
   const [messages, setMessages] = useState<ChatMessage[]>([])
   const [text, setText] = useState('')
   const [sending, setSending] = useState(false)
+  const [confirmDelete, setConfirmDelete] = useState<string | null>(null)
+  const [deleting, setDeleting] = useState(false)
   const scrollRef = useRef<HTMLDivElement>(null)
 
   const fetchConversations = useCallback(async () => {
@@ -80,6 +82,17 @@ export function ChatManager() {
     setSending(false)
   }
 
+  const handleDelete = async (phone_normalized: string) => {
+    setDeleting(true)
+    try {
+      await fetch('/api/admin/chat', { method: 'DELETE', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ phone_normalized }) })
+      setConfirmDelete(null)
+      if (active?.phone_normalized === phone_normalized) setActive(null)
+      fetchConversations()
+    } catch {}
+    setDeleting(false)
+  }
+
   if (loading) return <div className="text-center py-8 text-stone-400">Caricamento...</div>
 
   if (active) return (
@@ -88,10 +101,27 @@ export function ChatManager() {
         <button onClick={() => setActive(null)} className="p-2 rounded-lg hover:bg-stone-100 transition-colors">
           <ArrowLeft className="w-4 h-4" />
         </button>
-        <div>
+        <div className="flex-1">
           <p className="font-semibold text-stone-800">{active.customer_name || active.phone_number}</p>
           <p className="text-xs text-stone-400 flex items-center gap-1"><Phone className="w-3 h-3" /> {active.phone_number}</p>
         </div>
+        {confirmDelete === active.phone_normalized ? (
+          <div className="flex items-center gap-1.5 text-xs">
+            <span className="text-stone-500">Eliminare?</span>
+            <button onClick={() => handleDelete(active.phone_normalized)} disabled={deleting}
+              className="px-2.5 py-1.5 rounded-lg bg-red-500 text-white font-medium disabled:opacity-50">
+              {deleting ? '...' : 'Sì'}
+            </button>
+            <button onClick={() => setConfirmDelete(null)} className="px-2.5 py-1.5 rounded-lg bg-stone-100 text-stone-600 font-medium">
+              Annulla
+            </button>
+          </div>
+        ) : (
+          <button onClick={() => setConfirmDelete(active.phone_normalized)}
+            className="p-2 rounded-lg hover:bg-red-50 text-stone-400 hover:text-red-500 transition-colors">
+            <Trash2 className="w-4 h-4" />
+          </button>
+        )}
       </div>
       <div ref={scrollRef} className="bg-stone-50 rounded-xl p-3 h-96 overflow-y-auto space-y-2 border border-stone-100">
         {messages.map(m => (
@@ -131,22 +161,40 @@ export function ChatManager() {
         {conversations.length === 0 ? (
           <p className="text-center py-8 text-stone-400 text-sm">Nessuna conversazione</p>
         ) : conversations.map(c => (
-          <button key={c.phone_normalized} onClick={() => setActive(c)}
-            className="w-full text-left bg-white border border-stone-100 rounded-xl p-4 shadow-sm flex items-center gap-3 hover:border-amber-200 transition-colors">
-            <div className="w-10 h-10 rounded-full flex items-center justify-center shrink-0 font-bold text-sm bg-amber-50 text-amber-700">
-              {c.customer_name ? c.customer_name[0].toUpperCase() : <Phone className="w-4 h-4" />}
-            </div>
-            <div className="flex-1 min-w-0">
-              <div className="flex items-center gap-2">
-                <p className="font-semibold text-stone-800 truncate">{c.customer_name || c.phone_number}</p>
-                {c.unread > 0 && <span className="text-xs font-bold px-1.5 py-0.5 rounded-full bg-red-500 text-white shrink-0">{c.unread}</span>}
+          <div key={c.phone_normalized}
+            className="w-full bg-white border border-stone-100 rounded-xl p-4 shadow-sm flex items-center gap-3 hover:border-amber-200 transition-colors">
+            <button onClick={() => setActive(c)} className="flex items-center gap-3 flex-1 min-w-0 text-left">
+              <div className="w-10 h-10 rounded-full flex items-center justify-center shrink-0 font-bold text-sm bg-amber-50 text-amber-700">
+                {c.customer_name ? c.customer_name[0].toUpperCase() : <Phone className="w-4 h-4" />}
               </div>
-              <p className="text-xs text-stone-400 truncate">{c.last_message}</p>
-            </div>
-            <p className="text-xs text-stone-400 shrink-0">
-              {new Date(c.last_message_at).toLocaleDateString('it-IT', { day: '2-digit', month: 'short' })}
-            </p>
-          </button>
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center gap-2">
+                  <p className="font-semibold text-stone-800 truncate">{c.customer_name || c.phone_number}</p>
+                  {c.unread > 0 && <span className="text-xs font-bold px-1.5 py-0.5 rounded-full bg-red-500 text-white shrink-0">{c.unread}</span>}
+                </div>
+                <p className="text-xs text-stone-400 truncate">{c.last_message}</p>
+              </div>
+              <p className="text-xs text-stone-400 shrink-0">
+                {new Date(c.last_message_at).toLocaleDateString('it-IT', { day: '2-digit', month: 'short' })}
+              </p>
+            </button>
+            {confirmDelete === c.phone_normalized ? (
+              <div className="flex items-center gap-1 shrink-0">
+                <button onClick={() => handleDelete(c.phone_normalized)} disabled={deleting}
+                  className="px-2 py-1 rounded-lg bg-red-500 text-white text-xs font-medium disabled:opacity-50">
+                  {deleting ? '...' : 'Sì'}
+                </button>
+                <button onClick={() => setConfirmDelete(null)} className="px-2 py-1 rounded-lg bg-stone-100 text-stone-600 text-xs font-medium">
+                  No
+                </button>
+              </div>
+            ) : (
+              <button onClick={() => setConfirmDelete(c.phone_normalized)}
+                className="p-2 rounded-lg hover:bg-red-50 text-stone-300 hover:text-red-500 transition-colors shrink-0">
+                <Trash2 className="w-4 h-4" />
+              </button>
+            )}
+          </div>
         ))}
       </div>
     </div>
