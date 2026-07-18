@@ -238,6 +238,7 @@ export function PromoManager() {
         <ImageCropper
           file={cropFile}
           aspectRatio={3}
+          outputWidth={1800}
           onCancel={handleCropCancel}
           onConfirm={handleCropConfirm}
         />

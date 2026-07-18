@@ -46,7 +46,7 @@ function detectEdgeColor(img: HTMLImageElement): string {
   }
 }
 
-export function ImageCropper({ file, onCancel, onConfirm, outputWidth = 1200, aspectRatio = 1 }: ImageCropperProps) {
+export function ImageCropper({ file, onCancel, onConfirm, outputWidth = 1600, aspectRatio = 1 }: ImageCropperProps) {
   const [img, setImg] = useState<HTMLImageElement | null>(null)
   const [zoom, setZoom] = useState(1)
   const [offset, setOffset] = useState({ x: 0, y: 0 })
@@ -146,7 +146,7 @@ export function ImageCropper({ file, onCancel, onConfirm, outputWidth = 1200, as
     canvas.toBlob((blob) => {
       setProcessing(false)
       if (blob) onConfirm(blob)
-    }, 'image/jpeg', 0.92)
+    }, 'image/jpeg', 0.95)
   }
 
   return (
