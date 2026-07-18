@@ -2,22 +2,21 @@
 
 import { useState, useEffect } from 'react'
 import { useParams, useRouter } from 'next/navigation'
-import { ArrowLeft, ShoppingCart, ImageIcon, ChevronLeft, ChevronRight, Heart } from 'lucide-react'
+import { ArrowLeft, ShoppingCart, Heart } from 'lucide-react'
 import { useCartStore } from '@/lib/cart-store'
 import { toast } from 'sonner'
 import type { Product, ProductImage } from '@/lib/types'
 import Link from 'next/link'
+import { ProductGallery } from '@/components/shop/product-gallery'
 
 export default function ProductPage() {
   const { id } = useParams<{ id: string }>()
   const router = useRouter()
   const [product, setProduct] = useState<Product | null>(null)
   const [images, setImages] = useState<ProductImage[]>([])
-  const [currentImg, setCurrentImg] = useState(0)
   const [loading, setLoading] = useState(true)
   const [liked, setLiked] = useState(false)
   const [addedAnim, setAddedAnim] = useState(false)
-  const [tilt, setTilt] = useState({ x: 0, y: 0 })
   const addItem = useCartStore(s => s.addItem)
 
   useEffect(() => {
@@ -33,8 +32,32 @@ export default function ProductPage() {
   }, [id])
 
   if (loading) return (
-    <div className="min-h-screen flex items-center justify-center" style={{ background: '#faf7f2' }}>
-      <div className="w-10 h-10 rounded-full border-2 border-amber-200 border-t-amber-600 animate-spin" />
+    <div className="min-h-screen" style={{ background: '#faf7f2' }}>
+      <div className="max-w-5xl mx-auto px-4 py-8">
+        <div className="skeleton h-4 w-24 rounded-full mb-8" />
+        <div className="grid md:grid-cols-2 gap-10">
+          <div>
+            <div className="skeleton aspect-square rounded-3xl mb-3" />
+            <div className="flex gap-2">
+              {Array.from({ length: 3 }).map((_, i) => <div key={i} className="skeleton w-16 h-16 rounded-xl shrink-0" />)}
+            </div>
+          </div>
+          <div className="space-y-5">
+            <div className="skeleton h-5 w-28 rounded-full" />
+            <div className="skeleton h-8 w-4/5 rounded-lg" />
+            <div className="skeleton h-10 w-32 rounded-lg" />
+            <div className="space-y-2 pt-2">
+              <div className="skeleton h-4 w-full rounded-full" />
+              <div className="skeleton h-4 w-full rounded-full" />
+              <div className="skeleton h-4 w-2/3 rounded-full" />
+            </div>
+            <div className="flex gap-3 pt-2">
+              <div className="skeleton h-14 flex-1 rounded-2xl" />
+              <div className="skeleton h-14 w-14 rounded-2xl" />
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   )
   if (!product) return (
@@ -68,51 +91,7 @@ export default function ProductPage() {
 
         <div className="grid md:grid-cols-2 gap-10">
           <div>
-            <div className="relative aspect-square rounded-3xl overflow-hidden mb-3 cursor-pointer"
-              style={{
-                background: 'linear-gradient(135deg, #faf7f2, #fef3c7)',
-                boxShadow: '0 20px 60px rgba(217,119,6,0.12)',
-                transform: `perspective(800px) rotateX(${tilt.x}deg) rotateY(${tilt.y}deg)`,
-                transition: 'transform 0.3s ease'
-              }}
-              onMouseMove={e => {
-                const rect = e.currentTarget.getBoundingClientRect()
-                setTilt({ x: ((e.clientY - rect.top) / rect.height - 0.5) * 8, y: ((e.clientX - rect.left) / rect.width - 0.5) * -8 })
-              }}
-              onMouseLeave={() => setTilt({ x: 0, y: 0 })}>
-              {allImages.length > 0 ? (
-                <img src={allImages[currentImg].image_url} alt={product.name} className="w-full h-full object-cover transition-transform duration-500 hover:scale-105" />
-              ) : (
-                <div className="w-full h-full flex items-center justify-center">
-                  <ImageIcon className="w-20 h-20" style={{ color: 'rgba(217,119,6,0.3)' }} />
-                </div>
-              )}
-              {allImages.length > 1 && (
-                <>
-                  <button onClick={() => setCurrentImg(i => (i - 1 + allImages.length) % allImages.length)}
-                    className="absolute left-3 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full flex items-center justify-center btn-press"
-                    style={{ background: 'rgba(250,247,242,0.9)', backdropFilter: 'blur(8px)' }}>
-                    <ChevronLeft className="w-5 h-5" style={{ color: '#92400e' }} />
-                  </button>
-                  <button onClick={() => setCurrentImg(i => (i + 1) % allImages.length)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full flex items-center justify-center btn-press"
-                    style={{ background: 'rgba(250,247,242,0.9)', backdropFilter: 'blur(8px)' }}>
-                    <ChevronRight className="w-5 h-5" style={{ color: '#92400e' }} />
-                  </button>
-                </>
-              )}
-            </div>
-            {allImages.length > 1 && (
-              <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-hide">
-                {allImages.map((img, i) => (
-                  <button key={img.id} onClick={() => setCurrentImg(i)}
-                    className="w-16 h-16 rounded-xl overflow-hidden shrink-0 transition-all hover:scale-105 btn-press"
-                    style={{ border: i === currentImg ? '2px solid #d97706' : '2px solid transparent' }}>
-                    <img src={img.image_url} alt="" className="w-full h-full object-cover" />
-                  </button>
-                ))}
-              </div>
-            )}
+            <ProductGallery images={allImages} productName={product.name} />
           </div>
 
           <div className="space-y-5 animate-slide-in-right">
