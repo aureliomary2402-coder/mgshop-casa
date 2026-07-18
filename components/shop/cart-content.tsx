@@ -5,6 +5,7 @@ import Link from 'next/link'
 import { ArrowLeft, Minus, Plus, Trash2, ShoppingBag, ImageIcon, CheckCircle, ShoppingCart, Tag, X } from 'lucide-react'
 import { useCartStore } from '@/lib/cart-store'
 import { LoyaltyBanner } from './loyalty-banner'
+import { CodBanner } from './cod-banner'
 
 export function CartContent({ scope = 'shop' }: { scope?: string }) {
   const [mounted, setMounted] = useState(false)
@@ -152,6 +153,7 @@ export function CartContent({ scope = 'shop' }: { scope?: string }) {
             {couponData&&discountAmount>0&&<div className="flex justify-between text-sm text-green-600 font-medium"><span>Sconto coupon</span><span>-€{discountAmount.toFixed(2)}</span></div>}
             <div className="flex justify-between font-bold pt-1"><span style={{color:'#1a0800'}}>Totale</span><span className="text-xl" style={{color:'#d97706'}}>€{total.toFixed(2)}</span></div>
           </div>
+          <CodBanner />
           <form onSubmit={handleSubmit} className="space-y-3">
             <input type="tel" placeholder="Numero di telefono" value={phone} onChange={e=>setPhone(e.target.value)}
               className="w-full h-11 px-4 rounded-xl text-sm outline-none" style={{background:'rgba(217,119,6,0.05)',border:'1px solid rgba(217,119,6,0.15)',color:'#1a0800'}}/>

@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { ShoppingBag, Sparkles, ArrowRight, Tag } from 'lucide-react'
 import { SOCIAL_LINKS, InstagramIcon, TikTokIcon, WhatsAppIcon } from '@/components/shop/social-icons'
+import { CodBanner } from '@/components/shop/cod-banner'
 
 export default function WelcomePage() {
   const [mounted, setMounted] = useState(false)
@@ -66,6 +67,10 @@ export default function WelcomePage() {
               <Tag className="w-5 h-5" /> Promozioni
             </Link>
           )}
+        </div>
+
+        <div className="flex justify-center mb-6">
+          <CodBanner variant="dark" />
         </div>
 
         {/* Icone social */}
