@@ -2,7 +2,8 @@
 
 import { useState, useEffect, useRef, useCallback } from 'react'
 import { usePathname } from 'next/navigation'
-import { MessageCircle, X, Send } from 'lucide-react'
+import { MessageCircle, X, Send, Menu as MenuIcon } from 'lucide-react'
+import { SOCIAL_LINKS, InstagramIcon, TikTokIcon, WhatsAppIcon } from './social-icons'
 
 interface ChatMessage {
   id: string
@@ -20,9 +21,11 @@ const STORAGE_KEY = 'mgshop_chat_identity'
 const SEEN_KEY = 'mgshop_chat_last_seen'
 const POLL_MS = 4000
 
-export function ChatWidget() {
+export function FloatingMenu() {
   const pathname = usePathname()
-  const [open, setOpen] = useState(false)
+  const [menuOpen, setMenuOpen] = useState(false)
+  const [chatOpen, setChatOpen] = useState(false)
+
   const [identity, setIdentity] = useState<Identity | null>(null)
   const [nameInput, setNameInput] = useState('')
   const [phoneInput, setPhoneInput] = useState('')
@@ -64,15 +67,15 @@ export function ChatWidget() {
   }, [identity, fetchMessages])
 
   useEffect(() => {
-    if (open && scrollRef.current) {
+    if (chatOpen && scrollRef.current) {
       scrollRef.current.scrollTop = scrollRef.current.scrollHeight
     }
-    if (open && messages.length > 0) {
+    if (chatOpen && messages.length > 0) {
       const lastAdmin = [...messages].reverse().find(m => m.sender === 'admin')
       if (lastAdmin) localStorage.setItem(SEEN_KEY, lastAdmin.id)
       setHasUnseen(false)
     }
-  }, [open, messages])
+  }, [chatOpen, messages])
 
   const startChat = () => {
     if (!nameInput.trim() || !phoneInput.trim()) return
@@ -93,24 +96,65 @@ export function ChatWidget() {
     setSending(false)
   }
 
+  const openChat = () => { setMenuOpen(false); setChatOpen(true) }
+  const closeAll = () => { setMenuOpen(false); setChatOpen(false) }
+
   // Nascosto nel pannello admin
   if (pathname?.startsWith('/mgadmin-panel')) return null
 
+  const isOpen = menuOpen || chatOpen
+
   return (
     <>
+      {/* Bolla principale */}
       <button
-        onClick={() => setOpen(v => !v)}
+        onClick={() => (isOpen ? closeAll() : setMenuOpen(true))}
         className="fixed bottom-5 right-5 z-40 w-14 h-14 rounded-full shadow-lg flex items-center justify-center text-white transition-transform hover:scale-105"
         style={{ background: 'linear-gradient(135deg,#d97706,#f59e0b)' }}
-        aria-label="Apri chat"
+        aria-label="Apri menu"
       >
-        {open ? <X className="w-6 h-6" /> : <MessageCircle className="w-6 h-6" />}
-        {hasUnseen && !open && (
+        {isOpen ? <X className="w-6 h-6" /> : <MenuIcon className="w-6 h-6" />}
+        {hasUnseen && !isOpen && (
           <span className="absolute top-0 right-0 w-3.5 h-3.5 rounded-full bg-red-500 border-2 border-white" />
         )}
       </button>
 
-      {open && (
+      {/* Mini-menu a scomparsa: social + chat */}
+      {menuOpen && !chatOpen && (
+        <div className="fixed bottom-24 right-5 z-40 flex flex-col items-end gap-3">
+          <a href={SOCIAL_LINKS.instagram} target="_blank" rel="noopener noreferrer"
+            className="flex items-center gap-2.5 pl-4 pr-2 py-2 rounded-full shadow-lg bg-white text-sm font-medium text-stone-700 transition-transform hover:scale-105">
+            Instagram
+            <span className="w-9 h-9 rounded-full flex items-center justify-center text-white shrink-0" style={{ background: 'linear-gradient(135deg,#f59e0b,#d946ef,#db2777)' }}>
+              <InstagramIcon size={17} />
+            </span>
+          </a>
+          <a href={SOCIAL_LINKS.tiktok} target="_blank" rel="noopener noreferrer"
+            className="flex items-center gap-2.5 pl-4 pr-2 py-2 rounded-full shadow-lg bg-white text-sm font-medium text-stone-700 transition-transform hover:scale-105">
+            TikTok
+            <span className="w-9 h-9 rounded-full flex items-center justify-center text-white bg-stone-900 shrink-0">
+              <TikTokIcon size={16} />
+            </span>
+          </a>
+          <a href={SOCIAL_LINKS.whatsapp} target="_blank" rel="noopener noreferrer"
+            className="flex items-center gap-2.5 pl-4 pr-2 py-2 rounded-full shadow-lg bg-white text-sm font-medium text-stone-700 transition-transform hover:scale-105">
+            WhatsApp
+            <span className="w-9 h-9 rounded-full flex items-center justify-center text-white bg-green-500 shrink-0">
+              <WhatsAppIcon size={17} />
+            </span>
+          </a>
+          <button onClick={openChat}
+            className="flex items-center gap-2.5 pl-4 pr-2 py-2 rounded-full shadow-lg bg-white text-sm font-medium text-stone-700 transition-transform hover:scale-105">
+            Scrivici in chat
+            <span className="w-9 h-9 rounded-full flex items-center justify-center text-white shrink-0" style={{ background: 'linear-gradient(135deg,#d97706,#f59e0b)' }}>
+              <MessageCircle size={17} />
+            </span>
+          </button>
+        </div>
+      )}
+
+      {/* Pannello chat */}
+      {chatOpen && (
         <div className="fixed bottom-24 right-5 z-40 w-[90vw] max-w-sm h-[480px] max-h-[70vh] bg-white rounded-2xl shadow-2xl flex flex-col overflow-hidden border border-stone-100">
           <div className="px-4 py-3 text-white font-semibold flex items-center gap-2" style={{ background: 'linear-gradient(135deg,#d97706,#f59e0b)' }}>
             <MessageCircle className="w-4 h-4" /> Scrivici
