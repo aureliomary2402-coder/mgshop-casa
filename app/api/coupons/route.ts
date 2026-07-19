@@ -52,5 +52,8 @@ export async function POST(request: NextRequest) {
   if (coupon.max_uses && coupon.uses_count >= coupon.max_uses)
     return NextResponse.json({ error: 'Coupon esaurito' }, { status: 400 })
 
+  if (coupon.scope === 'promo' && scope !== 'promo')
+    return NextResponse.json({ error: 'Coupon valido solo nella sezione promo' }, { status: 400 })
+
   return NextResponse.json(coupon)
 }

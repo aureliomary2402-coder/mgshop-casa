@@ -6,11 +6,14 @@ import { useCartStore } from '@/lib/cart-store'
 import { toast } from 'sonner'
 import type { Product } from '@/lib/types'
 import { Reveal } from '@/components/shop/reveal'
-import { AmbientBubbles } from '@/components/shop/ambient-bubbles'
 
 interface PromoData {
   is_active: boolean; title: string; subtitle: string; content: string
   image_url: string; badge_text: string; expires_at: string; featured_product_ids: string[]
+}
+
+interface Coupon {
+  code: string; discount_percent: number; discount_fixed: number
 }
 
 function Countdown({ expiresAt }: { expiresAt: string }) {
@@ -36,9 +39,18 @@ function Countdown({ expiresAt }: { expiresAt: string }) {
   )
 }
 
-function PromoProductCard({ product }: { product: Product }) {
+function calcDiscountedPrice(price: number, coupon: Coupon | null): number | null {
+  if (!coupon) return null
+  if (coupon.discount_percent) return price * (1 - coupon.discount_percent / 100)
+  if (coupon.discount_fixed) return Math.max(0, price - coupon.discount_fixed)
+  return null
+}
+
+function PromoProductCard({ product, coupon }: { product: Product; coupon: Coupon | null }) {
   const addItem = useCartStore(s => s.addItem)
   const [added, setAdded] = useState(false)
+
+  const discounted = calcDiscountedPrice(product.price, coupon)
 
   const handleAdd = () => {
     addItem(product)
@@ -51,10 +63,15 @@ function PromoProductCard({ product }: { product: Product }) {
     <div className="bg-white rounded-2xl overflow-hidden shadow-sm hover:-translate-y-1 transition-all group"
       style={{ border: '1px solid rgba(217,119,6,0.1)', boxShadow: '0 4px 20px rgba(217,119,6,0.08)' }}>
       <Link href={`/prodotto/${product.id}`}>
-        <div className="aspect-square overflow-hidden" style={{ background: 'linear-gradient(135deg,#faf7f2,#fef3c7)' }}>
+        <div className="aspect-square overflow-hidden relative" style={{ background: 'linear-gradient(135deg,#faf7f2,#fef3c7)' }}>
           {product.cover_image
             ? <img src={product.cover_image} alt={product.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
             : <div className="w-full h-full flex items-center justify-center"><ImageIcon className="w-10 h-10" style={{color:'rgba(217,119,6,0.3)'}}/></div>}
+          {discounted !== null && coupon && coupon.discount_percent > 0 && (
+            <div className="absolute top-2 left-2 text-white text-xs font-bold px-2 py-1 rounded-lg" style={{ background: '#dc2626' }}>
+              -{coupon.discount_percent}%
+            </div>
+          )}
         </div>
       </Link>
       <div className="p-4">
@@ -62,7 +79,16 @@ function PromoProductCard({ product }: { product: Product }) {
           <h3 className="font-semibold text-sm text-stone-800 line-clamp-2 mb-2 hover:text-amber-700 transition-colors">{product.name}</h3>
         </Link>
         <div className="flex items-center justify-between">
-          <span className="font-bold text-lg" style={{ color: '#d97706' }}>euro{product.price.toFixed(2)}</span>
+          <div className="flex flex-col">
+            {discounted !== null ? (
+              <>
+                <span className="text-xs text-stone-400 line-through">euro{product.price.toFixed(2)}</span>
+                <span className="font-bold text-lg" style={{ color: '#dc2626' }}>euro{discounted.toFixed(2)}</span>
+              </>
+            ) : (
+              <span className="font-bold text-lg" style={{ color: '#d97706' }}>euro{product.price.toFixed(2)}</span>
+            )}
+          </div>
           <button onClick={handleAdd}
             className="flex items-center gap-1.5 text-white text-xs font-semibold px-4 py-2 rounded-full transition-all active:scale-95"
             style={{ background: added ? 'linear-gradient(135deg,#16a34a,#22c55e)' : 'linear-gradient(135deg,#d97706,#f59e0b)', boxShadow: '0 4px 12px rgba(217,119,6,0.3)' }}>
@@ -78,6 +104,7 @@ function PromoProductCard({ product }: { product: Product }) {
 export default function PromoPage() {
   const [promo, setPromo] = useState<PromoData|null>(null)
   const [products, setProducts] = useState<Product[]>([])
+  const [coupon, setCoupon] = useState<Coupon|null>(null)
   const [loading, setLoading] = useState(true)
   const cartCount = useCartStore(s => s.getTotalItems)()
 
@@ -93,6 +120,10 @@ export default function PromoPage() {
         setLoading(false)
       })
       .catch(()=>setLoading(false))
+    fetch('/api/coupons?scope=promo', { cache: 'no-store' })
+      .then(r=>r.json())
+      .then(setCoupon)
+      .catch(()=>setCoupon(null))
   },[])
 
   if(loading) return (
@@ -123,7 +154,6 @@ export default function PromoPage() {
       {/* Hero */}
       <div className="relative overflow-hidden" style={{background:'linear-gradient(135deg,#1a0800,#2d1500)'}}>
         <div className="absolute top-0 left-1/4 w-96 h-96 rounded-full blur-[100px] opacity-20" style={{background:'radial-gradient(circle,#d97706,transparent)'}}/>
-        <AmbientBubbles count={7} theme="dark" />
         <div className="relative z-10 max-w-4xl mx-auto px-4 py-12 text-center">
           <div className="flex items-center justify-between mb-6">
             <Link href="/shop" className="inline-flex items-center gap-2 text-amber-400/60 hover:text-amber-300 text-sm transition-colors"><ArrowLeft className="w-4 h-4"/> Negozio</Link>
@@ -145,7 +175,7 @@ export default function PromoPage() {
       <div className="max-w-5xl mx-auto px-4 py-10 space-y-10">
         {(promo.image_url||promo.content)&&(
           <Reveal className={`grid gap-6 ${promo.image_url&&promo.content?'md:grid-cols-2':''}`}>
-            {promo.image_url&&<div className="rounded-2xl overflow-hidden" style={{boxShadow:'0 16px 40px rgba(217,119,6,0.12)'}}><img src={promo.image_url} alt="Promo" className="w-full h-full object-cover max-h-72"/></div>}
+            {promo.image_url&&<div className="rounded-2xl overflow-hidden aspect-video" style={{boxShadow:'0 16px 40px rgba(217,119,6,0.12)'}}><img src={promo.image_url} alt="Promo" className="w-full h-full object-cover"/></div>}
             {promo.content&&<div className="flex items-center"><div className="bg-white rounded-2xl p-6 w-full" style={{border:'1px solid rgba(217,119,6,0.1)'}}><p className="text-stone-600 leading-relaxed whitespace-pre-line">{promo.content}</p></div></div>}
           </Reveal>
         )}
@@ -155,7 +185,7 @@ export default function PromoPage() {
           <Reveal delay={100}>
             <h2 className="text-2xl font-bold mb-6" style={{color:'#1a0800'}}>Prodotti in promozione</h2>
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 stagger-children">
-              {products.map(p => <PromoProductCard key={p.id} product={p}/>)}
+              {products.map(p => <PromoProductCard key={p.id} product={p} coupon={coupon}/>)}
             </div>
             {/* Sticky cart button */}
             {cartCount > 0 && (
