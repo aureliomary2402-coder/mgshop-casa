@@ -23,16 +23,33 @@ export default function WelcomePage() {
       style={{ background: 'linear-gradient(135deg,#0d0500 0%,#1a0800 40%,#2d1500 70%,#1a0800 100%)' }}>
 
       <div className="absolute inset-0 pointer-events-none">
-        <div className="absolute w-[600px] h-[600px] rounded-full blur-[120px] opacity-25"
-          style={{ background: 'radial-gradient(circle,#d97706,#92400e)', top: '50%', left: '50%', transform: `translate(calc(-50% + ${mousePos.x * 80}px),calc(-50% + ${mousePos.y * 60}px))`, transition: 'transform 1.2s cubic-bezier(0.22,1,0.36,1)' }} />
-        <div className="absolute w-[400px] h-[400px] rounded-full blur-[80px] opacity-15"
-          style={{ background: 'radial-gradient(circle,#f59e0b,#b45309)', top: '30%', left: '30%', transform: `translate(calc(-50% + ${mousePos.x * -50}px),calc(-50% + ${mousePos.y * -40}px))`, transition: 'transform 0.8s cubic-bezier(0.22,1,0.36,1)' }} />
+        <div className="absolute w-[600px] h-[600px] rounded-full"
+          style={{ top: '50%', left: '50%', transform: `translate(calc(-50% + ${mousePos.x * 80}px),calc(-50% + ${mousePos.y * 60}px))`, transition: 'transform 1.2s cubic-bezier(0.22,1,0.36,1)' }}>
+          <div className="w-full h-full rounded-full blur-[120px] opacity-25 animate-breathe" style={{ background: 'radial-gradient(circle,#d97706,#92400e)' }} />
+        </div>
+        <div className="absolute w-[400px] h-[400px] rounded-full"
+          style={{ top: '30%', left: '30%', transform: `translate(calc(-50% + ${mousePos.x * -50}px),calc(-50% + ${mousePos.y * -40}px))`, transition: 'transform 0.8s cubic-bezier(0.22,1,0.36,1)' }}>
+          <div className="w-full h-full rounded-full blur-[80px] opacity-15 animate-breathe" style={{ background: 'radial-gradient(circle,#f59e0b,#b45309)', animationDelay: '2s' }} />
+        </div>
+        {/* Scintille fluttuanti */}
+        {[
+          { left: '12%', size: 3, dur: 7, delay: 0 },
+          { left: '22%', size: 2, dur: 9, delay: 1.5 },
+          { left: '38%', size: 4, dur: 8, delay: 3 },
+          { left: '58%', size: 2, dur: 10, delay: 0.5 },
+          { left: '72%', size: 3, dur: 7.5, delay: 2.5 },
+          { left: '84%', size: 2, dur: 9.5, delay: 4 },
+          { left: '92%', size: 3, dur: 8.5, delay: 1 },
+        ].map((s, i) => (
+          <div key={i} className="absolute rounded-full bg-amber-300 animate-float-up"
+            style={{ left: s.left, bottom: '-10px', width: s.size, height: s.size, animationDuration: `${s.dur}s`, animationDelay: `${s.delay}s` }} />
+        ))}
       </div>
 
       <div className="absolute inset-0 opacity-[0.03]" style={{ backgroundImage: 'linear-gradient(rgba(251,191,36,0.8) 1px,transparent 1px),linear-gradient(90deg,rgba(251,191,36,0.8) 1px,transparent 1px)', backgroundSize: '60px 60px' }} />
 
-      <div className={`relative z-10 text-center px-6 max-w-2xl mx-auto transition-all duration-700 ${mounted ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
-        <div className="mb-10">
+      <div className="relative z-10 text-center px-6 max-w-2xl mx-auto">
+        <div className={`mb-10 ${mounted ? 'animate-fade-in-up' : 'opacity-0'}`} style={mounted ? { animationDelay: '0ms' } : undefined}>
           <div className="inline-flex items-center justify-center w-20 h-20 rounded-2xl mb-6 animate-float"
             style={{ background: 'linear-gradient(135deg,#d97706,#f59e0b)', boxShadow: '0 20px 60px rgba(217,119,6,0.5)' }}>
             <ShoppingBag className="w-10 h-10 text-white" />
@@ -43,9 +60,11 @@ export default function WelcomePage() {
           <p className="text-xl text-amber-200/40 tracking-[0.3em] uppercase font-light">Casa</p>
         </div>
 
-        <p className="text-stone-400 text-lg mb-10 leading-relaxed">Prodotti selezionati per la tua casa.<br />Qualità e stile in ogni angolo.</p>
+        <p className={`text-stone-400 text-lg mb-10 leading-relaxed ${mounted ? 'animate-fade-in-up' : 'opacity-0'}`} style={mounted ? { animationDelay: '120ms' } : undefined}>
+          Prodotti selezionati per la tua casa.<br />Qualità e stile in ogni angolo.
+        </p>
 
-        <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-8">
+        <div className={`flex flex-col sm:flex-row items-center justify-center gap-4 mb-8 ${mounted ? 'animate-fade-in-up' : 'opacity-0'}`} style={mounted ? { animationDelay: '220ms' } : undefined}>
           <Link href="/shop"
             className="group w-full sm:w-auto flex items-center justify-center gap-3 font-bold text-lg px-10 py-5 rounded-2xl text-black transition-all hover:scale-105 active:scale-95 btn-press"
             style={{ background: 'linear-gradient(135deg,#d97706,#f59e0b)', boxShadow: '0 16px 40px rgba(217,119,6,0.4)' }}>
@@ -69,12 +88,12 @@ export default function WelcomePage() {
           )}
         </div>
 
-        <div className="flex justify-center mb-6">
+        <div className={`flex justify-center mb-6 ${mounted ? 'animate-fade-in-up' : 'opacity-0'}`} style={mounted ? { animationDelay: '320ms' } : undefined}>
           <CodBanner variant="dark" />
         </div>
 
         {/* Icone social */}
-        <div className="flex items-center justify-center gap-3 mt-2">
+        <div className={`flex items-center justify-center gap-3 mt-2 ${mounted ? 'animate-fade-in-up' : 'opacity-0'}`} style={mounted ? { animationDelay: '420ms' } : undefined}>
           <a href={SOCIAL_LINKS.instagram} target="_blank" rel="noopener noreferrer" aria-label="Instagram"
             className="w-11 h-11 rounded-full flex items-center justify-center transition-all hover:scale-110 btn-press"
             style={{ background: 'rgba(217,70,160,0.15)', border: '1px solid rgba(217,70,160,0.3)', color: '#f472b6' }}>
@@ -92,7 +111,7 @@ export default function WelcomePage() {
           </a>
         </div>
 
-        <div className="flex items-center justify-center gap-8 mt-10">
+        <div className={`flex items-center justify-center gap-8 mt-10 ${mounted ? 'animate-fade-in-up' : 'opacity-0'}`} style={mounted ? { animationDelay: '520ms' } : undefined}>
           {[['400+', 'Prodotti'], ['⭐⭐⭐⭐⭐', 'Qualità'], ['🚚', 'Consegna rapida']].map(([v, l]) => (
             <div key={l} className="text-center">
               <div className="text-lg font-bold text-amber-400">{v}</div>
