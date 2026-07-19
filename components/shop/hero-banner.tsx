@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 import type { Banner } from '@/lib/types'
+import { AmbientBubbles } from './ambient-bubbles'
 
 export function HeroBanner({ banners }: { banners: Banner[] }) {
   const [currentIndex, setCurrentIndex] = useState(0)
@@ -16,8 +17,9 @@ export function HeroBanner({ banners }: { banners: Banner[] }) {
 
   if (banners.length === 0) {
     return (
-      <section className="bg-gradient-to-r from-stone-100 to-amber-50">
-        <div className="max-w-7xl mx-auto px-4 py-20 text-center">
+      <section className="relative overflow-hidden bg-gradient-to-r from-stone-100 to-amber-50">
+        <AmbientBubbles count={6} theme="light" />
+        <div className="relative z-10 max-w-7xl mx-auto px-4 py-20 text-center">
           <h1 className="text-3xl md:text-5xl font-bold tracking-tight mb-4 text-stone-800">
             Benvenuto in <span className="text-amber-600">MGShop Casa</span>
           </h1>
