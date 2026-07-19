@@ -116,6 +116,14 @@
 }
 .animate-bubble-bob { animation: bubbleBob 3.5s ease-in-out infinite; }
 
+@keyframes bubbleRiseSmall {
+  0% { transform: translateY(0) scale(0.6); opacity: 0; }
+  15% { opacity: 0.8; }
+  80% { opacity: 0.35; }
+  100% { transform: translateY(-95px) scale(0.9); opacity: 0; }
+}
+.animate-bubble-rise-small { animation: bubbleRiseSmall linear infinite; }
+
 @keyframes bubbleRise {
   0% { transform: translate(0, 0) scale(0.6); opacity: 0; }
   8% { opacity: 0.9; }
