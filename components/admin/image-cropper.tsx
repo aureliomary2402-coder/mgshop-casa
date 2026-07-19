@@ -64,7 +64,7 @@ export function ImageCropper({ file, onCancel, onConfirm, outputWidth = 1600, as
     image.onload = () => {
       setImg(image)
       setBgColor(detectEdgeColor(image))
-      const bs = Math.max(VIEWPORT_W / image.naturalWidth, viewportH / image.naturalHeight)
+      const bs = Math.min(VIEWPORT_W / image.naturalWidth, viewportH / image.naturalHeight)
       const dW = image.naturalWidth * bs
       const dH = image.naturalHeight * bs
       setZoom(1)
@@ -75,7 +75,7 @@ export function ImageCropper({ file, onCancel, onConfirm, outputWidth = 1600, as
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [file])
 
-  const baseScale = img ? Math.max(VIEWPORT_W / img.naturalWidth, viewportH / img.naturalHeight) : 1
+  const baseScale = img ? Math.min(VIEWPORT_W / img.naturalWidth, viewportH / img.naturalHeight) : 1
   const displayScale = baseScale * zoom
   const dispW = img ? img.naturalWidth * displayScale : 0
   const dispH = img ? img.naturalHeight * displayScale : 0
