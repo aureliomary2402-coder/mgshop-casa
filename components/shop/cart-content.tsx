@@ -15,9 +15,10 @@ export function CartContent({ scope = 'shop' }: { scope?: string }) {
   const [error, setError] = useState('')
   const [couponCode, setCouponCode] = useState('')
   const [couponInput, setCouponInput] = useState('')
-  const [couponData, setCouponData] = useState<{ discount_percent: number; discount_fixed: number; code: string } | null>(null)
+  const [couponData, setCouponData] = useState<{ discount_percent: number; discount_fixed: number; code: string; scope: string } | null>(null)
   const [couponError, setCouponError] = useState('')
   const [couponLoading, setCouponLoading] = useState(false)
+  const [promoProductIds, setPromoProductIds] = useState<string[]>([])
 
   const items = useCartStore(s => s.items)
   const updateQuantity = useCartStore(s => s.updateQuantity)
@@ -25,11 +26,23 @@ export function CartContent({ scope = 'shop' }: { scope?: string }) {
   const clearCart = useCartStore(s => s.clearCart)
   const getTotalPrice = useCartStore(s => s.getTotalPrice)
 
-  useEffect(() => { setMounted(true) }, [])
+  useEffect(() => {
+    setMounted(true)
+    // Carica quali prodotti fanno parte della promo attiva, per calcolare lo sconto solo su quelli quando serve
+    fetch('/api/promo', { cache: 'no-store' })
+      .then(r => r.json())
+      .then(d => setPromoProductIds(d?.is_active ? (d.featured_product_ids || []) : []))
+      .catch(() => setPromoProductIds([]))
+  }, [])
 
   const subtotal = mounted ? getTotalPrice() : 0
+  // Se il coupon vale solo per la promo, lo sconto si calcola solo sui prodotti in promo presenti nel carrello
+  const promoSubtotal = items.reduce((sum, i) => promoProductIds.includes(i.product.id) ? sum + i.product.price * i.quantity : sum, 0)
+  const discountBase = couponData?.scope === 'promo' ? promoSubtotal : subtotal
   const discountAmount = couponData
-    ? couponData.discount_percent > 0 ? subtotal * couponData.discount_percent / 100 : couponData.discount_fixed
+    ? couponData.discount_percent > 0
+      ? discountBase * couponData.discount_percent / 100
+      : Math.min(couponData.discount_fixed, discountBase)
     : 0
   const total = Math.max(0, subtotal - discountAmount)
 
@@ -171,7 +184,11 @@ export function CartContent({ scope = 'shop' }: { scope?: string }) {
               </>
             ) : (
               <div className="flex items-center justify-between p-3 rounded-xl" style={{background:'rgba(217,119,6,0.06)',border:'1px solid rgba(217,119,6,0.2)'}}>
-                <div><p className="text-sm font-bold text-amber-700">{couponData.code}</p><p className="text-xs text-stone-500">{couponData.discount_percent>0?`-${couponData.discount_percent}%`:`-€${couponData.discount_fixed}`}</p></div>
+                <div>
+                  <p className="text-sm font-bold text-amber-700">{couponData.code}</p>
+                  <p className="text-xs text-stone-500">{couponData.discount_percent>0?`-${couponData.discount_percent}%`:`-€${couponData.discount_fixed}`}{couponData.scope==='promo' ? ' (solo prodotti in promo)' : ' (tutto il carrello)'}</p>
+                  {couponData.scope==='promo' && promoSubtotal===0 && <p className="text-xs text-red-500 mt-1">Nessun prodotto in promo nel carrello: sconto non applicato</p>}
+                </div>
                 <button onClick={removeCoupon} className="p-1 hover:bg-amber-100 rounded-lg"><X className="w-4 h-4 text-amber-600"/></button>
               </div>
             )}
