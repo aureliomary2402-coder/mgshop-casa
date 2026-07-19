@@ -24,6 +24,7 @@ export function PromoManager() {
   const [error, setError] = useState('')
   const [allProducts, setAllProducts] = useState<Product[]>([])
   const [cropFile, setCropFile] = useState<File | null>(null)
+  const [cropAspect, setCropAspect] = useState(3)
   const [productSearch, setProductSearch] = useState('')
   const [showProductPicker, setShowProductPicker] = useState(false)
 
@@ -150,6 +151,23 @@ export function PromoManager() {
         <div>
           <label className="text-xs font-medium text-stone-500 mb-1 block">Immagine</label>
           <Input value={imageUrl} onChange={e => setImageUrl(e.target.value)} placeholder="URL immagine" className="mb-2" />
+          <div className="flex flex-wrap gap-1.5 mb-2">
+            {[
+              { label: 'Panoramico 3:1', value: 3 },
+              { label: 'Largo 16:9', value: 16 / 9 },
+              { label: 'Standard 4:3', value: 4 / 3 },
+              { label: 'Quadrato 1:1', value: 1 },
+              { label: 'Verticale 4:5', value: 4 / 5 },
+            ].map(opt => (
+              <button key={opt.label} type="button" onClick={() => setCropAspect(opt.value)}
+                className="text-xs font-medium px-2.5 py-1 rounded-lg border transition-colors"
+                style={cropAspect === opt.value
+                  ? { background: 'rgba(217,119,6,0.12)', borderColor: 'rgba(217,119,6,0.4)', color: '#b45309' }
+                  : { background: 'transparent', borderColor: 'rgba(0,0,0,0.1)', color: '#78716c' }}>
+                {opt.label}
+              </button>
+            ))}
+          </div>
           <label className="inline-flex items-center gap-2 cursor-pointer text-sm text-amber-700 font-medium">
             <ImageIcon className="w-4 h-4" /> {uploading ? 'Caricamento...' : 'Carica file'}
             <input type="file" accept="image/*" className="hidden" onChange={handleImageSelect} disabled={uploading} />
@@ -237,7 +255,7 @@ export function PromoManager() {
       {cropFile && (
         <ImageCropper
           file={cropFile}
-          aspectRatio={3}
+          aspectRatio={cropAspect}
           outputWidth={1800}
           onCancel={handleCropCancel}
           onConfirm={handleCropConfirm}
