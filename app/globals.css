@@ -110,6 +110,12 @@
 }
 .animate-breathe { animation: breathe 6s ease-in-out infinite; }
 
+@keyframes bubbleBob {
+  0%, 100% { transform: translateY(0) scale(1); }
+  50% { transform: translateY(-5px) scale(1.06); }
+}
+.animate-bubble-bob { animation: bubbleBob 3.5s ease-in-out infinite; }
+
 @keyframes bubbleRise {
   0% { transform: translate(0, 0) scale(0.6); opacity: 0; }
   8% { opacity: 0.9; }
