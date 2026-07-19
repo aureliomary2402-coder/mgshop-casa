@@ -37,10 +37,10 @@ export function LoyaltyBanner({ compact = false }: { compact?: boolean }) {
   )
 
   return (
-    <div className="rounded-2xl overflow-hidden"
-      style={{ background: 'linear-gradient(135deg,#1a0800,#2d1500)', boxShadow: '0 8px 32px rgba(217,119,6,0.15)' }}>
+    <div className="rounded-2xl overflow-hidden bg-white"
+      style={{ border: '1px solid rgba(217,119,6,0.15)', boxShadow: '0 8px 32px rgba(217,119,6,0.08)' }}>
       <div className="relative p-5">
-        <div className="absolute top-0 right-0 w-40 h-40 rounded-full blur-3xl opacity-20"
+        <div className="absolute top-0 right-0 w-40 h-40 rounded-full blur-3xl opacity-10"
           style={{ background: 'radial-gradient(circle,#d97706,transparent)' }} />
         <div className="relative z-10">
           <div className="flex items-center gap-2 mb-3">
@@ -48,31 +48,31 @@ export function LoyaltyBanner({ compact = false }: { compact?: boolean }) {
               style={{ background: 'linear-gradient(135deg,#d97706,#f59e0b)' }}>
               <Gift className="w-4 h-4 text-white" />
             </div>
-            <span className="font-bold text-white text-sm">Programma Fedeltà MGShop</span>
+            <span className="font-bold text-sm" style={{ color: '#1a0800' }}>Programma Fedeltà MGShop</span>
           </div>
           <div className="grid grid-cols-3 gap-3 mb-4">
             <div className="text-center">
-              <p className="text-2xl font-black text-amber-400">1</p>
-              <p className="text-xs text-amber-200/60">punto ogni</p>
-              <p className="text-sm font-bold text-white">{euroPerPoint}€</p>
+              <p className="text-2xl font-black text-amber-600">1</p>
+              <p className="text-xs text-stone-500">punto ogni</p>
+              <p className="text-sm font-bold" style={{ color: '#1a0800' }}>{euroPerPoint}€</p>
             </div>
             <div className="flex items-center justify-center">
-              <ChevronRight className="w-5 h-5 text-amber-600/50" />
+              <ChevronRight className="w-5 h-5 text-amber-500/50" />
             </div>
             <div className="text-center">
-              <p className="text-2xl font-black text-amber-400">{settings.points_threshold}</p>
-              <p className="text-xs text-amber-200/60">punti =</p>
-              <p className="text-sm font-bold text-white">Premio!</p>
+              <p className="text-2xl font-black text-amber-600">{settings.points_threshold}</p>
+              <p className="text-xs text-stone-500">punti =</p>
+              <p className="text-sm font-bold" style={{ color: '#1a0800' }}>Premio!</p>
             </div>
           </div>
           <div className="flex items-start gap-2 p-3 rounded-xl"
-            style={{ background: 'rgba(217,119,6,0.1)', border: '1px solid rgba(217,119,6,0.2)' }}>
-            <Star className="w-4 h-4 text-amber-400 shrink-0 mt-0.5" />
-            <p className="text-xs text-amber-200/80 leading-relaxed">
-              <strong className="text-amber-300">Premio:</strong> {settings.reward_description}
+            style={{ background: 'rgba(217,119,6,0.06)', border: '1px solid rgba(217,119,6,0.15)' }}>
+            <Star className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" />
+            <p className="text-xs text-stone-600 leading-relaxed">
+              <strong className="text-amber-700">Premio:</strong> {settings.reward_description}
             </p>
           </div>
-          <p className="text-xs text-amber-200/40 mt-3 text-center">
+          <p className="text-xs text-stone-400 mt-3 text-center">
             I punti vengono comunicati via WhatsApp dopo ogni ordine
           </p>
         </div>
