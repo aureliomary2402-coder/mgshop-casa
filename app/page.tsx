@@ -1,7 +1,7 @@
 "use client"
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
-import { ShoppingBag, Sparkles, ArrowRight, Tag } from 'lucide-react'
+import { ShoppingBag, Sparkles, ArrowRight, Tag, Newspaper } from 'lucide-react'
 import { SOCIAL_LINKS, InstagramIcon, TikTokIcon, WhatsAppIcon } from '@/components/shop/social-icons'
 import { CodBanner } from '@/components/shop/cod-banner'
 
@@ -9,10 +9,12 @@ export default function WelcomePage() {
   const [mounted, setMounted] = useState(false)
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 })
   const [promoActive, setPromoActive] = useState(false)
+  const [volantinoActive, setVolantinoActive] = useState(false)
 
   useEffect(() => {
     setMounted(true)
     fetch('/api/promo').then(r => r.json()).then(d => setPromoActive(d.is_active === true)).catch(() => {})
+    fetch('/api/volantino').then(r => r.json()).then(d => setVolantinoActive(d.is_active === true)).catch(() => {})
     const h = (e: MouseEvent) => setMousePos({ x: e.clientX / window.innerWidth - 0.5, y: e.clientY / window.innerHeight - 0.5 })
     window.addEventListener('mousemove', h, { passive: true })
     return () => window.removeEventListener('mousemove', h)
@@ -114,6 +116,21 @@ export default function WelcomePage() {
               className="w-full sm:w-auto flex items-center justify-center gap-3 font-bold text-lg px-10 py-5 rounded-2xl transition-all hover:scale-105 btn-press"
               style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', color: 'rgba(255,255,255,0.4)' }}>
               <Tag className="w-5 h-5" /> Promozioni
+            </Link>
+          )}
+
+          {volantinoActive ? (
+            <Link href="/volantino"
+              className="group w-full sm:w-auto flex items-center justify-center gap-3 font-bold text-lg px-10 py-5 rounded-2xl transition-all hover:scale-105 active:scale-95 btn-press"
+              style={{ background: 'rgba(217,119,6,0.1)', border: '1px solid rgba(217,119,6,0.3)', color: '#f59e0b' }}>
+              <Newspaper className="w-5 h-5" /> Vedi il volantino
+              <span className="text-xs bg-amber-500 text-black px-2 py-0.5 rounded-full font-semibold">VOLANTINO</span>
+            </Link>
+          ) : (
+            <Link href="/volantino"
+              className="w-full sm:w-auto flex items-center justify-center gap-3 font-bold text-lg px-10 py-5 rounded-2xl transition-all hover:scale-105 btn-press"
+              style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', color: 'rgba(255,255,255,0.4)' }}>
+              <Newspaper className="w-5 h-5" /> Volantino
             </Link>
           )}
         </div>
