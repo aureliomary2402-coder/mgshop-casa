@@ -52,8 +52,9 @@ export async function POST(request: NextRequest) {
   if (coupon.max_uses && coupon.uses_count >= coupon.max_uses)
     return NextResponse.json({ error: 'Coupon esaurito' }, { status: 400 })
 
-  if (coupon.scope === 'promo' && scope !== 'promo')
-    return NextResponse.json({ error: 'Coupon valido solo nella sezione promo' }, { status: 400 })
+  // Nota: coupon.scope indica su QUALI PRODOTTI si applica lo sconto (solo promo o tutto il negozio),
+  // non da quale pagina puo' essere riscattato. Il coupon va sempre validato qui; sara' il carrello
+  // a calcolare lo sconto solo sui prodotti in promo se scope === 'promo' (vedi cart-content.tsx).
 
   return NextResponse.json(coupon)
 }
