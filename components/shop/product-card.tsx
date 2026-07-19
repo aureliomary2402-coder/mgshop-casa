@@ -29,7 +29,7 @@ export function ProductCard({ product, index = 0 }: { product: Product; index?: 
     addItem(product)
     toast.success(`${product.name} aggiunto!`, {
       duration: 2000,
-      style: { background: '#fef3c7', border: '1px solid #d97706', color: '#92400e' }
+      style: { background: '#cffafe', border: '1px solid #0891b2', color: '#155e75' }
     })
   }
 
@@ -43,9 +43,9 @@ export function ProductCard({ product, index = 0 }: { product: Product; index?: 
         animationDelay: `${Math.min(index * 40, 400)}ms`,
         animationFillMode: 'both',
         background: 'white',
-        border: '1px solid rgba(217,119,6,0.08)',
+        border: '1px solid rgba(8,145,178,0.08)',
         boxShadow: isHovered
-          ? '0 20px 40px rgba(180,100,0,0.15), 0 8px 16px rgba(0,0,0,0.06)'
+          ? '0 20px 40px rgba(8,145,178,0.15), 0 8px 16px rgba(0,0,0,0.06)'
           : '0 2px 8px rgba(0,0,0,0.04)',
         transform: isHovered
           ? `perspective(800px) rotateX(${tilt.x}deg) rotateY(${tilt.y}deg) translateY(-6px) scale(1.02)`
@@ -58,7 +58,7 @@ export function ProductCard({ product, index = 0 }: { product: Product; index?: 
       onMouseLeave={() => { setIsHovered(false); setTilt({ x: 0, y: 0 }) }}
     >
       <Link href={`/prodotto/${product.id}`} className="block">
-        <div className="relative aspect-square overflow-hidden" style={{ background: 'linear-gradient(135deg, #faf7f2, #fef3c7)' }}>
+        <div className="relative aspect-square overflow-hidden" style={{ background: 'linear-gradient(135deg, #f0fbfd, #cffafe)' }}>
           {imgUrl && !imgError ? (
             <img
               src={imgUrl}
@@ -69,15 +69,15 @@ export function ProductCard({ product, index = 0 }: { product: Product; index?: 
             />
           ) : (
             <div className="w-full h-full flex items-center justify-center">
-              <ImageIcon className="w-10 h-10" style={{ color: 'rgba(217,119,6,0.3)' }} />
+              <ImageIcon className="w-10 h-10" style={{ color: 'rgba(8,145,178,0.3)' }} />
             </div>
           )}
           <div className="absolute inset-0 flex items-center justify-center transition-all duration-300"
-            style={{ background: isHovered ? 'rgba(26,8,0,0.15)' : 'rgba(26,8,0,0)' }}>
+            style={{ background: isHovered ? 'rgba(12,43,54,0.15)' : 'rgba(12,43,54,0)' }}>
             <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold transition-all duration-300"
               style={{
-                background: 'rgba(250,247,242,0.95)',
-                color: '#92400e',
+                background: 'rgba(240,251,253,0.95)',
+                color: '#155e75',
                 opacity: isHovered ? 1 : 0,
                 transform: isHovered ? 'translateY(0) scale(1)' : 'translateY(6px) scale(0.9)',
               }}>
@@ -90,16 +90,16 @@ export function ProductCard({ product, index = 0 }: { product: Product; index?: 
       <div className="p-3">
         <Link href={`/prodotto/${product.id}`}>
           <h3 className="font-semibold text-sm line-clamp-2 mb-2 leading-snug transition-colors"
-            style={{ color: isHovered ? '#92400e' : '#1a0800' }}>
+            style={{ color: isHovered ? '#155e75' : '#0c2b36' }}>
             {product.name}
           </h3>
         </Link>
         <div className="flex items-center justify-between">
-          <span className="font-bold text-base" style={{ color: '#d97706' }}>€{product.price.toFixed(2)}</span>
+          <span className="font-bold text-base" style={{ color: '#0891b2' }}>€{product.price.toFixed(2)}</span>
           <button
             onClick={handleAddToCart}
             className="flex items-center gap-1 text-white text-xs font-semibold px-3 py-1.5 rounded-full btn-press transition-all"
-            style={{ background: 'linear-gradient(135deg, #d97706, #f59e0b)', boxShadow: '0 2px 8px rgba(217,119,6,0.3)' }}>
+            style={{ background: 'linear-gradient(135deg, #0891b2, #06b6d4)', boxShadow: '0 2px 8px rgba(8,145,178,0.3)' }}>
             <ShoppingCart className="w-3.5 h-3.5" />
             <span className="hidden sm:inline">Aggiungi</span>
           </button>

@@ -35,11 +35,11 @@ export function CategoriesManager() {
     fetchCategories()
   }
 
-  if (loading) return <div className="text-center py-8 text-stone-400">Caricamento...</div>
+  if (loading) return <div className="text-center py-8 text-slate-400">Caricamento...</div>
 
   return (
     <div className="space-y-4">
-      <h2 className="font-semibold text-stone-800">Categorie ({categories.length})</h2>
+      <h2 className="font-semibold text-slate-800">Categorie ({categories.length})</h2>
       <div className="flex gap-2">
         <Input
           value={newName}
@@ -47,20 +47,20 @@ export function CategoriesManager() {
           onKeyDown={e => e.key === 'Enter' && handleAdd()}
           placeholder="Nome nuova categoria"
         />
-        <Button onClick={handleAdd} disabled={saving || !newName.trim()} className="bg-amber-600 hover:bg-amber-700 shrink-0 gap-1">
+        <Button onClick={handleAdd} disabled={saving || !newName.trim()} className="bg-cyan-600 hover:bg-cyan-700 shrink-0 gap-1">
           <Plus className="w-4 h-4" /> Aggiungi
         </Button>
       </div>
       <div className="space-y-2">
         {categories.map(c => (
-          <div key={c.id} className="flex items-center justify-between bg-white border border-stone-100 rounded-xl px-4 py-3 shadow-sm">
-            <span className="font-medium text-stone-700">{c.name}</span>
+          <div key={c.id} className="flex items-center justify-between bg-white border border-slate-100 rounded-xl px-4 py-3 shadow-sm">
+            <span className="font-medium text-slate-700">{c.name}</span>
             <button onClick={() => handleDelete(c.id)} className="p-1.5 hover:bg-red-50 rounded-lg transition-colors">
               <Trash2 className="w-4 h-4 text-red-400" />
             </button>
           </div>
         ))}
-        {categories.length === 0 && <p className="text-center py-6 text-stone-400 text-sm">Nessuna categoria</p>}
+        {categories.length === 0 && <p className="text-center py-6 text-slate-400 text-sm">Nessuna categoria</p>}
       </div>
     </div>
   )

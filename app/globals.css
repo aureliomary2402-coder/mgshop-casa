@@ -26,10 +26,10 @@
     --radius: 0.75rem;
 
     /* Brand colors */
-    --amber-warm: #d97706;
-    --amber-light: #fef3c7;
-    --beige: #faf7f2;
-    --beige-dark: #f5efe6;
+    --amber-warm: #0891b2;
+    --amber-light: #cffafe;
+    --beige: #f0fbfd;
+    --beige-dark: #e0f7fa;
   }
 }
 
@@ -37,7 +37,7 @@
   * { @apply border-border; }
   body { 
     @apply bg-background text-foreground;
-    background-color: #faf7f2;
+    background-color: #f0fbfd;
   }
 }
 
@@ -80,8 +80,8 @@
   100% { background-position: 200% center; }
 }
 @keyframes pulse-warm {
-  0%, 100% { box-shadow: 0 0 0 0 rgba(217, 119, 6, 0.4); }
-  50% { box-shadow: 0 0 0 12px rgba(217, 119, 6, 0); }
+  0%, 100% { box-shadow: 0 0 0 0 rgba(8, 145, 178, 0.4); }
+  50% { box-shadow: 0 0 0 12px rgba(8, 145, 178, 0); }
 }
 @keyframes rotate3d {
   0% { transform: perspective(600px) rotateY(0deg); }
@@ -195,7 +195,7 @@
 .animate-badge-pop { animation: badgePop 0.4s cubic-bezier(0.34,1.56,0.64,1); }
 .animate-check-pop { animation: checkPop 0.5s cubic-bezier(0.34,1.56,0.64,1) forwards; }
 .skeleton {
-  background: linear-gradient(90deg, rgba(217,119,6,0.06) 25%, rgba(217,119,6,0.14) 50%, rgba(217,119,6,0.06) 75%);
+  background: linear-gradient(90deg, rgba(8,145,178,0.06) 25%, rgba(8,145,178,0.14) 50%, rgba(8,145,178,0.06) 75%);
   background-size: 800px 100%;
   animation: skeletonShimmer 1.6s ease-in-out infinite;
 }
@@ -228,12 +228,12 @@
 }
 .card-3d:hover {
   transform: perspective(800px) translateY(-8px) rotateX(4deg) rotateY(-2deg) scale(1.02);
-  box-shadow: 0 25px 50px rgba(180, 120, 20, 0.15), 0 8px 20px rgba(0,0,0,0.08);
+  box-shadow: 0 25px 50px rgba(8, 145, 178, 0.15), 0 8px 20px rgba(0,0,0,0.08);
 }
 
 /* ===== SHIMMER TEXT ===== */
 .text-shimmer {
-  background: linear-gradient(90deg, #92400e, #d97706, #f59e0b, #d97706, #92400e);
+  background: linear-gradient(90deg, #155e75, #0891b2, #06b6d4, #0891b2, #155e75);
   background-size: 200% auto;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -243,26 +243,26 @@
 
 /* ===== GLASS ===== */
 .glass {
-  background: rgba(255, 247, 237, 0.8);
+  background: rgba(240, 251, 253, 0.8);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(217, 119, 6, 0.1);
+  border: 1px solid rgba(8, 145, 178, 0.1);
 }
 .glass-dark {
-  background: rgba(20, 10, 0, 0.6);
+  background: rgba(3, 19, 26, 0.6);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
 }
 
 /* ===== WARM GLOW ===== */
 .warm-glow {
-  box-shadow: 0 0 30px rgba(217, 119, 6, 0.2), 0 4px 15px rgba(0,0,0,0.05);
+  box-shadow: 0 0 30px rgba(8, 145, 178, 0.2), 0 4px 15px rgba(0,0,0,0.05);
 }
 .warm-glow-hover {
   transition: box-shadow 0.3s ease;
 }
 .warm-glow-hover:hover {
-  box-shadow: 0 0 40px rgba(217, 119, 6, 0.3), 0 8px 25px rgba(0,0,0,0.08);
+  box-shadow: 0 0 40px rgba(8, 145, 178, 0.3), 0 8px 25px rgba(0,0,0,0.08);
 }
 
 /* ===== BUTTON ===== */

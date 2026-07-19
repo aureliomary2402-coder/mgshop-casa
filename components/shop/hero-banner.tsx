@@ -17,13 +17,13 @@ export function HeroBanner({ banners }: { banners: Banner[] }) {
 
   if (banners.length === 0) {
     return (
-      <section className="relative overflow-hidden bg-gradient-to-r from-stone-100 to-amber-50">
+      <section className="relative overflow-hidden bg-gradient-to-r from-slate-100 to-cyan-50">
         <AmbientBubbles count={6} theme="light" />
         <div className="relative z-10 max-w-7xl mx-auto px-4 py-20 text-center">
-          <h1 className="text-3xl md:text-5xl font-bold tracking-tight mb-4 text-stone-800">
-            Benvenuto in <span className="text-amber-600">MGShop Casa</span>
+          <h1 className="text-3xl md:text-5xl font-bold tracking-tight mb-4 text-slate-800">
+            Benvenuto in <span className="text-cyan-600">MGShop Casa</span>
           </h1>
-          <p className="text-stone-500 text-lg max-w-2xl mx-auto">
+          <p className="text-slate-500 text-lg max-w-2xl mx-auto">
             Scopri la nostra collezione di articoli per la casa. Qualità e stile per ogni ambiente.
           </p>
         </div>

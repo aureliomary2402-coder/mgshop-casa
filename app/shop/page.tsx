@@ -33,10 +33,10 @@ export default async function ShopPage({ searchParams }: { searchParams: Promise
         <LoyaltyBanner />
         {products.length === 0 ? (
           <div className="text-center py-20 animate-fade-in">
-            <div className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4" style={{ background: 'rgba(217,119,6,0.08)' }}>
+            <div className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4" style={{ background: 'rgba(8,145,178,0.08)' }}>
               <span className="text-2xl">🔍</span>
             </div>
-            <p className="text-lg font-medium text-stone-600">Nessun prodotto trovato</p>
+            <p className="text-lg font-medium text-slate-600">Nessun prodotto trovato</p>
           </div>
         ) : (
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3 stagger-children">

@@ -35,7 +35,7 @@ function MiniChart({ data }: { data: { day: string; count: number }[] }) {
           <div className="w-full rounded-t-sm transition-all"
             style={{
               height: `${Math.max((d.count / max) * 44, 2)}px`,
-              background: i === data.length - 1 ? 'linear-gradient(135deg,#d97706,#f59e0b)' : 'rgba(217,119,6,0.2)'
+              background: i === data.length - 1 ? 'linear-gradient(135deg,#0891b2,#06b6d4)' : 'rgba(8,145,178,0.2)'
             }} />
         </div>
       ))}
@@ -84,7 +84,7 @@ export function DashboardStats() {
 
   if (loading) return (
     <div className="space-y-3">
-      {[...Array(4)].map((_, i) => <div key={i} className="bg-stone-100 rounded-xl h-24 animate-pulse" />)}
+      {[...Array(4)].map((_, i) => <div key={i} className="bg-slate-100 rounded-xl h-24 animate-pulse" />)}
     </div>
   )
 
@@ -95,15 +95,15 @@ export function DashboardStats() {
 
       {/* Visite */}
       <div>
-        <h2 className="font-semibold text-stone-800 mb-3 flex items-center gap-2">
-          <Eye className="w-4 h-4 text-amber-600" /> Visite sito
+        <h2 className="font-semibold text-slate-800 mb-3 flex items-center gap-2">
+          <Eye className="w-4 h-4 text-cyan-600" /> Visite sito
         </h2>
         <div className="grid grid-cols-2 gap-3 mb-3">
-          <div className="bg-white border border-stone-100 rounded-xl p-4 shadow-sm col-span-2">
+          <div className="bg-white border border-slate-100 rounded-xl p-4 shadow-sm col-span-2">
             <div className="flex items-start justify-between mb-3">
               <div>
-                <p className="text-3xl font-bold text-stone-800">{analytics?.today ?? 0}</p>
-                <p className="text-xs text-stone-500 mt-0.5">Visite oggi</p>
+                <p className="text-3xl font-bold text-slate-800">{analytics?.today ?? 0}</p>
+                <p className="text-xs text-slate-500 mt-0.5">Visite oggi</p>
               </div>
               <div className={`flex items-center gap-1 text-xs font-medium px-2 py-1 rounded-full ${todayVsYesterday >= 0 ? 'bg-green-50 text-green-600' : 'bg-red-50 text-red-500'}`}>
                 {todayVsYesterday >= 0 ? <ArrowUp className="w-3 h-3" /> : <ArrowDown className="w-3 h-3" />}
@@ -111,7 +111,7 @@ export function DashboardStats() {
               </div>
             </div>
             {analytics && <MiniChart data={analytics.last7Days} />}
-            <div className="flex justify-between text-xs text-stone-400 mt-1">
+            <div className="flex justify-between text-xs text-slate-400 mt-1">
               {analytics?.last7Days.map((d, i) => (
                 <span key={i}>{new Date(d.day).toLocaleDateString('it-IT', { weekday: 'short' })}</span>
               ))}
@@ -123,17 +123,17 @@ export function DashboardStats() {
             { label: '30 giorni', value: analytics?.last30 ?? 0 },
             { label: 'Totale', value: analytics?.total ?? 0 },
           ].map(({ label, value }) => (
-            <div key={label} className="bg-white border border-stone-100 rounded-xl p-4 shadow-sm">
-              <p className="text-xl font-bold text-stone-800">{value}</p>
-              <p className="text-xs text-stone-500 mt-0.5">{label}</p>
+            <div key={label} className="bg-white border border-slate-100 rounded-xl p-4 shadow-sm">
+              <p className="text-xl font-bold text-slate-800">{value}</p>
+              <p className="text-xs text-slate-500 mt-0.5">{label}</p>
             </div>
           ))}
         </div>
 
         {/* Pagine più visitate */}
         {analytics && analytics.topPages.length > 0 && (
-          <div className="bg-white border border-stone-100 rounded-xl p-4 shadow-sm">
-            <p className="text-xs font-semibold text-stone-500 mb-3 flex items-center gap-1">
+          <div className="bg-white border border-slate-100 rounded-xl p-4 shadow-sm">
+            <p className="text-xs font-semibold text-slate-500 mb-3 flex items-center gap-1">
               <BarChart2 className="w-3.5 h-3.5" /> Pagine più visitate (30gg)
             </p>
             <div className="space-y-2">
@@ -143,10 +143,10 @@ export function DashboardStats() {
                   <div key={page} className="space-y-1">
                     <div className="flex justify-between text-xs">
                       <PageLabel page={page} />
-                      <span className="font-medium text-stone-600">{count}</span>
+                      <span className="font-medium text-slate-600">{count}</span>
                     </div>
-                    <div className="h-1.5 rounded-full bg-stone-100 overflow-hidden">
-                      <div className="h-full rounded-full transition-all" style={{ width: `${pct}%`, background: 'linear-gradient(90deg,#d97706,#f59e0b)' }} />
+                    <div className="h-1.5 rounded-full bg-slate-100 overflow-hidden">
+                      <div className="h-full rounded-full transition-all" style={{ width: `${pct}%`, background: 'linear-gradient(90deg,#0891b2,#06b6d4)' }} />
                     </div>
                   </div>
                 )
@@ -158,24 +158,24 @@ export function DashboardStats() {
 
       {/* Ordini */}
       <div>
-        <h2 className="font-semibold text-stone-800 mb-3 flex items-center gap-2">
-          <ShoppingBag className="w-4 h-4 text-amber-600" /> Riepilogo ordini
+        <h2 className="font-semibold text-slate-800 mb-3 flex items-center gap-2">
+          <ShoppingBag className="w-4 h-4 text-cyan-600" /> Riepilogo ordini
         </h2>
         <div className="grid grid-cols-2 gap-3">
           {orders && [
             { label: 'Ordini totali', value: orders.totalOrders, icon: ShoppingBag, color: 'bg-blue-50 text-blue-600' },
             { label: 'Incasso totale', value: `€${orders.totalRevenue.toFixed(2)}`, icon: Euro, color: 'bg-green-50 text-green-600' },
-            { label: 'In attesa', value: orders.pendingOrders, icon: Clock, color: 'bg-yellow-50 text-yellow-600' },
+            { label: 'In attesa', value: orders.pendingOrders, icon: Clock, color: 'bg-teal-50 text-teal-600' },
             { label: 'Completati', value: orders.completedOrders, icon: CheckCircle, color: 'bg-emerald-50 text-emerald-600' },
             { label: 'Ordini oggi', value: orders.todayOrders, icon: TrendingUp, color: 'bg-purple-50 text-purple-600' },
-            { label: 'Incasso oggi', value: `€${orders.todayRevenue.toFixed(2)}`, icon: Package, color: 'bg-amber-50 text-amber-600' },
+            { label: 'Incasso oggi', value: `€${orders.todayRevenue.toFixed(2)}`, icon: Package, color: 'bg-cyan-50 text-cyan-600' },
           ].map(({ label, value, icon: Icon, color }) => (
-            <div key={label} className="bg-white border border-stone-100 rounded-xl p-4 shadow-sm">
+            <div key={label} className="bg-white border border-slate-100 rounded-xl p-4 shadow-sm">
               <div className={`w-8 h-8 rounded-lg flex items-center justify-center mb-2 ${color}`}>
                 <Icon className="w-4 h-4" />
               </div>
-              <p className="text-xl font-bold text-stone-800">{value}</p>
-              <p className="text-xs text-stone-500 mt-0.5">{label}</p>
+              <p className="text-xl font-bold text-slate-800">{value}</p>
+              <p className="text-xs text-slate-500 mt-0.5">{label}</p>
             </div>
           ))}
         </div>
@@ -183,13 +183,13 @@ export function DashboardStats() {
 
       {/* Fedeltà */}
       <div>
-        <h2 className="font-semibold text-stone-800 mb-3 flex items-center gap-2">
-          <Gift className="w-4 h-4 text-amber-600" /> Fedeltà
+        <h2 className="font-semibold text-slate-800 mb-3 flex items-center gap-2">
+          <Gift className="w-4 h-4 text-cyan-600" /> Fedeltà
         </h2>
-        <div className="bg-white border border-stone-100 rounded-xl p-4 shadow-sm flex items-center justify-between">
+        <div className="bg-white border border-slate-100 rounded-xl p-4 shadow-sm flex items-center justify-between">
           <div>
-            <p className="text-2xl font-bold text-stone-800">{loyaltyReadyCount ?? 0}</p>
-            <p className="text-xs text-stone-500 mt-0.5">
+            <p className="text-2xl font-bold text-slate-800">{loyaltyReadyCount ?? 0}</p>
+            <p className="text-xs text-slate-500 mt-0.5">
               {loyaltyReadyCount === 1 ? 'cliente pronto per il premio' : 'clienti pronti per il premio'}
             </p>
           </div>

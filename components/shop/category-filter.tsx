@@ -18,12 +18,12 @@ export function CategoryFilter({ categories }: { categories: Category[] }) {
   return (
     <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-hide">
       <button onClick={() => setCategory('tutti')}
-        className={`shrink-0 px-4 py-1.5 rounded-full text-sm font-medium transition-all ${active === 'tutti' ? 'bg-amber-600 text-white' : 'bg-stone-100 text-stone-600 hover:bg-stone-200'}`}>
+        className={`shrink-0 px-4 py-1.5 rounded-full text-sm font-medium transition-all ${active === 'tutti' ? 'bg-cyan-600 text-white' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'}`}>
         Tutti
       </button>
       {categories.map((cat) => (
         <button key={cat.id} onClick={() => setCategory(cat.slug)}
-          className={`shrink-0 px-4 py-1.5 rounded-full text-sm font-medium transition-all ${active === cat.slug ? 'bg-amber-600 text-white' : 'bg-stone-100 text-stone-600 hover:bg-stone-200'}`}>
+          className={`shrink-0 px-4 py-1.5 rounded-full text-sm font-medium transition-all ${active === cat.slug ? 'bg-cyan-600 text-white' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'}`}>
           {cat.name}
         </button>
       ))}

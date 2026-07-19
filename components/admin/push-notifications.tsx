@@ -69,7 +69,7 @@ export function PushNotifications() {
 
   if (status === 'loading') return null
   if (status === 'unsupported') return (
-    <div className="flex items-center gap-2 text-xs text-stone-400 px-2">
+    <div className="flex items-center gap-2 text-xs text-slate-400 px-2">
       <BellOff className="w-3.5 h-3.5" /> Notifiche non supportate
     </div>
   )
@@ -90,7 +90,7 @@ export function PushNotifications() {
       ) : (
         <button onClick={subscribe} disabled={loading}
           className="flex items-center gap-1.5 text-xs font-medium px-3 py-1.5 rounded-lg transition-colors hover:scale-105 btn-press"
-          style={{ background: 'rgba(217,119,6,0.1)', color: '#d97706', border: '1px solid rgba(217,119,6,0.2)' }}>
+          style={{ background: 'rgba(8,145,178,0.1)', color: '#0891b2', border: '1px solid rgba(8,145,178,0.2)' }}>
           <Bell className="w-3.5 h-3.5" />
           {loading ? 'Attivazione...' : 'Attiva notifiche'}
         </button>

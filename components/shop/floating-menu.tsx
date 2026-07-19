@@ -110,7 +110,7 @@ export function FloatingMenu() {
       <button
         onClick={() => (isOpen ? closeAll() : setMenuOpen(true))}
         className="fixed bottom-5 right-5 z-40 w-14 h-14 rounded-full shadow-lg flex items-center justify-center text-white transition-transform hover:scale-105"
-        style={{ background: 'linear-gradient(135deg,#d97706,#f59e0b)' }}
+        style={{ background: 'linear-gradient(135deg,#0891b2,#06b6d4)' }}
         aria-label="Apri menu"
       >
         {isOpen ? <X className="w-6 h-6" /> : <MenuIcon className="w-6 h-6" />}
@@ -123,30 +123,30 @@ export function FloatingMenu() {
       {menuOpen && !chatOpen && (
         <div className="fixed bottom-24 right-5 z-40 flex flex-col items-end gap-3">
           <a href={SOCIAL_LINKS.instagram} target="_blank" rel="noopener noreferrer"
-            className="flex items-center gap-2.5 pl-4 pr-2 py-2 rounded-full shadow-lg bg-white text-sm font-medium text-stone-700 transition-transform hover:scale-105">
+            className="flex items-center gap-2.5 pl-4 pr-2 py-2 rounded-full shadow-lg bg-white text-sm font-medium text-slate-700 transition-transform hover:scale-105">
             Instagram
-            <span className="w-9 h-9 rounded-full flex items-center justify-center text-white shrink-0" style={{ background: 'linear-gradient(135deg,#f59e0b,#d946ef,#db2777)' }}>
+            <span className="w-9 h-9 rounded-full flex items-center justify-center text-white shrink-0" style={{ background: 'linear-gradient(135deg,#06b6d4,#d946ef,#db2777)' }}>
               <InstagramIcon size={17} />
             </span>
           </a>
           <a href={SOCIAL_LINKS.tiktok} target="_blank" rel="noopener noreferrer"
-            className="flex items-center gap-2.5 pl-4 pr-2 py-2 rounded-full shadow-lg bg-white text-sm font-medium text-stone-700 transition-transform hover:scale-105">
+            className="flex items-center gap-2.5 pl-4 pr-2 py-2 rounded-full shadow-lg bg-white text-sm font-medium text-slate-700 transition-transform hover:scale-105">
             TikTok
-            <span className="w-9 h-9 rounded-full flex items-center justify-center text-white bg-stone-900 shrink-0">
+            <span className="w-9 h-9 rounded-full flex items-center justify-center text-white bg-slate-900 shrink-0">
               <TikTokIcon size={16} />
             </span>
           </a>
           <a href={SOCIAL_LINKS.whatsapp} target="_blank" rel="noopener noreferrer"
-            className="flex items-center gap-2.5 pl-4 pr-2 py-2 rounded-full shadow-lg bg-white text-sm font-medium text-stone-700 transition-transform hover:scale-105">
+            className="flex items-center gap-2.5 pl-4 pr-2 py-2 rounded-full shadow-lg bg-white text-sm font-medium text-slate-700 transition-transform hover:scale-105">
             WhatsApp
             <span className="w-9 h-9 rounded-full flex items-center justify-center text-white bg-green-500 shrink-0">
               <WhatsAppIcon size={17} />
             </span>
           </a>
           <button onClick={openChat}
-            className="flex items-center gap-2.5 pl-4 pr-2 py-2 rounded-full shadow-lg bg-white text-sm font-medium text-stone-700 transition-transform hover:scale-105">
+            className="flex items-center gap-2.5 pl-4 pr-2 py-2 rounded-full shadow-lg bg-white text-sm font-medium text-slate-700 transition-transform hover:scale-105">
             Scrivici in chat
-            <span className="w-9 h-9 rounded-full flex items-center justify-center text-white shrink-0" style={{ background: 'linear-gradient(135deg,#d97706,#f59e0b)' }}>
+            <span className="w-9 h-9 rounded-full flex items-center justify-center text-white shrink-0" style={{ background: 'linear-gradient(135deg,#0891b2,#06b6d4)' }}>
               <MessageCircle size={17} />
             </span>
           </button>
@@ -155,66 +155,66 @@ export function FloatingMenu() {
 
       {/* Pannello chat */}
       {chatOpen && (
-        <div className="fixed bottom-24 right-5 z-40 w-[90vw] max-w-sm h-[480px] max-h-[70vh] bg-white rounded-2xl shadow-2xl flex flex-col overflow-hidden border border-stone-100">
-          <div className="px-4 py-3 text-white font-semibold flex items-center gap-2" style={{ background: 'linear-gradient(135deg,#d97706,#f59e0b)' }}>
+        <div className="fixed bottom-24 right-5 z-40 w-[90vw] max-w-sm h-[480px] max-h-[70vh] bg-white rounded-2xl shadow-2xl flex flex-col overflow-hidden border border-slate-100">
+          <div className="px-4 py-3 text-white font-semibold flex items-center gap-2" style={{ background: 'linear-gradient(135deg,#0891b2,#06b6d4)' }}>
             <MessageCircle className="w-4 h-4" /> Scrivici
           </div>
 
           {!identity ? (
             <div className="flex-1 p-5 space-y-3 flex flex-col justify-center">
-              <p className="text-sm text-stone-500 text-center mb-2">Lascia il tuo nome e numero per iniziare a chattare con noi</p>
+              <p className="text-sm text-slate-500 text-center mb-2">Lascia il tuo nome e numero per iniziare a chattare con noi</p>
               <input
                 value={nameInput}
                 onChange={e => setNameInput(e.target.value)}
                 placeholder="Il tuo nome"
-                className="w-full border border-stone-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-500"
+                className="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-cyan-500"
               />
               <input
                 value={phoneInput}
                 onChange={e => setPhoneInput(e.target.value)}
                 placeholder="Numero di telefono"
                 type="tel"
-                className="w-full border border-stone-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-500"
+                className="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-cyan-500"
               />
               <button
                 onClick={startChat}
                 disabled={!nameInput.trim() || !phoneInput.trim()}
                 className="w-full py-2.5 rounded-lg text-sm font-bold text-white disabled:opacity-50"
-                style={{ background: 'linear-gradient(135deg,#d97706,#f59e0b)' }}
+                style={{ background: 'linear-gradient(135deg,#0891b2,#06b6d4)' }}
               >
                 Inizia chat
               </button>
             </div>
           ) : (
             <>
-              <div ref={scrollRef} className="flex-1 overflow-y-auto p-3 space-y-2 bg-stone-50">
+              <div ref={scrollRef} className="flex-1 overflow-y-auto p-3 space-y-2 bg-slate-50">
                 {messages.length === 0 && (
-                  <p className="text-xs text-stone-400 text-center mt-4">Scrivici un messaggio, ti risponderemo al più presto!</p>
+                  <p className="text-xs text-slate-400 text-center mt-4">Scrivici un messaggio, ti risponderemo al più presto!</p>
                 )}
                 {messages.map(m => (
                   <div key={m.id} className={`flex ${m.sender === 'customer' ? 'justify-end' : 'justify-start'}`}>
                     <div
-                      className={`max-w-[75%] px-3 py-2 rounded-2xl text-sm ${m.sender === 'customer' ? 'text-white rounded-br-sm' : 'bg-white text-stone-700 border border-stone-200 rounded-bl-sm'}`}
-                      style={m.sender === 'customer' ? { background: 'linear-gradient(135deg,#d97706,#f59e0b)' } : undefined}
+                      className={`max-w-[75%] px-3 py-2 rounded-2xl text-sm ${m.sender === 'customer' ? 'text-white rounded-br-sm' : 'bg-white text-slate-700 border border-slate-200 rounded-bl-sm'}`}
+                      style={m.sender === 'customer' ? { background: 'linear-gradient(135deg,#0891b2,#06b6d4)' } : undefined}
                     >
                       {m.message}
                     </div>
                   </div>
                 ))}
               </div>
-              <div className="p-3 border-t border-stone-100 flex gap-2">
+              <div className="p-3 border-t border-slate-100 flex gap-2">
                 <input
                   value={text}
                   onChange={e => setText(e.target.value)}
                   onKeyDown={e => e.key === 'Enter' && send()}
                   placeholder="Scrivi un messaggio..."
-                  className="flex-1 border border-stone-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-500"
+                  className="flex-1 border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-cyan-500"
                 />
                 <button
                   onClick={send}
                   disabled={sending || !text.trim()}
                   className="w-10 h-10 rounded-lg flex items-center justify-center text-white disabled:opacity-50 shrink-0"
-                  style={{ background: 'linear-gradient(135deg,#d97706,#f59e0b)' }}
+                  style={{ background: 'linear-gradient(135deg,#0891b2,#06b6d4)' }}
                 >
                   <Send className="w-4 h-4" />
                 </button>

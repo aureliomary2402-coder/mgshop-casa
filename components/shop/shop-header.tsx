@@ -75,38 +75,38 @@ export function ShopHeader() {
 
   return (
     <header className={`sticky top-0 z-50 transition-all duration-300 ${scrolled ? 'shadow-lg' : ''}`}
-      style={{ background: scrolled ? 'rgba(250,247,242,0.97)' : 'rgba(250,247,242,0.98)', backdropFilter: 'blur(16px)', borderBottom: '1px solid rgba(217,119,6,0.1)' }}>
+      style={{ background: scrolled ? 'rgba(240,251,253,0.97)' : 'rgba(240,251,253,0.98)', backdropFilter: 'blur(16px)', borderBottom: '1px solid rgba(8,145,178,0.1)' }}>
       <div className="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between gap-3">
         <Link href="/" className="flex items-center gap-2 shrink-0 group">
           <div className="w-8 h-8 rounded-lg flex items-center justify-center transition-transform group-hover:scale-110"
-            style={{ background: 'linear-gradient(135deg, #d97706, #f59e0b)' }}>
+            style={{ background: 'linear-gradient(135deg, #0891b2, #06b6d4)' }}>
             <Home className="w-4 h-4 text-white" />
           </div>
-          <span className="text-lg font-bold tracking-tight hidden sm:block" style={{ color: '#1a0800' }}>
-            MG<span style={{ color: '#d97706' }}>Shop</span>
+          <span className="text-lg font-bold tracking-tight hidden sm:block" style={{ color: '#0c2b36' }}>
+            MG<span style={{ color: '#0891b2' }}>Shop</span>
           </span>
         </Link>
 
         <div className="flex items-center gap-1">
           <div className="relative" ref={catRef}>
             <button onClick={() => setCatOpen(v => !v)}
-              className="flex items-center gap-1.5 px-3 py-2 rounded-xl text-sm font-medium transition-all hover:bg-amber-50 btn-press"
-              style={{ color: catOpen || activeCategory ? '#d97706' : '#44403c' }}>
+              className="flex items-center gap-1.5 px-3 py-2 rounded-xl text-sm font-medium transition-all hover:bg-cyan-50 btn-press"
+              style={{ color: catOpen || activeCategory ? '#0891b2' : '#44403c' }}>
               <Tag className="w-4 h-4" />
               <span className="hidden sm:inline">{activeCategoryName || 'Categorie'}</span>
               <ChevronDown className={`w-3.5 h-3.5 transition-transform duration-200 ${catOpen ? 'rotate-180' : ''}`} />
             </button>
             {catOpen && (
               <div className="absolute top-full left-0 mt-2 w-56 rounded-2xl overflow-hidden shadow-xl animate-scale-in z-50"
-                style={{ background: 'white', border: '1px solid rgba(217,119,6,0.1)', boxShadow: '0 20px 60px rgba(0,0,0,0.12)' }}>
+                style={{ background: 'white', border: '1px solid rgba(8,145,178,0.1)', boxShadow: '0 20px 60px rgba(0,0,0,0.12)' }}>
                 <div className="p-2">
                   <button onClick={() => handleCategorySelect(null)}
-                    className={`w-full text-left px-3 py-2.5 rounded-xl text-sm font-medium transition-all hover:bg-amber-50 ${!activeCategory ? 'bg-amber-50 text-amber-700' : 'text-stone-700'}`}>
+                    className={`w-full text-left px-3 py-2.5 rounded-xl text-sm font-medium transition-all hover:bg-cyan-50 ${!activeCategory ? 'bg-cyan-50 text-cyan-700' : 'text-slate-700'}`}>
                     Tutti i prodotti
                   </button>
                   {categories.map(cat => (
                     <button key={cat.id} onClick={() => handleCategorySelect(cat.slug)}
-                      className={`w-full text-left px-3 py-2.5 rounded-xl text-sm font-medium transition-all hover:bg-amber-50 ${activeCategory === cat.slug ? 'bg-amber-50 text-amber-700' : 'text-stone-700'}`}>
+                      className={`w-full text-left px-3 py-2.5 rounded-xl text-sm font-medium transition-all hover:bg-cyan-50 ${activeCategory === cat.slug ? 'bg-cyan-50 text-cyan-700' : 'text-slate-700'}`}>
                       {cat.name}
                     </button>
                   ))}
@@ -116,15 +116,15 @@ export function ShopHeader() {
           </div>
 
           {promoActive && (
-            <Link href="/promo" className="hidden sm:flex items-center gap-1.5 px-3 py-2 rounded-xl text-sm font-medium transition-all hover:bg-amber-50 btn-press" style={{ color: '#d97706' }}>
+            <Link href="/promo" className="hidden sm:flex items-center gap-1.5 px-3 py-2 rounded-xl text-sm font-medium transition-all hover:bg-cyan-50 btn-press" style={{ color: '#0891b2' }}>
               <Sparkles className="w-4 h-4" /> Promo
-              <span className="text-xs bg-amber-500 text-white px-1.5 py-0.5 rounded-full font-bold">!</span>
+              <span className="text-xs bg-cyan-500 text-white px-1.5 py-0.5 rounded-full font-bold">!</span>
             </Link>
           )}
           {volantinoActive && (
-            <Link href="/volantino" className="hidden sm:flex items-center gap-1.5 px-3 py-2 rounded-xl text-sm font-medium transition-all hover:bg-amber-50 btn-press" style={{ color: '#d97706' }}>
+            <Link href="/volantino" className="hidden sm:flex items-center gap-1.5 px-3 py-2 rounded-xl text-sm font-medium transition-all hover:bg-cyan-50 btn-press" style={{ color: '#0891b2' }}>
               <Newspaper className="w-4 h-4" /> Volantino
-              <span className="text-xs bg-amber-500 text-white px-1.5 py-0.5 rounded-full font-bold">!</span>
+              <span className="text-xs bg-cyan-500 text-white px-1.5 py-0.5 rounded-full font-bold">!</span>
             </Link>
           )}
         </div>
@@ -132,23 +132,23 @@ export function ShopHeader() {
         <div className="flex items-center gap-2">
           <div className={`transition-all duration-300 ${searchOpen ? 'flex w-40' : 'hidden md:flex w-40'}`}>
             <div className="relative w-full">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-amber-400 pointer-events-none" />
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-cyan-400 pointer-events-none" />
               <input ref={inputRef} type="search" placeholder="Cerca..." value={searchValue}
                 onChange={e => handleSearch(e.target.value)}
                 className="w-full h-9 pl-9 pr-9 rounded-xl text-sm outline-none"
-                style={{ background: 'rgba(217,119,6,0.06)', border: '1px solid rgba(217,119,6,0.15)', color: '#1a0800' }} />
-              {searchValue && <button onClick={handleClearSearch} className="absolute right-3 top-1/2 -translate-y-1/2 text-amber-400"><X className="w-4 h-4" /></button>}
+                style={{ background: 'rgba(8,145,178,0.06)', border: '1px solid rgba(8,145,178,0.15)', color: '#0c2b36' }} />
+              {searchValue && <button onClick={handleClearSearch} className="absolute right-3 top-1/2 -translate-y-1/2 text-cyan-400"><X className="w-4 h-4" /></button>}
             </div>
           </div>
-          <button className="md:hidden w-9 h-9 flex items-center justify-center rounded-lg hover:bg-amber-50 text-amber-700"
+          <button className="md:hidden w-9 h-9 flex items-center justify-center rounded-lg hover:bg-cyan-50 text-cyan-700"
             onClick={() => { searchOpen ? handleClearSearch() : setSearchOpen(true) }}>
             {searchOpen ? <X className="w-5 h-5" /> : <Search className="w-5 h-5" />}
           </button>
-          <Link href="/carrello" className="relative flex items-center gap-2 px-3 py-2 rounded-xl transition-all hover:bg-amber-50 btn-press group">
-            <ShoppingBag className={`w-5 h-5 text-amber-700 group-hover:scale-110 transition-transform ${cartBump ? 'animate-cart-bounce' : ''}`} />
+          <Link href="/carrello" className="relative flex items-center gap-2 px-3 py-2 rounded-xl transition-all hover:bg-cyan-50 btn-press group">
+            <ShoppingBag className={`w-5 h-5 text-cyan-700 group-hover:scale-110 transition-transform ${cartBump ? 'animate-cart-bounce' : ''}`} />
             {itemCount > 0 && (
               <span className={`absolute -top-1 -right-1 w-5 h-5 text-white text-xs rounded-full flex items-center justify-center font-bold ${cartBump ? 'animate-badge-pop' : ''}`}
-                style={{ background: 'linear-gradient(135deg, #d97706, #f59e0b)' }}>
+                style={{ background: 'linear-gradient(135deg, #0891b2, #06b6d4)' }}>
                 {itemCount > 9 ? '9+' : itemCount}
               </span>
             )}

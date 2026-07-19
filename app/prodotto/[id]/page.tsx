@@ -32,7 +32,7 @@ export default function ProductPage() {
   }, [id])
 
   if (loading) return (
-    <div className="min-h-screen" style={{ background: '#faf7f2' }}>
+    <div className="min-h-screen" style={{ background: '#f0fbfd' }}>
       <div className="max-w-5xl mx-auto px-4 py-8">
         <div className="skeleton h-4 w-24 rounded-full mb-8" />
         <div className="grid md:grid-cols-2 gap-10">
@@ -61,8 +61,8 @@ export default function ProductPage() {
     </div>
   )
   if (!product) return (
-    <div className="min-h-screen flex items-center justify-center" style={{ background: '#faf7f2' }}>
-      <p className="text-stone-400">Prodotto non trovato</p>
+    <div className="min-h-screen flex items-center justify-center" style={{ background: '#f0fbfd' }}>
+      <p className="text-slate-400">Prodotto non trovato</p>
     </div>
   )
 
@@ -76,16 +76,16 @@ export default function ProductPage() {
     setAddedAnim(true)
     setTimeout(() => setAddedAnim(false), 600)
     toast.success(`${product.name} aggiunto!`, {
-      style: { background: '#fef3c7', border: '1px solid #d97706', color: '#92400e' }
+      style: { background: '#cffafe', border: '1px solid #0891b2', color: '#155e75' }
     })
   }
 
   return (
-    <div className="min-h-screen" style={{ background: '#faf7f2' }}>
+    <div className="min-h-screen" style={{ background: '#f0fbfd' }}>
       <div className="max-w-5xl mx-auto px-4 py-8">
         <button onClick={() => router.back()}
           className="inline-flex items-center gap-2 mb-8 text-sm font-medium group transition-all hover:gap-3"
-          style={{ color: '#92400e' }}>
+          style={{ color: '#155e75' }}>
           <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" /> Indietro
         </button>
 
@@ -98,21 +98,21 @@ export default function ProductPage() {
             {product.category && (
               <Link href={`/shop?categoria=${product.category.slug}`}
                 className="inline-block text-xs font-semibold px-3 py-1.5 rounded-full hover:opacity-80 transition-opacity"
-                style={{ background: 'rgba(217,119,6,0.1)', color: '#92400e', border: '1px solid rgba(217,119,6,0.2)' }}>
+                style={{ background: 'rgba(8,145,178,0.1)', color: '#155e75', border: '1px solid rgba(8,145,178,0.2)' }}>
                 {product.category.name}
               </Link>
             )}
-            <h1 className="text-2xl md:text-3xl font-bold leading-tight" style={{ color: '#1a0800' }}>{product.name}</h1>
-            <p className="text-4xl font-extrabold" style={{ color: '#d97706' }}>€{product.price.toFixed(2)}</p>
+            <h1 className="text-2xl md:text-3xl font-bold leading-tight" style={{ color: '#0c2b36' }}>{product.name}</h1>
+            <p className="text-4xl font-extrabold" style={{ color: '#0891b2' }}>€{product.price.toFixed(2)}</p>
             {product.description && (
-              <p className="leading-relaxed text-stone-600 border-t border-amber-100 pt-4">{product.description}</p>
+              <p className="leading-relaxed text-slate-600 border-t border-cyan-100 pt-4">{product.description}</p>
             )}
             <div className="flex gap-3 pt-2">
               <button onClick={handleAddToCart}
                 className="flex-1 flex items-center justify-center gap-2.5 font-bold py-4 rounded-2xl text-white btn-press"
                 style={{
-                  background: 'linear-gradient(135deg, #d97706, #f59e0b)',
-                  boxShadow: addedAnim ? '0 0 0 6px rgba(217,119,6,0.2)' : '0 8px 24px rgba(217,119,6,0.35)',
+                  background: 'linear-gradient(135deg, #0891b2, #06b6d4)',
+                  boxShadow: addedAnim ? '0 0 0 6px rgba(8,145,178,0.2)' : '0 8px 24px rgba(8,145,178,0.35)',
                   transform: addedAnim ? 'scale(0.97)' : undefined,
                   transition: 'all 0.2s ease'
                 }}>
@@ -121,14 +121,14 @@ export default function ProductPage() {
               </button>
               <button onClick={() => setLiked(l => !l)}
                 className="w-14 h-14 rounded-2xl flex items-center justify-center transition-all hover:scale-110 btn-press"
-                style={{ background: liked ? 'rgba(239,68,68,0.1)' : 'rgba(217,119,6,0.06)', border: '1px solid', borderColor: liked ? 'rgba(239,68,68,0.2)' : 'rgba(217,119,6,0.15)' }}>
-                <Heart className="w-5 h-5" style={{ color: liked ? '#ef4444' : '#d97706', fill: liked ? '#ef4444' : 'none' }} />
+                style={{ background: liked ? 'rgba(239,68,68,0.1)' : 'rgba(8,145,178,0.06)', border: '1px solid', borderColor: liked ? 'rgba(239,68,68,0.2)' : 'rgba(8,145,178,0.15)' }}>
+                <Heart className="w-5 h-5" style={{ color: liked ? '#ef4444' : '#0891b2', fill: liked ? '#ef4444' : 'none' }} />
               </button>
             </div>
             <div className="grid grid-cols-2 gap-3">
               {[['🚚','Consegna rapida'],['✅','Qualità garantita'],['💬','Supporto WhatsApp'],['🔒','Acquisto sicuro']].map(([icon,label]) => (
-                <div key={label} className="flex items-center gap-2 text-xs text-stone-500 rounded-xl p-3"
-                  style={{ background: 'rgba(217,119,6,0.04)', border: '1px solid rgba(217,119,6,0.08)' }}>
+                <div key={label} className="flex items-center gap-2 text-xs text-slate-500 rounded-xl p-3"
+                  style={{ background: 'rgba(8,145,178,0.04)', border: '1px solid rgba(8,145,178,0.08)' }}>
                   <span>{icon}</span> {label}
                 </div>
               ))}

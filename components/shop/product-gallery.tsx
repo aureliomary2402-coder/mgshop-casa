@@ -97,8 +97,8 @@ export function ProductGallery({ images, productName }: { images: GalleryImage[]
   if (images.length === 0) {
     return (
       <div className="relative aspect-square rounded-3xl overflow-hidden mb-3 flex items-center justify-center"
-        style={{ background: 'linear-gradient(135deg, #faf7f2, #fef3c7)', boxShadow: '0 20px 60px rgba(217,119,6,0.12)' }}>
-        <ImageIcon className="w-20 h-20" style={{ color: 'rgba(217,119,6,0.3)' }} />
+        style={{ background: 'linear-gradient(135deg, #f0fbfd, #cffafe)', boxShadow: '0 20px 60px rgba(8,145,178,0.12)' }}>
+        <ImageIcon className="w-20 h-20" style={{ color: 'rgba(8,145,178,0.3)' }} />
       </div>
     )
   }
@@ -109,8 +109,8 @@ export function ProductGallery({ images, productName }: { images: GalleryImage[]
         <div
           className="relative aspect-square rounded-3xl overflow-hidden mb-3 cursor-pointer"
           style={{
-            background: 'linear-gradient(135deg, #faf7f2, #fef3c7)',
-            boxShadow: '0 20px 60px rgba(217,119,6,0.12)',
+            background: 'linear-gradient(135deg, #f0fbfd, #cffafe)',
+            boxShadow: '0 20px 60px rgba(8,145,178,0.12)',
             transform: `perspective(800px) rotateX(${tilt.x}deg) rotateY(${tilt.y}deg)`,
             transition: 'transform 0.3s ease'
           }}
@@ -129,18 +129,18 @@ export function ProductGallery({ images, productName }: { images: GalleryImage[]
             <>
               <button onClick={(e) => { e.stopPropagation(); goPrev() }}
                 className="absolute left-3 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full items-center justify-center btn-press hidden sm:flex"
-                style={{ background: 'rgba(250,247,242,0.9)', backdropFilter: 'blur(8px)' }}>
-                <ChevronLeft className="w-5 h-5" style={{ color: '#92400e' }} />
+                style={{ background: 'rgba(240,251,253,0.9)', backdropFilter: 'blur(8px)' }}>
+                <ChevronLeft className="w-5 h-5" style={{ color: '#155e75' }} />
               </button>
               <button onClick={(e) => { e.stopPropagation(); goNext() }}
                 className="absolute right-3 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full items-center justify-center btn-press hidden sm:flex"
-                style={{ background: 'rgba(250,247,242,0.9)', backdropFilter: 'blur(8px)' }}>
-                <ChevronRight className="w-5 h-5" style={{ color: '#92400e' }} />
+                style={{ background: 'rgba(240,251,253,0.9)', backdropFilter: 'blur(8px)' }}>
+                <ChevronRight className="w-5 h-5" style={{ color: '#155e75' }} />
               </button>
               <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-1.5 sm:hidden">
                 {images.map((_, i) => (
                   <div key={i} className="w-1.5 h-1.5 rounded-full transition-all"
-                    style={{ background: i === currentImg ? '#d97706' : 'rgba(217,119,6,0.25)' }} />
+                    style={{ background: i === currentImg ? '#0891b2' : 'rgba(8,145,178,0.25)' }} />
                 ))}
               </div>
             </>
@@ -151,7 +151,7 @@ export function ProductGallery({ images, productName }: { images: GalleryImage[]
             {images.map((img, i) => (
               <button key={img.id} onClick={() => setCurrentImg(i)}
                 className="w-16 h-16 rounded-xl overflow-hidden shrink-0 transition-all hover:scale-105 btn-press"
-                style={{ border: i === currentImg ? '2px solid #d97706' : '2px solid transparent' }}>
+                style={{ border: i === currentImg ? '2px solid #0891b2' : '2px solid transparent' }}>
                 <img src={img.image_url} alt="" className="w-full h-full object-cover" />
               </button>
             ))}

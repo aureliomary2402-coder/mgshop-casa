@@ -153,14 +153,14 @@ export function ImageCropper({ file, onCancel, onConfirm, outputWidth = 1600, as
     <div className="fixed inset-0 z-50 bg-black/70 flex items-center justify-center p-4">
       <div className="bg-white rounded-2xl p-5 w-full max-w-sm space-y-4 shadow-xl">
         <div className="flex items-center justify-between">
-          <h3 className="font-semibold text-stone-800">Ritaglia immagine</h3>
-          <button onClick={onCancel} className="p-1.5 rounded-lg hover:bg-stone-100 transition-colors">
-            <X className="w-4 h-4 text-stone-500" />
+          <h3 className="font-semibold text-slate-800">Ritaglia immagine</h3>
+          <button onClick={onCancel} className="p-1.5 rounded-lg hover:bg-slate-100 transition-colors">
+            <X className="w-4 h-4 text-slate-500" />
           </button>
         </div>
 
         <div
-          className="relative mx-auto rounded-xl overflow-hidden border border-stone-200 select-none touch-none"
+          className="relative mx-auto rounded-xl overflow-hidden border border-slate-200 select-none touch-none"
           style={{ width: VIEWPORT_W, height: viewportH, cursor: 'grab', background: bgColor }}
           onMouseDown={(e) => startDrag(e.clientX, e.clientY)}
           onMouseMove={(e) => moveDrag(e.clientX, e.clientY)}
@@ -188,26 +188,26 @@ export function ImageCropper({ file, onCancel, onConfirm, outputWidth = 1600, as
         </div>
 
         <div className="flex items-center gap-3">
-          <ZoomIn className="w-4 h-4 text-stone-400 shrink-0" />
+          <ZoomIn className="w-4 h-4 text-slate-400 shrink-0" />
           <input
             type="range" min={MIN_ZOOM} max={MAX_ZOOM} step="0.01"
             value={zoom}
             onChange={(e) => handleZoomChange(parseFloat(e.target.value))}
-            className="w-full accent-amber-600"
+            className="w-full accent-cyan-600"
           />
         </div>
-        <p className="text-xs text-stone-400 text-center -mt-2">
+        <p className="text-xs text-slate-400 text-center -mt-2">
           Trascina per spostare, usa lo slider per rimpicciolire o ingrandire. Lo spazio vuoto si riempie da solo con il colore della foto.
         </p>
 
         <div className="flex gap-2">
           <button onClick={onCancel}
-            className="flex-1 py-2.5 rounded-xl text-sm font-medium text-stone-500 hover:bg-stone-100 transition-colors">
+            className="flex-1 py-2.5 rounded-xl text-sm font-medium text-slate-500 hover:bg-slate-100 transition-colors">
             Annulla
           </button>
           <button onClick={handleConfirm} disabled={!img || processing}
             className="flex-1 py-2.5 rounded-xl text-sm font-bold text-white flex items-center justify-center gap-1.5 disabled:opacity-50 transition-all"
-            style={{ background: 'linear-gradient(135deg,#d97706,#f59e0b)' }}>
+            style={{ background: 'linear-gradient(135deg,#0891b2,#06b6d4)' }}>
             <Check className="w-4 h-4" /> {processing ? 'Elaborazione...' : 'Conferma'}
           </button>
         </div>
