@@ -43,9 +43,9 @@ export function ProductCard({ product, index = 0 }: { product: Product; index?: 
         animationDelay: `${Math.min(index * 40, 400)}ms`,
         animationFillMode: 'both',
         background: 'white',
-        border: '1px solid rgba(100,116,139,0.08)',
+        border: '1px solid rgba(8,145,178,0.08)',
         boxShadow: isHovered
-          ? '0 20px 40px rgba(100,116,139,0.15), 0 8px 16px rgba(0,0,0,0.06)'
+          ? '0 20px 40px rgba(8,145,178,0.15), 0 8px 16px rgba(0,0,0,0.06)'
           : '0 2px 8px rgba(0,0,0,0.04)',
         transform: isHovered
           ? `perspective(800px) rotateX(${tilt.x}deg) rotateY(${tilt.y}deg) translateY(-6px) scale(1.02)`
@@ -58,7 +58,7 @@ export function ProductCard({ product, index = 0 }: { product: Product; index?: 
       onMouseLeave={() => { setIsHovered(false); setTilt({ x: 0, y: 0 }) }}
     >
       <Link href={`/prodotto/${product.id}`} className="block">
-        <div className="relative aspect-square overflow-hidden" style={{ background: 'linear-gradient(135deg, #fafafa, #cffafe)' }}>
+        <div className="relative aspect-square overflow-hidden" style={{ background: 'linear-gradient(135deg, #f0fbfd, #cffafe)' }}>
           {imgUrl && !imgError ? (
             <img
               src={imgUrl}
@@ -69,7 +69,7 @@ export function ProductCard({ product, index = 0 }: { product: Product; index?: 
             />
           ) : (
             <div className="w-full h-full flex items-center justify-center">
-              <ImageIcon className="w-10 h-10" style={{ color: 'rgba(100,116,139,0.3)' }} />
+              <ImageIcon className="w-10 h-10" style={{ color: 'rgba(8,145,178,0.3)' }} />
             </div>
           )}
           <div className="absolute inset-0 flex items-center justify-center transition-all duration-300"
@@ -99,7 +99,7 @@ export function ProductCard({ product, index = 0 }: { product: Product; index?: 
           <button
             onClick={handleAddToCart}
             className="flex items-center gap-1 text-white text-xs font-semibold px-3 py-1.5 rounded-full btn-press transition-all"
-            style={{ background: 'linear-gradient(135deg, #0891b2, #06b6d4)', boxShadow: '0 2px 8px rgba(100,116,139,0.3)' }}>
+            style={{ background: 'linear-gradient(135deg, #0891b2, #06b6d4)', boxShadow: '0 2px 8px rgba(8,145,178,0.3)' }}>
             <ShoppingCart className="w-3.5 h-3.5" />
             <span className="hidden sm:inline">Aggiungi</span>
           </button>

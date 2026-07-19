@@ -42,7 +42,7 @@ export function LoyaltySettingsManager() {
   return (
     <div className="space-y-5">
       <div className="flex items-center justify-between p-4 rounded-2xl border"
-        style={{ background: settings.is_active ? 'rgba(100,116,139,0.06)' : 'rgba(0,0,0,0.02)', borderColor: settings.is_active ? 'rgba(100,116,139,0.2)' : 'rgba(0,0,0,0.08)' }}>
+        style={{ background: settings.is_active ? 'rgba(8,145,178,0.06)' : 'rgba(0,0,0,0.02)', borderColor: settings.is_active ? 'rgba(8,145,178,0.2)' : 'rgba(0,0,0,0.08)' }}>
         <div>
           <p className="font-semibold text-slate-800">Programma Fedeltà</p>
           <p className="text-xs mt-0.5">

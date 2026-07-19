@@ -6,7 +6,7 @@ export function CodBanner({ variant = 'light' }: { variant?: 'light' | 'dark' })
   if (variant === 'dark') {
     return (
       <div className="inline-flex items-center gap-2.5 px-5 py-2.5 rounded-2xl font-medium text-sm"
-        style={{ background: 'rgba(100,116,139,0.1)', border: '1px solid rgba(100,116,139,0.25)', color: '#22d3ee' }}>
+        style={{ background: 'rgba(8,145,178,0.1)', border: '1px solid rgba(8,145,178,0.25)', color: '#22d3ee' }}>
         <Banknote className="w-4 h-4" />
         Pagamento comodo alla consegna
       </div>

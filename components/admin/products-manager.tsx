@@ -248,7 +248,7 @@ export function ProductsManager() {
 
       <div className="space-y-2">
         {filteredProducts.map(p => (
-          <div key={p.id} className={`flex items-center gap-3 bg-white border rounded-xl p-3 shadow-sm ${p.stock === 0 ? 'border-red-200 bg-red-50/30' : p.stock !== null && p.stock !== undefined && p.stock <= 5 ? 'border-sky-200 bg-slate-50/30' : 'border-slate-100'}`}>
+          <div key={p.id} className={`flex items-center gap-3 bg-white border rounded-xl p-3 shadow-sm ${p.stock === 0 ? 'border-red-200 bg-red-50/30' : p.stock !== null && p.stock !== undefined && p.stock <= 5 ? 'border-sky-200 bg-sky-50/30' : 'border-slate-100'}`}>
             <div className="w-12 h-12 rounded-lg bg-slate-50 overflow-hidden shrink-0">
               {p.cover_image
                 ? <img src={p.cover_image} alt={p.name} className="w-full h-full object-cover" />

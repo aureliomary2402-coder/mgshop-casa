@@ -1,6 +1,6 @@
 export default function ShopLoading() {
   return (
-    <div className="min-h-screen" style={{ background: '#fafafa' }}>
+    <div className="min-h-screen" style={{ background: '#f0fbfd' }}>
       <div className="max-w-7xl mx-auto px-4 py-6">
         <div className="skeleton rounded-2xl h-40 md:h-56 mb-6" />
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3">

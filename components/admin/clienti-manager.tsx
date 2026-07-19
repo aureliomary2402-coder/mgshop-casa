@@ -81,7 +81,7 @@ function LoyaltyPanel({ cliente }: { cliente: Cliente }) {
           </button>
           <button onClick={() => { setAdding(v => !v); setMode('add') }}
             className="flex items-center gap-1 text-xs font-medium px-3 py-1.5 rounded-lg transition-colors"
-            style={{ background: adding ? 'rgba(100,116,139,0.15)' : 'rgba(100,116,139,0.08)', color: '#0891b2', border: '1px solid rgba(100,116,139,0.2)' }}>
+            style={{ background: adding ? 'rgba(8,145,178,0.15)' : 'rgba(8,145,178,0.08)', color: '#0891b2', border: '1px solid rgba(8,145,178,0.2)' }}>
             <Plus className="w-3.5 h-3.5" /> Gestisci punti
           </button>
         </div>

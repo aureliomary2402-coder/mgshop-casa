@@ -24,7 +24,7 @@ export function LoyaltyBanner({ compact = false }: { compact?: boolean }) {
 
   if (compact) return (
     <div className="flex items-center gap-3 p-3 rounded-xl"
-      style={{ background: 'rgba(100,116,139,0.06)', border: '1px solid rgba(100,116,139,0.15)' }}>
+      style={{ background: 'rgba(8,145,178,0.06)', border: '1px solid rgba(8,145,178,0.15)' }}>
       <Gift className="w-5 h-5 text-cyan-600 shrink-0" />
       <div className="flex-1 min-w-0">
         <p className="text-xs font-semibold text-cyan-800">🎁 Raccolta Punti Fedeltà</p>
@@ -39,12 +39,12 @@ export function LoyaltyBanner({ compact = false }: { compact?: boolean }) {
   const sphereStyle = (size: number) => ({
     width: size, height: size,
     background: 'radial-gradient(circle at 30% 25%, #a5f3fc, #0891b2 55%, #155e75 100%)',
-    boxShadow: 'inset -3px -4px 8px rgba(0,0,0,0.3), inset 3px 4px 7px rgba(255,255,255,0.55), 0 6px 14px rgba(100,116,139,0.35)',
+    boxShadow: 'inset -3px -4px 8px rgba(0,0,0,0.3), inset 3px 4px 7px rgba(255,255,255,0.55), 0 6px 14px rgba(8,145,178,0.35)',
   })
 
   return (
     <div className="relative overflow-hidden rounded-2xl bg-white p-4 card-3d"
-      style={{ border: '1px solid rgba(100,116,139,0.15)', boxShadow: '0 10px 28px rgba(100,116,139,0.12), 0 2px 6px rgba(0,0,0,0.04)' }}>
+      style={{ border: '1px solid rgba(8,145,178,0.15)', boxShadow: '0 10px 28px rgba(8,145,178,0.12), 0 2px 6px rgba(0,0,0,0.04)' }}>
 
       {/* Bollicine che risalgono, contenute nel banner */}
       {[
@@ -56,8 +56,8 @@ export function LoyaltyBanner({ compact = false }: { compact?: boolean }) {
         <div key={i} className="absolute rounded-full animate-bubble-rise-small"
           style={{
             left: b.left, bottom: 0, width: b.size, height: b.size,
-            background: 'radial-gradient(circle at 32% 28%, rgba(255,255,255,0.95), rgba(100,116,139,0.15))',
-            border: '1px solid rgba(100,116,139,0.2)',
+            background: 'radial-gradient(circle at 32% 28%, rgba(255,255,255,0.95), rgba(8,145,178,0.15))',
+            border: '1px solid rgba(8,145,178,0.2)',
             animationDuration: `${b.dur}s`, animationDelay: `${b.delay}s`,
           }} />
       ))}
