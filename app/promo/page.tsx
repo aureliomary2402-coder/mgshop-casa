@@ -157,7 +157,7 @@ export default function PromoPage() {
         <div className="relative z-10 max-w-4xl mx-auto px-4 py-12 text-center">
           <div className="flex items-center justify-between mb-6">
             <Link href="/shop" className="inline-flex items-center gap-2 text-amber-400/60 hover:text-amber-300 text-sm transition-colors"><ArrowLeft className="w-4 h-4"/> Negozio</Link>
-            <Link href="/carrello" className="relative flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium text-white transition-all hover:bg-white/10"
+            <Link href="/carrello?promo=1" className="relative flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium text-white transition-all hover:bg-white/10"
               style={{ border: '1px solid rgba(255,255,255,0.1)' }}>
               <ShoppingBag className="w-4 h-4"/>
               Carrello
@@ -190,7 +190,7 @@ export default function PromoPage() {
             {/* Sticky cart button */}
             {cartCount > 0 && (
               <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 animate-scale-in">
-                <Link href="/carrello"
+                <Link href="/carrello?promo=1"
                   className="flex items-center gap-3 px-8 py-4 rounded-2xl text-black font-bold shadow-2xl transition-all hover:scale-105"
                   style={{ background: 'linear-gradient(135deg,#d97706,#f59e0b)', boxShadow: '0 16px 40px rgba(217,119,6,0.5)' }}>
                   <ShoppingBag className="w-5 h-5"/>
