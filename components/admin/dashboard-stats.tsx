@@ -35,7 +35,7 @@ function MiniChart({ data }: { data: { day: string; count: number }[] }) {
           <div className="w-full rounded-t-sm transition-all"
             style={{
               height: `${Math.max((d.count / max) * 44, 2)}px`,
-              background: i === data.length - 1 ? 'linear-gradient(135deg,#0891b2,#06b6d4)' : 'rgba(8,145,178,0.2)'
+              background: i === data.length - 1 ? 'linear-gradient(135deg,#0891b2,#06b6d4)' : 'rgba(100,116,139,0.2)'
             }} />
         </div>
       ))}

@@ -42,10 +42,10 @@ function FlyerCard({ product, salePrice, index }: { product: Product; salePrice:
         </div>
       )}
       <Link href={`/prodotto/${product.id}`}>
-        <div className="aspect-square overflow-hidden" style={{ background: 'linear-gradient(135deg,#f0fbfd,#cffafe)' }}>
+        <div className="aspect-square overflow-hidden" style={{ background: 'linear-gradient(135deg,#fafafa,#cffafe)' }}>
           {product.cover_image
             ? <img src={product.cover_image} alt={product.name} className="w-full h-full object-cover" />
-            : <div className="w-full h-full flex items-center justify-center"><ImageIcon className="w-10 h-10" style={{ color: 'rgba(8,145,178,0.3)' }} /></div>}
+            : <div className="w-full h-full flex items-center justify-center"><ImageIcon className="w-10 h-10" style={{ color: 'rgba(100,116,139,0.3)' }} /></div>}
         </div>
       </Link>
       <div className="p-3">
@@ -91,7 +91,7 @@ export default function VolantinoPage() {
   }, [])
 
   if (loading) return (
-    <div className="min-h-screen" style={{ background: '#f0fbfd' }}>
+    <div className="min-h-screen" style={{ background: '#fafafa' }}>
       <div className="max-w-5xl mx-auto px-4 py-12 space-y-6">
         <div className="skeleton h-24 rounded-3xl" />
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
@@ -102,10 +102,10 @@ export default function VolantinoPage() {
   )
 
   if (!data || !data.is_active) return (
-    <div className="min-h-screen flex items-center justify-center px-4" style={{ background: '#f0fbfd' }}>
+    <div className="min-h-screen flex items-center justify-center px-4" style={{ background: '#fafafa' }}>
       <div className="text-center max-w-md">
-        <div className="w-24 h-24 rounded-full flex items-center justify-center mx-auto mb-6" style={{ background: 'rgba(8,145,178,0.08)', border: '2px dashed rgba(8,145,178,0.2)' }}>
-          <Newspaper className="w-12 h-12" style={{ color: 'rgba(8,145,178,0.4)' }} />
+        <div className="w-24 h-24 rounded-full flex items-center justify-center mx-auto mb-6" style={{ background: 'rgba(100,116,139,0.08)', border: '2px dashed rgba(100,116,139,0.2)' }}>
+          <Newspaper className="w-12 h-12" style={{ color: 'rgba(100,116,139,0.4)' }} />
         </div>
         <h1 className="text-2xl font-bold mb-2" style={{ color: '#0c2b36' }}>Nessun volantino attivo</h1>
         <p className="text-slate-400 mb-8">Torna presto per le nostre offerte!</p>
@@ -117,13 +117,13 @@ export default function VolantinoPage() {
   )
 
   return (
-    <div className="min-h-screen" style={{ background: '#f0fbfd' }}>
+    <div className="min-h-screen" style={{ background: '#fafafa' }}>
       {/* Header stile volantino */}
-      <div className="relative overflow-hidden" style={{ background: '#0c2b36' }}>
-        <div className="absolute inset-0 opacity-[0.04]" style={{ backgroundImage: 'linear-gradient(rgba(34,211,238,0.9) 1px,transparent 1px),linear-gradient(90deg,rgba(34,211,238,0.9) 1px,transparent 1px)', backgroundSize: '40px 40px' }} />
+      <div className="relative overflow-hidden" style={{ background: '#1c1c1f' }}>
+        <div className="absolute inset-0 opacity-[0.04]" style={{ backgroundImage: 'linear-gradient(rgba(148,163,184,0.9) 1px,transparent 1px),linear-gradient(90deg,rgba(148,163,184,0.9) 1px,transparent 1px)', backgroundSize: '40px 40px' }} />
         <div className="relative z-10 max-w-5xl mx-auto px-4 py-10 text-center">
           <div className="flex items-center justify-between mb-6">
-            <Link href="/shop" className="inline-flex items-center gap-2 text-cyan-400/60 hover:text-cyan-300 text-sm transition-colors"><ArrowLeft className="w-4 h-4" /> Negozio</Link>
+            <Link href="/shop" className="inline-flex items-center gap-2 text-slate-400/60 hover:text-cyan-300 text-sm transition-colors"><ArrowLeft className="w-4 h-4" /> Negozio</Link>
             <Link href="/carrello" className="relative flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium text-white transition-all hover:bg-white/10"
               style={{ border: '1px solid rgba(255,255,255,0.1)' }}>
               <ShoppingBag className="w-4 h-4" />
@@ -131,11 +131,11 @@ export default function VolantinoPage() {
               {cartCount > 0 && <span className="absolute -top-1 -right-1 w-5 h-5 text-white text-xs rounded-full flex items-center justify-center font-bold" style={{ background: 'linear-gradient(135deg,#0891b2,#06b6d4)' }}>{cartCount}</span>}
             </Link>
           </div>
-          <div className="inline-flex items-center gap-2 rounded-full px-4 py-1.5 text-cyan-300 text-sm font-bold mb-4" style={{ background: 'rgba(8,145,178,0.15)', border: '1px solid rgba(8,145,178,0.3)' }}>
+          <div className="inline-flex items-center gap-2 rounded-full px-4 py-1.5 text-cyan-300 text-sm font-bold mb-4" style={{ background: 'rgba(100,116,139,0.15)', border: '1px solid rgba(100,116,139,0.3)' }}>
             <Newspaper className="w-4 h-4" /> Volantino digitale
           </div>
           <h1 className="text-4xl md:text-5xl font-extrabold text-white mb-3">{data.title || 'Offerte della settimana'}</h1>
-          {data.subtitle && <p className="text-lg text-cyan-200/60">{data.subtitle}</p>}
+          {data.subtitle && <p className="text-lg text-slate-200/60">{data.subtitle}</p>}
         </div>
       </div>
 
@@ -153,7 +153,7 @@ export default function VolantinoPage() {
               <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 animate-scale-in">
                 <Link href="/carrello"
                   className="flex items-center gap-3 px-8 py-4 rounded-2xl text-white font-bold shadow-2xl transition-all hover:scale-105"
-                  style={{ background: 'linear-gradient(135deg,#0891b2,#06b6d4)', boxShadow: '0 16px 40px rgba(8,145,178,0.5)' }}>
+                  style={{ background: 'linear-gradient(135deg,#0891b2,#06b6d4)', boxShadow: '0 16px 40px rgba(100,116,139,0.5)' }}>
                   <ShoppingBag className="w-5 h-5" />
                   Vai al carrello ({cartCount})
                 </Link>
@@ -165,7 +165,7 @@ export default function VolantinoPage() {
         )}
 
         <div className="text-center py-10">
-          <Link href="/shop" className="inline-flex items-center gap-2 font-bold px-10 py-4 rounded-2xl text-white" style={{ background: 'linear-gradient(135deg,#0891b2,#06b6d4)', boxShadow: '0 12px 32px rgba(8,145,178,0.35)' }}>
+          <Link href="/shop" className="inline-flex items-center gap-2 font-bold px-10 py-4 rounded-2xl text-white" style={{ background: 'linear-gradient(135deg,#0891b2,#06b6d4)', boxShadow: '0 12px 32px rgba(100,116,139,0.35)' }}>
             <ShoppingBag className="w-5 h-5" /> Vai al negozio completo
           </Link>
         </div>

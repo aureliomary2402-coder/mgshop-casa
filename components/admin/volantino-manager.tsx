@@ -83,7 +83,7 @@ export function VolantinoManager() {
     <div className="space-y-5">
       {/* Toggle */}
       <div className="flex items-center justify-between p-4 rounded-2xl border"
-        style={{ background: isActive ? 'rgba(8,145,178,0.06)' : 'rgba(0,0,0,0.02)', borderColor: isActive ? 'rgba(8,145,178,0.2)' : 'rgba(0,0,0,0.08)' }}>
+        style={{ background: isActive ? 'rgba(100,116,139,0.06)' : 'rgba(0,0,0,0.02)', borderColor: isActive ? 'rgba(100,116,139,0.2)' : 'rgba(0,0,0,0.08)' }}>
         <div>
           <p className="font-semibold text-slate-800">Volantino</p>
           <p className="text-xs mt-0.5">
@@ -102,7 +102,7 @@ export function VolantinoManager() {
         </div>
       </div>
 
-      <div className="p-3 rounded-xl text-xs text-cyan-700 font-medium" style={{ background: 'rgba(8,145,178,0.08)', border: '1px solid rgba(8,145,178,0.15)' }}>
+      <div className="p-3 rounded-xl text-xs text-cyan-700 font-medium" style={{ background: 'rgba(100,116,139,0.08)', border: '1px solid rgba(100,116,139,0.15)' }}>
         Dopo ogni modifica clicca Salva modifiche
       </div>
 

@@ -154,7 +154,7 @@ export function OrdersManager() {
                 {/* Lista prodotti */}
                 <div className="space-y-2">
                   {order.order_items.map(item => (
-                    <div key={item.id} className="flex items-center gap-3 p-2 rounded-xl" style={{background:'rgba(8,145,178,0.04)',border:'1px solid rgba(8,145,178,0.08)'}}>
+                    <div key={item.id} className="flex items-center gap-3 p-2 rounded-xl" style={{background:'rgba(100,116,139,0.04)',border:'1px solid rgba(100,116,139,0.08)'}}>
                       <div className="flex-1 min-w-0">
                         <p className="text-sm font-medium text-slate-800 truncate">{item.product_name}</p>
                         <p className="text-xs text-cyan-700 font-semibold">€{item.product_price.toFixed(2)} cad.</p>
@@ -219,7 +219,7 @@ export function OrdersManager() {
                       ) : (
                         <button onClick={() => setShowAddProduct(order.id)}
                           className="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl text-sm font-medium transition-colors"
-                          style={{background:'rgba(8,145,178,0.08)',border:'1px dashed rgba(8,145,178,0.3)',color:'#0891b2'}}>
+                          style={{background:'rgba(100,116,139,0.08)',border:'1px dashed rgba(100,116,139,0.3)',color:'#0891b2'}}>
                           <Plus className="w-4 h-4"/> Aggiungi prodotto all'ordine
                         </button>
                       )}

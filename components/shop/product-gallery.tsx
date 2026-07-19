@@ -97,8 +97,8 @@ export function ProductGallery({ images, productName }: { images: GalleryImage[]
   if (images.length === 0) {
     return (
       <div className="relative aspect-square rounded-3xl overflow-hidden mb-3 flex items-center justify-center"
-        style={{ background: 'linear-gradient(135deg, #f0fbfd, #cffafe)', boxShadow: '0 20px 60px rgba(8,145,178,0.12)' }}>
-        <ImageIcon className="w-20 h-20" style={{ color: 'rgba(8,145,178,0.3)' }} />
+        style={{ background: 'linear-gradient(135deg, #fafafa, #cffafe)', boxShadow: '0 20px 60px rgba(100,116,139,0.12)' }}>
+        <ImageIcon className="w-20 h-20" style={{ color: 'rgba(100,116,139,0.3)' }} />
       </div>
     )
   }
@@ -109,8 +109,8 @@ export function ProductGallery({ images, productName }: { images: GalleryImage[]
         <div
           className="relative aspect-square rounded-3xl overflow-hidden mb-3 cursor-pointer"
           style={{
-            background: 'linear-gradient(135deg, #f0fbfd, #cffafe)',
-            boxShadow: '0 20px 60px rgba(8,145,178,0.12)',
+            background: 'linear-gradient(135deg, #fafafa, #cffafe)',
+            boxShadow: '0 20px 60px rgba(100,116,139,0.12)',
             transform: `perspective(800px) rotateX(${tilt.x}deg) rotateY(${tilt.y}deg)`,
             transition: 'transform 0.3s ease'
           }}
@@ -140,7 +140,7 @@ export function ProductGallery({ images, productName }: { images: GalleryImage[]
               <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-1.5 sm:hidden">
                 {images.map((_, i) => (
                   <div key={i} className="w-1.5 h-1.5 rounded-full transition-all"
-                    style={{ background: i === currentImg ? '#0891b2' : 'rgba(8,145,178,0.25)' }} />
+                    style={{ background: i === currentImg ? '#0891b2' : 'rgba(100,116,139,0.25)' }} />
                 ))}
               </div>
             </>

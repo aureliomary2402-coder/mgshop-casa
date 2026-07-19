@@ -78,8 +78,8 @@ export default function AdminPage() {
   if (checking) return <div className="min-h-screen flex items-center justify-center text-slate-400">Caricamento...</div>
 
   if (!authenticated) return (
-    <div className="min-h-screen flex items-center justify-center px-4" style={{ background: '#f0fbfd' }}>
-      <div className="bg-white rounded-2xl shadow-md p-8 w-full max-w-sm" style={{ border: '1px solid rgba(8,145,178,0.1)' }}>
+    <div className="min-h-screen flex items-center justify-center px-4" style={{ background: '#fafafa' }}>
+      <div className="bg-white rounded-2xl shadow-md p-8 w-full max-w-sm" style={{ border: '1px solid rgba(100,116,139,0.1)' }}>
         <div className="flex justify-center mb-6">
           <div className="w-14 h-14 rounded-full flex items-center justify-center" style={{ background: 'linear-gradient(135deg, #0891b2, #06b6d4)' }}>
             <Lock className="w-7 h-7 text-white" />
@@ -96,8 +96,8 @@ export default function AdminPage() {
   )
 
   return (
-    <div className="min-h-screen" style={{ background: '#f0fbfd' }}>
-      <div className="bg-white border-b px-4 h-14 flex items-center justify-between sticky top-0 z-40" style={{ borderColor: 'rgba(8,145,178,0.1)' }}>
+    <div className="min-h-screen" style={{ background: '#fafafa' }}>
+      <div className="bg-white border-b px-4 h-14 flex items-center justify-between sticky top-0 z-40" style={{ borderColor: 'rgba(100,116,139,0.1)' }}>
         <div className="flex items-center gap-3">
           <button onClick={() => setMenuOpen(v => !v)} className="w-9 h-9 flex items-center justify-center rounded-xl hover:bg-cyan-50 transition-colors" style={{ color: '#0891b2' }}>
             {menuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
@@ -111,7 +111,7 @@ export default function AdminPage() {
         </div>
         <div className="flex items-center gap-2">
           <PushNotifications />
-          <Link href="/shop" target="_blank" className="flex items-center gap-1 text-xs font-medium px-3 py-1.5 rounded-lg transition-colors hover:bg-cyan-50" style={{ color: '#0891b2', border: '1px solid rgba(8,145,178,0.2)' }}>
+          <Link href="/shop" target="_blank" className="flex items-center gap-1 text-xs font-medium px-3 py-1.5 rounded-lg transition-colors hover:bg-cyan-50" style={{ color: '#0891b2', border: '1px solid rgba(100,116,139,0.2)' }}>
             <ExternalLink className="w-3.5 h-3.5" /><span className="hidden sm:inline">Negozio</span>
           </Link>
           <button onClick={handleLogout} className="flex items-center gap-1 text-xs text-slate-500 hover:text-slate-800 px-2 py-1.5 rounded-lg hover:bg-slate-50">
@@ -150,7 +150,7 @@ export default function AdminPage() {
             </div>
             <div className="p-4 border-t border-slate-100 space-y-2">
               <Link href="/shop" target="_blank" onClick={() => setMenuOpen(false)} className="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-colors hover:bg-cyan-50" style={{ color: '#0891b2' }}>
-                <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ background: 'rgba(8,145,178,0.1)' }}><ExternalLink className="w-4 h-4" style={{ color: '#0891b2' }} /></div>
+                <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ background: 'rgba(100,116,139,0.1)' }}><ExternalLink className="w-4 h-4" style={{ color: '#0891b2' }} /></div>
                 Vai al negozio
               </Link>
               <button onClick={handleLogout} className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-red-500 hover:bg-red-50 transition-colors">

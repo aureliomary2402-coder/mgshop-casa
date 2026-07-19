@@ -101,7 +101,7 @@ export function CartContent({ scope = 'shop' }: { scope?: string }) {
               animationDelay: `${i * 40}ms`,
             }} />
         ))}
-        <div className="w-24 h-24 rounded-full flex items-center justify-center animate-check-pop" style={{background:'linear-gradient(135deg,#0891b2,#06b6d4)',boxShadow:'0 20px 40px rgba(8,145,178,0.3)'}}>
+        <div className="w-24 h-24 rounded-full flex items-center justify-center animate-check-pop" style={{background:'linear-gradient(135deg,#0891b2,#06b6d4)',boxShadow:'0 20px 40px rgba(100,116,139,0.3)'}}>
           <CheckCircle className="w-12 h-12 text-white"/>
         </div>
       </div>
@@ -116,8 +116,8 @@ export function CartContent({ scope = 'shop' }: { scope?: string }) {
 
   if (items.length === 0) return (
     <div className="max-w-md mx-auto px-4 py-20 text-center animate-scale-in">
-      <div className="w-24 h-24 rounded-full flex items-center justify-center mx-auto mb-6" style={{background:'rgba(8,145,178,0.08)',border:'2px dashed rgba(8,145,178,0.2)'}}>
-        <ShoppingCart className="w-12 h-12" style={{color:'rgba(8,145,178,0.4)'}}/>
+      <div className="w-24 h-24 rounded-full flex items-center justify-center mx-auto mb-6" style={{background:'rgba(100,116,139,0.08)',border:'2px dashed rgba(100,116,139,0.2)'}}>
+        <ShoppingCart className="w-12 h-12" style={{color:'rgba(100,116,139,0.4)'}}/>
       </div>
       <h2 className="text-2xl font-bold mb-2" style={{color:'#0c2b36'}}>Il carrello è vuoto</h2>
       <p className="text-slate-400 mb-8">Aggiungi qualche prodotto per iniziare.</p>
@@ -137,17 +137,17 @@ export function CartContent({ scope = 'shop' }: { scope?: string }) {
         <div className="md:col-span-2 space-y-3">
           {items.map(({product,quantity},i) => (
             <div key={product.id} className="flex gap-4 rounded-2xl p-4 animate-fade-in-up"
-              style={{animationDelay:`${i*50}ms`,animationFillMode:'both',background:'white',border:'1px solid rgba(8,145,178,0.08)',boxShadow:'0 2px 8px rgba(0,0,0,0.04)'}}>
-              <div className="w-20 h-20 rounded-xl overflow-hidden shrink-0" style={{background:'linear-gradient(135deg,#f0fbfd,#cffafe)'}}>
-                {product.cover_image ? <img src={product.cover_image} alt={product.name} className="w-full h-full object-cover"/> : <div className="w-full h-full flex items-center justify-center"><ImageIcon className="w-8 h-8" style={{color:'rgba(8,145,178,0.3)'}}/></div>}
+              style={{animationDelay:`${i*50}ms`,animationFillMode:'both',background:'white',border:'1px solid rgba(100,116,139,0.08)',boxShadow:'0 2px 8px rgba(0,0,0,0.04)'}}>
+              <div className="w-20 h-20 rounded-xl overflow-hidden shrink-0" style={{background:'linear-gradient(135deg,#fafafa,#cffafe)'}}>
+                {product.cover_image ? <img src={product.cover_image} alt={product.name} className="w-full h-full object-cover"/> : <div className="w-full h-full flex items-center justify-center"><ImageIcon className="w-8 h-8" style={{color:'rgba(100,116,139,0.3)'}}/></div>}
               </div>
               <div className="flex-1 min-w-0">
                 <p className="font-semibold truncate mb-1" style={{color:'#0c2b36'}}>{product.name}</p>
                 <p className="font-bold" style={{color:'#0891b2'}}>€{product.price.toFixed(2)}</p>
                 <div className="flex items-center gap-2 mt-2">
-                  <button onClick={() => updateQuantity(product.id,quantity-1)} className="w-7 h-7 rounded-full flex items-center justify-center transition-all hover:scale-110 btn-press" style={{border:'1px solid rgba(8,145,178,0.2)',background:'rgba(8,145,178,0.04)'}}><Minus className="w-3 h-3" style={{color:'#155e75'}}/></button>
+                  <button onClick={() => updateQuantity(product.id,quantity-1)} className="w-7 h-7 rounded-full flex items-center justify-center transition-all hover:scale-110 btn-press" style={{border:'1px solid rgba(100,116,139,0.2)',background:'rgba(100,116,139,0.04)'}}><Minus className="w-3 h-3" style={{color:'#155e75'}}/></button>
                   <span className="w-6 text-center text-sm font-bold" style={{color:'#0c2b36'}}>{quantity}</span>
-                  <button onClick={() => updateQuantity(product.id,quantity+1)} className="w-7 h-7 rounded-full flex items-center justify-center transition-all hover:scale-110 btn-press" style={{border:'1px solid rgba(8,145,178,0.2)',background:'rgba(8,145,178,0.04)'}}><Plus className="w-3 h-3" style={{color:'#155e75'}}/></button>
+                  <button onClick={() => updateQuantity(product.id,quantity+1)} className="w-7 h-7 rounded-full flex items-center justify-center transition-all hover:scale-110 btn-press" style={{border:'1px solid rgba(100,116,139,0.2)',background:'rgba(100,116,139,0.04)'}}><Plus className="w-3 h-3" style={{color:'#155e75'}}/></button>
                   <button onClick={() => removeItem(product.id)} className="ml-auto w-8 h-8 rounded-lg flex items-center justify-center transition-all hover:scale-110 btn-press" style={{background:'rgba(239,68,68,0.06)',border:'1px solid rgba(239,68,68,0.1)'}}><Trash2 className="w-4 h-4 text-red-400"/></button>
                 </div>
               </div>
@@ -157,7 +157,7 @@ export function CartContent({ scope = 'shop' }: { scope?: string }) {
           <LoyaltyBanner compact={true} />
         </div>
 
-        <div className="rounded-2xl p-5 h-fit sticky top-20 animate-slide-in-right space-y-4" style={{background:'white',border:'1px solid rgba(8,145,178,0.1)',boxShadow:'0 8px 24px rgba(8,145,178,0.08)'}}>
+        <div className="rounded-2xl p-5 h-fit sticky top-20 animate-slide-in-right space-y-4" style={{background:'white',border:'1px solid rgba(100,116,139,0.1)',boxShadow:'0 8px 24px rgba(100,116,139,0.08)'}}>
           <h2 className="font-bold" style={{color:'#0c2b36'}}>Riepilogo ordine</h2>
           <div className="space-y-2">
             {items.map(({product,quantity}) => (
@@ -174,7 +174,7 @@ export function CartContent({ scope = 'shop' }: { scope?: string }) {
                   <div className="relative flex-1">
                     <Tag className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-cyan-400"/>
                     <input value={couponInput} onChange={e => setCouponInput(e.target.value.toUpperCase())} onKeyDown={e => e.key==='Enter'&&handleApplyCoupon()} placeholder="Codice coupon"
-                      className="w-full h-10 pl-9 pr-3 rounded-xl text-sm font-mono outline-none" style={{background:'rgba(8,145,178,0.05)',border:'1px solid rgba(8,145,178,0.15)',color:'#0c2b36'}}/>
+                      className="w-full h-10 pl-9 pr-3 rounded-xl text-sm font-mono outline-none" style={{background:'rgba(100,116,139,0.05)',border:'1px solid rgba(100,116,139,0.15)',color:'#0c2b36'}}/>
                   </div>
                   <button onClick={handleApplyCoupon} disabled={couponLoading||!couponInput.trim()} className="px-3 py-2 rounded-xl text-sm font-medium text-white disabled:opacity-50 transition-all hover:scale-105 btn-press" style={{background:'linear-gradient(135deg,#0891b2,#06b6d4)'}}>
                     {couponLoading?'...':'Applica'}
@@ -183,7 +183,7 @@ export function CartContent({ scope = 'shop' }: { scope?: string }) {
                 {couponError && <p className="text-red-500 text-xs">{couponError}</p>}
               </>
             ) : (
-              <div className="flex items-center justify-between p-3 rounded-xl" style={{background:'rgba(8,145,178,0.06)',border:'1px solid rgba(8,145,178,0.2)'}}>
+              <div className="flex items-center justify-between p-3 rounded-xl" style={{background:'rgba(100,116,139,0.06)',border:'1px solid rgba(100,116,139,0.2)'}}>
                 <div>
                   <p className="text-sm font-bold text-cyan-700">{couponData.code}</p>
                   <p className="text-xs text-slate-500">{couponData.discount_percent>0?`-${couponData.discount_percent}%`:`-€${couponData.discount_fixed}`}{couponData.scope==='promo' ? ' (solo prodotti in promo)' : ' (tutto il carrello)'}</p>
@@ -201,9 +201,9 @@ export function CartContent({ scope = 'shop' }: { scope?: string }) {
           <CodBanner />
           <form onSubmit={handleSubmit} className="space-y-3">
             <input type="tel" placeholder="Numero di telefono" value={phone} onChange={e=>setPhone(e.target.value)}
-              className="w-full h-11 px-4 rounded-xl text-sm outline-none" style={{background:'rgba(8,145,178,0.05)',border:'1px solid rgba(8,145,178,0.15)',color:'#0c2b36'}}/>
+              className="w-full h-11 px-4 rounded-xl text-sm outline-none" style={{background:'rgba(100,116,139,0.05)',border:'1px solid rgba(100,116,139,0.15)',color:'#0c2b36'}}/>
             {error&&<p className="text-red-500 text-xs">{error}</p>}
-            <button type="submit" disabled={submitting} className="w-full py-3.5 rounded-xl font-bold text-white transition-all hover:scale-[1.02] btn-press disabled:opacity-60" style={{background:'linear-gradient(135deg,#0891b2,#06b6d4)',boxShadow:'0 8px 20px rgba(8,145,178,0.3)'}}>
+            <button type="submit" disabled={submitting} className="w-full py-3.5 rounded-xl font-bold text-white transition-all hover:scale-[1.02] btn-press disabled:opacity-60" style={{background:'linear-gradient(135deg,#0891b2,#06b6d4)',boxShadow:'0 8px 20px rgba(100,116,139,0.3)'}}>
               {submitting?'Invio in corso...':'Invia ordine'}
             </button>
           </form>

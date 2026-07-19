@@ -75,7 +75,7 @@ export function ShopHeader() {
 
   return (
     <header className={`sticky top-0 z-50 transition-all duration-300 ${scrolled ? 'shadow-lg' : ''}`}
-      style={{ background: scrolled ? 'rgba(240,251,253,0.97)' : 'rgba(240,251,253,0.98)', backdropFilter: 'blur(16px)', borderBottom: '1px solid rgba(8,145,178,0.1)' }}>
+      style={{ background: scrolled ? 'rgba(240,251,253,0.97)' : 'rgba(240,251,253,0.98)', backdropFilter: 'blur(16px)', borderBottom: '1px solid rgba(100,116,139,0.1)' }}>
       <div className="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between gap-3">
         <Link href="/" className="flex items-center gap-2 shrink-0 group">
           <div className="w-8 h-8 rounded-lg flex items-center justify-center transition-transform group-hover:scale-110"
@@ -98,7 +98,7 @@ export function ShopHeader() {
             </button>
             {catOpen && (
               <div className="absolute top-full left-0 mt-2 w-56 rounded-2xl overflow-hidden shadow-xl animate-scale-in z-50"
-                style={{ background: 'white', border: '1px solid rgba(8,145,178,0.1)', boxShadow: '0 20px 60px rgba(0,0,0,0.12)' }}>
+                style={{ background: 'white', border: '1px solid rgba(100,116,139,0.1)', boxShadow: '0 20px 60px rgba(0,0,0,0.12)' }}>
                 <div className="p-2">
                   <button onClick={() => handleCategorySelect(null)}
                     className={`w-full text-left px-3 py-2.5 rounded-xl text-sm font-medium transition-all hover:bg-cyan-50 ${!activeCategory ? 'bg-cyan-50 text-cyan-700' : 'text-slate-700'}`}>
@@ -136,7 +136,7 @@ export function ShopHeader() {
               <input ref={inputRef} type="search" placeholder="Cerca..." value={searchValue}
                 onChange={e => handleSearch(e.target.value)}
                 className="w-full h-9 pl-9 pr-9 rounded-xl text-sm outline-none"
-                style={{ background: 'rgba(8,145,178,0.06)', border: '1px solid rgba(8,145,178,0.15)', color: '#0c2b36' }} />
+                style={{ background: 'rgba(100,116,139,0.06)', border: '1px solid rgba(100,116,139,0.15)', color: '#0c2b36' }} />
               {searchValue && <button onClick={handleClearSearch} className="absolute right-3 top-1/2 -translate-y-1/2 text-cyan-400"><X className="w-4 h-4" /></button>}
             </div>
           </div>

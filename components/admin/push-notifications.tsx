@@ -90,7 +90,7 @@ export function PushNotifications() {
       ) : (
         <button onClick={subscribe} disabled={loading}
           className="flex items-center gap-1.5 text-xs font-medium px-3 py-1.5 rounded-lg transition-colors hover:scale-105 btn-press"
-          style={{ background: 'rgba(8,145,178,0.1)', color: '#0891b2', border: '1px solid rgba(8,145,178,0.2)' }}>
+          style={{ background: 'rgba(100,116,139,0.1)', color: '#0891b2', border: '1px solid rgba(100,116,139,0.2)' }}>
           <Bell className="w-3.5 h-3.5" />
           {loading ? 'Attivazione...' : 'Attiva notifiche'}
         </button>
