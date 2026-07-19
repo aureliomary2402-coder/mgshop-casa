@@ -143,7 +143,7 @@ export default function PromoPage() {
       <div className="max-w-5xl mx-auto px-4 py-10 space-y-10">
         {(promo.image_url||promo.content)&&(
           <Reveal className={`grid gap-6 ${promo.image_url&&promo.content?'md:grid-cols-2':''}`}>
-            {promo.image_url&&<div className="rounded-2xl overflow-hidden" style={{boxShadow:'0 16px 40px rgba(217,119,6,0.12)'}}><img src={promo.image_url} alt="Promo" className="w-full h-full object-cover max-h-72"/></div>}
+            {promo.image_url&&<div className="rounded-2xl overflow-hidden aspect-video" style={{boxShadow:'0 16px 40px rgba(217,119,6,0.12)'}}><img src={promo.image_url} alt="Promo" className="w-full h-full object-cover"/></div>}
             {promo.content&&<div className="flex items-center"><div className="bg-white rounded-2xl p-6 w-full" style={{border:'1px solid rgba(217,119,6,0.1)'}}><p className="text-stone-600 leading-relaxed whitespace-pre-line">{promo.content}</p></div></div>}
           </Reveal>
         )}

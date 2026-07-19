@@ -24,7 +24,7 @@ export function PromoManager() {
   const [error, setError] = useState('')
   const [allProducts, setAllProducts] = useState<Product[]>([])
   const [cropFile, setCropFile] = useState<File | null>(null)
-  const [cropAspect, setCropAspect] = useState(3)
+  const [cropAspect, setCropAspect] = useState(16 / 9)
   const [productSearch, setProductSearch] = useState('')
   const [showProductPicker, setShowProductPicker] = useState(false)
 
