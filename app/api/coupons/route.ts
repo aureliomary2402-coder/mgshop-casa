@@ -1,6 +1,37 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createAdminClient } from '@/lib/supabase/admin'
 
+export const dynamic = 'force-dynamic'
+export const fetchCache = 'force-no-store'
+export const revalidate = 0
+
+// Restituisce il coupon attivo con lo sconto piu alto valido per la sezione promo,
+// cosi la pagina promo puo mostrare in automatico il prezzo scontato sui prodotti
+export async function GET(request: NextRequest) {
+  const scope = request.nextUrl.searchParams.get('scope') || 'promo'
+  const supabase = createAdminClient()
+  const { data: coupons, error } = await supabase
+    .from('coupons')
+    .select('*')
+    .eq('is_active', true)
+    .in('scope', scope === 'promo' ? ['promo', 'all'] : ['shop', 'all'])
+
+  if (error) return NextResponse.json(null)
+
+  const now = new Date()
+  const valid = (coupons || []).filter((c) => {
+    if (c.expires_at && new Date(c.expires_at) < now) return false
+    if (c.max_uses && c.uses_count >= c.max_uses) return false
+    return true
+  })
+
+  if (valid.length === 0) return NextResponse.json(null)
+
+  // Sceglie il coupon che da lo sconto maggiore in percentuale (uso indicativo, non calcola su un prezzo specifico)
+  const best = valid.sort((a, b) => (b.discount_percent || 0) - (a.discount_percent || 0))[0]
+  return NextResponse.json(best)
+}
+
 export async function POST(request: NextRequest) {
   const { code, scope } = await request.json()
   if (!code) return NextResponse.json({ error: 'Codice mancante' }, { status: 400 })

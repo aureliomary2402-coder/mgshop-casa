@@ -12,6 +12,10 @@ interface PromoData {
   image_url: string; badge_text: string; expires_at: string; featured_product_ids: string[]
 }
 
+interface Coupon {
+  code: string; discount_percent: number; discount_fixed: number
+}
+
 function Countdown({ expiresAt }: { expiresAt: string }) {
   const [t, setT] = useState({ days:0, hours:0, minutes:0, seconds:0 })
   const [expired, setExpired] = useState(false)
@@ -35,9 +39,18 @@ function Countdown({ expiresAt }: { expiresAt: string }) {
   )
 }
 
-function PromoProductCard({ product }: { product: Product }) {
+function calcDiscountedPrice(price: number, coupon: Coupon | null): number | null {
+  if (!coupon) return null
+  if (coupon.discount_percent) return price * (1 - coupon.discount_percent / 100)
+  if (coupon.discount_fixed) return Math.max(0, price - coupon.discount_fixed)
+  return null
+}
+
+function PromoProductCard({ product, coupon }: { product: Product; coupon: Coupon | null }) {
   const addItem = useCartStore(s => s.addItem)
   const [added, setAdded] = useState(false)
+
+  const discounted = calcDiscountedPrice(product.price, coupon)
 
   const handleAdd = () => {
     addItem(product)
@@ -50,10 +63,15 @@ function PromoProductCard({ product }: { product: Product }) {
     <div className="bg-white rounded-2xl overflow-hidden shadow-sm hover:-translate-y-1 transition-all group"
       style={{ border: '1px solid rgba(217,119,6,0.1)', boxShadow: '0 4px 20px rgba(217,119,6,0.08)' }}>
       <Link href={`/prodotto/${product.id}`}>
-        <div className="aspect-square overflow-hidden" style={{ background: 'linear-gradient(135deg,#faf7f2,#fef3c7)' }}>
+        <div className="aspect-square overflow-hidden relative" style={{ background: 'linear-gradient(135deg,#faf7f2,#fef3c7)' }}>
           {product.cover_image
             ? <img src={product.cover_image} alt={product.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
             : <div className="w-full h-full flex items-center justify-center"><ImageIcon className="w-10 h-10" style={{color:'rgba(217,119,6,0.3)'}}/></div>}
+          {discounted !== null && coupon && coupon.discount_percent > 0 && (
+            <div className="absolute top-2 left-2 text-white text-xs font-bold px-2 py-1 rounded-lg" style={{ background: '#dc2626' }}>
+              -{coupon.discount_percent}%
+            </div>
+          )}
         </div>
       </Link>
       <div className="p-4">
@@ -61,7 +79,16 @@ function PromoProductCard({ product }: { product: Product }) {
           <h3 className="font-semibold text-sm text-stone-800 line-clamp-2 mb-2 hover:text-amber-700 transition-colors">{product.name}</h3>
         </Link>
         <div className="flex items-center justify-between">
-          <span className="font-bold text-lg" style={{ color: '#d97706' }}>euro{product.price.toFixed(2)}</span>
+          <div className="flex flex-col">
+            {discounted !== null ? (
+              <>
+                <span className="text-xs text-stone-400 line-through">euro{product.price.toFixed(2)}</span>
+                <span className="font-bold text-lg" style={{ color: '#dc2626' }}>euro{discounted.toFixed(2)}</span>
+              </>
+            ) : (
+              <span className="font-bold text-lg" style={{ color: '#d97706' }}>euro{product.price.toFixed(2)}</span>
+            )}
+          </div>
           <button onClick={handleAdd}
             className="flex items-center gap-1.5 text-white text-xs font-semibold px-4 py-2 rounded-full transition-all active:scale-95"
             style={{ background: added ? 'linear-gradient(135deg,#16a34a,#22c55e)' : 'linear-gradient(135deg,#d97706,#f59e0b)', boxShadow: '0 4px 12px rgba(217,119,6,0.3)' }}>
@@ -77,6 +104,7 @@ function PromoProductCard({ product }: { product: Product }) {
 export default function PromoPage() {
   const [promo, setPromo] = useState<PromoData|null>(null)
   const [products, setProducts] = useState<Product[]>([])
+  const [coupon, setCoupon] = useState<Coupon|null>(null)
   const [loading, setLoading] = useState(true)
   const cartCount = useCartStore(s => s.getTotalItems)()
 
@@ -92,6 +120,10 @@ export default function PromoPage() {
         setLoading(false)
       })
       .catch(()=>setLoading(false))
+    fetch('/api/coupons?scope=promo', { cache: 'no-store' })
+      .then(r=>r.json())
+      .then(setCoupon)
+      .catch(()=>setCoupon(null))
   },[])
 
   if(loading) return (
@@ -153,7 +185,7 @@ export default function PromoPage() {
           <Reveal delay={100}>
             <h2 className="text-2xl font-bold mb-6" style={{color:'#1a0800'}}>Prodotti in promozione</h2>
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 stagger-children">
-              {products.map(p => <PromoProductCard key={p.id} product={p}/>)}
+              {products.map(p => <PromoProductCard key={p.id} product={p} coupon={coupon}/>)}
             </div>
             {/* Sticky cart button */}
             {cartCount > 0 && (
