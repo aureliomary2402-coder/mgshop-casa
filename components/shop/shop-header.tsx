@@ -1,6 +1,6 @@
 "use client"
 import Link from 'next/link'
-import { ShoppingBag, Search, X, Home, ChevronDown, Tag, Sparkles } from 'lucide-react'
+import { ShoppingBag, Search, X, Home, ChevronDown, Tag, Sparkles, Newspaper } from 'lucide-react'
 import { useCartStore } from '@/lib/cart-store'
 import { useState, useEffect, useRef } from 'react'
 import { useRouter, useSearchParams, usePathname } from 'next/navigation'
@@ -14,6 +14,7 @@ export function ShopHeader() {
   const [categories, setCategories] = useState<Category[]>([])
   const [catOpen, setCatOpen] = useState(false)
   const [promoActive, setPromoActive] = useState(false)
+  const [volantinoActive, setVolantinoActive] = useState(false)
   const [cartBump, setCartBump] = useState(false)
   const getTotalItems = useCartStore(s => s.getTotalItems)
   const lastAdded = useCartStore(s => s.lastAdded)
@@ -31,6 +32,7 @@ export function ShopHeader() {
     window.addEventListener('scroll', hs, { passive: true })
     fetch('/api/admin/categories').then(r => r.json()).then(setCategories).catch(() => {})
     fetch('/api/promo').then(r => r.json()).then(d => setPromoActive(d.is_active === true)).catch(() => {})
+    fetch('/api/volantino').then(r => r.json()).then(d => setVolantinoActive(d.is_active === true)).catch(() => {})
     const hc = (e: MouseEvent) => { if (catRef.current && !catRef.current.contains(e.target as Node)) setCatOpen(false) }
     document.addEventListener('mousedown', hc)
     return () => { window.removeEventListener('scroll', hs); document.removeEventListener('mousedown', hc) }
@@ -116,6 +118,12 @@ export function ShopHeader() {
           {promoActive && (
             <Link href="/promo" className="hidden sm:flex items-center gap-1.5 px-3 py-2 rounded-xl text-sm font-medium transition-all hover:bg-amber-50 btn-press" style={{ color: '#d97706' }}>
               <Sparkles className="w-4 h-4" /> Promo
+              <span className="text-xs bg-amber-500 text-white px-1.5 py-0.5 rounded-full font-bold">!</span>
+            </Link>
+          )}
+          {volantinoActive && (
+            <Link href="/volantino" className="hidden sm:flex items-center gap-1.5 px-3 py-2 rounded-xl text-sm font-medium transition-all hover:bg-amber-50 btn-press" style={{ color: '#d97706' }}>
+              <Newspaper className="w-4 h-4" /> Volantino
               <span className="text-xs bg-amber-500 text-white px-1.5 py-0.5 rounded-full font-bold">!</span>
             </Link>
           )}

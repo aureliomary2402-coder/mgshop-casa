@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect } from 'react'
-import { Package, Tag, Image, ShoppingBag, LogOut, Lock, LayoutDashboard, Megaphone, Ticket, Menu, X, ExternalLink, Users, Gift, MessageCircle } from 'lucide-react'
+import { Package, Tag, Image, ShoppingBag, LogOut, Lock, LayoutDashboard, Megaphone, Ticket, Menu, X, ExternalLink, Users, Gift, MessageCircle, Newspaper } from 'lucide-react'
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -11,13 +11,14 @@ import { BannersManager } from '@/components/admin/banners-manager'
 import { OrdersManager } from '@/components/admin/orders-manager'
 import { DashboardStats } from '@/components/admin/dashboard-stats'
 import { PromoManager } from '@/components/admin/promo-manager'
+import { VolantinoManager } from '@/components/admin/volantino-manager'
 import { CouponsManager } from '@/components/admin/coupons-manager'
 import { PushNotifications } from '@/components/admin/push-notifications'
 import { ClientiManager } from '@/components/admin/clienti-manager'
 import { LoyaltySettingsManager } from '@/components/admin/loyalty-settings-manager'
 import { ChatManager } from '@/components/admin/chat-manager'
 
-type Tab = 'dashboard' | 'products' | 'categories' | 'banners' | 'orders' | 'promo' | 'coupons' | 'clienti' | 'fedelta' | 'chat'
+type Tab = 'dashboard' | 'products' | 'categories' | 'banners' | 'orders' | 'promo' | 'volantino' | 'coupons' | 'clienti' | 'fedelta' | 'chat'
 
 const TABS = [
   { id: 'dashboard' as Tab, label: 'Dashboard', icon: LayoutDashboard, color: 'text-blue-600 bg-blue-50' },
@@ -26,6 +27,7 @@ const TABS = [
   { id: 'banners' as Tab, label: 'Banner', icon: Image, color: 'text-purple-600 bg-purple-50' },
   { id: 'orders' as Tab, label: 'Ordini', icon: ShoppingBag, color: 'text-orange-600 bg-orange-50' },
   { id: 'promo' as Tab, label: 'Promo', icon: Megaphone, color: 'text-rose-600 bg-rose-50' },
+  { id: 'volantino' as Tab, label: 'Volantino', icon: Newspaper, color: 'text-red-600 bg-red-50' },
   { id: 'coupons' as Tab, label: 'Coupon', icon: Ticket, color: 'text-indigo-600 bg-indigo-50' },
   { id: 'clienti' as Tab, label: 'Clienti', icon: Users, color: 'text-pink-600 bg-pink-50' },
   { id: 'fedelta' as Tab, label: 'Fedeltà', icon: Gift, color: 'text-yellow-600 bg-yellow-50' },
@@ -167,6 +169,7 @@ export default function AdminPage() {
         {activeTab === 'banners' && <BannersManager />}
         {activeTab === 'orders' && <OrdersManager />}
         {activeTab === 'promo' && <PromoManager />}
+        {activeTab === 'volantino' && <VolantinoManager />}
         {activeTab === 'coupons' && <CouponsManager />}
         {activeTab === 'clienti' && <ClientiManager />}
         {activeTab === 'fedelta' && <LoyaltySettingsManager />}
