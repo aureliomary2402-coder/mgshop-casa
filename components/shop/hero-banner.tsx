@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
-import { ChevronLeft, ChevronRight, ShoppingBag, ArrowRight } from 'lucide-react'
+import { ChevronLeft, ChevronRight, ShoppingBag, ArrowRight, ChevronUp } from 'lucide-react'
 import type { Banner, Category } from '@/lib/types'
 import { AmbientBubbles } from './ambient-bubbles'
 
@@ -58,7 +58,14 @@ export function HeroBanner({ banners }: { banners: Banner[] }) {
           </button>
         ) : (
           <div className="w-full">
-            <p className="text-white/70 text-xs font-medium uppercase tracking-wider mb-3">Scegli una categoria</p>
+            <div className="flex items-center gap-2 mb-3">
+              <p className="text-white/70 text-xs font-medium uppercase tracking-wider">Scegli una categoria</p>
+              <button onClick={() => setShowCategories(false)} aria-label="Richiudi categorie"
+                className="w-6 h-6 rounded-full flex items-center justify-center transition-all hover:scale-110 btn-press"
+                style={{ background: 'rgba(255,255,255,0.15)', border: '1px solid rgba(255,255,255,0.25)' }}>
+                <ChevronUp className="w-3.5 h-3.5 text-white" />
+              </button>
+            </div>
             <div className="flex flex-wrap gap-3">
               {categories.map((cat, i) => (
                 <Link key={cat.id} href={`/shop?categoria=${cat.slug}`}
