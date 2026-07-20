@@ -52,7 +52,7 @@ export function HeroBanner({ banners }: { banners: Banner[] }) {
 
         {!showCategories ? (
           <button onClick={() => setShowCategories(true)}
-            className="group inline-flex items-center gap-2 font-bold text-sm md:text-base px-6 py-3 rounded-xl text-cyan-800 bg-white transition-all hover:scale-105 btn-press">
+            className="group inline-flex items-center gap-2 font-bold text-sm md:text-base px-6 py-3 rounded-xl text-cyan-800 bg-white transition-all hover:scale-105 btn-press neon-glow">
             Scopri i prodotti
             <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
           </button>
