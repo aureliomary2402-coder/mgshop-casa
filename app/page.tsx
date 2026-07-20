@@ -98,15 +98,15 @@ export default function WelcomePage() {
 
         <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-8">
           <Link href="/shop"
-            className="group w-full sm:w-auto flex items-center justify-center gap-3 font-bold text-lg px-10 py-5 rounded-2xl text-white transition-all hover:scale-105 active:scale-95 btn-press"
-            style={{ background: 'linear-gradient(135deg,#0891b2,#06b6d4)', boxShadow: '0 16px 40px rgba(8,145,178,0.4)' }}>
+            className="group w-full sm:w-auto flex items-center justify-center gap-3 font-bold text-lg px-10 py-5 rounded-2xl text-white transition-all hover:scale-105 active:scale-95 btn-press neon-glow"
+            style={{ background: 'linear-gradient(135deg,#0891b2,#06b6d4)' }}>
             <ShoppingBag className="w-5 h-5" /> Sfoglia il negozio
             <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
           </Link>
 
           {promoActive ? (
             <Link href="/promo"
-              className="group w-full sm:w-auto flex items-center justify-center gap-3 font-bold text-lg px-10 py-5 rounded-2xl transition-all hover:scale-105 active:scale-95 btn-press"
+              className="group w-full sm:w-auto flex items-center justify-center gap-3 font-bold text-lg px-10 py-5 rounded-2xl transition-all hover:scale-105 active:scale-95 btn-press neon-glow"
               style={{ background: 'rgba(8,145,178,0.1)', border: '1px solid rgba(8,145,178,0.3)', color: '#06b6d4' }}>
               <Sparkles className="w-5 h-5" /> Vedi le promo
               <span className="text-xs bg-cyan-500 text-black px-2 py-0.5 rounded-full font-semibold">OFFERTE</span>
@@ -121,7 +121,7 @@ export default function WelcomePage() {
 
           {volantinoActive ? (
             <Link href="/volantino"
-              className="group w-full sm:w-auto flex items-center justify-center gap-3 font-bold text-lg px-10 py-5 rounded-2xl transition-all hover:scale-105 active:scale-95 btn-press"
+              className="group w-full sm:w-auto flex items-center justify-center gap-3 font-bold text-lg px-10 py-5 rounded-2xl transition-all hover:scale-105 active:scale-95 btn-press neon-glow"
               style={{ background: 'rgba(8,145,178,0.1)', border: '1px solid rgba(8,145,178,0.3)', color: '#06b6d4' }}>
               <Newspaper className="w-5 h-5" /> Vedi il volantino
               <span className="text-xs bg-cyan-500 text-black px-2 py-0.5 rounded-full font-semibold">VOLANTINO</span>
