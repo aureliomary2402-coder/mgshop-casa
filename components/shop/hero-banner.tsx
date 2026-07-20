@@ -6,20 +6,15 @@ import { ChevronLeft, ChevronRight, ShoppingBag, ArrowRight, ChevronUp } from 'l
 import type { Banner, Category } from '@/lib/types'
 import { AmbientBubbles } from './ambient-bubbles'
 
-export function HeroBanner({ banners }: { banners: Banner[] }) {
+export function HeroBanner({ banners, categories }: { banners: Banner[]; categories: Category[] }) {
   const [currentIndex, setCurrentIndex] = useState(0)
   const [showCategories, setShowCategories] = useState(false)
-  const [categories, setCategories] = useState<Category[]>([])
 
   useEffect(() => {
     if (banners.length <= 1) return
     const interval = setInterval(() => setCurrentIndex((prev) => (prev + 1) % banners.length), 5000)
     return () => clearInterval(interval)
   }, [banners.length])
-
-  useEffect(() => {
-    fetch('/api/admin/categories').then(r => r.json()).then(setCategories).catch(() => {})
-  }, [])
 
   // Banner sempre "disegnato" a codice: niente foto caricate, sempre nitido a qualsiasi risoluzione.
   const current: Partial<Banner> | undefined = banners[currentIndex]

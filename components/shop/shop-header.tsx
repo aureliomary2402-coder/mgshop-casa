@@ -6,12 +6,11 @@ import { useState, useEffect, useRef } from 'react'
 import { useRouter, useSearchParams, usePathname } from 'next/navigation'
 import type { Category } from '@/lib/types'
 
-export function ShopHeader() {
+export function ShopHeader({ categories }: { categories: Category[] }) {
   const [mounted, setMounted] = useState(false)
   const [searchOpen, setSearchOpen] = useState(false)
   const [searchValue, setSearchValue] = useState('')
   const [scrolled, setScrolled] = useState(false)
-  const [categories, setCategories] = useState<Category[]>([])
   const [catOpen, setCatOpen] = useState(false)
   const [promoActive, setPromoActive] = useState(false)
   const [volantinoActive, setVolantinoActive] = useState(false)
@@ -30,7 +29,6 @@ export function ShopHeader() {
     if (q) { setSearchValue(q); setSearchOpen(true) }
     const hs = () => setScrolled(window.scrollY > 20)
     window.addEventListener('scroll', hs, { passive: true })
-    fetch('/api/admin/categories').then(r => r.json()).then(setCategories).catch(() => {})
     fetch('/api/promo').then(r => r.json()).then(d => setPromoActive(d.is_active === true)).catch(() => {})
     fetch('/api/volantino').then(r => r.json()).then(d => setVolantinoActive(d.is_active === true)).catch(() => {})
     const hc = (e: MouseEvent) => { if (catRef.current && !catRef.current.contains(e.target as Node)) setCatOpen(false) }
