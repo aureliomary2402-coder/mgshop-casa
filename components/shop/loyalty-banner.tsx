@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect } from 'react'
-import { Sparkles, ArrowRight } from 'lucide-react'
+import { Sparkles } from 'lucide-react'
 
 interface LoyaltySettings {
   points_per_euro: number
@@ -29,50 +29,30 @@ export function LoyaltyBanner({ compact = false }: { compact?: boolean }) {
       <div className="flex-1 min-w-0">
         <p className="text-xs font-semibold text-slate-800">Programma Fedeltà</p>
         <p className="text-xs text-slate-500 mt-0.5">
-          1 punto ogni {euroPerPoint}€ &middot; {settings.points_threshold} punti = {settings.reward_description}
+          Ogni {euroPerPoint}€ di spesa = 1 punto. A {settings.points_threshold} punti ricevi: {settings.reward_description}
         </p>
       </div>
     </div>
   )
 
   return (
-    <div className="relative overflow-hidden rounded-2xl bg-white border border-slate-200">
-      <div className="flex flex-col sm:flex-row sm:items-center gap-6 sm:gap-10 px-6 py-6 sm:px-8">
-
-        {/* Etichetta e titolo */}
-        <div className="flex items-center gap-4 sm:shrink-0">
-          <div className="w-12 h-12 rounded-full bg-cyan-50 flex items-center justify-center shrink-0">
-            <Sparkles className="w-5 h-5 text-cyan-600" />
-          </div>
-          <div>
-            <p className="text-[11px] font-semibold tracking-wider text-cyan-600 uppercase">Programma fedeltà</p>
-            <p className="text-base font-bold text-slate-900 mt-0.5">Accumula punti ad ogni ordine</p>
-          </div>
+    <div className="rounded-2xl bg-white border border-slate-200 px-5 py-5 sm:px-7 sm:py-6">
+      <div className="flex items-center gap-3 mb-3">
+        <div className="w-10 h-10 rounded-full bg-cyan-50 flex items-center justify-center shrink-0">
+          <Sparkles className="w-5 h-5 text-cyan-600" />
         </div>
-
-        {/* Divisore verticale, solo desktop */}
-        <div className="hidden sm:block w-px self-stretch bg-slate-200" />
-
-        {/* Stepper Spendi -> Punti -> Premio */}
-        <div className="flex items-center gap-3 sm:gap-4 flex-1 min-w-0">
-          <div className="text-center">
-            <p className="text-sm font-bold text-slate-900">{euroPerPoint}€</p>
-            <p className="text-[11px] text-slate-500">spesi</p>
-          </div>
-          <div className="flex-1 h-px bg-gradient-to-r from-slate-200 via-cyan-300 to-slate-200 max-w-[40px]" />
-          <div className="text-center">
-            <p className="text-sm font-bold text-cyan-600">1 punto</p>
-            <p className="text-[11px] text-slate-500">accumulato</p>
-          </div>
-          <div className="flex-1 h-px bg-gradient-to-r from-slate-200 via-cyan-300 to-slate-200 max-w-[40px]" />
-          <div className="min-w-0">
-            <p className="text-sm font-bold text-slate-900">{settings.points_threshold} pt</p>
-            <p className="text-[11px] text-slate-500 truncate max-w-[160px]">{settings.reward_description}</p>
-          </div>
+        <div>
+          <p className="text-[11px] font-semibold tracking-wider text-cyan-600 uppercase">Programma fedeltà</p>
+          <p className="text-base font-bold text-slate-900">Accumula punti ad ogni ordine</p>
         </div>
-
-        <ArrowRight className="hidden sm:block w-4 h-4 text-slate-300 shrink-0" />
       </div>
+
+      <p className="text-sm text-slate-600 leading-relaxed">
+        Ogni <strong className="text-slate-900">{euroPerPoint}€</strong> di spesa ti fa guadagnare{' '}
+        <strong className="text-cyan-600">1 punto</strong>. Raggiunti{' '}
+        <strong className="text-slate-900">{settings.points_threshold} punti</strong>, ricevi:{' '}
+        <strong className="text-slate-900">{settings.reward_description}</strong>.
+      </p>
     </div>
   )
 }
