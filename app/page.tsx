@@ -1,13 +1,12 @@
 "use client"
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
-import { ShoppingBag, Sparkles, ArrowRight, Tag, Newspaper } from 'lucide-react'
+import { ShoppingBag, Sparkles, ArrowRight, Tag, Newspaper, Truck, ShieldCheck, Star } from 'lucide-react'
 import { SOCIAL_LINKS, InstagramIcon, TikTokIcon, WhatsAppIcon } from '@/components/shop/social-icons'
 import { CodBanner } from '@/components/shop/cod-banner'
 
 export default function WelcomePage() {
   const [mounted, setMounted] = useState(false)
-  const [mousePos, setMousePos] = useState({ x: 0, y: 0 })
   const [promoActive, setPromoActive] = useState(false)
   const [volantinoActive, setVolantinoActive] = useState(false)
 
@@ -15,24 +14,19 @@ export default function WelcomePage() {
     setMounted(true)
     fetch('/api/promo').then(r => r.json()).then(d => setPromoActive(d.is_active === true)).catch(() => {})
     fetch('/api/volantino').then(r => r.json()).then(d => setVolantinoActive(d.is_active === true)).catch(() => {})
-    const h = (e: MouseEvent) => setMousePos({ x: e.clientX / window.innerWidth - 0.5, y: e.clientY / window.innerHeight - 0.5 })
-    window.addEventListener('mousemove', h, { passive: true })
-    return () => window.removeEventListener('mousemove', h)
   }, [])
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center relative overflow-hidden"
       style={{ background: 'linear-gradient(135deg,#03131a 0%,#0c2b36 40%,#06303d 70%,#0c2b36 100%)' }}>
 
-      <div className="absolute inset-0 pointer-events-none">
-        <div className="absolute w-[600px] h-[600px] rounded-full"
-          style={{ top: '50%', left: '50%', transform: `translate(calc(-50% + ${mousePos.x * 80}px),calc(-50% + ${mousePos.y * 60}px))`, transition: 'transform 1.2s cubic-bezier(0.22,1,0.36,1)' }}>
-          <div className="w-full h-full rounded-full blur-[120px] opacity-25 animate-breathe" style={{ background: 'radial-gradient(circle,#0891b2,#155e75)' }} />
-        </div>
-        <div className="absolute w-[400px] h-[400px] rounded-full"
-          style={{ top: '30%', left: '30%', transform: `translate(calc(-50% + ${mousePos.x * -50}px),calc(-50% + ${mousePos.y * -40}px))`, transition: 'transform 0.8s cubic-bezier(0.22,1,0.36,1)' }}>
-          <div className="w-full h-full rounded-full blur-[80px] opacity-15 animate-breathe" style={{ background: 'radial-gradient(circle,#06b6d4,#0e7490)', animationDelay: '2s' }} />
-        </div>
+      <div className="absolute inset-0 pointer-events-none overflow-hidden">
+        <div className="absolute w-[700px] h-[700px] rounded-full blur-[130px] opacity-25 aurora-1"
+          style={{ top: '10%', left: '10%', background: 'radial-gradient(circle,#0891b2,#155e75)' }} />
+        <div className="absolute w-[550px] h-[550px] rounded-full blur-[110px] opacity-20 aurora-2"
+          style={{ top: '40%', left: '55%', background: 'radial-gradient(circle,#22d3ee,#0e7490)' }} />
+        <div className="absolute w-[450px] h-[450px] rounded-full blur-[100px] opacity-[0.12] aurora-3"
+          style={{ top: '55%', left: '20%', background: 'radial-gradient(circle,#e2e8f0,#475569)' }} />
         {/* Bolle di sapone in salita */}
         {[
           { left: '5%', size: 46, dur: 11, delay: 0 },
@@ -82,17 +76,17 @@ export default function WelcomePage() {
 
       <div className={`relative z-10 text-center px-6 max-w-2xl mx-auto ${mounted ? 'animate-bubble-reveal' : 'opacity-0'}`}>
         <div className="mb-10">
-          <div className="inline-flex items-center justify-center w-20 h-20 rounded-2xl mb-6 animate-float"
-            style={{ background: 'linear-gradient(135deg,#0891b2,#06b6d4)', boxShadow: '0 20px 60px rgba(8,145,178,0.5)' }}>
+          <div className="inline-flex items-center justify-center w-20 h-20 rounded-2xl mb-6 animate-float word-reveal"
+            style={{ background: 'linear-gradient(135deg,#0891b2,#06b6d4)', boxShadow: '0 20px 60px rgba(8,145,178,0.5)', animationDelay: '0.1s' }}>
             <ShoppingBag className="w-10 h-10 text-white" />
           </div>
           <h1 className="text-6xl md:text-8xl font-extrabold tracking-tight text-white leading-none mb-3">
-            MG<span className="text-shimmer">Shop</span>
+            <span className="inline-block word-reveal" style={{ animationDelay: '0.25s' }}>MG</span><span className="inline-block text-shimmer word-reveal" style={{ animationDelay: '0.4s' }}>Shop</span>
           </h1>
-          <p className="text-xl text-cyan-200/40 tracking-[0.3em] uppercase font-light">Casa</p>
+          <p className="text-xl text-cyan-200/40 tracking-[0.3em] uppercase font-light word-reveal" style={{ animationDelay: '0.55s' }}>Casa</p>
         </div>
 
-        <p className="text-slate-400 text-lg mb-10 leading-relaxed">
+        <p className="text-slate-400 text-lg mb-10 leading-relaxed word-reveal" style={{ animationDelay: '0.7s' }}>
           Prodotti selezionati per la tua casa.<br />Qualità e stile in ogni angolo.
         </p>
 
@@ -163,6 +157,20 @@ export default function WelcomePage() {
             <div key={l} className="text-center">
               <div className="text-lg font-bold text-cyan-400">{v}</div>
               <div className="text-xs text-cyan-200/30 mt-1">{l}</div>
+            </div>
+          ))}
+        </div>
+
+        <div className="flex flex-wrap items-center justify-center gap-3 mt-8">
+          {[
+            { Icon: Truck, label: 'Spedizione 24/48h' },
+            { Icon: ShieldCheck, label: 'Pagamento sicuro' },
+            { Icon: Star, label: '+500 recensioni 5 stelle' },
+          ].map(({ Icon, label }, i) => (
+            <div key={i} className="flex items-center gap-2 px-4 py-2 rounded-full text-xs font-medium text-slate-300"
+              style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)' }}>
+              <Icon className="w-3.5 h-3.5 text-cyan-400 shrink-0" />
+              {label}
             </div>
           ))}
         </div>

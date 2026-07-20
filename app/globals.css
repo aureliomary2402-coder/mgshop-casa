@@ -110,6 +110,33 @@
 }
 .animate-breathe { animation: breathe 6s ease-in-out infinite; }
 
+@keyframes word-reveal {
+  from { opacity: 0; transform: translateY(28px) scale(0.94); filter: blur(6px); }
+  to { opacity: 1; transform: translateY(0) scale(1); filter: blur(0); }
+}
+.word-reveal {
+  opacity: 0;
+  animation: word-reveal 0.9s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+@keyframes aurora-drift-1 {
+  0%, 100% { transform: translate(-10%, -10%) scale(1); }
+  33% { transform: translate(15%, 5%) scale(1.15); }
+  66% { transform: translate(-5%, 15%) scale(0.95); }
+}
+@keyframes aurora-drift-2 {
+  0%, 100% { transform: translate(10%, 10%) scale(1); }
+  33% { transform: translate(-15%, -8%) scale(0.9); }
+  66% { transform: translate(8%, -12%) scale(1.1); }
+}
+@keyframes aurora-drift-3 {
+  0%, 100% { transform: translate(0%, 0%) scale(1); }
+  50% { transform: translate(-12%, 10%) scale(1.2); }
+}
+.aurora-1 { animation: aurora-drift-1 18s ease-in-out infinite; }
+.aurora-2 { animation: aurora-drift-2 22s ease-in-out infinite; }
+.aurora-3 { animation: aurora-drift-3 26s ease-in-out infinite; }
+
 @keyframes bubbleBob {
   0%, 100% { transform: translateY(0) scale(1); }
   50% { transform: translateY(-5px) scale(1.06); }
