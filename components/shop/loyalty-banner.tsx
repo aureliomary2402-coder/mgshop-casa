@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect } from 'react'
-import { Gift, ChevronRight } from 'lucide-react'
+import { Sparkles, ArrowRight } from 'lucide-react'
 
 interface LoyaltySettings {
   points_per_euro: number
@@ -20,66 +20,58 @@ export function LoyaltyBanner({ compact = false }: { compact?: boolean }) {
   if (!settings || !settings.is_active) return null
 
   const euroPerPoint = settings.points_per_euro > 0 ? Math.round(1 / settings.points_per_euro) : 0
-  const euroToReward = settings.points_per_euro > 0 ? Math.round(settings.points_threshold / settings.points_per_euro) : 0
 
   if (compact) return (
-    <div className="flex items-center gap-3 p-3 rounded-xl"
-      style={{ background: 'rgba(8,145,178,0.06)', border: '1px solid rgba(8,145,178,0.15)' }}>
-      <Gift className="w-5 h-5 text-cyan-600 shrink-0" />
+    <div className="flex items-center gap-3 p-3 rounded-xl bg-slate-50 border border-slate-200">
+      <div className="w-8 h-8 rounded-full bg-cyan-50 flex items-center justify-center shrink-0">
+        <Sparkles className="w-4 h-4 text-cyan-600" />
+      </div>
       <div className="flex-1 min-w-0">
-        <p className="text-xs font-semibold text-cyan-800">🎁 Raccolta Punti Fedeltà</p>
+        <p className="text-xs font-semibold text-slate-800">Programma Fedeltà</p>
         <p className="text-xs text-slate-500 mt-0.5">
-          Guadagni <strong>1 punto</strong> ogni <strong>{euroPerPoint}€</strong> spesi.
-          A <strong>{settings.points_threshold} punti</strong>: {settings.reward_description}
+          1 punto ogni {euroPerPoint}€ &middot; {settings.points_threshold} punti = {settings.reward_description}
         </p>
       </div>
     </div>
   )
 
-  const sphereStyle = (size: number) => ({
-    width: size, height: size,
-    background: 'radial-gradient(circle at 30% 25%, #a5f3fc, #0891b2 55%, #155e75 100%)',
-    boxShadow: 'inset -3px -4px 8px rgba(0,0,0,0.3), inset 3px 4px 7px rgba(255,255,255,0.55), 0 6px 14px rgba(8,145,178,0.35)',
-  })
-
   return (
-    <div className="relative overflow-hidden rounded-2xl bg-white p-4 card-3d"
-      style={{ border: '1px solid rgba(8,145,178,0.15)', boxShadow: '0 10px 28px rgba(8,145,178,0.12), 0 2px 6px rgba(0,0,0,0.04)' }}>
+    <div className="relative overflow-hidden rounded-2xl bg-white border border-slate-200">
+      <div className="flex flex-col sm:flex-row sm:items-center gap-6 sm:gap-10 px-6 py-6 sm:px-8">
 
-      {/* Bollicine che risalgono, contenute nel banner */}
-      {[
-        { left: '78%', size: 10, dur: 4.5, delay: 0 },
-        { left: '85%', size: 6, dur: 3.8, delay: 1 },
-        { left: '92%', size: 8, dur: 5, delay: 2 },
-        { left: '70%', size: 5, dur: 4, delay: 1.6 },
-      ].map((b, i) => (
-        <div key={i} className="absolute rounded-full animate-bubble-rise-small"
-          style={{
-            left: b.left, bottom: 0, width: b.size, height: b.size,
-            background: 'radial-gradient(circle at 32% 28%, rgba(255,255,255,0.95), rgba(8,145,178,0.15))',
-            border: '1px solid rgba(8,145,178,0.2)',
-            animationDuration: `${b.dur}s`, animationDelay: `${b.delay}s`,
-          }} />
-      ))}
-
-      <div className="relative z-10 flex items-center gap-4">
-        {/* Icona a bolla 3D */}
-        <div className="shrink-0 animate-float">
-          <div className="rounded-full flex items-center justify-center" style={sphereStyle(56)}>
-            <Gift className="w-6 h-6 text-white" style={{ filter: 'drop-shadow(0 1px 2px rgba(0,0,0,0.3))' }} />
+        {/* Etichetta e titolo */}
+        <div className="flex items-center gap-4 sm:shrink-0">
+          <div className="w-12 h-12 rounded-full bg-cyan-50 flex items-center justify-center shrink-0">
+            <Sparkles className="w-5 h-5 text-cyan-600" />
+          </div>
+          <div>
+            <p className="text-[11px] font-semibold tracking-wider text-cyan-600 uppercase">Programma fedeltà</p>
+            <p className="text-base font-bold text-slate-900 mt-0.5">Accumula punti ad ogni ordine</p>
           </div>
         </div>
 
-        <div className="flex-1 min-w-0">
-          <p className="text-sm font-bold mb-1.5" style={{ color: '#0c2b36' }}>Programma Fedeltà 🎁</p>
-          <div className="flex items-center gap-1.5 flex-wrap">
-            <span className="inline-flex items-center justify-center rounded-full font-bold text-white text-[11px] shrink-0" style={sphereStyle(22)}>1</span>
-            <span className="text-xs text-slate-500">ogni {euroPerPoint}€</span>
-            <ChevronRight className="w-3.5 h-3.5 text-cyan-400 shrink-0" />
-            <span className="inline-flex items-center justify-center rounded-full font-bold text-white text-[10px] shrink-0" style={sphereStyle(22)}>{settings.points_threshold}</span>
-            <span className="text-xs text-slate-500 truncate">= {settings.reward_description}</span>
+        {/* Divisore verticale, solo desktop */}
+        <div className="hidden sm:block w-px self-stretch bg-slate-200" />
+
+        {/* Stepper Spendi -> Punti -> Premio */}
+        <div className="flex items-center gap-3 sm:gap-4 flex-1 min-w-0">
+          <div className="text-center">
+            <p className="text-sm font-bold text-slate-900">{euroPerPoint}€</p>
+            <p className="text-[11px] text-slate-500">spesi</p>
+          </div>
+          <div className="flex-1 h-px bg-gradient-to-r from-slate-200 via-cyan-300 to-slate-200 max-w-[40px]" />
+          <div className="text-center">
+            <p className="text-sm font-bold text-cyan-600">1 punto</p>
+            <p className="text-[11px] text-slate-500">accumulato</p>
+          </div>
+          <div className="flex-1 h-px bg-gradient-to-r from-slate-200 via-cyan-300 to-slate-200 max-w-[40px]" />
+          <div className="min-w-0">
+            <p className="text-sm font-bold text-slate-900">{settings.points_threshold} pt</p>
+            <p className="text-[11px] text-slate-500 truncate max-w-[160px]">{settings.reward_description}</p>
           </div>
         </div>
+
+        <ArrowRight className="hidden sm:block w-4 h-4 text-slate-300 shrink-0" />
       </div>
     </div>
   )
