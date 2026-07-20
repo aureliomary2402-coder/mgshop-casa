@@ -39,11 +39,38 @@ export async function PUT(request: NextRequest) {
   if (!(await isAuthenticated())) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   const body = await request.json()
   const supabase = createAdminClient()
+
+  // Leggo lo stato precedente prima di aggiornare, per sapere se sto per assegnare punti nuovi
+  const { data: before } = await supabase.from('orders').select('status').eq('id', body.id).single()
+  const wasAlreadyDelivered = before?.status === 'delivered'
+
   const updateData: Record<string, string> = {}
   if (body.status !== undefined) updateData.status = body.status
   if (body.customer_name !== undefined) updateData.customer_name = body.customer_name
   const { data, error } = await supabase.from('orders').update(updateData).eq('id', body.id).select().single()
   if (error) return NextResponse.json({ error: error.message }, { status: 500 })
+
+  // Il trigger DB che assegna i punti gira DOPO questo update (in una scrittura separata sulla riga),
+  // quindi "data.points_earned" qui sopra è ancora quello vecchio: rileggo l'ordine per prendere il valore aggiornato
+  let pointsJustAwarded = 0
+  if (updateData.status === 'delivered' && !wasAlreadyDelivered) {
+    const { data: refreshed } = await supabase.from('orders').select('points_earned').eq('id', body.id).single()
+    pointsJustAwarded = refreshed?.points_earned || 0
+  }
+
+  // Se l'ordine è appena passato a "delivered" ORA (non lo era già), il trigger del DB ha assegnato i punti:
+  // avviso subito l'admin di quanti punti sono stati dati per questo ordine
+  if (updateData.status === 'delivered' && !wasAlreadyDelivered && pointsJustAwarded > 0) {
+    try {
+      await sendPushToAdmin(
+        '🎁 Punti fedeltà assegnati',
+        `${data.customer_name || data.phone_number}: +${pointsJustAwarded} punti per l'ordine da €${Number(data.total).toFixed(2)}`,
+        '/mgadmin-panel'
+      )
+    } catch (e) {
+      console.error('Notifica punti assegnati fallita:', e)
+    }
+  }
 
   // Se l'ordine è appena passato a "delivered", controlla se il cliente ha raggiunto la soglia punti fedeltà
   if (updateData.status === 'delivered' && data?.phone_number) {
