@@ -107,7 +107,7 @@ export default function WelcomePage() {
           {promoActive ? (
             <Link href="/promo"
               className="group w-full sm:w-auto flex items-center justify-center gap-3 font-bold text-lg px-10 py-5 rounded-2xl transition-all hover:scale-105 active:scale-95 btn-press neon-glow"
-              style={{ background: 'rgba(8,145,178,0.1)', border: '1px solid rgba(8,145,178,0.3)', color: '#06b6d4' }}>
+              style={{ background: 'rgba(8,145,178,0.1)', border: '1px solid rgba(8,145,178,0.3)', color: '#ffffff' }}>
               <Sparkles className="w-5 h-5" /> Vedi le promo
               <span className="text-xs bg-cyan-500 text-black px-2 py-0.5 rounded-full font-semibold">OFFERTE</span>
             </Link>
@@ -122,7 +122,7 @@ export default function WelcomePage() {
           {volantinoActive ? (
             <Link href="/volantino"
               className="group w-full sm:w-auto flex items-center justify-center gap-3 font-bold text-lg px-10 py-5 rounded-2xl transition-all hover:scale-105 active:scale-95 btn-press neon-glow"
-              style={{ background: 'rgba(8,145,178,0.1)', border: '1px solid rgba(8,145,178,0.3)', color: '#06b6d4' }}>
+              style={{ background: 'rgba(8,145,178,0.1)', border: '1px solid rgba(8,145,178,0.3)', color: '#ffffff' }}>
               <Newspaper className="w-5 h-5" /> Vedi il volantino
               <span className="text-xs bg-cyan-500 text-black px-2 py-0.5 rounded-full font-semibold">VOLANTINO</span>
             </Link>
@@ -142,17 +142,17 @@ export default function WelcomePage() {
         {/* Icone social */}
         <div className="flex items-center justify-center gap-3 mt-2">
           <a href={SOCIAL_LINKS.instagram} target="_blank" rel="noopener noreferrer" aria-label="Instagram"
-            className="w-11 h-11 rounded-full flex items-center justify-center transition-all hover:scale-110 btn-press"
+            className="w-11 h-11 rounded-full flex items-center justify-center transition-all hover:scale-110 btn-press neon-glow-pink"
             style={{ background: 'rgba(217,70,160,0.15)', border: '1px solid rgba(217,70,160,0.3)', color: '#f472b6' }}>
             <InstagramIcon size={19} />
           </a>
           <a href={SOCIAL_LINKS.tiktok} target="_blank" rel="noopener noreferrer" aria-label="TikTok"
-            className="w-11 h-11 rounded-full flex items-center justify-center transition-all hover:scale-110 btn-press"
+            className="w-11 h-11 rounded-full flex items-center justify-center transition-all hover:scale-110 btn-press neon-glow-white"
             style={{ background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.15)', color: '#e5e5e5' }}>
             <TikTokIcon size={18} />
           </a>
           <a href={SOCIAL_LINKS.whatsapp} target="_blank" rel="noopener noreferrer" aria-label="WhatsApp"
-            className="w-11 h-11 rounded-full flex items-center justify-center transition-all hover:scale-110 btn-press"
+            className="w-11 h-11 rounded-full flex items-center justify-center transition-all hover:scale-110 btn-press neon-glow-green"
             style={{ background: 'rgba(22,163,74,0.15)', border: '1px solid rgba(22,163,74,0.3)', color: '#4ade80' }}>
             <WhatsAppIcon size={19} />
           </a>
