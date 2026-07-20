@@ -24,6 +24,7 @@ export function VolantinoManager() {
   const [allProducts, setAllProducts] = useState<Product[]>([])
   const [productSearch, setProductSearch] = useState('')
   const [showProductPicker, setShowProductPicker] = useState(false)
+  const [priceDrafts, setPriceDrafts] = useState<Record<string, string>>({})
 
   useEffect(() => {
     fetch('/api/admin/volantino')
@@ -62,10 +63,22 @@ export function VolantinoManager() {
 
   const removeProduct = (productId: string) => {
     setItems(prev => prev.filter(i => i.product_id !== productId))
+    setPriceDrafts(prev => {
+      const { [productId]: _, ...rest } = prev
+      return rest
+    })
   }
 
-  const updateSalePrice = (productId: string, price: string) => {
-    const val = parseFloat(price)
+  const updateSalePrice = (productId: string, raw: string) => {
+    // Normalizza virgola -> punto e tiene solo cifre + un separatore decimale,
+    // così il campo non "salta" mentre l'utente sta ancora scrivendo (es. "12," o "12.")
+    let cleaned = raw.replace(',', '.').replace(/[^0-9.]/g, '')
+    const parts = cleaned.split('.')
+    if (parts.length > 2) cleaned = parts[0] + '.' + parts.slice(1).join('')
+
+    setPriceDrafts(prev => ({ ...prev, [productId]: cleaned }))
+
+    const val = parseFloat(cleaned)
     setItems(prev => prev.map(i => i.product_id === productId ? { ...i, sale_price: isNaN(val) ? 0 : val } : i))
   }
 
@@ -134,12 +147,13 @@ export function VolantinoManager() {
                   {product.cover_image && <img src={product.cover_image} alt={product.name} className="w-12 h-12 rounded-lg object-cover shrink-0" />}
                   <div className="flex-1 min-w-0">
                     <p className="text-sm font-medium text-slate-800 truncate">{product.name}</p>
-                    <p className="text-xs text-slate-400 line-through">euro{product.price.toFixed(2)}</p>
+                    <p className="text-xs text-slate-400 line-through">€{product.price.toFixed(2)}</p>
                   </div>
                   <div className="flex items-center gap-1 shrink-0">
                     <Tag className="w-3.5 h-3.5 text-red-500" />
                     <Input
-                      type="number" step="0.01" value={item.sale_price}
+                      type="text" inputMode="decimal"
+                      value={priceDrafts[product.id] ?? String(item.sale_price)}
                       onChange={e => updateSalePrice(product.id, e.target.value)}
                       className="w-20 h-9 text-sm font-bold text-red-600"
                     />
@@ -173,7 +187,7 @@ export function VolantinoManager() {
                         : <div className="w-10 h-10 rounded-lg bg-slate-100 shrink-0" />}
                       <div className="flex-1 min-w-0">
                         <p className="text-sm font-medium text-slate-800 truncate">{p.name}</p>
-                        <p className="text-xs text-cyan-700">euro{p.price.toFixed(2)}</p>
+                        <p className="text-xs text-cyan-700">€{p.price.toFixed(2)}</p>
                       </div>
                       {already && <span className="text-xs text-slate-400 font-bold shrink-0">Aggiunto</span>}
                     </button>
