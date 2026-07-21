@@ -2,13 +2,20 @@ import { createAdminClient } from './supabase/admin'
 
 type SupabaseAdmin = ReturnType<typeof createAdminClient>
 
+// Quanto aspettare dopo la scadenza prima di archiviare automaticamente.
+// Serve a lasciare il tempo ai clienti di vedere le bolle scoppiare e il
+// numero vincente rivelato sulla pagina pubblica: se disattivassimo la
+// lotteria nello stesso istante della scadenza, la pagina la tratterebbe
+// subito come "nessuna lotteria attiva" e nessuno vedrebbe la rivelazione.
+const GRACE_PERIOD_MS = 15 * 60 * 1000 // 15 minuti
+
 /**
- * Se la lotteria è attiva e il tempo è scaduto, la archivia da sola nello
- * storico vincitori e la rimette in bozza — senza bisogno che l'admin
- * clicchi manualmente "Archivia". Viene richiamata sia dalla pagina
- * pubblica /api/lottery sia dal pannello admin, così basta che qualcuno
- * (cliente o admin) apra una delle due pagine dopo la scadenza perché
- * l'archiviazione scatti da sola.
+ * Se la lotteria è attiva ed è scaduta da più del periodo di grazia, la
+ * archivia da sola nello storico vincitori e la rimette in bozza — senza
+ * bisogno che l'admin clicchi manualmente "Archivia". Viene richiamata sia
+ * dalla pagina pubblica /api/lottery sia dal pannello admin, così basta che
+ * qualcuno (cliente o admin) apra una delle due pagine dopo la scadenza
+ * perché l'archiviazione scatti da sola, ma solo a rivelazione già vista.
  *
  * L'update usa `.eq('is_active', true)` come "lucchetto": se due richieste
  * arrivano nello stesso istante, solo una riesce ad aggiornare la riga
@@ -17,7 +24,7 @@ type SupabaseAdmin = ReturnType<typeof createAdminClient>
  */
 export async function autoArchiveIfExpired(supabase: SupabaseAdmin, lottery: any) {
   if (!lottery || !lottery.is_active || !lottery.ends_at) return lottery
-  if (new Date(lottery.ends_at).getTime() > Date.now()) return lottery
+  if (new Date(lottery.ends_at).getTime() + GRACE_PERIOD_MS > Date.now()) return lottery
 
   const { data: claimed } = await supabase.from('lottery')
     .update({ is_active: false, status: 'draft', updated_at: new Date().toISOString() })
