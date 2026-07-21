@@ -1,6 +1,12 @@
 import { NextResponse } from 'next/server'
 import { createAdminClient } from '@/lib/supabase/admin'
 
+// Senza questa riga, Next.js mette in cache questa risposta GET la prima volta
+// e la serve sempre uguale (congelata) finché non c'è un nuovo deploy.
+// Qui invece serve sempre lo stato reale e aggiornato del database.
+export const dynamic = 'force-dynamic'
+export const revalidate = 0
+
 export async function GET() {
   const supabase = createAdminClient()
   const { data: lottery } = await supabase.from('lottery').select('*').limit(1).single()
