@@ -1,7 +1,7 @@
 "use client"
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
-import { ShoppingBag, Sparkles, ArrowRight, Tag, Newspaper, Gift } from 'lucide-react'
+import { ShoppingBag, Sparkles, ArrowRight, Tag, Newspaper, Gift, MapPin } from 'lucide-react'
 import { SOCIAL_LINKS, InstagramIcon, TikTokIcon, WhatsAppIcon } from '@/components/shop/social-icons'
 import { CodBanner } from '@/components/shop/cod-banner'
 
@@ -154,6 +154,12 @@ export default function WelcomePage() {
 
         <div className="flex justify-center mb-6">
           <CodBanner variant="dark" />
+        </div>
+
+        <div className="flex justify-center mb-6 -mt-3">
+          <Link href="/consegne" className="inline-flex items-center gap-1.5 text-xs text-cyan-300/70 hover:text-cyan-200 transition-colors underline underline-offset-2">
+            <MapPin className="w-3.5 h-3.5" /> Zone di consegna
+          </Link>
         </div>
 
         {/* Icone social */}
