@@ -62,19 +62,20 @@ export default function LotteryPage() {
     return () => clearInterval(i)
   }, [data?.ends_at])
 
-  // Quando il countdown arriva a zero, continua a ricontrollare col server finché
-  // non conferma l'estrazione (revealed: true). Un singolo tentativo non basta:
-  // un piccolo scarto di orologio o di rete può far fallire il primo controllo,
-  // lasciando la pagina bloccata su "Estrazione in corso...".
+  // "Scaduto" diventa true una sola volta e resta tale: usarlo come dipendenza
+  // (invece di "remaining", che cambia ogni secondo) evita che l'intervallo di
+  // controllo venga distrutto e ricreato ogni tick prima di poter scattare.
+  const expired = !!data?.ends_at && remaining <= 0
+
   useEffect(() => {
-    if (!data || !data.ends_at || remaining > 0) return
-    if (data.revealed && data.winner_number) {
+    if (!expired) return
+    if (data?.revealed && data.winner_number) {
       if (phase === 'idle') { setWinnerNumber(data.winner_number); setPhase('popping') }
       return
     }
     const i = setInterval(() => { fetchData() }, 1500)
     return () => clearInterval(i)
-  }, [remaining, data, phase])
+  }, [expired, data?.revealed, data?.winner_number, phase])
 
   useEffect(() => {
     if (phase !== 'popping') return
