@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createAdminClient } from '@/lib/supabase/admin'
+import { autoArchiveIfExpired } from '@/lib/lottery'
 import { cookies } from 'next/headers'
 
 async function isAuthenticated() {
@@ -14,7 +15,7 @@ async function isAuthenticated() {
 // bloccare per sempre il salvataggio dal pannello.
 async function getOrCreateLotteryRow(supabase: ReturnType<typeof createAdminClient>) {
   const { data: existing } = await supabase.from('lottery').select('*').limit(1).single()
-  if (existing) return existing
+  if (existing) return autoArchiveIfExpired(supabase, existing)
 
   const { data: created, error } = await supabase.from('lottery').insert({
     is_active: false,

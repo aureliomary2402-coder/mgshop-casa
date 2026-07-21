@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect } from 'react'
-import { ToggleLeft, ToggleRight, ImageIcon, Save, Eye, Clock, Gift, Search, Award, History, Sparkles, Phone } from 'lucide-react'
+import { ToggleLeft, ToggleRight, ImageIcon, Save, Eye, Clock, Gift, Search, Award, History, Sparkles, Phone, Trash2, Pencil, Check, X } from 'lucide-react'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import Link from 'next/link'
@@ -10,7 +10,7 @@ import { ImageCropper } from './image-cropper'
 
 interface Coupon { id: string; code: string; discount_percent: number; discount_fixed: number }
 interface Winner { id: string; lottery_title: string; prize_label: string; prize_image_url: string | null; winner_number: number; participants_count: number; drawn_at: string }
-interface Entry { phone_number: string; customer_name: string | null; lottery_number: number; created_at: string }
+interface Entry { id: string; phone_number: string; customer_name: string | null; lottery_number: number; created_at: string }
 type PrizeType = 'product' | 'coupon' | 'custom'
 
 // Converte una data ISO (UTC, come arriva da Supabase) nel formato
@@ -41,6 +41,8 @@ export function LotteryManager() {
   const [entries, setEntries] = useState<Entry[]>([])
   const [productSearch, setProductSearch] = useState('')
   const [showProductPicker, setShowProductPicker] = useState(false)
+  const [editingEntryId, setEditingEntryId] = useState<string | null>(null)
+  const [editingName, setEditingName] = useState('')
 
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
@@ -111,6 +113,39 @@ export function LotteryManager() {
     if (res.ok) load()
     else setError('Errore archiviazione')
     setDrawing(false)
+  }
+
+  const startEditEntry = (e: Entry) => {
+    setEditingEntryId(e.id)
+    setEditingName(e.customer_name || '')
+  }
+
+  const saveEntryName = async (id: string) => {
+    const res = await fetch('/api/admin/lottery/entries', {
+      method: 'PATCH', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ order_id: id, customer_name: editingName }),
+    })
+    setEditingEntryId(null)
+    if (res.ok) {
+      fetch('/api/admin/lottery/entries').then(r => r.json()).then(d => setEntries(d.entries || [])).catch(() => {})
+    } else setError('Errore nel salvare il nome')
+  }
+
+  const deleteEntry = async (id: string) => {
+    if (!confirm('Rimuovere questo partecipante dalla lotteria? Il suo ordine resta salvato, ma non parteciperà più a questa estrazione.')) return
+    const res = await fetch('/api/admin/lottery/entries', {
+      method: 'DELETE', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ order_id: id }),
+    })
+    if (res.ok) setEntries(prev => prev.filter(e => e.id !== id))
+    else setError('Errore nella rimozione del partecipante')
+  }
+
+  const deleteWinner = async (id: string) => {
+    if (!confirm('Eliminare questa estrazione dallo storico? Non si può annullare.')) return
+    const res = await fetch(`/api/admin/lottery/winners/${id}`, { method: 'DELETE' })
+    if (res.ok) setWinners(prev => prev.filter(w => w.id !== id))
+    else setError('Errore nell\'eliminazione dello storico')
   }
 
   const selectProduct = (p: Product) => {
@@ -266,11 +301,25 @@ export function LotteryManager() {
           <p className="text-xs font-medium text-cyan-700 mb-2 flex items-center gap-1"><Phone className="w-3.5 h-3.5" /> Partecipanti reali di questo turno ({entries.length})</p>
           {entries.length === 0 && <p className="text-xs text-slate-400">Ancora nessun cliente ha aggiunto +1€ al checkout in questo turno.</p>}
           {entries.length > 0 && (
-            <div className="max-h-40 overflow-y-auto space-y-1">
+            <div className="max-h-60 overflow-y-auto space-y-1">
               {entries.map(e => (
-                <div key={e.lottery_number} className="flex items-center justify-between text-xs bg-white rounded-lg px-2.5 py-1.5">
-                  <span className="text-slate-600">{e.customer_name || e.phone_number}</span>
-                  <span className="font-bold text-cyan-700">#{e.lottery_number}</span>
+                <div key={e.id} className="flex items-center justify-between gap-2 text-xs bg-white rounded-lg px-2.5 py-1.5">
+                  {editingEntryId === e.id ? (
+                    <>
+                      <Input value={editingName} onChange={ev => setEditingName(ev.target.value)}
+                        placeholder={e.phone_number} className="h-7 text-xs flex-1" autoFocus
+                        onKeyDown={ev => { if (ev.key === 'Enter') saveEntryName(e.id); if (ev.key === 'Escape') setEditingEntryId(null) }} />
+                      <button onClick={() => saveEntryName(e.id)} className="text-green-600 shrink-0"><Check className="w-3.5 h-3.5" /></button>
+                      <button onClick={() => setEditingEntryId(null)} className="text-slate-400 shrink-0"><X className="w-3.5 h-3.5" /></button>
+                    </>
+                  ) : (
+                    <>
+                      <span className="text-slate-600 truncate flex-1">{e.customer_name || e.phone_number}</span>
+                      <span className="font-bold text-cyan-700 shrink-0">#{e.lottery_number}</span>
+                      <button onClick={() => startEditEntry(e)} className="text-slate-400 hover:text-cyan-600 shrink-0"><Pencil className="w-3.5 h-3.5" /></button>
+                      <button onClick={() => deleteEntry(e.id)} className="text-slate-400 hover:text-red-500 shrink-0"><Trash2 className="w-3.5 h-3.5" /></button>
+                    </>
+                  )}
                 </div>
               ))}
             </div>
@@ -305,9 +354,12 @@ export function LotteryManager() {
         {saved ? 'Salvato!' : saving ? 'Salvataggio...' : 'Salva modifiche'}
       </Button>
 
+      <p className="text-xs text-slate-400 text-center">
+        Allo scadere del conto alla rovescia l'estrazione si archivia da sola nello storico. Usa il pulsante sotto solo se vuoi chiuderla subito, prima della scadenza.
+      </p>
       <Button onClick={handleDraw} disabled={drawing} variant="outline" className="w-full gap-2 border-amber-300 text-amber-700 hover:bg-amber-50">
         <Sparkles className="w-4 h-4" />
-        {drawing ? 'Archiviazione...' : 'Estrazione conclusa: archivia nello storico'}
+        {drawing ? 'Archiviazione...' : 'Chiudi ora e archivia nello storico'}
       </Button>
 
       {/* Storico */}
@@ -322,6 +374,7 @@ export function LotteryManager() {
                 <p className="text-xs text-slate-400 truncate">{w.prize_label} · Numero #{w.winner_number} su {w.participants_count}</p>
               </div>
               <span className="text-xs text-slate-400 shrink-0">{new Date(w.drawn_at).toLocaleDateString('it-IT')}</span>
+              <button onClick={() => deleteWinner(w.id)} className="text-slate-300 hover:text-red-500 shrink-0"><Trash2 className="w-4 h-4" /></button>
             </div>
           ))}
           {winners.length === 0 && <p className="text-xs text-slate-400 text-center py-3">Ancora nessuna estrazione archiviata</p>}
