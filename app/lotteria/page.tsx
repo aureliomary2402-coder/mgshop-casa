@@ -1,5 +1,5 @@
 "use client"
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { ArrowLeft, Clock, Gift, History, PartyPopper, ImageIcon } from 'lucide-react'
 import { Reveal } from '@/components/shop/reveal'
@@ -48,7 +48,6 @@ export default function LotteryPage() {
   const [remaining, setRemaining] = useState(0)
   const [phase, setPhase] = useState<'idle' | 'popping' | 'revealed'>('idle')
   const [winnerNumber, setWinnerNumber] = useState<number | null>(null)
-  const fetchedReveal = useRef(false)
 
   const fetchData = () =>
     fetch('/api/lottery', { cache: 'no-store' }).then(r => r.json()).then(d => { setData(d); setLoading(false); return d })
@@ -63,16 +62,18 @@ export default function LotteryPage() {
     return () => clearInterval(i)
   }, [data?.ends_at])
 
+  // Quando il countdown arriva a zero, continua a ricontrollare col server finché
+  // non conferma l'estrazione (revealed: true). Un singolo tentativo non basta:
+  // un piccolo scarto di orologio o di rete può far fallire il primo controllo,
+  // lasciando la pagina bloccata su "Estrazione in corso...".
   useEffect(() => {
     if (!data || !data.ends_at || remaining > 0) return
     if (data.revealed && data.winner_number) {
       if (phase === 'idle') { setWinnerNumber(data.winner_number); setPhase('popping') }
       return
     }
-    if (fetchedReveal.current) return
-    fetchedReveal.current = true
-    const t = setTimeout(() => { fetchData() }, 1200)
-    return () => clearTimeout(t)
+    const i = setInterval(() => { fetchData() }, 1500)
+    return () => clearInterval(i)
   }, [remaining, data, phase])
 
   useEffect(() => {
