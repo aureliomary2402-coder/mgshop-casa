@@ -1,7 +1,7 @@
 "use client"
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
-import { ArrowLeft, Clock, Gift, History, PartyPopper, ImageIcon } from 'lucide-react'
+import { ArrowLeft, Clock, Gift, History, PartyPopper, ImageIcon, ShoppingCart, Hash, Sparkles } from 'lucide-react'
 import { Reveal } from '@/components/shop/reveal'
 import { AmbientBubbles } from '@/components/shop/ambient-bubbles'
 
@@ -138,6 +138,32 @@ export default function LotteryPage() {
       <div className="relative overflow-hidden">
         <AmbientBubbles count={16} theme="light" />
         <div className="relative z-10 max-w-5xl mx-auto px-4 py-10 space-y-10">
+        {/* Come funziona */}
+        <Reveal>
+          <div className="bg-white rounded-2xl p-6 sm:p-7" style={{ border: '1px solid rgba(8,145,178,0.1)' }}>
+            <h2 className="text-xl font-bold mb-5 text-center" style={{ color: '#0c2b36' }}>Come funziona</h2>
+            <div className="grid sm:grid-cols-4 gap-5">
+              {[
+                { icon: ShoppingCart, title: 'Fai un ordine', text: 'Aggiungi i prodotti che vuoi al carrello, come al solito.' },
+                { icon: Gift, title: 'Partecipa (+1€)', text: 'Al checkout spunta "Partecipa alla lotteria" aggiungendo 1€ al totale.' },
+                { icon: Hash, title: 'Ricevi il numero', text: 'Ti viene assegnato automaticamente il prossimo numero libero: quello è il tuo biglietto.' },
+                { icon: Sparkles, title: 'Scopri se hai vinto', text: 'Allo scadere del countdown le bolle scoppiano tutte tranne quella vincente.' },
+              ].map((step, i) => (
+                <div key={step.title} className="text-center">
+                  <div className="w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-3 relative"
+                    style={{ background: 'linear-gradient(135deg, rgba(8,145,178,0.1), rgba(6,182,212,0.1))' }}>
+                    <step.icon className="w-5 h-5" style={{ color: '#0891b2' }} />
+                    <span className="absolute -top-1.5 -right-1.5 w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold text-white"
+                      style={{ background: '#0c2b36' }}>{i + 1}</span>
+                  </div>
+                  <p className="text-sm font-bold mb-1" style={{ color: '#0c2b36' }}>{step.title}</p>
+                  <p className="text-xs text-slate-500 leading-relaxed">{step.text}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </Reveal>
+
         {/* Premio */}
         {(data.image_url || data.prize_label) && (
           <Reveal className={`grid gap-6 ${data.image_url && data.prize_label ? 'md:grid-cols-2' : ''}`}>
