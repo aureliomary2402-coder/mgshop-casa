@@ -3,15 +3,33 @@ import { createAdminClient } from '@/lib/supabase/admin'
 
 export async function POST(request: NextRequest) {
   try {
-    const { phone_number, items, total, coupon_code } = await request.json()
+    const { phone_number, items, total, coupon_code, lottery_entry } = await request.json()
     if (!phone_number || !items || items.length === 0)
       return NextResponse.json({ error: 'Missing required fields' }, { status: 400 })
 
     const supabase = createAdminClient()
 
+    // Se il cliente ha scelto di partecipare alla lotteria, gli assegniamo il
+    // prossimo numero libero nel turno corrente — ma solo se la lotteria
+    // risulta ancora davvero attiva (evita numeri assegnati a lotteria chiusa).
+    let lotteryNumber: number | null = null
+    let lotteryRound: string | null = null
+    if (lottery_entry) {
+      const { data: lottery } = await supabase.from('lottery').select('id, is_active, round_id').limit(1).single()
+      if (lottery?.is_active && lottery.round_id) {
+        lotteryRound = lottery.round_id
+        const { count } = await supabase
+          .from('orders')
+          .select('id', { count: 'exact', head: true })
+          .eq('lottery_round', lottery.round_id)
+          .not('lottery_number', 'is', null)
+        lotteryNumber = (count || 0) + 1
+      }
+    }
+
     const { data: order, error: orderError } = await supabase
       .from('orders')
-      .insert({ phone_number, total, status: 'pending' })
+      .insert({ phone_number, total, status: 'pending', lottery_round: lotteryRound, lottery_number: lotteryNumber })
       .select().single()
     if (orderError) return NextResponse.json({ error: orderError.message }, { status: 500 })
 
@@ -56,7 +74,7 @@ export async function POST(request: NextRequest) {
       })
     }).catch(() => {})
 
-    return NextResponse.json({ success: true, order })
+    return NextResponse.json({ success: true, order, lottery_number: lotteryNumber })
   } catch {
     return NextResponse.json({ error: 'Checkout failed' }, { status: 500 })
   }

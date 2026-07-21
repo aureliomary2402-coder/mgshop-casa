@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect } from 'react'
-import { ToggleLeft, ToggleRight, ImageIcon, Save, Eye, Clock, Gift, Search, Award, History, Sparkles } from 'lucide-react'
+import { ToggleLeft, ToggleRight, ImageIcon, Save, Eye, Clock, Gift, Search, Award, History, Sparkles, Phone } from 'lucide-react'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import Link from 'next/link'
@@ -10,6 +10,7 @@ import { ImageCropper } from './image-cropper'
 
 interface Coupon { id: string; code: string; discount_percent: number; discount_fixed: number }
 interface Winner { id: string; lottery_title: string; prize_label: string; prize_image_url: string | null; winner_number: number; participants_count: number; drawn_at: string }
+interface Entry { phone_number: string; customer_name: string | null; lottery_number: number; created_at: string }
 type PrizeType = 'product' | 'coupon' | 'custom'
 
 // Converte una data ISO (UTC, come arriva da Supabase) nel formato
@@ -37,6 +38,7 @@ export function LotteryManager() {
   const [allProducts, setAllProducts] = useState<Product[]>([])
   const [coupons, setCoupons] = useState<Coupon[]>([])
   const [winners, setWinners] = useState<Winner[]>([])
+  const [entries, setEntries] = useState<Entry[]>([])
   const [productSearch, setProductSearch] = useState('')
   const [showProductPicker, setShowProductPicker] = useState(false)
 
@@ -64,6 +66,7 @@ export function LotteryManager() {
       setLoading(false)
     }).catch(() => setLoading(false))
     fetch('/api/lottery').then(r => r.json()).then(d => setWinners(d.winners || [])).catch(() => {})
+    fetch('/api/admin/lottery/entries').then(r => r.json()).then(d => setEntries(d.entries || [])).catch(() => {})
   }
 
   useEffect(() => {
@@ -256,6 +259,22 @@ export function LotteryManager() {
         </div>
 
         {/* Partecipanti e vincitore */}
+        <div className="p-3 rounded-xl" style={{ background: 'rgba(8,145,178,0.05)', border: '1px solid rgba(8,145,178,0.12)' }}>
+          <p className="text-xs font-medium text-cyan-700 mb-2 flex items-center gap-1"><Phone className="w-3.5 h-3.5" /> Partecipanti reali di questo turno ({entries.length})</p>
+          {entries.length === 0 && <p className="text-xs text-slate-400">Ancora nessun cliente ha aggiunto +1€ al checkout in questo turno.</p>}
+          {entries.length > 0 && (
+            <div className="max-h-40 overflow-y-auto space-y-1">
+              {entries.map(e => (
+                <div key={e.lottery_number} className="flex items-center justify-between text-xs bg-white rounded-lg px-2.5 py-1.5">
+                  <span className="text-slate-600">{e.customer_name || e.phone_number}</span>
+                  <span className="font-bold text-cyan-700">#{e.lottery_number}</span>
+                </div>
+              ))}
+            </div>
+          )}
+          <p className="text-xs text-slate-400 mt-2">Usa questo elenco per impostare "Numero partecipanti" e "Numero vincente" qui sotto in modo coerente con chi ha davvero partecipato.</p>
+        </div>
+
         <div className="grid grid-cols-2 gap-3">
           <div>
             <label className="text-xs font-medium text-slate-500 mb-1 block">Numero partecipanti</label>

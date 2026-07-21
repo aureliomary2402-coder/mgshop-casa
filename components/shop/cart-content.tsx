@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
-import { ArrowLeft, Minus, Plus, Trash2, ShoppingBag, ImageIcon, CheckCircle, ShoppingCart, Tag, X } from 'lucide-react'
+import { ArrowLeft, Minus, Plus, Trash2, ShoppingBag, ImageIcon, CheckCircle, ShoppingCart, Tag, X, Gift } from 'lucide-react'
 import { useCartStore } from '@/lib/cart-store'
 import { LoyaltyBanner } from './loyalty-banner'
 import { CodBanner } from './cod-banner'
@@ -19,6 +19,10 @@ export function CartContent({ scope = 'shop' }: { scope?: string }) {
   const [couponError, setCouponError] = useState('')
   const [couponLoading, setCouponLoading] = useState(false)
   const [promoProductIds, setPromoProductIds] = useState<string[]>([])
+  const [lotteryActive, setLotteryActive] = useState(false)
+  const [lotteryPrizeLabel, setLotteryPrizeLabel] = useState('')
+  const [joinLottery, setJoinLottery] = useState(false)
+  const [wonNumber, setWonNumber] = useState<number | null>(null)
 
   const items = useCartStore(s => s.items)
   const updateQuantity = useCartStore(s => s.updateQuantity)
@@ -33,6 +37,10 @@ export function CartContent({ scope = 'shop' }: { scope?: string }) {
       .then(r => r.json())
       .then(d => setPromoProductIds(d?.is_active ? (d.featured_product_ids || []) : []))
       .catch(() => setPromoProductIds([]))
+    fetch('/api/lottery', { cache: 'no-store' })
+      .then(r => r.json())
+      .then(d => { setLotteryActive(d?.is_active === true); setLotteryPrizeLabel(d?.prize_label || '') })
+      .catch(() => {})
   }, [])
 
   const subtotal = mounted ? getTotalPrice() : 0
@@ -44,7 +52,7 @@ export function CartContent({ scope = 'shop' }: { scope?: string }) {
       ? discountBase * couponData.discount_percent / 100
       : Math.min(couponData.discount_fixed, discountBase)
     : 0
-  const total = Math.max(0, subtotal - discountAmount)
+  const total = Math.max(0, subtotal - discountAmount) + (joinLottery ? 1 : 0)
 
   const handleApplyCoupon = async () => {
     if (!couponInput.trim()) return
@@ -63,8 +71,10 @@ export function CartContent({ scope = 'shop' }: { scope?: string }) {
     if (!phone.trim()) { setError('Inserisci il tuo numero di telefono'); return }
     setSubmitting(true)
     try {
-      const res = await fetch('/api/checkout', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ phone_number: phone, items, total, coupon_code: couponCode || null }) })
+      const res = await fetch('/api/checkout', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ phone_number: phone, items, total, coupon_code: couponCode || null, lottery_entry: joinLottery }) })
       if (!res.ok) throw new Error()
+      const data = await res.json()
+      if (data.lottery_number) setWonNumber(data.lottery_number)
       clearCart(); setSubmitted(true)
     } catch { setError('Si è verificato un errore. Riprova.') }
     finally { setSubmitting(false) }
@@ -107,6 +117,11 @@ export function CartContent({ scope = 'shop' }: { scope?: string }) {
       </div>
       <h2 className="text-3xl font-bold mb-3" style={{color:'#0c2b36'}}>Ordine inviato!</h2>
       <p className="text-slate-500 mb-2">Ti contatteremo presto su WhatsApp per confermare.</p>
+      {wonNumber && (
+        <div className="inline-flex items-center gap-2 font-bold px-5 py-3 rounded-2xl text-white mb-2" style={{ background: 'linear-gradient(135deg,#0891b2,#06b6d4)' }}>
+          <Gift className="w-5 h-5" /> Il tuo numero per la lotteria è: #{wonNumber}
+        </div>
+      )}
       <p className="text-sm text-cyan-700 font-medium mb-8">🎁 Riceverai i tuoi punti fedeltà via WhatsApp!</p>
       <Link href="/shop" className="inline-flex items-center gap-2 font-bold px-8 py-4 rounded-2xl text-white btn-press" style={{background:'linear-gradient(135deg,#0891b2,#06b6d4)'}}>
         <ShoppingBag className="w-5 h-5"/> Continua a fare shopping
@@ -193,9 +208,19 @@ export function CartContent({ scope = 'shop' }: { scope?: string }) {
               </div>
             )}
           </div>
+          {lotteryActive && (
+            <label className="flex items-start gap-3 p-3 rounded-xl cursor-pointer transition-colors" style={{ background: joinLottery ? 'rgba(8,145,178,0.08)' : 'rgba(8,145,178,0.03)', border: '1px solid rgba(8,145,178,0.15)' }}>
+              <input type="checkbox" checked={joinLottery} onChange={e => setJoinLottery(e.target.checked)} className="mt-0.5 w-4 h-4 accent-cyan-600 shrink-0" />
+              <span className="text-sm">
+                <span className="font-bold flex items-center gap-1.5" style={{ color: '#0c2b36' }}><Gift className="w-4 h-4 text-cyan-600" /> Partecipa alla lotteria (+1€)</span>
+                <span className="text-xs text-slate-400 block mt-0.5">{lotteryPrizeLabel ? `In palio: ${lotteryPrizeLabel}` : 'Ricevi un numero per l\'estrazione'}</span>
+              </span>
+            </label>
+          )}
           <div className="border-t border-cyan-100 pt-3 space-y-1.5">
             <div className="flex justify-between text-sm text-slate-500"><span>Subtotale</span><span>€{subtotal.toFixed(2)}</span></div>
             {couponData&&discountAmount>0&&<div className="flex justify-between text-sm text-green-600 font-medium"><span>Sconto coupon</span><span>-€{discountAmount.toFixed(2)}</span></div>}
+            {joinLottery&&<div className="flex justify-between text-sm text-cyan-700 font-medium"><span>Lotteria</span><span>+€1.00</span></div>}
             <div className="flex justify-between font-bold pt-1"><span style={{color:'#0c2b36'}}>Totale</span><span className="text-xl" style={{color:'#0891b2'}}>€{total.toFixed(2)}</span></div>
           </div>
           <CodBanner />

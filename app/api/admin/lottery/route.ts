@@ -19,11 +19,14 @@ export async function POST(request: NextRequest) {
   if (!(await isAuthenticated())) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   const body = await request.json()
   const supabase = createAdminClient()
-  const { data: existing } = await supabase.from('lottery').select('id').limit(1).single()
+  const { data: existing } = await supabase.from('lottery').select('id, is_active, round_id').limit(1).single()
   if (!existing) return NextResponse.json({ error: 'Not found' }, { status: 404 })
 
   const participants = Math.min(500, Math.max(2, parseInt(body.participants_count) || 2))
   const winner = Math.min(participants, Math.max(1, parseInt(body.winner_number) || 1))
+  // Nuovo turno: se la lotteria viene (ri)attivata partendo da spenta, i numeri
+  // assegnati ai clienti al checkout devono ripartire da 1.
+  const isNewRound = body.is_active === true && existing.is_active !== true
 
   const { data, error } = await supabase.from('lottery').update({
     title: body.title || '',
@@ -39,6 +42,7 @@ export async function POST(request: NextRequest) {
     is_active: body.is_active ?? false,
     status: body.is_active ? 'running' : 'draft',
     updated_at: new Date().toISOString(),
+    ...(isNewRound ? { round_id: crypto.randomUUID() } : {}),
   }).eq('id', existing.id).select().single()
 
   if (error) return NextResponse.json({ error: error.message }, { status: 500 })
