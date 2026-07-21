@@ -6,6 +6,7 @@ import { useCartStore } from '@/lib/cart-store'
 import { toast } from 'sonner'
 import type { Product } from '@/lib/types'
 import { Reveal } from '@/components/shop/reveal'
+import { AmbientBubbles } from '@/components/shop/ambient-bubbles'
 
 interface VolantinoItem {
   product_id: string
@@ -54,8 +55,8 @@ function FlyerCard({ product, salePrice, index }: { product: Product; salePrice:
         </Link>
         <div className="flex items-end justify-between gap-2 mb-2">
           <div>
-            {hasDiscount && <p className="text-xs text-slate-400 line-through leading-none mb-0.5">euro{product.price.toFixed(2)}</p>}
-            <p className="font-extrabold text-2xl leading-none" style={{ color: '#dc2626' }}>euro{salePrice.toFixed(2)}</p>
+            {hasDiscount && <p className="text-xs text-slate-400 line-through leading-none mb-0.5">€{product.price.toFixed(2)}</p>}
+            <p className="font-extrabold text-2xl leading-none" style={{ color: '#dc2626' }}>€{salePrice.toFixed(2)}</p>
           </div>
         </div>
         <button onClick={handleAdd}
@@ -121,6 +122,7 @@ export default function VolantinoPage() {
       {/* Header stile volantino */}
       <div className="relative overflow-hidden" style={{ background: '#0c2b36' }}>
         <div className="absolute inset-0 opacity-[0.04]" style={{ backgroundImage: 'linear-gradient(rgba(34,211,238,0.9) 1px,transparent 1px),linear-gradient(90deg,rgba(34,211,238,0.9) 1px,transparent 1px)', backgroundSize: '40px 40px' }} />
+        <AmbientBubbles count={9} theme="dark" />
         <div className="relative z-10 max-w-5xl mx-auto px-4 py-10 text-center">
           <div className="flex items-center justify-between mb-6">
             <Link href="/shop" className="inline-flex items-center gap-2 text-cyan-400/60 hover:text-cyan-300 text-sm transition-colors"><ArrowLeft className="w-4 h-4" /> Negozio</Link>
@@ -140,34 +142,37 @@ export default function VolantinoPage() {
       </div>
 
       {/* Griglia prodotti stile volantino */}
-      <div className="max-w-5xl mx-auto px-4 py-10">
-        {products.length > 0 ? (
-          <Reveal>
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 stagger-children">
-              {products.map((p, i) => {
-                const item = data.items.find(it => it.product_id === p.id)
-                return <FlyerCard key={p.id} product={p} salePrice={item ? item.sale_price : p.price} index={i} />
-              })}
-            </div>
-            {cartCount > 0 && (
-              <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 animate-scale-in">
-                <Link href="/carrello"
-                  className="flex items-center gap-3 px-8 py-4 rounded-2xl text-white font-bold shadow-2xl transition-all hover:scale-105 neon-glow"
-                  style={{ background: 'linear-gradient(135deg,#0891b2,#06b6d4)' }}>
-                  <ShoppingBag className="w-5 h-5" />
-                  Vai al carrello ({cartCount})
-                </Link>
+      <div className="relative overflow-hidden">
+        <AmbientBubbles count={16} theme="light" />
+        <div className="relative z-10 max-w-5xl mx-auto px-4 py-10">
+          {products.length > 0 ? (
+            <Reveal>
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 stagger-children">
+                {products.map((p, i) => {
+                  const item = data.items.find(it => it.product_id === p.id)
+                  return <FlyerCard key={p.id} product={p} salePrice={item ? item.sale_price : p.price} index={i} />
+                })}
               </div>
-            )}
-          </Reveal>
-        ) : (
-          <p className="text-center text-slate-400 py-12">Nessun prodotto nel volantino al momento.</p>
-        )}
+              {cartCount > 0 && (
+                <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 animate-scale-in">
+                  <Link href="/carrello"
+                    className="flex items-center gap-3 px-8 py-4 rounded-2xl text-white font-bold shadow-2xl transition-all hover:scale-105 neon-glow"
+                    style={{ background: 'linear-gradient(135deg,#0891b2,#06b6d4)' }}>
+                    <ShoppingBag className="w-5 h-5" />
+                    Vai al carrello ({cartCount})
+                  </Link>
+                </div>
+              )}
+            </Reveal>
+          ) : (
+            <p className="text-center text-slate-400 py-12">Nessun prodotto nel volantino al momento.</p>
+          )}
 
-        <div className="text-center py-10">
-          <Link href="/shop" className="inline-flex items-center gap-2 font-bold px-10 py-4 rounded-2xl text-white" style={{ background: 'linear-gradient(135deg,#0891b2,#06b6d4)', boxShadow: '0 12px 32px rgba(8,145,178,0.35)' }}>
-            <ShoppingBag className="w-5 h-5" /> Vai al negozio completo
-          </Link>
+          <div className="text-center py-10">
+            <Link href="/shop" className="inline-flex items-center gap-2 font-bold px-10 py-4 rounded-2xl text-white" style={{ background: 'linear-gradient(135deg,#0891b2,#06b6d4)', boxShadow: '0 12px 32px rgba(8,145,178,0.35)' }}>
+              <ShoppingBag className="w-5 h-5" /> Vai al negozio completo
+            </Link>
+          </div>
         </div>
       </div>
     </div>

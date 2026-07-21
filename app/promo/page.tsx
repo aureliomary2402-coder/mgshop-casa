@@ -6,6 +6,7 @@ import { useCartStore } from '@/lib/cart-store'
 import { toast } from 'sonner'
 import type { Product } from '@/lib/types'
 import { Reveal } from '@/components/shop/reveal'
+import { AmbientBubbles } from '@/components/shop/ambient-bubbles'
 
 interface PromoData {
   is_active: boolean; title: string; subtitle: string; content: string
@@ -82,11 +83,11 @@ function PromoProductCard({ product, coupon }: { product: Product; coupon: Coupo
           <div className="flex flex-col">
             {discounted !== null ? (
               <>
-                <span className="text-xs text-slate-400 line-through">euro{product.price.toFixed(2)}</span>
-                <span className="font-bold text-lg" style={{ color: '#dc2626' }}>euro{discounted.toFixed(2)}</span>
+                <span className="text-xs text-slate-400 line-through">€{product.price.toFixed(2)}</span>
+                <span className="font-bold text-lg" style={{ color: '#dc2626' }}>€{discounted.toFixed(2)}</span>
               </>
             ) : (
-              <span className="font-bold text-lg" style={{ color: '#0891b2' }}>euro{product.price.toFixed(2)}</span>
+              <span className="font-bold text-lg" style={{ color: '#0891b2' }}>€{product.price.toFixed(2)}</span>
             )}
           </div>
           <button onClick={handleAdd}
@@ -154,6 +155,7 @@ export default function PromoPage() {
       {/* Hero */}
       <div className="relative overflow-hidden" style={{background:'linear-gradient(135deg,#0c2b36,#06303d)'}}>
         <div className="absolute top-0 left-1/4 w-96 h-96 rounded-full blur-[100px] opacity-20" style={{background:'radial-gradient(circle,#0891b2,transparent)'}}/>
+        <AmbientBubbles count={9} theme="dark" />
         <div className="relative z-10 max-w-4xl mx-auto px-4 py-12 text-center">
           <div className="flex items-center justify-between mb-6">
             <Link href="/shop" className="inline-flex items-center gap-2 text-cyan-400/60 hover:text-cyan-300 text-sm transition-colors"><ArrowLeft className="w-4 h-4"/> Negozio</Link>
@@ -172,40 +174,43 @@ export default function PromoPage() {
       </div>
 
       {/* Content */}
-      <div className="max-w-5xl mx-auto px-4 py-10 space-y-10">
-        {(promo.image_url||promo.content)&&(
-          <Reveal className={`grid gap-6 ${promo.image_url&&promo.content?'md:grid-cols-2':''}`}>
-            {promo.image_url&&<div className="rounded-2xl overflow-hidden aspect-video" style={{boxShadow:'0 16px 40px rgba(8,145,178,0.12)'}}><img src={promo.image_url} alt="Promo" className="w-full h-full object-cover"/></div>}
-            {promo.content&&<div className="flex items-center"><div className="bg-white rounded-2xl p-6 w-full" style={{border:'1px solid rgba(8,145,178,0.1)'}}><p className="text-slate-600 leading-relaxed whitespace-pre-line">{promo.content}</p></div></div>}
-          </Reveal>
-        )}
+      <div className="relative overflow-hidden">
+        <AmbientBubbles count={16} theme="light" />
+        <div className="relative z-10 max-w-5xl mx-auto px-4 py-10 space-y-10">
+          {(promo.image_url||promo.content)&&(
+            <Reveal className={`grid gap-6 ${promo.image_url&&promo.content?'md:grid-cols-2':''}`}>
+              {promo.image_url&&<div className="rounded-2xl overflow-hidden aspect-video" style={{boxShadow:'0 16px 40px rgba(8,145,178,0.12)'}}><img src={promo.image_url} alt="Promo" className="w-full h-full object-cover"/></div>}
+              {promo.content&&<div className="flex items-center"><div className="bg-white rounded-2xl p-6 w-full" style={{border:'1px solid rgba(8,145,178,0.1)'}}><p className="text-slate-600 leading-relaxed whitespace-pre-line">{promo.content}</p></div></div>}
+            </Reveal>
+          )}
 
-        {/* Prodotti in promo */}
-        {products.length > 0 && (
-          <Reveal delay={100}>
-            <h2 className="text-2xl font-bold mb-6" style={{color:'#0c2b36'}}>Prodotti in promozione</h2>
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 stagger-children">
-              {products.map(p => <PromoProductCard key={p.id} product={p} coupon={coupon}/>)}
-            </div>
-            {/* Sticky cart button */}
-            {cartCount > 0 && (
-              <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 animate-scale-in">
-                <Link href="/carrello?promo=1"
-                  className="flex items-center gap-3 px-8 py-4 rounded-2xl text-white font-bold shadow-2xl transition-all hover:scale-105 neon-glow"
-                  style={{ background: 'linear-gradient(135deg,#0891b2,#06b6d4)' }}>
-                  <ShoppingBag className="w-5 h-5"/>
-                  Vai al carrello ({cartCount})
-                </Link>
+          {/* Prodotti in promo */}
+          {products.length > 0 && (
+            <Reveal delay={100}>
+              <h2 className="text-2xl font-bold mb-6" style={{color:'#0c2b36'}}>Prodotti in promozione</h2>
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 stagger-children">
+                {products.map(p => <PromoProductCard key={p.id} product={p} coupon={coupon}/>)}
               </div>
-            )}
-          </Reveal>
-        )}
+              {/* Sticky cart button */}
+              {cartCount > 0 && (
+                <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 animate-scale-in">
+                  <Link href="/carrello?promo=1"
+                    className="flex items-center gap-3 px-8 py-4 rounded-2xl text-white font-bold shadow-2xl transition-all hover:scale-105 neon-glow"
+                    style={{ background: 'linear-gradient(135deg,#0891b2,#06b6d4)' }}>
+                    <ShoppingBag className="w-5 h-5"/>
+                    Vai al carrello ({cartCount})
+                  </Link>
+                </div>
+              )}
+            </Reveal>
+          )}
 
-        <Reveal delay={150} className="text-center py-6">
-          <Link href="/shop" className="inline-flex items-center gap-2 font-bold px-10 py-4 rounded-2xl text-white" style={{background:'linear-gradient(135deg,#0891b2,#06b6d4)',boxShadow:'0 12px 32px rgba(8,145,178,0.35)'}}>
-            <ShoppingBag className="w-5 h-5"/> Vai al negozio completo
-          </Link>
-        </Reveal>
+          <Reveal delay={150} className="text-center py-6">
+            <Link href="/shop" className="inline-flex items-center gap-2 font-bold px-10 py-4 rounded-2xl text-white" style={{background:'linear-gradient(135deg,#0891b2,#06b6d4)',boxShadow:'0 12px 32px rgba(8,145,178,0.35)'}}>
+              <ShoppingBag className="w-5 h-5"/> Vai al negozio completo
+            </Link>
+          </Reveal>
+        </div>
       </div>
     </div>
   )
