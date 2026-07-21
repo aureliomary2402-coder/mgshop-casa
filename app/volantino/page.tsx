@@ -27,7 +27,7 @@ function FlyerCard({ product, salePrice, index }: { product: Product; salePrice:
   const percentOff = hasDiscount ? Math.round((1 - salePrice / product.price) * 100) : 0
 
   const handleAdd = () => {
-    addItem(product)
+    addItem({ ...product, price: salePrice })
     setAdded(true)
     setTimeout(() => setAdded(false), 1500)
     toast.success(`${product.name} aggiunto!`, { style: { background: '#cffafe', border: '1px solid #0891b2', color: '#155e75' } })
