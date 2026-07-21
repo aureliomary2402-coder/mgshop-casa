@@ -7,6 +7,7 @@ import { toast } from 'sonner'
 import type { Product } from '@/lib/types'
 import { Reveal } from '@/components/shop/reveal'
 import { AmbientBubbles } from '@/components/shop/ambient-bubbles'
+import { optimizeImage } from '@/lib/image'
 
 interface VolantinoItem {
   product_id: string
@@ -45,7 +46,7 @@ function FlyerCard({ product, salePrice, index }: { product: Product; salePrice:
       <Link href={`/prodotto/${product.id}`}>
         <div className="aspect-square overflow-hidden" style={{ background: 'linear-gradient(135deg,#f0fbfd,#cffafe)' }}>
           {product.cover_image
-            ? <img src={product.cover_image} alt={product.name} className="w-full h-full object-cover" />
+            ? <img src={optimizeImage(product.cover_image, 400) || product.cover_image} alt={product.name} loading="lazy" decoding="async" className="w-full h-full object-cover" />
             : <div className="w-full h-full flex items-center justify-center"><ImageIcon className="w-10 h-10" style={{ color: 'rgba(8,145,178,0.3)' }} /></div>}
         </div>
       </Link>
