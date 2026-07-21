@@ -1,7 +1,7 @@
 "use client"
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
-import { ShoppingBag, Sparkles, ArrowRight, Tag, Newspaper } from 'lucide-react'
+import { ShoppingBag, Sparkles, ArrowRight, Tag, Newspaper, Gift } from 'lucide-react'
 import { SOCIAL_LINKS, InstagramIcon, TikTokIcon, WhatsAppIcon } from '@/components/shop/social-icons'
 import { CodBanner } from '@/components/shop/cod-banner'
 
@@ -10,11 +10,13 @@ export default function WelcomePage() {
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 })
   const [promoActive, setPromoActive] = useState(false)
   const [volantinoActive, setVolantinoActive] = useState(false)
+  const [lotteryActive, setLotteryActive] = useState(false)
 
   useEffect(() => {
     setMounted(true)
     fetch('/api/promo').then(r => r.json()).then(d => setPromoActive(d.is_active === true)).catch(() => {})
     fetch('/api/volantino').then(r => r.json()).then(d => setVolantinoActive(d.is_active === true)).catch(() => {})
+    fetch('/api/lottery').then(r => r.json()).then(d => setLotteryActive(d.is_active === true)).catch(() => {})
     const h = (e: MouseEvent) => setMousePos({ x: e.clientX / window.innerWidth - 0.5, y: e.clientY / window.innerHeight - 0.5 })
     window.addEventListener('mousemove', h, { passive: true })
     return () => window.removeEventListener('mousemove', h)
@@ -131,6 +133,21 @@ export default function WelcomePage() {
               className="w-full sm:w-auto flex items-center justify-center gap-3 font-bold text-lg px-10 py-5 rounded-2xl transition-all hover:scale-105 btn-press"
               style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', color: 'rgba(255,255,255,0.4)' }}>
               <Newspaper className="w-5 h-5" /> Volantino
+            </Link>
+          )}
+
+          {lotteryActive ? (
+            <Link href="/lotteria"
+              className="group w-full sm:w-auto flex items-center justify-center gap-3 font-bold text-lg px-10 py-5 rounded-2xl transition-all hover:scale-105 active:scale-95 btn-press neon-glow"
+              style={{ background: 'rgba(8,145,178,0.1)', border: '1px solid rgba(8,145,178,0.3)', color: '#ffffff' }}>
+              <Gift className="w-5 h-5" /> Partecipa alla lotteria
+              <span className="text-xs bg-cyan-500 text-black px-2 py-0.5 rounded-full font-semibold">LOTTERIA</span>
+            </Link>
+          ) : (
+            <Link href="/lotteria"
+              className="w-full sm:w-auto flex items-center justify-center gap-3 font-bold text-lg px-10 py-5 rounded-2xl transition-all hover:scale-105 btn-press"
+              style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', color: 'rgba(255,255,255,0.4)' }}>
+              <Gift className="w-5 h-5" /> Lotteria
             </Link>
           )}
         </div>

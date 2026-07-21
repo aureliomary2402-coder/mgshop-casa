@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { ArrowLeft, Clock, Gift, History, PartyPopper, ImageIcon } from 'lucide-react'
 import { Reveal } from '@/components/shop/reveal'
+import { AmbientBubbles } from '@/components/shop/ambient-bubbles'
 
 interface Winner {
   id: string; lottery_title: string; prize_label: string; prize_image_url: string | null
@@ -112,6 +113,7 @@ export default function LotteryPage() {
       {/* Hero */}
       <div className="relative overflow-hidden" style={{ background: 'linear-gradient(135deg,#0c2b36,#06303d)' }}>
         <div className="absolute top-0 left-1/4 w-96 h-96 rounded-full blur-[100px] opacity-20" style={{ background: 'radial-gradient(circle,#0891b2,transparent)' }} />
+        <AmbientBubbles count={9} theme="dark" />
         <div className="relative z-10 max-w-4xl mx-auto px-4 py-12 text-center">
           <Link href="/shop" className="inline-flex items-center gap-2 text-cyan-400/60 hover:text-cyan-300 text-sm transition-colors mb-6"><ArrowLeft className="w-4 h-4" /> Negozio</Link>
           <div className="inline-flex items-center gap-2 rounded-full px-4 py-1.5 text-cyan-300 text-sm font-medium mb-4" style={{ background: 'rgba(8,145,178,0.15)', border: '1px solid rgba(8,145,178,0.3)' }}><Gift className="w-4 h-4" /> Lotteria a premi</div>
@@ -133,7 +135,9 @@ export default function LotteryPage() {
         </div>
       </div>
 
-      <div className="max-w-5xl mx-auto px-4 py-10 space-y-10">
+      <div className="relative overflow-hidden">
+        <AmbientBubbles count={16} theme="light" />
+        <div className="relative z-10 max-w-5xl mx-auto px-4 py-10 space-y-10">
         {/* Premio */}
         {(data.image_url || data.prize_label) && (
           <Reveal className={`grid gap-6 ${data.image_url && data.prize_label ? 'md:grid-cols-2' : ''}`}>
@@ -215,6 +219,7 @@ export default function LotteryPage() {
             <ArrowLeft className="w-5 h-5" /> Vai al negozio
           </Link>
         </Reveal>
+      </div>
       </div>
     </div>
   )

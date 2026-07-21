@@ -75,8 +75,13 @@ export function LotteryManager() {
   const participantsNum = Math.min(500, Math.max(2, parseInt(participantsCount) || 2))
 
   const handleSave = async () => {
-    if (!title.trim()) { setError('Inserisci un titolo'); return }
-    if (!prizeLabel.trim()) { setError('Inserisci o seleziona un premio'); return }
+    // La validazione di titolo/premio serve solo per una lotteria che deve
+    // essere mostrata ai clienti. Se la stai disattivando (o svuotando),
+    // il salvataggio deve comunque passare, altrimenti resta tutto come prima.
+    if (isActive) {
+      if (!title.trim()) { setError('Inserisci un titolo'); return }
+      if (!prizeLabel.trim()) { setError('Inserisci o seleziona un premio'); return }
+    }
     const winnerNum = Math.min(participantsNum, Math.max(1, parseInt(winnerNumber) || 1))
     setSaving(true); setError('')
     const res = await fetch('/api/admin/lottery', {
