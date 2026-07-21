@@ -7,11 +7,35 @@ async function isAuthenticated() {
   return cookieStore.get('admin_session')?.value === 'authenticated'
 }
 
+// La tabella "lottery" deve sempre avere esattamente una riga: tutto il
+// pannello admin fa solo UPDATE su quella riga, mai INSERT. Se la riga
+// manca (es. cancellata per errore, tabella svuotata a mano) la creiamo
+// qui al volo con i valori di default, invece di rispondere 404 e
+// bloccare per sempre il salvataggio dal pannello.
+async function getOrCreateLotteryRow(supabase: ReturnType<typeof createAdminClient>) {
+  const { data: existing } = await supabase.from('lottery').select('*').limit(1).single()
+  if (existing) return existing
+
+  const { data: created, error } = await supabase.from('lottery').insert({
+    is_active: false,
+    title: '',
+    description: '',
+    prize_type: 'custom',
+    prize_label: '',
+    participants_count: 10,
+    winner_number: 1,
+    status: 'draft',
+  }).select().single()
+
+  if (error || !created) return null
+  return created
+}
+
 export async function GET() {
   if (!(await isAuthenticated())) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   const supabase = createAdminClient()
-  const { data, error } = await supabase.from('lottery').select('*').limit(1).single()
-  if (error) return NextResponse.json({ error: error.message }, { status: 500 })
+  const data = await getOrCreateLotteryRow(supabase)
+  if (!data) return NextResponse.json({ error: 'Impossibile creare la riga lotteria' }, { status: 500 })
   return NextResponse.json(data)
 }
 
@@ -19,8 +43,8 @@ export async function POST(request: NextRequest) {
   if (!(await isAuthenticated())) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   const body = await request.json()
   const supabase = createAdminClient()
-  const { data: existing } = await supabase.from('lottery').select('id, is_active, round_id').limit(1).single()
-  if (!existing) return NextResponse.json({ error: 'Not found' }, { status: 404 })
+  const existing = await getOrCreateLotteryRow(supabase)
+  if (!existing) return NextResponse.json({ error: 'Impossibile creare la riga lotteria' }, { status: 500 })
 
   const participants = Math.min(500, Math.max(2, parseInt(body.participants_count) || 2))
   const winner = Math.min(participants, Math.max(1, parseInt(body.winner_number) || 1))

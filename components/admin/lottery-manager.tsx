@@ -97,7 +97,10 @@ export function LotteryManager() {
       })
     })
     if (res.ok) { setSaved(true); setTimeout(() => setSaved(false), 2000); setWinnerNumber(String(winnerNum)) }
-    else setError('Errore salvataggio')
+    else {
+      const data = await res.json().catch(() => null)
+      setError(data?.error ? `Errore salvataggio: ${data.error}` : 'Errore salvataggio')
+    }
     setSaving(false)
   }
 
