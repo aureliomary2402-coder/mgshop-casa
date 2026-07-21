@@ -12,6 +12,15 @@ interface Coupon { id: string; code: string; discount_percent: number; discount_
 interface Winner { id: string; lottery_title: string; prize_label: string; prize_image_url: string | null; winner_number: number; participants_count: number; drawn_at: string }
 type PrizeType = 'product' | 'coupon' | 'custom'
 
+// Converte una data ISO (UTC, come arriva da Supabase) nel formato
+// "YYYY-MM-DDTHH:mm" richiesto da <input type="datetime-local">,
+// usando l'ora LOCALE del browser (non UTC), altrimenti l'orario mostrato si sfasa.
+function isoToLocalInputValue(iso: string) {
+  const d = new Date(iso)
+  const pad = (n: number) => String(n).padStart(2, '0')
+  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`
+}
+
 export function LotteryManager() {
   const [title, setTitle] = useState('')
   const [description, setDescription] = useState('')
@@ -50,7 +59,7 @@ export function LotteryManager() {
       setPrizeLabel(d.prize_label || '')
       setParticipantsCount(String(d.participants_count || 10))
       setWinnerNumber(String(d.winner_number || 1))
-      setEndsAt(d.ends_at ? d.ends_at.slice(0, 16) : '')
+      setEndsAt(d.ends_at ? isoToLocalInputValue(d.ends_at) : '')
       setIsActive(d.is_active === true)
       setLoading(false)
     }).catch(() => setLoading(false))
@@ -76,7 +85,7 @@ export function LotteryManager() {
         title, description, image_url: imageUrl || null,
         prize_type: prizeType, prize_product_id: prizeProductId || null, prize_coupon_id: prizeCouponId || null,
         prize_label: prizeLabel, participants_count: participantsNum, winner_number: winnerNum,
-        ends_at: endsAt || null, is_active: isActive,
+        ends_at: endsAt ? new Date(endsAt).toISOString() : null, is_active: isActive,
       })
     })
     if (res.ok) { setSaved(true); setTimeout(() => setSaved(false), 2000); setWinnerNumber(String(winnerNum)) }
