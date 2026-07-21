@@ -36,7 +36,7 @@ export default function ConsegnePage() {
           </div>
           <h1 className="text-4xl md:text-5xl font-extrabold text-white mb-3">Dove consegniamo</h1>
           <p className="text-lg text-cyan-200/60 max-w-xl mx-auto">
-            Siamo un negozio online: niente punto vendita fisico, consegniamo direttamente a casa tua nelle zone qui sotto.
+            Siamo un negozio online: Consegniamo direttamente a casa tua nelle zone qui sotto.
           </p>
         </div>
       </div>
