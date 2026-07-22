@@ -33,7 +33,24 @@ export async function GET() {
     .eq('is_ticket_only', false)
     .order('created_at', { ascending: false })
   if (error) return NextResponse.json({ error: error.message }, { status: 500 })
-  return NextResponse.json(data)
+
+  // Alcuni di questi ordini hanno anche biglietti lotteria acquistati insieme
+  // ai prodotti: quei €1 a biglietto non vanno contati come incasso "prodotti",
+  // altrimenti l'incasso ordini risulta gonfiato. Qui calcoliamo quanti
+  // biglietti (e quindi quanti € di biglietti) ha ciascun ordine.
+  const orderIds = (data || []).map((o: { id: string }) => o.id)
+  const ticketCounts: Record<string, number> = {}
+  if (orderIds.length > 0) {
+    const { data: tickets } = await supabase.from('lottery_tickets').select('order_id').in('order_id', orderIds)
+    for (const t of tickets || []) {
+      ticketCounts[t.order_id] = (ticketCounts[t.order_id] || 0) + 1
+    }
+  }
+  const withTicketInfo = (data || []).map((o: { id: string }) => ({
+    ...o,
+    ticket_count: ticketCounts[o.id] || 0,
+  }))
+  return NextResponse.json(withTicketInfo)
 }
 
 export async function PUT(request: NextRequest) {

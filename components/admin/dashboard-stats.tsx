@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect } from 'react'
-import { ShoppingBag, Euro, Clock, CheckCircle, TrendingUp, Package, Eye, BarChart2, ArrowUp, ArrowDown, Gift } from 'lucide-react'
+import { ShoppingBag, Euro, Clock, CheckCircle, TrendingUp, Package, Eye, BarChart2, ArrowUp, ArrowDown, Gift, Ticket } from 'lucide-react'
 
 interface OrderStats {
   totalOrders: number
@@ -10,6 +10,11 @@ interface OrderStats {
   completedOrders: number
   todayOrders: number
   todayRevenue: number
+}
+
+interface TicketStats {
+  totalTickets: number
+  todayTickets: number
 }
 
 interface AnalyticsData {
@@ -57,6 +62,7 @@ function PageLabel({ page }: { page: string }) {
 
 export function DashboardStats() {
   const [orders, setOrders] = useState<OrderStats | null>(null)
+  const [tickets, setTickets] = useState<TicketStats | null>(null)
   const [analytics, setAnalytics] = useState<AnalyticsData | null>(null)
   const [loyaltyReadyCount, setLoyaltyReadyCount] = useState<number | null>(null)
   const [loading, setLoading] = useState(true)
@@ -66,15 +72,25 @@ export function DashboardStats() {
       fetch('/api/admin/orders').then(r => r.json()),
       fetch('/api/admin/analytics').then(r => r.json()),
       fetch('/api/admin/clienti').then(r => r.json()),
-    ]).then(([ordersData, analyticsData, clientiData]) => {
+      fetch('/api/admin/lottery/purchases').then(r => r.json()),
+    ]).then(([ordersData, analyticsData, clientiData, ticketGroups]) => {
       const today = new Date().toDateString()
+      // Alcuni ordini includono anche biglietti lotteria: quei €1 a biglietto
+      // vanno tolti dall'incasso "ordini", perché contati a parte qui sotto.
+      const productRevenue = (o: { total: number; ticket_count?: number }) => o.total - (o.ticket_count || 0)
       setOrders({
         totalOrders: ordersData.length,
-        totalRevenue: ordersData.reduce((s: number, o: { total: number }) => s + (o.total || 0), 0),
+        totalRevenue: ordersData.reduce((s: number, o: { total: number; ticket_count?: number }) => s + productRevenue(o), 0),
         pendingOrders: ordersData.filter((o: { status: string }) => o.status === 'pending').length,
         completedOrders: ordersData.filter((o: { status: string }) => o.status === 'delivered').length,
         todayOrders: ordersData.filter((o: { created_at: string }) => new Date(o.created_at).toDateString() === today).length,
-        todayRevenue: ordersData.filter((o: { created_at: string }) => new Date(o.created_at).toDateString() === today).reduce((s: number, o: { total: number }) => s + (o.total || 0), 0),
+        todayRevenue: ordersData.filter((o: { created_at: string }) => new Date(o.created_at).toDateString() === today).reduce((s: number, o: { total: number; ticket_count?: number }) => s + productRevenue(o), 0),
+      })
+      setTickets({
+        totalTickets: ticketGroups.reduce((s: number, g: { numbers: number[] }) => s + g.numbers.length, 0),
+        todayTickets: ticketGroups
+          .filter((g: { created_at: string }) => new Date(g.created_at).toDateString() === today)
+          .reduce((s: number, g: { numbers: number[] }) => s + g.numbers.length, 0),
       })
       setAnalytics(analyticsData)
       setLoyaltyReadyCount((clientiData as Cliente[]).filter(c => c.loyaltyReady).length)
@@ -169,6 +185,29 @@ export function DashboardStats() {
             { label: 'Completati', value: orders.completedOrders, icon: CheckCircle, color: 'bg-emerald-50 text-emerald-600' },
             { label: 'Ordini oggi', value: orders.todayOrders, icon: TrendingUp, color: 'bg-purple-50 text-purple-600' },
             { label: 'Incasso oggi', value: `€${orders.todayRevenue.toFixed(2)}`, icon: Package, color: 'bg-cyan-50 text-cyan-600' },
+          ].map(({ label, value, icon: Icon, color }) => (
+            <div key={label} className="bg-white border border-slate-100 rounded-xl p-4 shadow-sm">
+              <div className={`w-8 h-8 rounded-lg flex items-center justify-center mb-2 ${color}`}>
+                <Icon className="w-4 h-4" />
+              </div>
+              <p className="text-xl font-bold text-slate-800">{value}</p>
+              <p className="text-xs text-slate-500 mt-0.5">{label}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Biglietti lotteria */}
+      <div>
+        <h2 className="font-semibold text-slate-800 mb-3 flex items-center gap-2">
+          <Ticket className="w-4 h-4 text-amber-600" /> Riepilogo biglietti lotteria
+        </h2>
+        <div className="grid grid-cols-2 gap-3">
+          {tickets && [
+            { label: 'Biglietti venduti', value: tickets.totalTickets, icon: Ticket, color: 'bg-amber-50 text-amber-600' },
+            { label: 'Incasso biglietti', value: `€${tickets.totalTickets.toFixed(2)}`, icon: Euro, color: 'bg-green-50 text-green-600' },
+            { label: 'Biglietti oggi', value: tickets.todayTickets, icon: TrendingUp, color: 'bg-orange-50 text-orange-600' },
+            { label: 'Incasso oggi', value: `€${tickets.todayTickets.toFixed(2)}`, icon: Package, color: 'bg-cyan-50 text-cyan-600' },
           ].map(({ label, value, icon: Icon, color }) => (
             <div key={label} className="bg-white border border-slate-100 rounded-xl p-4 shadow-sm">
               <div className={`w-8 h-8 rounded-lg flex items-center justify-center mb-2 ${color}`}>
