@@ -7,9 +7,14 @@ import { toast } from 'sonner'
 import type { Product } from '@/lib/types'
 import { Reveal } from '@/components/shop/reveal'
 import { AmbientBubbles } from '@/components/shop/ambient-bubbles'
+import { buildCustomPromoProduct } from '@/lib/promo-custom-product'
 
 interface PromoItem {
-  product_id: string
+  id: string
+  product_id: string | null
+  name?: string
+  image_url?: string | null
+  original_price?: number
   sale_price: number
 }
 
@@ -99,7 +104,7 @@ function PromoProductCard({ product, salePrice }: { product: Product; salePrice:
 
 export default function PromoPage() {
   const [promo, setPromo] = useState<PromoData|null>(null)
-  const [products, setProducts] = useState<Product[]>([])
+  const [displayItems, setDisplayItems] = useState<{ product: Product; salePrice: number }[]>([])
   const [loading, setLoading] = useState(true)
   const cartCount = useCartStore(s => s.getTotalItems)()
 
@@ -109,11 +114,24 @@ export default function PromoPage() {
       .then(async d => {
         setPromo(d)
         const promoItems: PromoItem[] = d.promo_items || []
-        if (promoItems.length > 0) {
+        const shopIds = promoItems.filter(i => i.product_id).map(i => i.product_id as string)
+        let shopProducts: Product[] = []
+        if (shopIds.length > 0) {
           const allProducts = await fetch('/api/admin/products').then(r=>r.json())
-          const ids = promoItems.map(i => i.product_id)
-          setProducts(allProducts.filter((p: Product) => ids.includes(p.id)))
+          shopProducts = allProducts.filter((p: Product) => shopIds.includes(p.id))
         }
+        const built = promoItems.map(item => {
+          if (item.product_id) {
+            const p = shopProducts.find(sp => sp.id === item.product_id)
+            return p ? { product: p, salePrice: item.sale_price } : null
+          }
+          const custom = buildCustomPromoProduct({
+            id: item.id, name: item.name || 'Prodotto', image_url: item.image_url || null,
+            price: item.original_price ?? item.sale_price,
+          })
+          return { product: custom, salePrice: item.sale_price }
+        }).filter((x): x is { product: Product; salePrice: number } => !!x)
+        setDisplayItems(built)
         setLoading(false)
       })
       .catch(()=>setLoading(false))
@@ -177,14 +195,13 @@ export default function PromoPage() {
           )}
 
           {/* Prodotti in promo */}
-          {products.length > 0 && (
+          {displayItems.length > 0 && (
             <Reveal delay={100}>
               <h2 className="text-2xl font-bold mb-6" style={{color:'#0c2b36'}}>Prodotti in promozione</h2>
               <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 stagger-children">
-                {products.map(p => {
-                  const promoItem = promo.promo_items.find(i => i.product_id === p.id)
-                  return <PromoProductCard key={p.id} product={p} salePrice={promoItem ? promoItem.sale_price : p.price} />
-                })}
+                {displayItems.map(({ product, salePrice }) => (
+                  <PromoProductCard key={product.id} product={product} salePrice={salePrice} />
+                ))}
               </div>
               {/* Sticky cart button */}
               {cartCount > 0 && (

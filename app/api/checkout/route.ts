@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { createAdminClient } from '@/lib/supabase/admin'
 import { autoArchiveIfExpired } from '@/lib/lottery'
 import { LOTTERY_TICKET_PRODUCT_ID } from '@/lib/lottery-ticket-product'
+import { isCustomPromoProductId } from '@/lib/promo-custom-product'
 
 export async function POST(request: NextRequest) {
   try {
@@ -54,7 +55,11 @@ export async function POST(request: NextRequest) {
     if (realItems.length > 0) {
       const orderItems = realItems.map((item: { product: { id: string; name: string; price: number }; quantity: number }) => ({
         order_id: order.id,
-        product_id: item.product.id,
+        // I prodotti creati apposta per una promo (non presenti nel negozio)
+        // non hanno una riga vera in "products": mettere qui il loro id
+        // finto violerebbe il vincolo di chiave esterna. Nome e prezzo
+        // restano comunque salvati sull'ordine per lo storico.
+        product_id: isCustomPromoProductId(item.product.id) ? null : item.product.id,
         product_name: item.product.name,
         product_price: item.product.price,
         quantity: item.quantity,
@@ -62,8 +67,10 @@ export async function POST(request: NextRequest) {
       const { error: itemsError } = await supabase.from('order_items').insert(orderItems)
       if (itemsError) return NextResponse.json({ error: itemsError.message }, { status: 500 })
 
-      // Scala le quantità dal magazzino (solo per i prodotti veri)
+      // Scala le quantità dal magazzino (solo per i prodotti veri, quelli
+      // personalizzati della promo non hanno un magazzino da scalare)
       for (const item of realItems) {
+        if (isCustomPromoProductId(item.product.id)) continue
         const { data: product } = await supabase
           .from('products')
           .select('stock')
