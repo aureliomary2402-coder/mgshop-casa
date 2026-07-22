@@ -27,7 +27,7 @@ export async function POST(request: NextRequest) {
 
     const { data: order, error: orderError } = await supabase
       .from('orders')
-      .insert({ phone_number, total, status: 'pending' })
+      .insert({ phone_number, total, status: 'pending', is_ticket_only: realItems.length === 0 })
       .select().single()
     if (orderError) return NextResponse.json({ error: orderError.message }, { status: 500 })
 

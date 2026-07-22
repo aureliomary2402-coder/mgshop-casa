@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect } from 'react'
-import { Package, Tag, Image, ShoppingBag, LogOut, Lock, LayoutDashboard, Megaphone, Ticket, Menu, X, ExternalLink, Users, Gift, MessageCircle, Newspaper, PartyPopper } from 'lucide-react'
+import { Package, Tag, Image, ShoppingBag, LogOut, Lock, LayoutDashboard, Megaphone, Ticket, Menu, X, ExternalLink, Users, Gift, MessageCircle, Newspaper, PartyPopper, Hash } from 'lucide-react'
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -18,8 +18,9 @@ import { ClientiManager } from '@/components/admin/clienti-manager'
 import { LoyaltySettingsManager } from '@/components/admin/loyalty-settings-manager'
 import { ChatManager } from '@/components/admin/chat-manager'
 import { LotteryManager } from '@/components/admin/lottery-manager'
+import { LotteryPurchasesManager } from '@/components/admin/lottery-purchases-manager'
 
-type Tab = 'dashboard' | 'products' | 'categories' | 'banners' | 'orders' | 'promo' | 'volantino' | 'coupons' | 'clienti' | 'fedelta' | 'chat' | 'lottery'
+type Tab = 'dashboard' | 'products' | 'categories' | 'banners' | 'orders' | 'promo' | 'volantino' | 'coupons' | 'clienti' | 'fedelta' | 'chat' | 'lottery' | 'biglietti'
 type Group = 'generale' | 'ordini' | 'catalogo'
 
 const GROUP_LABELS: Record<Group, string> = {
@@ -31,6 +32,7 @@ const GROUP_LABELS: Record<Group, string> = {
 const TABS: { id: Tab; label: string; icon: typeof Package; color: string; group: Group }[] = [
   { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard, color: 'text-blue-600 bg-blue-50', group: 'generale' },
   { id: 'orders', label: 'Ordini', icon: ShoppingBag, color: 'text-sky-600 bg-sky-50', group: 'ordini' },
+  { id: 'biglietti', label: 'Biglietti', icon: Hash, color: 'text-amber-600 bg-amber-50', group: 'ordini' },
   { id: 'clienti', label: 'Clienti', icon: Users, color: 'text-pink-600 bg-pink-50', group: 'ordini' },
   { id: 'fedelta', label: 'Fedeltà', icon: Gift, color: 'text-teal-600 bg-teal-50', group: 'ordini' },
   { id: 'coupons', label: 'Coupon', icon: Ticket, color: 'text-indigo-600 bg-indigo-50', group: 'ordini' },
@@ -184,6 +186,7 @@ export default function AdminPage() {
         {activeTab === 'categories' && <CategoriesManager />}
         {activeTab === 'banners' && <BannersManager />}
         {activeTab === 'orders' && <OrdersManager />}
+        {activeTab === 'biglietti' && <LotteryPurchasesManager />}
         {activeTab === 'promo' && <PromoManager />}
         {activeTab === 'volantino' && <VolantinoManager />}
         {activeTab === 'lottery' && <LotteryManager />}

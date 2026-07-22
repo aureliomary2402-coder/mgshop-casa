@@ -86,8 +86,8 @@ export function CartContent({ scope = 'shop' }: { scope?: string }) {
     setSubmitting(true)
     try {
       const res = await fetch('/api/checkout', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ phone_number: phone, items, total, coupon_code: couponCode || null }) })
-      if (!res.ok) throw new Error()
-      const data = await res.json()
+      const data = await res.json().catch(() => null)
+      if (!res.ok) { setError(data?.error || 'Si è verificato un errore. Riprova.'); setSubmitting(false); return }
       if (data.ticket_numbers?.length) setTicketNumbers(data.ticket_numbers)
       clearCart(); setSubmitted(true)
     } catch { setError('Si è verificato un errore. Riprova.') }
