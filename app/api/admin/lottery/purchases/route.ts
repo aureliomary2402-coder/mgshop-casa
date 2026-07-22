@@ -23,7 +23,7 @@ export async function GET() {
   if (error) return NextResponse.json({ error: error.message }, { status: 500 })
   if (!tickets || tickets.length === 0) return NextResponse.json([])
 
-  const orderIds = [...new Set(tickets.map(t => t.order_id).filter(Boolean))] as string[]
+  const orderIds = Array.from(new Set(tickets.map(t => t.order_id).filter(Boolean))) as string[]
   const { data: orders } = orderIds.length > 0
     ? await supabase.from('orders').select('id, status, is_ticket_only, customer_name').in('id', orderIds)
     : { data: [] as any[] }
