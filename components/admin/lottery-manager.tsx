@@ -10,7 +10,7 @@ import { ImageCropper } from './image-cropper'
 
 interface Coupon { id: string; code: string; discount_percent: number; discount_fixed: number }
 interface Winner { id: string; lottery_title: string; prize_label: string; prize_image_url: string | null; winner_number: number; participants_count: number; drawn_at: string }
-interface Entry { id: string; phone_number: string; customer_name: string | null; lottery_number: number; created_at: string }
+interface Entry { id: string; phone_number: string; customer_name: string | null; lottery_number: number; created_at: string; source: 'order' | 'ticket' }
 type PrizeType = 'product' | 'coupon' | 'custom'
 
 // Converte una data ISO (UTC, come arriva da Supabase) nel formato
@@ -120,10 +120,10 @@ export function LotteryManager() {
     setEditingName(e.customer_name || '')
   }
 
-  const saveEntryName = async (id: string) => {
+  const saveEntryName = async (id: string, source: 'order' | 'ticket') => {
     const res = await fetch('/api/admin/lottery/entries', {
       method: 'PATCH', headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ order_id: id, customer_name: editingName }),
+      body: JSON.stringify({ id, source, customer_name: editingName }),
     })
     setEditingEntryId(null)
     if (res.ok) {
@@ -131,11 +131,14 @@ export function LotteryManager() {
     } else setError('Errore nel salvare il nome')
   }
 
-  const deleteEntry = async (id: string) => {
-    if (!confirm('Rimuovere questo partecipante dalla lotteria? Il suo ordine resta salvato, ma non parteciperà più a questa estrazione.')) return
+  const deleteEntry = async (id: string, source: 'order' | 'ticket') => {
+    const msg = source === 'ticket'
+      ? 'Eliminare questo biglietto acquistato? L\'operazione non si può annullare.'
+      : 'Rimuovere questo partecipante dalla lotteria? Il suo ordine resta salvato, ma non parteciperà più a questa estrazione.'
+    if (!confirm(msg)) return
     const res = await fetch('/api/admin/lottery/entries', {
       method: 'DELETE', headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ order_id: id }),
+      body: JSON.stringify({ id, source }),
     })
     if (res.ok) setEntries(prev => prev.filter(e => e.id !== id))
     else setError('Errore nella rimozione del partecipante')
@@ -308,16 +311,17 @@ export function LotteryManager() {
                     <>
                       <Input value={editingName} onChange={ev => setEditingName(ev.target.value)}
                         placeholder={e.phone_number} className="h-7 text-xs flex-1" autoFocus
-                        onKeyDown={ev => { if (ev.key === 'Enter') saveEntryName(e.id); if (ev.key === 'Escape') setEditingEntryId(null) }} />
-                      <button onClick={() => saveEntryName(e.id)} className="text-green-600 shrink-0"><Check className="w-3.5 h-3.5" /></button>
+                        onKeyDown={ev => { if (ev.key === 'Enter') saveEntryName(e.id, e.source); if (ev.key === 'Escape') setEditingEntryId(null) }} />
+                      <button onClick={() => saveEntryName(e.id, e.source)} className="text-green-600 shrink-0"><Check className="w-3.5 h-3.5" /></button>
                       <button onClick={() => setEditingEntryId(null)} className="text-slate-400 shrink-0"><X className="w-3.5 h-3.5" /></button>
                     </>
                   ) : (
                     <>
                       <span className="text-slate-600 truncate flex-1">{e.customer_name || e.phone_number}</span>
+                      {e.source === 'ticket' && <span className="text-[10px] font-semibold text-amber-600 bg-amber-50 px-1.5 py-0.5 rounded shrink-0">biglietto</span>}
                       <span className="font-bold text-cyan-700 shrink-0">#{e.lottery_number}</span>
                       <button onClick={() => startEditEntry(e)} className="text-slate-400 hover:text-cyan-600 shrink-0"><Pencil className="w-3.5 h-3.5" /></button>
-                      <button onClick={() => deleteEntry(e.id)} className="text-slate-400 hover:text-red-500 shrink-0"><Trash2 className="w-3.5 h-3.5" /></button>
+                      <button onClick={() => deleteEntry(e.id, e.source)} className="text-slate-400 hover:text-red-500 shrink-0"><Trash2 className="w-3.5 h-3.5" /></button>
                     </>
                   )}
                 </div>

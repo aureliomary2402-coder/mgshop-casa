@@ -2,7 +2,7 @@ import { createAdminClient } from '@/lib/supabase/admin'
 import { HeroBanner } from '@/components/shop/hero-banner'
 import { ProductGrid } from '@/components/shop/product-grid'
 import { LoyaltyBanner } from '@/components/shop/loyalty-banner'
-import { LotteryBanner } from '@/components/shop/lottery-banner'
+import { LotteryTicketCard } from '@/components/shop/lottery-ticket-card'
 import type { Product, Category, Banner } from '@/lib/types'
 
 export const revalidate = 0
@@ -36,8 +36,8 @@ export default async function ShopPage({ searchParams }: { searchParams: Promise
     <main>
       <HeroBanner banners={banners as Banner[]} categories={categories as Category[]} />
       <div className="max-w-7xl mx-auto px-4 py-6 space-y-5">
+        <LotteryTicketCard />
         <LoyaltyBanner />
-        <LotteryBanner />
         {products.length === 0 ? (
           <div className="text-center py-20 animate-fade-in">
             <div className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4" style={{ background: 'rgba(8,145,178,0.08)' }}>
