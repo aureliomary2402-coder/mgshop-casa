@@ -8,13 +8,14 @@ import type { Product } from '@/lib/types'
 import { Reveal } from '@/components/shop/reveal'
 import { AmbientBubbles } from '@/components/shop/ambient-bubbles'
 
-interface PromoData {
-  is_active: boolean; title: string; subtitle: string; content: string
-  image_url: string; badge_text: string; expires_at: string; featured_product_ids: string[]
+interface PromoItem {
+  product_id: string
+  sale_price: number
 }
 
-interface Coupon {
-  code: string; discount_percent: number; discount_fixed: number
+interface PromoData {
+  is_active: boolean; title: string; subtitle: string; content: string
+  image_url: string; badge_text: string; expires_at: string; promo_items: PromoItem[]
 }
 
 function Countdown({ expiresAt }: { expiresAt: string }) {
@@ -40,21 +41,15 @@ function Countdown({ expiresAt }: { expiresAt: string }) {
   )
 }
 
-function calcDiscountedPrice(price: number, coupon: Coupon | null): number | null {
-  if (!coupon) return null
-  if (coupon.discount_percent) return price * (1 - coupon.discount_percent / 100)
-  if (coupon.discount_fixed) return Math.max(0, price - coupon.discount_fixed)
-  return null
-}
-
-function PromoProductCard({ product, coupon }: { product: Product; coupon: Coupon | null }) {
+function PromoProductCard({ product, salePrice }: { product: Product; salePrice: number }) {
   const addItem = useCartStore(s => s.addItem)
   const [added, setAdded] = useState(false)
 
-  const discounted = calcDiscountedPrice(product.price, coupon)
+  const hasDiscount = salePrice < product.price
+  const percentOff = hasDiscount ? Math.round((1 - salePrice / product.price) * 100) : 0
 
   const handleAdd = () => {
-    addItem(product)
+    addItem({ ...product, price: salePrice })
     setAdded(true)
     setTimeout(() => setAdded(false), 1500)
     toast.success(`${product.name} aggiunto!`, { style: { background: '#cffafe', border: '1px solid #0891b2', color: '#155e75' } })
@@ -68,9 +63,9 @@ function PromoProductCard({ product, coupon }: { product: Product; coupon: Coupo
           {product.cover_image
             ? <img src={product.cover_image} alt={product.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
             : <div className="w-full h-full flex items-center justify-center"><ImageIcon className="w-10 h-10" style={{color:'rgba(8,145,178,0.3)'}}/></div>}
-          {discounted !== null && coupon && coupon.discount_percent > 0 && (
+          {hasDiscount && (
             <div className="absolute top-2 left-2 text-white text-xs font-bold px-2 py-1 rounded-lg" style={{ background: '#dc2626' }}>
-              -{coupon.discount_percent}%
+              -{percentOff}%
             </div>
           )}
         </div>
@@ -81,13 +76,13 @@ function PromoProductCard({ product, coupon }: { product: Product; coupon: Coupo
         </Link>
         <div className="flex items-center justify-between">
           <div className="flex flex-col">
-            {discounted !== null ? (
+            {hasDiscount ? (
               <>
                 <span className="text-xs text-slate-400 line-through">€{product.price.toFixed(2)}</span>
-                <span className="font-bold text-lg" style={{ color: '#dc2626' }}>€{discounted.toFixed(2)}</span>
+                <span className="font-bold text-lg" style={{ color: '#dc2626' }}>€{salePrice.toFixed(2)}</span>
               </>
             ) : (
-              <span className="font-bold text-lg" style={{ color: '#0891b2' }}>€{product.price.toFixed(2)}</span>
+              <span className="font-bold text-lg" style={{ color: '#0891b2' }}>€{salePrice.toFixed(2)}</span>
             )}
           </div>
           <button onClick={handleAdd}
@@ -105,7 +100,6 @@ function PromoProductCard({ product, coupon }: { product: Product; coupon: Coupo
 export default function PromoPage() {
   const [promo, setPromo] = useState<PromoData|null>(null)
   const [products, setProducts] = useState<Product[]>([])
-  const [coupon, setCoupon] = useState<Coupon|null>(null)
   const [loading, setLoading] = useState(true)
   const cartCount = useCartStore(s => s.getTotalItems)()
 
@@ -114,17 +108,15 @@ export default function PromoPage() {
       .then(r=>r.json())
       .then(async d => {
         setPromo(d)
-        if (d.featured_product_ids && d.featured_product_ids.length > 0) {
+        const promoItems: PromoItem[] = d.promo_items || []
+        if (promoItems.length > 0) {
           const allProducts = await fetch('/api/admin/products').then(r=>r.json())
-          setProducts(allProducts.filter((p: Product) => d.featured_product_ids.includes(p.id)))
+          const ids = promoItems.map(i => i.product_id)
+          setProducts(allProducts.filter((p: Product) => ids.includes(p.id)))
         }
         setLoading(false)
       })
       .catch(()=>setLoading(false))
-    fetch('/api/coupons?scope=promo', { cache: 'no-store' })
-      .then(r=>r.json())
-      .then(setCoupon)
-      .catch(()=>setCoupon(null))
   },[])
 
   if(loading) return (
@@ -189,7 +181,10 @@ export default function PromoPage() {
             <Reveal delay={100}>
               <h2 className="text-2xl font-bold mb-6" style={{color:'#0c2b36'}}>Prodotti in promozione</h2>
               <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 stagger-children">
-                {products.map(p => <PromoProductCard key={p.id} product={p} coupon={coupon}/>)}
+                {products.map(p => {
+                  const promoItem = promo.promo_items.find(i => i.product_id === p.id)
+                  return <PromoProductCard key={p.id} product={p} salePrice={promoItem ? promoItem.sale_price : p.price} />
+                })}
               </div>
               {/* Sticky cart button */}
               {cartCount > 0 && (
