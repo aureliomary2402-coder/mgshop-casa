@@ -238,6 +238,15 @@
   box-shadow: 0 25px 50px rgba(8, 145, 178, 0.15), 0 8px 20px rgba(0,0,0,0.08);
 }
 
+/* ===== SEARCH BAR GLOW ===== */
+@keyframes search-glow-pulse {
+  0%, 100% { box-shadow: 0 0 0 4px rgba(34,211,238,0.15), 0 4px 16px rgba(8,145,178,0.18); }
+  50% { box-shadow: 0 0 0 6px rgba(34,211,238,0.22), 0 6px 22px rgba(8,145,178,0.28); }
+}
+.search-glow:focus {
+  animation: search-glow-pulse 2s ease-in-out infinite;
+}
+
 /* ===== NEON GLOW ===== */
 @keyframes neon-pulse {
   0%, 100% {
