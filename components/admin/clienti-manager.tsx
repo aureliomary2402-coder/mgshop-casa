@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect } from 'react'
-import { Users, Search, X, TrendingUp, ShoppingBag, Phone, Star, Gift, Plus, Minus, ChevronDown, ChevronUp, Clock } from 'lucide-react'
+import { Users, Search, X, TrendingUp, ShoppingBag, Phone, Star, Gift, Plus, Minus, ChevronDown, ChevronUp, Clock, ArrowUpDown } from 'lucide-react'
 import { Input } from '@/components/ui/input'
 
 interface Cliente {
@@ -156,15 +156,22 @@ export function ClientiManager() {
   const [loading, setLoading] = useState(true)
   const [search, setSearch] = useState('')
   const [expanded, setExpanded] = useState<string | null>(null)
+  const [sortBy, setSortBy] = useState<'total' | 'orders' | 'points'>('total')
 
   useEffect(() => {
     fetch('/api/admin/clienti').then(r => r.json()).then(d => { setClienti(d); setLoading(false) })
   }, [])
 
-  const filtered = clienti.filter(c => {
-    const q = search.toLowerCase()
-    return c.phone_number.toLowerCase().includes(q) || c.normalized.includes(q) || (c.customer_name || '').toLowerCase().includes(q)
-  })
+  const filtered = clienti
+    .filter(c => {
+      const q = search.toLowerCase()
+      return c.phone_number.toLowerCase().includes(q) || c.normalized.includes(q) || (c.customer_name || '').toLowerCase().includes(q)
+    })
+    .sort((a, b) => {
+      if (sortBy === 'orders') return b.orders - a.orders
+      if (sortBy === 'points') return (b.loyaltyPoints || 0) - (a.loyaltyPoints || 0)
+      return b.total - a.total
+    })
 
   const totalClienti = clienti.length
   const totalOrdini = clienti.reduce((s, c) => s + c.orders, 0)
@@ -206,6 +213,20 @@ export function ClientiManager() {
         <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 pointer-events-none"/>
         <Input value={search} onChange={e => setSearch(e.target.value)} placeholder="Cerca per nome o numero..." className="pl-9 pr-9"/>
         {search && <button onClick={() => setSearch('')} className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400"><X className="w-4 h-4"/></button>}
+      </div>
+
+      <div className="flex items-center gap-2 overflow-x-auto pb-0.5">
+        <span className="flex items-center gap-1 text-xs text-slate-400 shrink-0"><ArrowUpDown className="w-3.5 h-3.5" /> Ordina:</span>
+        {([
+          { id: 'total', label: 'Importo speso' },
+          { id: 'orders', label: 'Ordini' },
+          { id: 'points', label: 'Punti' },
+        ] as const).map(opt => (
+          <button key={opt.id} onClick={() => setSortBy(opt.id)}
+            className={`shrink-0 px-3 py-1.5 rounded-full text-xs font-medium transition-all ${sortBy === opt.id ? 'bg-cyan-600 text-white' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'}`}>
+            {opt.label}
+          </button>
+        ))}
       </div>
 
       <div className="space-y-2">

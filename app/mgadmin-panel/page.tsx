@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect } from 'react'
-import { Package, Tag, Image, ShoppingBag, LogOut, Lock, LayoutDashboard, Megaphone, Ticket, Menu, X, ExternalLink, Users, Gift, MessageCircle, Newspaper, PartyPopper, Hash } from 'lucide-react'
+import { Package, Tag, Image, ShoppingBag, LogOut, Lock, LayoutDashboard, Megaphone, Ticket, Menu, X, ExternalLink, Users, Gift, MessageCircle, Newspaper, PartyPopper, Hash, TrendingUp } from 'lucide-react'
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -19,8 +19,9 @@ import { LoyaltySettingsManager } from '@/components/admin/loyalty-settings-mana
 import { ChatManager } from '@/components/admin/chat-manager'
 import { LotteryManager } from '@/components/admin/lottery-manager'
 import { LotteryPurchasesManager } from '@/components/admin/lottery-purchases-manager'
+import { ProductStatsManager } from '@/components/admin/product-stats-manager'
 
-type Tab = 'dashboard' | 'products' | 'categories' | 'banners' | 'orders' | 'promo' | 'volantino' | 'coupons' | 'clienti' | 'fedelta' | 'chat' | 'lottery' | 'biglietti'
+type Tab = 'dashboard' | 'products' | 'categories' | 'banners' | 'orders' | 'promo' | 'volantino' | 'coupons' | 'clienti' | 'fedelta' | 'chat' | 'lottery' | 'biglietti' | 'statistiche'
 type Group = 'generale' | 'ordini' | 'catalogo'
 
 const GROUP_LABELS: Record<Group, string> = {
@@ -43,6 +44,7 @@ const TABS: { id: Tab; label: string; icon: typeof Package; color: string; group
   { id: 'promo', label: 'Promo', icon: Megaphone, color: 'text-rose-600 bg-rose-50', group: 'catalogo' },
   { id: 'volantino', label: 'Volantino', icon: Newspaper, color: 'text-red-600 bg-red-50', group: 'catalogo' },
   { id: 'lottery', label: 'Lotteria', icon: PartyPopper, color: 'text-amber-600 bg-amber-50', group: 'catalogo' },
+  { id: 'statistiche', label: 'Statistiche', icon: TrendingUp, color: 'text-orange-600 bg-orange-50', group: 'catalogo' },
 ]
 
 const GROUP_ORDER: Group[] = ['generale', 'ordini', 'catalogo']
@@ -194,6 +196,7 @@ export default function AdminPage() {
         {activeTab === 'clienti' && <ClientiManager />}
         {activeTab === 'fedelta' && <LoyaltySettingsManager />}
         {activeTab === 'chat' && <ChatManager />}
+        {activeTab === 'statistiche' && <ProductStatsManager />}
       </div>
     </div>
   )

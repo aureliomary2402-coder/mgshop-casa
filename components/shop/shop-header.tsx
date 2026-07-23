@@ -71,6 +71,11 @@ export function ShopHeader({ categories }: { categories: Category[] }) {
         .then(d => { setSearchResults((d.products || []).slice(0, 6)); setSearchCount(d.count || 0) })
         .catch(() => { setSearchResults([]); setSearchCount(0) })
         .finally(() => setSearchLoading(false))
+      fetch('/api/analytics/search', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ term }),
+      }).catch(() => {})
     }, 250)
     return () => clearTimeout(t)
   }, [searchValue])
