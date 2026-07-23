@@ -33,7 +33,7 @@ export function ProductCard({ product, index = 0 }: { product: Product; index?: 
     })
   }
 
-  const imgUrl = optimizeImage(product.cover_image, 400)
+  const imgUrl = optimizeImage(product.card_image || product.cover_image, 400)
 
   return (
     <div

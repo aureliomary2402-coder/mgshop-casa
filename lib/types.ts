@@ -12,6 +12,7 @@ export interface Product {
   price: number
   category_id: string | null
   cover_image: string | null
+  card_image?: string | null
   is_active: boolean
   stock: number | null
   created_at: string

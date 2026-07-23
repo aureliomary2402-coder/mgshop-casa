@@ -29,6 +29,7 @@ export async function POST(request: NextRequest) {
       price: body.price,
       category_id: body.category_id || null,
       cover_image: body.cover_image,
+      card_image: body.card_image || null,
       is_active: body.is_active ?? true,
       stock: body.stock !== '' && body.stock !== null && body.stock !== undefined ? parseInt(body.stock) : null,
     })
@@ -49,6 +50,7 @@ export async function PUT(request: NextRequest) {
       price: body.price,
       category_id: body.category_id || null,
       cover_image: body.cover_image,
+      card_image: body.card_image || null,
       is_active: body.is_active,
       stock: body.stock !== '' && body.stock !== null && body.stock !== undefined ? parseInt(body.stock) : null,
       updated_at: new Date().toISOString(),

@@ -1,3 +1,78 @@
+#!/bin/bash
+set -e
+
+# Esegui questo script dalla cartella del repo (cd ~/mgshop)
+
+mkdir -p "lib"
+cat > "lib/types.ts" << 'CARDIMGEOF'
+export interface Category {
+  id: string
+  name: string
+  slug: string
+  created_at: string
+}
+
+export interface Product {
+  id: string
+  name: string
+  description: string | null
+  price: number
+  category_id: string | null
+  cover_image: string | null
+  card_image?: string | null
+  is_active: boolean
+  stock: number | null
+  created_at: string
+  updated_at: string
+  category?: Category
+}
+
+export interface ProductImage {
+  id: string
+  product_id: string
+  image_url: string
+  display_order: number
+  created_at: string
+}
+
+export interface Banner {
+  id: string
+  title: string | null
+  subtitle: string | null
+  image_url: string
+  link: string | null
+  is_active: boolean
+  display_order: number
+  created_at: string
+}
+
+export interface Order {
+  id: string
+  phone_number: string
+  status: string
+  total: number
+  customer_name?: string
+  created_at: string
+}
+
+export interface OrderItem {
+  id: string
+  order_id: string
+  product_id: string | null
+  product_name: string
+  product_price: number
+  quantity: number
+  created_at: string
+}
+
+export interface CartItem {
+  product: Product
+  quantity: number
+}
+CARDIMGEOF
+
+mkdir -p "components/admin"
+cat > "components/admin/products-manager.tsx" << 'CARDIMGEOF'
 "use client"
 
 import { useState, useEffect } from 'react'
@@ -340,3 +415,198 @@ export function ProductsManager() {
     </div>
   )
 }
+CARDIMGEOF
+
+mkdir -p "app/api/admin/products"
+cat > "app/api/admin/products/route.ts" << 'CARDIMGEOF'
+import { NextRequest, NextResponse } from 'next/server'
+import { createAdminClient } from '@/lib/supabase/admin'
+import { cookies } from 'next/headers'
+
+async function isAuthenticated() {
+  const cookieStore = await cookies()
+  return cookieStore.get('admin_session')?.value === 'authenticated'
+}
+
+export async function GET() {
+  const supabase = createAdminClient()
+  const { data, error } = await supabase
+    .from('products')
+    .select('*, category:categories(*)')
+    .order('created_at', { ascending: false })
+  if (error) return NextResponse.json({ error: error.message }, { status: 500 })
+  return NextResponse.json(data)
+}
+
+export async function POST(request: NextRequest) {
+  if (!(await isAuthenticated())) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+  const body = await request.json()
+  const supabase = createAdminClient()
+  const { data, error } = await supabase
+    .from('products')
+    .insert({
+      name: body.name,
+      description: body.description,
+      price: body.price,
+      category_id: body.category_id || null,
+      cover_image: body.cover_image,
+      card_image: body.card_image || null,
+      is_active: body.is_active ?? true,
+      stock: body.stock !== '' && body.stock !== null && body.stock !== undefined ? parseInt(body.stock) : null,
+    })
+    .select().single()
+  if (error) return NextResponse.json({ error: error.message }, { status: 500 })
+  return NextResponse.json(data)
+}
+
+export async function PUT(request: NextRequest) {
+  if (!(await isAuthenticated())) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+  const body = await request.json()
+  const supabase = createAdminClient()
+  const { data, error } = await supabase
+    .from('products')
+    .update({
+      name: body.name,
+      description: body.description,
+      price: body.price,
+      category_id: body.category_id || null,
+      cover_image: body.cover_image,
+      card_image: body.card_image || null,
+      is_active: body.is_active,
+      stock: body.stock !== '' && body.stock !== null && body.stock !== undefined ? parseInt(body.stock) : null,
+      updated_at: new Date().toISOString(),
+    })
+    .eq('id', body.id).select().single()
+  if (error) return NextResponse.json({ error: error.message }, { status: 500 })
+  return NextResponse.json(data)
+}
+
+export async function DELETE(request: NextRequest) {
+  if (!(await isAuthenticated())) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+  const { id } = await request.json()
+  const supabase = createAdminClient()
+  const { error } = await supabase.from('products').delete().eq('id', id)
+  if (error) return NextResponse.json({ error: error.message }, { status: 500 })
+  return NextResponse.json({ success: true })
+}
+CARDIMGEOF
+
+mkdir -p "components/shop"
+cat > "components/shop/product-card.tsx" << 'CARDIMGEOF'
+"use client"
+
+import Link from 'next/link'
+import { ImageIcon, ShoppingCart, Eye } from 'lucide-react'
+import { toast } from 'sonner'
+import type { Product } from '@/lib/types'
+import { useCartStore } from '@/lib/cart-store'
+import { useState, useRef } from 'react'
+import { optimizeImage } from '@/lib/image'
+
+export function ProductCard({ product, index = 0 }: { product: Product; index?: number }) {
+  const addItem = useCartStore((state) => state.addItem)
+  const [imgError, setImgError] = useState(false)
+  const [tilt, setTilt] = useState({ x: 0, y: 0 })
+  const [isHovered, setIsHovered] = useState(false)
+  const cardRef = useRef<HTMLDivElement>(null)
+
+  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (!cardRef.current) return
+    const rect = cardRef.current.getBoundingClientRect()
+    const x = (e.clientX - rect.left) / rect.width - 0.5
+    const y = (e.clientY - rect.top) / rect.height - 0.5
+    setTilt({ x: y * 12, y: x * -12 })
+  }
+
+  const handleAddToCart = (e: React.MouseEvent) => {
+    e.preventDefault()
+    e.stopPropagation()
+    addItem(product)
+    toast.success(`${product.name} aggiunto!`, {
+      duration: 2000,
+      style: { background: '#cffafe', border: '1px solid #0891b2', color: '#155e75' }
+    })
+  }
+
+  const imgUrl = optimizeImage(product.card_image || product.cover_image, 400)
+
+  return (
+    <div
+      ref={cardRef}
+      className="group relative rounded-2xl overflow-hidden animate-fade-in-up"
+      style={{
+        animationDelay: `${Math.min(index * 40, 400)}ms`,
+        animationFillMode: 'both',
+        background: 'white',
+        border: '1px solid rgba(8,145,178,0.08)',
+        boxShadow: isHovered
+          ? '0 20px 40px rgba(8,145,178,0.15), 0 8px 16px rgba(0,0,0,0.06)'
+          : '0 2px 8px rgba(0,0,0,0.04)',
+        transform: isHovered
+          ? `perspective(800px) rotateX(${tilt.x}deg) rotateY(${tilt.y}deg) translateY(-6px) scale(1.02)`
+          : 'perspective(800px) rotateX(0deg) rotateY(0deg) translateY(0px) scale(1)',
+        transition: 'transform 0.3s cubic-bezier(0.22,1,0.36,1), box-shadow 0.3s ease',
+        willChange: 'transform',
+      }}
+      onMouseMove={handleMouseMove}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => { setIsHovered(false); setTilt({ x: 0, y: 0 }) }}
+    >
+      <Link href={`/prodotto/${product.id}`} className="block">
+        <div className="relative aspect-square overflow-hidden" style={{ background: 'linear-gradient(135deg, #f0fbfd, #cffafe)' }}>
+          {imgUrl && !imgError ? (
+            <img
+              src={imgUrl}
+              alt={product.name}
+              loading={index < 8 ? 'eager' : 'lazy'}
+              decoding="async"
+              className="w-full h-full object-cover transition-transform duration-500 ease-out"
+              style={{ transform: isHovered ? 'scale(1.08)' : 'scale(1)' }}
+              onError={() => setImgError(true)}
+            />
+          ) : (
+            <div className="w-full h-full flex items-center justify-center">
+              <ImageIcon className="w-10 h-10" style={{ color: 'rgba(8,145,178,0.3)' }} />
+            </div>
+          )}
+          <div className="absolute inset-0 flex items-center justify-center transition-all duration-300"
+            style={{ background: isHovered ? 'rgba(12,43,54,0.15)' : 'rgba(12,43,54,0)' }}>
+            <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold transition-all duration-300"
+              style={{
+                background: 'rgba(240,251,253,0.95)',
+                color: '#155e75',
+                opacity: isHovered ? 1 : 0,
+                transform: isHovered ? 'translateY(0) scale(1)' : 'translateY(6px) scale(0.9)',
+              }}>
+              <Eye className="w-3.5 h-3.5" /> Vedi dettagli
+            </div>
+          </div>
+        </div>
+      </Link>
+
+      <div className="p-3">
+        <Link href={`/prodotto/${product.id}`}>
+          <h3 className="font-semibold text-sm line-clamp-2 mb-2 leading-snug transition-colors"
+            style={{ color: isHovered ? '#155e75' : '#0c2b36' }}>
+            {product.name}
+          </h3>
+        </Link>
+        <div className="flex items-center justify-between">
+          <span className="font-bold text-base" style={{ color: '#0891b2' }}>€{product.price.toFixed(2)}</span>
+          <button
+            onClick={handleAddToCart}
+            className="flex items-center gap-1 text-white text-xs font-semibold px-3 py-1.5 rounded-full btn-press transition-all"
+            style={{ background: 'linear-gradient(135deg, #0891b2, #06b6d4)', boxShadow: '0 2px 8px rgba(8,145,178,0.3)' }}>
+            <ShoppingCart className="w-3.5 h-3.5" />
+            <span className="hidden sm:inline">Aggiungi</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  )
+}
+CARDIMGEOF
+
+git add -A
+git commit -m "feat: foto separata per la card negozio (zoom libero) e per la pagina prodotto (sempre a riempimento)"
+git push
