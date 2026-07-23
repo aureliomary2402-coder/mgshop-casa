@@ -30,6 +30,7 @@ export function ShopHeader({ categories }: { categories: Category[] }) {
   const [volantinoActive, setVolantinoActive] = useState(false)
   const [cartBump, setCartBump] = useState(false)
   const [searchResults, setSearchResults] = useState<Product[]>([])
+  const [searchCount, setSearchCount] = useState(0)
   const [searchLoading, setSearchLoading] = useState(false)
   const [dropdownOpen, setDropdownOpen] = useState(false)
   const [searchFocused, setSearchFocused] = useState(false)
@@ -62,13 +63,13 @@ export function ShopHeader({ categories }: { categories: Category[] }) {
 
   useEffect(() => {
     const term = searchValue.trim()
-    if (!term) { setSearchResults([]); setSearchLoading(false); return }
+    if (!term) { setSearchResults([]); setSearchCount(0); setSearchLoading(false); return }
     setSearchLoading(true)
     const t = setTimeout(() => {
       fetch(`/api/shop/products?q=${encodeURIComponent(term)}&pagina=1`)
         .then(r => r.json())
-        .then(d => setSearchResults((d.products || []).slice(0, 6)))
-        .catch(() => setSearchResults([]))
+        .then(d => { setSearchResults((d.products || []).slice(0, 6)); setSearchCount(d.count || 0) })
+        .catch(() => { setSearchResults([]); setSearchCount(0) })
         .finally(() => setSearchLoading(false))
     }, 250)
     return () => clearTimeout(t)
@@ -107,6 +108,12 @@ export function ShopHeader({ categories }: { categories: Category[] }) {
     setDropdownOpen(false)
     setSearchOpen(false)
     router.push(`/prodotto/${product.id}`)
+  }
+
+  const handleSeeAllResults = () => {
+    setDropdownOpen(false)
+    setSearchOpen(false)
+    router.push(`/shop?q=${encodeURIComponent(searchValue.trim())}`)
   }
 
   const handleCategorySelect = (slug: string | null) => {
@@ -196,23 +203,31 @@ export function ShopHeader({ categories }: { categories: Category[] }) {
                 <div className="absolute top-full left-0 mt-2 w-full min-w-[280px] rounded-2xl overflow-hidden shadow-xl animate-scale-in z-50"
                   style={{ background: 'white', border: '1px solid rgba(8,145,178,0.15)', boxShadow: '0 20px 60px rgba(0,0,0,0.15)' }}>
                   {searchResults.length > 0 ? (
-                    <div className="max-h-96 overflow-y-auto p-1.5">
-                      {searchResults.map(product => {
-                        const imgUrl = optimizeImage(product.card_image || product.cover_image, 80)
-                        return (
-                          <button key={product.id} onClick={() => handleSelectProduct(product)}
-                            className="w-full flex items-center gap-3 p-2 rounded-xl text-left hover:bg-cyan-50 transition-colors">
-                            <div className="w-10 h-10 rounded-lg flex items-center justify-center shrink-0 overflow-hidden" style={{ background: 'rgba(8,145,178,0.06)' }}>
-                              {imgUrl ? <img src={imgUrl} alt={product.name} className="w-full h-full object-cover" /> : <ImageIcon className="w-4 h-4 text-cyan-300" />}
-                            </div>
-                            <span className="flex-1 min-w-0 text-sm font-medium truncate" style={{ color: '#0c2b36' }}>
-                              <HighlightedText text={product.name} query={searchValue} />
-                            </span>
-                            <span className="text-sm font-bold shrink-0" style={{ color: '#0891b2' }}>€{product.price.toFixed(2)}</span>
-                          </button>
-                        )
-                      })}
-                    </div>
+                    <>
+                      <div className="max-h-96 overflow-y-auto p-1.5">
+                        {searchResults.map(product => {
+                          const imgUrl = optimizeImage(product.card_image || product.cover_image, 80)
+                          return (
+                            <button key={product.id} onClick={() => handleSelectProduct(product)}
+                              className="w-full flex items-center gap-3 p-2 rounded-xl text-left hover:bg-cyan-50 transition-colors">
+                              <div className="w-10 h-10 rounded-lg flex items-center justify-center shrink-0 overflow-hidden" style={{ background: 'rgba(8,145,178,0.06)' }}>
+                                {imgUrl ? <img src={imgUrl} alt={product.name} className="w-full h-full object-cover" /> : <ImageIcon className="w-4 h-4 text-cyan-300" />}
+                              </div>
+                              <span className="flex-1 min-w-0 text-sm font-medium truncate" style={{ color: '#0c2b36' }}>
+                                <HighlightedText text={product.name} query={searchValue} />
+                              </span>
+                              <span className="text-sm font-bold shrink-0" style={{ color: '#0891b2' }}>€{product.price.toFixed(2)}</span>
+                            </button>
+                          )
+                        })}
+                      </div>
+                      <button onClick={handleSeeAllResults}
+                        className="w-full flex items-center justify-center gap-1.5 py-3 text-sm font-semibold border-t transition-colors hover:bg-cyan-50"
+                        style={{ borderColor: 'rgba(8,145,178,0.12)', color: '#0891b2' }}>
+                        Vedi tutti i risultati{searchCount > 0 ? ` (${searchCount})` : ''}
+                        <ChevronDown className="w-3.5 h-3.5 -rotate-90" />
+                      </button>
+                    </>
                   ) : !searchLoading ? (
                     <div className="px-4 py-6 text-center text-sm text-slate-500">Nessun prodotto trovato</div>
                   ) : (
