@@ -9,6 +9,7 @@ interface ImageCropperProps {
   onConfirm: (blob: Blob) => void
   outputWidth?: number // risoluzione in pixel della larghezza esportata
   aspectRatio?: number // larghezza/altezza del riquadro. 1 = quadrato, 3 = panoramico tipo banner
+  minZoom?: number // zoom minimo consentito. 1 = non si può rimpicciolire sotto la misura che riempie il riquadro (niente bordi vuoti)
 }
 
 const VIEWPORT_W = 320
@@ -46,7 +47,7 @@ function detectEdgeColor(img: HTMLImageElement): string {
   }
 }
 
-export function ImageCropper({ file, onCancel, onConfirm, outputWidth = 1600, aspectRatio = 1 }: ImageCropperProps) {
+export function ImageCropper({ file, onCancel, onConfirm, outputWidth = 1600, aspectRatio = 1, minZoom = MIN_ZOOM }: ImageCropperProps) {
   const [img, setImg] = useState<HTMLImageElement | null>(null)
   const [zoom, setZoom] = useState(1)
   const [offset, setOffset] = useState({ x: 0, y: 0 })
@@ -57,6 +58,11 @@ export function ImageCropper({ file, onCancel, onConfirm, outputWidth = 1600, as
   })
 
   const viewportH = Math.round(VIEWPORT_W / aspectRatio)
+  const fillFrame = minZoom >= 1
+  const computeBaseScale = useCallback((w: number, h: number) => (
+    fillFrame ? Math.max(VIEWPORT_W / w, viewportH / h) : Math.min(VIEWPORT_W / w, viewportH / h)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  ), [fillFrame, viewportH])
 
   useEffect(() => {
     const url = URL.createObjectURL(file)
@@ -64,7 +70,7 @@ export function ImageCropper({ file, onCancel, onConfirm, outputWidth = 1600, as
     image.onload = () => {
       setImg(image)
       setBgColor(detectEdgeColor(image))
-      const bs = Math.min(VIEWPORT_W / image.naturalWidth, viewportH / image.naturalHeight)
+      const bs = computeBaseScale(image.naturalWidth, image.naturalHeight)
       const dW = image.naturalWidth * bs
       const dH = image.naturalHeight * bs
       setZoom(1)
@@ -75,7 +81,7 @@ export function ImageCropper({ file, onCancel, onConfirm, outputWidth = 1600, as
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [file])
 
-  const baseScale = img ? Math.min(VIEWPORT_W / img.naturalWidth, viewportH / img.naturalHeight) : 1
+  const baseScale = img ? computeBaseScale(img.naturalWidth, img.naturalHeight) : 1
   const displayScale = baseScale * zoom
   const dispW = img ? img.naturalWidth * displayScale : 0
   const dispH = img ? img.naturalHeight * displayScale : 0
@@ -190,14 +196,16 @@ export function ImageCropper({ file, onCancel, onConfirm, outputWidth = 1600, as
         <div className="flex items-center gap-3">
           <ZoomIn className="w-4 h-4 text-slate-400 shrink-0" />
           <input
-            type="range" min={MIN_ZOOM} max={MAX_ZOOM} step="0.01"
+            type="range" min={minZoom} max={MAX_ZOOM} step="0.01"
             value={zoom}
             onChange={(e) => handleZoomChange(parseFloat(e.target.value))}
             className="w-full accent-cyan-600"
           />
         </div>
         <p className="text-xs text-slate-400 text-center -mt-2">
-          Trascina per spostare, usa lo slider per rimpicciolire o ingrandire. Lo spazio vuoto si riempie da solo con il colore della foto.
+          {minZoom >= 1
+            ? 'Trascina per spostare, usa lo slider per ingrandire. Il riquadro resta sempre pieno, senza bordi vuoti.'
+            : 'Trascina per spostare, usa lo slider per rimpicciolire o ingrandire. Lo spazio vuoto si riempie da solo con il colore della foto.'}
         </p>
 
         <div className="flex gap-2">
