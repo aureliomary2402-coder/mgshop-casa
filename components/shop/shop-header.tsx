@@ -113,7 +113,12 @@ export function ShopHeader({ categories }: { categories: Category[] }) {
   const handleSeeAllResults = () => {
     setDropdownOpen(false)
     setSearchOpen(false)
-    router.push(`/shop?q=${encodeURIComponent(searchValue.trim())}`)
+    const term = searchValue.trim()
+    router.push(`/shop?q=${encodeURIComponent(term)}#prodotti-grid`)
+    // fallback per quando siamo già sulla pagina shop (l'url q non cambia)
+    requestAnimationFrame(() => {
+      document.getElementById('prodotti-grid')?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+    })
   }
 
   const handleCategorySelect = (slug: string | null) => {
