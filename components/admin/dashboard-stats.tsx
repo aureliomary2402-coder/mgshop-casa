@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect } from 'react'
-import { ShoppingBag, Euro, Clock, CheckCircle, TrendingUp, Package, Eye, BarChart2, ArrowUp, ArrowDown, Gift, Ticket } from 'lucide-react'
+import { ShoppingBag, Euro, Clock, CheckCircle, TrendingUp, Package, Eye, BarChart2, ArrowUp, ArrowDown, Gift, Ticket, Radio } from 'lucide-react'
 
 interface OrderStats {
   totalOrders: number
@@ -48,6 +48,23 @@ function MiniChart({ data }: { data: { day: string; count: number }[] }) {
   )
 }
 
+interface ActiveVisitors {
+  count: number
+  pages: { page: string; count: number }[]
+}
+
+function pageLabel(page: string) {
+  const labels: Record<string, string> = {
+    '/': 'Home',
+    '/shop': 'Negozio',
+    '/promo': 'Promo',
+    '/carrello': 'Carrello',
+  }
+  if (labels[page]) return labels[page]
+  if (page.startsWith('/prodotto/')) return 'Scheda prodotto'
+  return page
+}
+
 function PageLabel({ page }: { page: string }) {
   const labels: Record<string, string> = {
     '/': 'Home',
@@ -65,7 +82,17 @@ export function DashboardStats() {
   const [tickets, setTickets] = useState<TicketStats | null>(null)
   const [analytics, setAnalytics] = useState<AnalyticsData | null>(null)
   const [loyaltyReadyCount, setLoyaltyReadyCount] = useState<number | null>(null)
+  const [activeVisitors, setActiveVisitors] = useState<ActiveVisitors | null>(null)
   const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    const fetchActive = () => {
+      fetch('/api/admin/active-visitors').then(r => r.json()).then(setActiveVisitors).catch(() => {})
+    }
+    fetchActive()
+    const interval = setInterval(fetchActive, 8000)
+    return () => clearInterval(interval)
+  }, [])
 
   useEffect(() => {
     Promise.all([
@@ -108,6 +135,31 @@ export function DashboardStats() {
 
   return (
     <div className="space-y-6">
+
+      {/* Visitatori in tempo reale */}
+      <div className="rounded-xl p-4 shadow-sm text-white relative overflow-hidden" style={{ background: 'linear-gradient(135deg,#0c2b36,#0891b2)' }}>
+        <div className="flex items-center justify-between relative z-10">
+          <div className="flex items-center gap-3">
+            <div className="relative w-3 h-3">
+              <span className="absolute inset-0 rounded-full bg-emerald-400 animate-ping" />
+              <span className="absolute inset-0 rounded-full bg-emerald-400" />
+            </div>
+            <div>
+              <p className="text-2xl font-bold leading-none">{activeVisitors?.count ?? 0}</p>
+              <p className="text-xs text-cyan-100 mt-1 flex items-center gap-1">
+                <Radio className="w-3 h-3" /> {activeVisitors?.count === 1 ? 'persona online ora' : 'persone online ora'}
+              </p>
+            </div>
+          </div>
+          {activeVisitors && activeVisitors.pages.length > 0 && (
+            <div className="text-right space-y-0.5">
+              {activeVisitors.pages.slice(0, 3).map(p => (
+                <p key={p.page} className="text-xs text-cyan-100">{pageLabel(p.page)} · <span className="font-semibold text-white">{p.count}</span></p>
+              ))}
+            </div>
+          )}
+        </div>
+      </div>
 
       {/* Visite */}
       <div>
