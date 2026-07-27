@@ -100,7 +100,8 @@ export function DashboardStats() {
       fetch('/api/admin/analytics').then(r => r.json()),
       fetch('/api/admin/clienti').then(r => r.json()),
       fetch('/api/admin/lottery/purchases').then(r => r.json()),
-    ]).then(([ordersData, analyticsData, clientiData, ticketGroups]) => {
+    ]).then(([ordersData, analyticsData, clientiData, ticketData]) => {
+      const ticketGroups = ticketData.purchases || []
       const today = new Date().toDateString()
       // Alcuni ordini includono anche biglietti lotteria: quei €1 a biglietto
       // vanno tolti dall'incasso "ordini", perché contati a parte qui sotto.
