@@ -45,8 +45,8 @@ function FlyerCard({ product, salePrice, index }: { product: Product; salePrice:
       )}
       <Link href={`/prodotto/${product.id}`}>
         <div className="aspect-square overflow-hidden" style={{ background: 'linear-gradient(135deg,#f0fbfd,#cffafe)' }}>
-          {product.cover_image
-            ? <img src={optimizeImage(product.cover_image, 400) || product.cover_image} alt={product.name} loading="lazy" decoding="async" className="w-full h-full object-cover" />
+          {product.card_image || product.cover_image
+            ? <img src={optimizeImage(product.card_image || product.cover_image, 400) || product.card_image || product.cover_image || ''} alt={product.name} loading="lazy" decoding="async" className="w-full h-full object-cover" />
             : <div className="w-full h-full flex items-center justify-center"><ImageIcon className="w-10 h-10" style={{ color: 'rgba(8,145,178,0.3)' }} /></div>}
         </div>
       </Link>
