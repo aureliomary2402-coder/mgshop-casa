@@ -19,6 +19,7 @@ export async function GET() {
   const { data: tickets, error } = await supabase
     .from('lottery_tickets')
     .select('id, order_id, lottery_number, phone_number, customer_name, created_at, round_id')
+    .eq('is_reserved', false)
     .order('created_at', { ascending: false })
   if (error) return NextResponse.json({ error: error.message }, { status: 500 })
   if (!tickets || tickets.length === 0) return NextResponse.json({ rounds: [], purchases: [] })

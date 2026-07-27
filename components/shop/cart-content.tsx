@@ -288,29 +288,24 @@ export function CartContent({ scope = 'shop' }: { scope?: string }) {
                       <p className="text-xs text-slate-500 mb-2">
                         Scegli fino a {ticketQtyInCart} numer{ticketQtyInCart > 1 ? 'i' : 'o'} ({chosenNumbers.length}/{ticketQtyInCart} scelt{chosenNumbers.length === 1 ? 'o' : 'i'}). I biglietti senza numero scelto vengono assegnati automaticamente.
                       </p>
-                      {(() => {
-                        const freeNumbers = Array.from({ length: participantsCount }, (_, i) => i + 1).filter(n => !takenNumbers.includes(n))
-                        if (freeNumbers.length === 0) {
-                          return <p className="text-xs text-slate-400 italic py-2 text-center">Al momento non ci sono numeri liberi da scegliere: verranno assegnati automaticamente.</p>
-                        }
-                        return (
-                          <div className="grid grid-cols-8 gap-1 max-h-40 overflow-y-auto">
-                            {freeNumbers.map(n => {
-                              const isChosen = chosenNumbers.includes(n)
-                              return (
-                                <button key={n} type="button"
-                                  onClick={() => toggleChosenNumber(n)}
-                                  className="h-7 rounded-md text-[11px] font-bold flex items-center justify-center transition-all"
-                                  style={isChosen
-                                    ? { background: 'linear-gradient(135deg,#0891b2,#06b6d4)', color: 'white' }
-                                    : { background: 'rgba(8,145,178,0.05)', border: '1px solid rgba(8,145,178,0.15)', color: '#0c2b36' }}>
-                                  {n}
-                                </button>
-                              )
-                            })}
-                          </div>
-                        )
-                      })()}
+                      <div className="grid grid-cols-8 gap-1 max-h-40 overflow-y-auto">
+                        {Array.from({ length: participantsCount }, (_, i) => i + 1).map(n => {
+                          const isTaken = takenNumbers.includes(n)
+                          const isChosen = chosenNumbers.includes(n)
+                          return (
+                            <button key={n} type="button" disabled={isTaken}
+                              onClick={() => toggleChosenNumber(n)}
+                              className="h-7 rounded-md text-[11px] font-bold flex items-center justify-center transition-all disabled:cursor-not-allowed"
+                              style={isTaken
+                                ? { background: 'rgba(148,163,184,0.15)', color: 'rgba(100,116,139,0.5)', textDecoration: 'line-through' }
+                                : isChosen
+                                  ? { background: 'linear-gradient(135deg,#0891b2,#06b6d4)', color: 'white' }
+                                  : { background: 'rgba(8,145,178,0.05)', border: '1px solid rgba(8,145,178,0.15)', color: '#0c2b36' }}>
+                              {n}
+                            </button>
+                          )
+                        })}
+                      </div>
                     </div>
                   )}
                 </div>

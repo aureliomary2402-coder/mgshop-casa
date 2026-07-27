@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect } from 'react'
-import { ToggleLeft, ToggleRight, ImageIcon, Save, Eye, Clock, Gift, Search, Award, History, Sparkles, Phone, Trash2, Pencil, Check, X } from 'lucide-react'
+import { ToggleLeft, ToggleRight, ImageIcon, Save, Eye, Clock, Gift, Search, Award, History, Sparkles, Phone, Trash2, Pencil, Check, X, Lock, Ghost } from 'lucide-react'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import Link from 'next/link'
@@ -44,6 +44,11 @@ export function LotteryManager() {
   const [editingEntryId, setEditingEntryId] = useState<string | null>(null)
   const [editingName, setEditingName] = useState('')
 
+  const [soldNumbers, setSoldNumbers] = useState<number[]>([])
+  const [reservedNumbers, setReservedNumbers] = useState<number[]>([])
+  const [reservingNumber, setReservingNumber] = useState<number | null>(null)
+  const [reserveError, setReserveError] = useState('')
+
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
   const [saved, setSaved] = useState(false)
@@ -69,7 +74,14 @@ export function LotteryManager() {
     }).catch(() => setLoading(false))
     fetch('/api/lottery').then(r => r.json()).then(d => setWinners(d.winners || [])).catch(() => {})
     fetch('/api/admin/lottery/entries').then(r => r.json()).then(d => setEntries(d.entries || [])).catch(() => {})
+    loadReserved()
   }
+
+  const loadReserved = () => {
+    fetch('/api/admin/lottery/reserved').then(r => r.json()).then(d => {
+      setSoldNumbers(d.sold_numbers || [])
+      setReservedNumbers(d.reserved_numbers || [])
+    }).catch(() => {})
 
   useEffect(() => {
     load()
@@ -149,6 +161,29 @@ export function LotteryManager() {
     const res = await fetch(`/api/admin/lottery/winners/${id}`, { method: 'DELETE' })
     if (res.ok) setWinners(prev => prev.filter(w => w.id !== id))
     else setError('Errore nell\'eliminazione dello storico')
+  }
+
+  const reserveNumber = async (n: number) => {
+    setReservingNumber(n); setReserveError('')
+    const res = await fetch('/api/admin/lottery/reserved', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ number: n }),
+    })
+    if (res.ok) setReservedNumbers(prev => [...prev, n].sort((a, b) => a - b))
+    else {
+      const data = await res.json().catch(() => null)
+      setReserveError(data?.error || 'Errore nella riserva del numero')
+    }
+    setReservingNumber(null)
+  }
+
+  const releaseNumber = async (n: number) => {
+    setReservingNumber(n); setReserveError('')
+    const res = await fetch('/api/admin/lottery/reserved', {
+      method: 'DELETE', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ number: n }),
+    })
+    if (res.ok) setReservedNumbers(prev => prev.filter(x => x !== n))
+    else setReserveError('Errore nella liberazione del numero')
+    setReservingNumber(null)
   }
 
   const selectProduct = (p: Product) => {
@@ -329,6 +364,34 @@ export function LotteryManager() {
             </div>
           )}
           <p className="text-xs text-slate-400 mt-2">Usa questo elenco per impostare "Numero partecipanti" e "Numero vincente" qui sotto in modo coerente con chi ha davvero partecipato.</p>
+        </div>
+
+        {/* Numeri riservati dall'admin (fantasma) */}
+        <div className="p-3 rounded-xl" style={{ background: 'rgba(249,115,22,0.05)', border: '1px solid rgba(249,115,22,0.15)' }}>
+          <p className="text-xs font-medium text-orange-700 mb-1 flex items-center gap-1"><Ghost className="w-3.5 h-3.5" /> Numeri riservati per te ({reservedNumbers.length})</p>
+          <p className="text-xs text-slate-400 mb-2">
+            Tocca un numero libero per riservartelo: resta occupato e i clienti non potranno più sceglierlo né riceverlo in automatico, ma non conta come biglietto venduto né come incasso. Tocca un numero già riservato per liberarlo di nuovo.
+          </p>
+          <div className="grid grid-cols-8 gap-1 max-h-40 overflow-y-auto">
+            {Array.from({ length: participantsNum }, (_, i) => i + 1).map(n => {
+              const isSold = soldNumbers.includes(n)
+              const isReserved = reservedNumbers.includes(n)
+              const isBusy = reservingNumber === n
+              return (
+                <button key={n} type="button" disabled={isSold || isBusy}
+                  onClick={() => (isReserved ? releaseNumber(n) : reserveNumber(n))}
+                  className="h-7 rounded-md text-[11px] font-bold flex items-center justify-center transition-all disabled:cursor-not-allowed"
+                  style={isSold
+                    ? { background: 'rgba(148,163,184,0.15)', color: 'rgba(100,116,139,0.5)', textDecoration: 'line-through' }
+                    : isReserved
+                      ? { background: 'linear-gradient(135deg,#f59e0b,#ea580c)', color: 'white', opacity: isBusy ? 0.6 : 1 }
+                      : { background: 'rgba(8,145,178,0.05)', border: '1px solid rgba(8,145,178,0.15)', color: '#0c2b36', opacity: isBusy ? 0.6 : 1 }}>
+                  {isReserved ? <Lock className="w-3 h-3" /> : n}
+                </button>
+              )
+            })}
+          </div>
+          {reserveError && <p className="text-red-500 text-xs mt-2">{reserveError}</p>}
         </div>
 
         <div className="grid grid-cols-2 gap-3">

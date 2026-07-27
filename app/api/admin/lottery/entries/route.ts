@@ -28,7 +28,8 @@ export async function GET() {
       .not('lottery_number', 'is', null),
     supabase.from('lottery_tickets')
       .select('id, phone_number, customer_name, lottery_number, created_at')
-      .eq('round_id', lottery.round_id),
+      .eq('round_id', lottery.round_id)
+      .eq('is_reserved', false),
   ])
 
   if (ordersError) return NextResponse.json({ error: ordersError.message }, { status: 500 })
