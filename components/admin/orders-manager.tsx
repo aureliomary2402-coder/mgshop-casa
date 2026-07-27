@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect } from 'react'
-import { ChevronDown, ChevronUp, Package, Trash2, Pencil, Check, X, User, Plus, Minus, Search, ShoppingBag } from 'lucide-react'
+import { ChevronDown, ChevronUp, Package, Trash2, Pencil, Check, X, User, Plus, Minus, Search, ShoppingBag, Gift } from 'lucide-react'
 import type { Order, OrderItem, Product } from '@/lib/types'
 
 const STATUS_LABELS: Record<string, string> = {
@@ -14,7 +14,7 @@ const STATUS_COLORS: Record<string, string> = {
   cancelled: 'bg-red-100 text-red-700',
 }
 
-interface OrderWithItems extends Order { order_items: OrderItem[]; customer_name?: string }
+interface OrderWithItems extends Order { order_items: OrderItem[]; customer_name?: string; ticket_count?: number }
 
 export function OrdersManager() {
   const [orders, setOrders] = useState<OrderWithItems[]>([])
@@ -132,6 +132,11 @@ export function OrdersManager() {
                   <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${STATUS_COLORS[order.status]||'bg-slate-100 text-slate-600'}`}>
                     {STATUS_LABELS[order.status]||order.status}
                   </span>
+                  {!!order.ticket_count && (
+                    <span className="text-xs px-2 py-0.5 rounded-full font-medium bg-cyan-100 text-cyan-700 flex items-center gap-1">
+                      <Gift className="w-3 h-3"/> {order.ticket_count} bigliett{order.ticket_count > 1 ? 'i' : 'o'}
+                    </span>
+                  )}
                 </div>
                 <p className="text-xs text-slate-400 mt-0.5">
                   {new Date(order.created_at).toLocaleDateString('it-IT',{day:'2-digit',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'})}
@@ -232,11 +237,24 @@ export function OrdersManager() {
                   )}
                 </div>
 
+                {/* Biglietti lotteria inclusi nell'ordine */}
+                {!!order.ticket_count && (
+                  <div className="flex items-center justify-between p-2 rounded-xl text-sm" style={{background:'rgba(8,145,178,0.06)',border:'1px solid rgba(8,145,178,0.15)'}}>
+                    <span className="flex items-center gap-1.5 font-medium text-cyan-700">
+                      <Gift className="w-4 h-4"/> {order.ticket_count} bigliett{order.ticket_count > 1 ? 'i' : 'o'} lotteria
+                    </span>
+                    <span className="font-bold text-cyan-700">€{order.ticket_count.toFixed(2)}</span>
+                  </div>
+                )}
+
                 {/* Totale */}
                 <div className="flex justify-between font-bold text-sm border-t border-slate-100 pt-2">
                   <span>Totale ordine</span>
                   <span className="text-cyan-700">€{order.total.toFixed(2)}</span>
                 </div>
+                {!!order.ticket_count && (
+                  <p className="text-xs text-slate-400 -mt-1">di cui €{order.ticket_count.toFixed(2)} per i biglietti lotteria (già inclusi nel totale)</p>
+                )}
 
                 {/* Stato */}
                 <div>
