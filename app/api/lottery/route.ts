@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server'
 import { createAdminClient } from '@/lib/supabase/admin'
-import { autoArchiveIfExpired } from '@/lib/lottery'
+import { autoArchiveIfExpired, getTakenLotteryNumbers } from '@/lib/lottery'
 
 // Senza questa riga, Next.js mette in cache questa risposta GET la prima volta
 // e la serve sempre uguale (congelata) finché non c'è un nuovo deploy.
@@ -22,6 +22,13 @@ export async function GET() {
 
   const revealed = !!lottery.ends_at && new Date(lottery.ends_at).getTime() <= Date.now()
 
+  // Serve al carrello per mostrare quali numeri sono già stati presi da
+  // altri clienti, così chi vuole scegliere il proprio numero vede subito
+  // quali sono liberi invece di scoprirlo solo al momento dell'acquisto.
+  const takenNumbers = lottery.is_active && lottery.round_id && !revealed
+    ? Array.from(await getTakenLotteryNumbers(supabase, lottery.round_id)).sort((a, b) => a - b)
+    : []
+
   return NextResponse.json({
     is_active: lottery.is_active,
     title: lottery.title,
@@ -33,5 +40,6 @@ export async function GET() {
     revealed,
     winner_number: revealed ? lottery.winner_number : null,
     winners: winners || [],
+    taken_numbers: takenNumbers,
   })
 }

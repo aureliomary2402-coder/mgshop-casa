@@ -24,6 +24,10 @@ export function CartContent({ scope = 'shop' }: { scope?: string }) {
   const [lotteryPrizeLabel, setLotteryPrizeLabel] = useState('')
   const [ticketQtyToAdd, setTicketQtyToAdd] = useState(1)
   const [ticketNumbers, setTicketNumbers] = useState<number[]>([])
+  const [participantsCount, setParticipantsCount] = useState(0)
+  const [takenNumbers, setTakenNumbers] = useState<number[]>([])
+  const [showNumberPicker, setShowNumberPicker] = useState(false)
+  const [chosenNumbers, setChosenNumbers] = useState<number[]>([])
 
   const items = useCartStore(s => s.items)
   const addItem = useCartStore(s => s.addItem)
@@ -33,6 +37,21 @@ export function CartContent({ scope = 'shop' }: { scope?: string }) {
   const getTotalPrice = useCartStore(s => s.getTotalPrice)
 
   const ticketQtyInCart = items.find(i => i.product.id === LOTTERY_TICKET_PRODUCT_ID)?.quantity || 0
+
+  // Se il cliente riduce la quantità di biglietti (o li rimuove), teniamo
+  // al massimo tanti numeri scelti quanti sono i biglietti rimasti nel carrello.
+  useEffect(() => {
+    if (chosenNumbers.length > ticketQtyInCart) setChosenNumbers(prev => prev.slice(0, ticketQtyInCart))
+    if (ticketQtyInCart === 0) setShowNumberPicker(false)
+  }, [ticketQtyInCart]) // eslint-disable-line react-hooks/exhaustive-deps
+
+  const toggleChosenNumber = (n: number) => {
+    setChosenNumbers(prev => {
+      if (prev.includes(n)) return prev.filter(x => x !== n)
+      if (prev.length >= ticketQtyInCart) return prev
+      return [...prev, n].sort((a, b) => a - b)
+    })
+  }
 
   const addLotteryTickets = (qty: number) => {
     const existing = items.find(i => i.product.id === LOTTERY_TICKET_PRODUCT_ID)
@@ -53,7 +72,12 @@ export function CartContent({ scope = 'shop' }: { scope?: string }) {
       .catch(() => setPromoProductIds([]))
     fetch('/api/lottery', { cache: 'no-store' })
       .then(r => r.json())
-      .then(d => { setLotteryActive(d?.is_active === true); setLotteryPrizeLabel(d?.prize_label || '') })
+      .then(d => {
+        setLotteryActive(d?.is_active === true)
+        setLotteryPrizeLabel(d?.prize_label || '')
+        setParticipantsCount(d?.participants_count || 0)
+        setTakenNumbers(d?.taken_numbers || [])
+      })
       .catch(() => {})
   }, [])
 
@@ -85,10 +109,21 @@ export function CartContent({ scope = 'shop' }: { scope?: string }) {
     if (!phone.trim()) { setError('Inserisci il tuo numero di telefono'); return }
     setSubmitting(true)
     try {
-      const res = await fetch('/api/checkout', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ phone_number: phone, items, total, coupon_code: couponCode || null }) })
+      const res = await fetch('/api/checkout', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ phone_number: phone, items, total, coupon_code: couponCode || null, ticket_number_choices: chosenNumbers }) })
       const data = await res.json().catch(() => null)
-      if (!res.ok) { setError(data?.error || 'Si è verificato un errore. Riprova.'); setSubmitting(false); return }
+      if (!res.ok) {
+        // Uno o più numeri scelti sono stati presi da un altro cliente nel
+        // frattempo: li togliamo dalla selezione e aggiorniamo la lista dei
+        // numeri occupati, così il cliente può subito sceglierne altri.
+        if (data?.unavailable_numbers?.length) {
+          setChosenNumbers(prev => prev.filter(n => !data.unavailable_numbers.includes(n)))
+          setTakenNumbers(prev => Array.from(new Set([...prev, ...data.unavailable_numbers])))
+          setShowNumberPicker(true)
+        }
+        setError(data?.error || 'Si è verificato un errore. Riprova.'); setSubmitting(false); return
+      }
       if (data.ticket_numbers?.length) setTicketNumbers(data.ticket_numbers)
+      setChosenNumbers([])
       clearCart(); setSubmitted(true)
     } catch { setError('Si è verificato un errore. Riprova.') }
     finally { setSubmitting(false) }
@@ -233,11 +268,46 @@ export function CartContent({ scope = 'shop' }: { scope?: string }) {
               <span className="text-xs text-slate-400 block mt-0.5 mb-2.5">{lotteryPrizeLabel ? `In palio: ${lotteryPrizeLabel}` : 'Ricevi un numero per l\'estrazione'} — €1 a biglietto, puoi prenderne più di uno.</span>
 
               {ticketQtyInCart > 0 ? (
-                <div className="flex items-center gap-2">
-                  <button type="button" onClick={() => updateQuantity(LOTTERY_TICKET_PRODUCT_ID, ticketQtyInCart - 1)} className="w-7 h-7 rounded-full flex items-center justify-center bg-white" style={{ border: '1px solid rgba(8,145,178,0.2)' }}><Minus className="w-3 h-3 text-cyan-700" /></button>
-                  <span className="w-6 text-center text-sm font-bold text-cyan-700">{ticketQtyInCart}</span>
-                  <button type="button" onClick={() => updateQuantity(LOTTERY_TICKET_PRODUCT_ID, ticketQtyInCart + 1)} className="w-7 h-7 rounded-full flex items-center justify-center bg-white" style={{ border: '1px solid rgba(8,145,178,0.2)' }}><Plus className="w-3 h-3 text-cyan-700" /></button>
-                  <span className="text-xs text-slate-500 ml-1">bigliett{ticketQtyInCart > 1 ? 'i' : 'o'} nel carrello</span>
+                <div className="space-y-2.5">
+                  <div className="flex items-center gap-2">
+                    <button type="button" onClick={() => updateQuantity(LOTTERY_TICKET_PRODUCT_ID, ticketQtyInCart - 1)} className="w-7 h-7 rounded-full flex items-center justify-center bg-white" style={{ border: '1px solid rgba(8,145,178,0.2)' }}><Minus className="w-3 h-3 text-cyan-700" /></button>
+                    <span className="w-6 text-center text-sm font-bold text-cyan-700">{ticketQtyInCart}</span>
+                    <button type="button" onClick={() => updateQuantity(LOTTERY_TICKET_PRODUCT_ID, ticketQtyInCart + 1)} className="w-7 h-7 rounded-full flex items-center justify-center bg-white" style={{ border: '1px solid rgba(8,145,178,0.2)' }}><Plus className="w-3 h-3 text-cyan-700" /></button>
+                    <span className="text-xs text-slate-500 ml-1">bigliett{ticketQtyInCart > 1 ? 'i' : 'o'} nel carrello</span>
+                  </div>
+
+                  {participantsCount > 0 && (
+                    <button type="button" onClick={() => setShowNumberPicker(v => !v)}
+                      className="text-xs font-semibold text-cyan-700 underline underline-offset-2">
+                      {showNumberPicker ? 'Nascondi la scelta dei numeri' : chosenNumbers.length > 0 ? `Numeri scelti: ${chosenNumbers.join(', ')} — modifica` : 'Vuoi scegliere tu i numeri? (facoltativo)'}
+                    </button>
+                  )}
+
+                  {showNumberPicker && participantsCount > 0 && (
+                    <div className="p-2.5 rounded-lg bg-white" style={{ border: '1px solid rgba(8,145,178,0.15)' }}>
+                      <p className="text-xs text-slate-500 mb-2">
+                        Scegli fino a {ticketQtyInCart} numer{ticketQtyInCart > 1 ? 'i' : 'o'} ({chosenNumbers.length}/{ticketQtyInCart} scelt{chosenNumbers.length === 1 ? 'o' : 'i'}). I biglietti senza numero scelto vengono assegnati automaticamente.
+                      </p>
+                      <div className="grid grid-cols-8 gap-1 max-h-40 overflow-y-auto">
+                        {Array.from({ length: participantsCount }, (_, i) => i + 1).map(n => {
+                          const isTaken = takenNumbers.includes(n)
+                          const isChosen = chosenNumbers.includes(n)
+                          return (
+                            <button key={n} type="button" disabled={isTaken}
+                              onClick={() => toggleChosenNumber(n)}
+                              className="h-7 rounded-md text-[11px] font-bold flex items-center justify-center transition-all disabled:cursor-not-allowed"
+                              style={isTaken
+                                ? { background: 'rgba(148,163,184,0.15)', color: 'rgba(100,116,139,0.5)', textDecoration: 'line-through' }
+                                : isChosen
+                                  ? { background: 'linear-gradient(135deg,#0891b2,#06b6d4)', color: 'white' }
+                                  : { background: 'rgba(8,145,178,0.05)', border: '1px solid rgba(8,145,178,0.15)', color: '#0c2b36' }}>
+                              {n}
+                            </button>
+                          )
+                        })}
+                      </div>
+                    </div>
+                  )}
                 </div>
               ) : (
                 <div className="flex items-center gap-2">

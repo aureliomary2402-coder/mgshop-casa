@@ -49,3 +49,22 @@ export async function autoArchiveIfExpired(supabase: SupabaseAdmin, lottery: any
   const { data: fresh } = await supabase.from('lottery').select('*').eq('id', lottery.id).single()
   return fresh || lottery
 }
+
+/**
+ * Numeri già assegnati nel turno corrente, unendo le due fonti storiche:
+ * gli ordini con "+1€" (colonna orders.lottery_number, oggi non più
+ * popolata ma mantenuta per compatibilità con turni passati) e i biglietti
+ * comprati a parte (tabella lottery_tickets). Usata sia per mostrare al
+ * cliente quali numeri sono liberi, sia per validare la scelta manuale e
+ * per assegnare automaticamente il primo numero libero.
+ */
+export async function getTakenLotteryNumbers(supabase: SupabaseAdmin, roundId: string): Promise<Set<number>> {
+  const [{ data: orderNums }, { data: ticketNums }] = await Promise.all([
+    supabase.from('orders').select('lottery_number').eq('lottery_round', roundId).not('lottery_number', 'is', null),
+    supabase.from('lottery_tickets').select('lottery_number').eq('round_id', roundId),
+  ])
+  const taken = new Set<number>()
+  for (const row of orderNums || []) if (row.lottery_number != null) taken.add(row.lottery_number)
+  for (const row of ticketNums || []) taken.add(row.lottery_number)
+  return taken
+}

@@ -1,12 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createAdminClient } from '@/lib/supabase/admin'
-import { autoArchiveIfExpired } from '@/lib/lottery'
+import { autoArchiveIfExpired, getTakenLotteryNumbers } from '@/lib/lottery'
 import { LOTTERY_TICKET_PRODUCT_ID } from '@/lib/lottery-ticket-product'
 import { isCustomPromoProductId } from '@/lib/promo-custom-product'
 
 export async function POST(request: NextRequest) {
   try {
-    const { phone_number, items, total, coupon_code } = await request.json()
+    const { phone_number, items, total, coupon_code, ticket_number_choices } = await request.json()
     if (!phone_number || !items || items.length === 0)
       return NextResponse.json({ error: 'Missing required fields' }, { status: 400 })
 
@@ -21,9 +21,55 @@ export async function POST(request: NextRequest) {
     const realItems = items.filter((i: { product: { id: string } }) => i.product.id !== LOTTERY_TICKET_PRODUCT_ID)
 
     let lottery: any = null
+    let ticketNumbers: number[] = []
     if (ticketQty > 0) {
       const { data: lotteryRow } = await supabase.from('lottery').select('*').limit(1).single()
       lottery = lotteryRow ? await autoArchiveIfExpired(supabase, lotteryRow) : null
+
+      if (lottery?.is_active && lottery.round_id) {
+        const taken = await getTakenLotteryNumbers(supabase, lottery.round_id)
+
+        // Numeri scelti dal cliente (facoltativi): li validiamo PRIMA di
+        // creare l'ordine, così se qualcuno non è più disponibile il
+        // cliente può sceglierne un altro senza lasciare ordini a metà.
+        const rawChoices: number[] = Array.isArray(ticket_number_choices) ? ticket_number_choices : []
+        const chosen: number[] = []
+        const unavailable: number[] = []
+        const seen = new Set<number>()
+        for (const raw of rawChoices) {
+          const n = parseInt(raw as any, 10)
+          if (!Number.isInteger(n)) continue
+          if (n < 1 || n > lottery.participants_count || taken.has(n) || seen.has(n)) {
+            unavailable.push(n)
+            continue
+          }
+          seen.add(n)
+          chosen.push(n)
+        }
+        if (unavailable.length > 0) {
+          return NextResponse.json({
+            error: `Il numero ${unavailable.join(', ')} non è più disponibile: scegline un altro`,
+            unavailable_numbers: unavailable,
+          }, { status: 409 })
+        }
+        if (chosen.length > ticketQty) {
+          return NextResponse.json({ error: 'Hai scelto più numeri di quanti biglietti stai acquistando' }, { status: 400 })
+        }
+
+        // I biglietti senza numero scelto vengono assegnati automaticamente
+        // sul primo numero libero disponibile (stesso criterio di sempre,
+        // solo che ora "libero" tiene conto anche dei numeri scelti a mano).
+        const remaining = ticketQty - chosen.length
+        const auto: number[] = []
+        for (let n = 1; n <= lottery.participants_count && auto.length < remaining; n++) {
+          if (!taken.has(n) && !seen.has(n)) { auto.push(n); seen.add(n) }
+        }
+        if (auto.length < remaining) {
+          return NextResponse.json({ error: 'Non ci sono abbastanza numeri liberi per tutti i biglietti richiesti' }, { status: 409 })
+        }
+
+        ticketNumbers = [...chosen, ...auto]
+      }
     }
 
     const { data: order, error: orderError } = await supabase
@@ -32,17 +78,8 @@ export async function POST(request: NextRequest) {
       .select().single()
     if (orderError) return NextResponse.json({ error: orderError.message }, { status: 500 })
 
-    let ticketNumbers: number[] = []
-    if (ticketQty > 0 && lottery?.is_active && lottery.round_id) {
-      const [{ count: orderCount }, { count: existingTicketCount }] = await Promise.all([
-        supabase.from('orders').select('id', { count: 'exact', head: true })
-          .eq('lottery_round', lottery.round_id).not('lottery_number', 'is', null),
-        supabase.from('lottery_tickets').select('id', { count: 'exact', head: true })
-          .eq('round_id', lottery.round_id),
-      ])
-      const start = (orderCount || 0) + (existingTicketCount || 0) + 1
-      ticketNumbers = Array.from({ length: ticketQty }, (_, i) => start + i)
-      await supabase.from('lottery_tickets').insert(
+    if (ticketNumbers.length > 0) {
+      const { error: ticketsError } = await supabase.from('lottery_tickets').insert(
         ticketNumbers.map(n => ({
           round_id: lottery.round_id,
           lottery_number: n,
@@ -50,6 +87,17 @@ export async function POST(request: NextRequest) {
           phone_number,
         }))
       )
+      if (ticketsError) {
+        // Un altro cliente ha preso uno di questi numeri nello stesso
+        // istante (raro, ma possibile con la scelta manuale): annulliamo
+        // l'ordine appena creato invece di lasciarlo orfano, e chiediamo
+        // di riprovare invece di far pagare un ordine senza biglietti validi.
+        await supabase.from('orders').delete().eq('id', order.id)
+        const raceLost = ticketsError.code === '23505'
+        return NextResponse.json({
+          error: raceLost ? 'Uno dei numeri scelti è stato appena preso da un altro cliente: riprova' : ticketsError.message,
+        }, { status: raceLost ? 409 : 500 })
+      }
     }
 
     if (realItems.length > 0) {
