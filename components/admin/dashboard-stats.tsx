@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { ShoppingBag, Euro, Clock, CheckCircle, TrendingUp, Package, Eye, BarChart2, ArrowUp, ArrowDown, Gift, Ticket, Radio } from 'lucide-react'
+import { PendingFulfillment } from './pending-fulfillment'
 
 interface OrderStats {
   totalOrders: number
@@ -161,6 +162,9 @@ export function DashboardStats() {
           )}
         </div>
       </div>
+
+      {/* Da consegnare e incassare */}
+      <PendingFulfillment />
 
       {/* Visite */}
       <div>
