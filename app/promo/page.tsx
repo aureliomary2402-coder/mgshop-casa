@@ -122,14 +122,14 @@ function PromoDetailModal({ product, salePrice, onClose }: { product: Product; s
   return (
     <div className="fixed inset-0 z-[60] flex items-end sm:items-center justify-center p-0 sm:p-4" style={{ background: 'rgba(12,43,54,0.5)' }} onClick={onClose}>
       <div onClick={e => e.stopPropagation()} className="bg-white w-full sm:max-w-md sm:rounded-3xl rounded-t-3xl overflow-hidden max-h-[90vh] flex flex-col animate-slide-in-right">
-        <div className="relative aspect-video shrink-0" style={{ background: 'linear-gradient(135deg,#f0fbfd,#cffafe)' }}>
+        <div className="relative shrink-0" style={{ height: '200px', background: 'linear-gradient(135deg,#f0fbfd,#cffafe)' }}>
           {product.cover_image
             ? <img src={product.cover_image} alt={product.name} className="w-full h-full object-cover" />
             : <div className="w-full h-full flex items-center justify-center"><ImageIcon className="w-12 h-12" style={{color:'rgba(8,145,178,0.3)'}}/></div>}
           <button onClick={onClose} className="absolute top-3 right-3 w-8 h-8 rounded-full bg-white/90 flex items-center justify-center hover:scale-110 transition-transform"><X className="w-4 h-4 text-slate-600"/></button>
           {hasDiscount && <div className="absolute top-3 left-3 text-white text-xs font-bold px-2.5 py-1 rounded-lg" style={{ background: '#dc2626' }}>-{percentOff}%</div>}
         </div>
-        <div className="p-5 overflow-y-auto space-y-4">
+        <div className="p-5 overflow-y-auto flex-1 space-y-4">
           <h2 className="text-xl font-bold" style={{color:'#0c2b36'}}>{product.name}</h2>
           <div className="flex items-baseline gap-2">
             {hasDiscount && <span className="text-sm text-slate-400 line-through">€{product.price.toFixed(2)}</span>}
