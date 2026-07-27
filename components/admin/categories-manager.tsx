@@ -31,7 +31,12 @@ export function CategoriesManager() {
 
   const handleDelete = async (id: string) => {
     if (!confirm('Eliminare questa categoria?')) return
-    await fetch('/api/admin/categories', { method: 'DELETE', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id }) })
+    const res = await fetch('/api/admin/categories', { method: 'DELETE', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id }) })
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}))
+      alert('Errore eliminazione categoria: ' + (err.error || res.status))
+      return
+    }
     fetchCategories()
   }
 

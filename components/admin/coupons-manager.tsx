@@ -78,7 +78,12 @@ export function CouponsManager() {
 
   const handleDelete = async (id: string) => {
     if (!confirm('Eliminare questo coupon?')) return
-    await fetch('/api/admin/coupons', { method: 'DELETE', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id }) })
+    const res = await fetch('/api/admin/coupons', { method: 'DELETE', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id }) })
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}))
+      alert('Errore eliminazione coupon: ' + (err.error || res.status))
+      return
+    }
     fetchCoupons()
   }
 

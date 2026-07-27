@@ -85,11 +85,19 @@ export function ChatManager() {
   const handleDelete = async (phone_normalized: string) => {
     setDeleting(true)
     try {
-      await fetch('/api/admin/chat', { method: 'DELETE', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ phone_normalized }) })
+      const res = await fetch('/api/admin/chat', { method: 'DELETE', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ phone_normalized }) })
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}))
+        alert('Errore eliminazione conversazione: ' + (err.error || res.status))
+        setDeleting(false)
+        return
+      }
       setConfirmDelete(null)
       if (active?.phone_normalized === phone_normalized) setActive(null)
       fetchConversations()
-    } catch {}
+    } catch (e) {
+      alert('Errore di rete durante l\'eliminazione: ' + e)
+    }
     setDeleting(false)
   }
 

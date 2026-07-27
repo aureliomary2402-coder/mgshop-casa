@@ -45,7 +45,12 @@ export function LotteryPurchasesManager() {
 
   const handleDelete = async (orderId: string) => {
     if (!confirm('Eliminare questo acquisto di biglietti? I numeri collegati verranno rimossi.')) return
-    await fetch('/api/admin/lottery/purchases', { method: 'DELETE', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ order_id: orderId }) })
+    const res = await fetch('/api/admin/lottery/purchases', { method: 'DELETE', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ order_id: orderId }) })
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}))
+      alert('Errore eliminazione acquisto: ' + (err.error || res.status))
+      return
+    }
     fetchPurchases()
   }
 

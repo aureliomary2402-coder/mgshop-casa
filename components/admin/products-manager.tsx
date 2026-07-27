@@ -140,7 +140,12 @@ export function ProductsManager() {
 
   const handleDelete = async (id: string) => {
     if (!confirm('Eliminare questo prodotto?')) return
-    await fetch('/api/admin/products', { method: 'DELETE', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id }) })
+    const res = await fetch('/api/admin/products', { method: 'DELETE', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id }) })
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}))
+      alert('Errore eliminazione prodotto: ' + (err.error || res.status))
+      return
+    }
     fetchAll()
   }
 

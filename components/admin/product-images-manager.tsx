@@ -93,11 +93,16 @@ export function ProductImagesManager({ productId, onBack }: ProductImagesManager
   }
 
   const handleDelete = async (id: string) => {
-    await fetch('/api/admin/product-images', {
+    const res = await fetch('/api/admin/product-images', {
       method: 'DELETE',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ id }),
     })
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}))
+      alert('Errore eliminazione immagine: ' + (err.error || res.status))
+      return
+    }
     fetchImages()
   }
 

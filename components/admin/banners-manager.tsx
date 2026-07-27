@@ -72,7 +72,12 @@ export function BannersManager() {
 
   const handleDelete = async (id: string) => {
     if (!confirm('Eliminare questo banner?')) return
-    await fetch('/api/admin/banners', { method: 'DELETE', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id }) })
+    const res = await fetch('/api/admin/banners', { method: 'DELETE', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id }) })
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}))
+      alert('Errore eliminazione banner: ' + (err.error || res.status))
+      return
+    }
     fetchBanners()
   }
 
