@@ -82,6 +82,7 @@ export function LotteryManager() {
       setSoldNumbers(d.sold_numbers || [])
       setReservedNumbers(d.reserved_numbers || [])
     }).catch(() => {})
+  }
 
   useEffect(() => {
     load()
