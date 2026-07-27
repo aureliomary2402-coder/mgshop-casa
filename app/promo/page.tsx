@@ -1,13 +1,13 @@
 "use client"
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
-import { ArrowLeft, Clock, Tag, ShoppingBag, ShoppingCart, ImageIcon } from 'lucide-react'
+import { ArrowLeft, Clock, Tag, ShoppingBag, ShoppingCart, ImageIcon, X, Info } from 'lucide-react'
 import { useCartStore } from '@/lib/cart-store'
 import { toast } from 'sonner'
 import type { Product } from '@/lib/types'
 import { Reveal } from '@/components/shop/reveal'
 import { AmbientBubbles } from '@/components/shop/ambient-bubbles'
-import { buildCustomPromoProduct } from '@/lib/promo-custom-product'
+import { buildCustomPromoProduct, isCustomPromoProductId } from '@/lib/promo-custom-product'
 
 interface PromoItem {
   id: string
@@ -16,6 +16,7 @@ interface PromoItem {
   image_url?: string | null
   original_price?: number
   sale_price: number
+  description?: string
 }
 
 interface PromoData {
@@ -46,14 +47,15 @@ function Countdown({ expiresAt }: { expiresAt: string }) {
   )
 }
 
-function PromoProductCard({ product, salePrice }: { product: Product; salePrice: number }) {
+function PromoProductCard({ product, salePrice, onOpenDetail }: { product: Product; salePrice: number; onOpenDetail: () => void }) {
   const addItem = useCartStore(s => s.addItem)
   const [added, setAdded] = useState(false)
 
   const hasDiscount = salePrice < product.price
   const percentOff = hasDiscount ? Math.round((1 - salePrice / product.price) * 100) : 0
 
-  const handleAdd = () => {
+  const handleAdd = (e: React.MouseEvent) => {
+    e.stopPropagation()
     addItem({ ...product, price: salePrice })
     setAdded(true)
     setTimeout(() => setAdded(false), 1500)
@@ -61,24 +63,21 @@ function PromoProductCard({ product, salePrice }: { product: Product; salePrice:
   }
 
   return (
-    <div className="bg-white rounded-2xl overflow-hidden shadow-sm hover:-translate-y-1 transition-all group"
+    <div onClick={onOpenDetail} role="button"
+      className="bg-white rounded-2xl overflow-hidden shadow-sm hover:-translate-y-1 transition-all group cursor-pointer"
       style={{ border: '1px solid rgba(8,145,178,0.1)', boxShadow: '0 4px 20px rgba(8,145,178,0.08)' }}>
-      <Link href={`/prodotto/${product.id}`}>
-        <div className="aspect-square overflow-hidden relative" style={{ background: 'linear-gradient(135deg,#f0fbfd,#cffafe)' }}>
-          {product.cover_image
-            ? <img src={product.cover_image} alt={product.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
-            : <div className="w-full h-full flex items-center justify-center"><ImageIcon className="w-10 h-10" style={{color:'rgba(8,145,178,0.3)'}}/></div>}
-          {hasDiscount && (
-            <div className="absolute top-2 left-2 text-white text-xs font-bold px-2 py-1 rounded-lg" style={{ background: '#dc2626' }}>
-              -{percentOff}%
-            </div>
-          )}
-        </div>
-      </Link>
+      <div className="aspect-square overflow-hidden relative" style={{ background: 'linear-gradient(135deg,#f0fbfd,#cffafe)' }}>
+        {product.cover_image
+          ? <img src={product.cover_image} alt={product.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
+          : <div className="w-full h-full flex items-center justify-center"><ImageIcon className="w-10 h-10" style={{color:'rgba(8,145,178,0.3)'}}/></div>}
+        {hasDiscount && (
+          <div className="absolute top-2 left-2 text-white text-xs font-bold px-2 py-1 rounded-lg" style={{ background: '#dc2626' }}>
+            -{percentOff}%
+          </div>
+        )}
+      </div>
       <div className="p-4">
-        <Link href={`/prodotto/${product.id}`}>
-          <h3 className="font-semibold text-sm text-slate-800 line-clamp-2 mb-2 hover:text-cyan-700 transition-colors">{product.name}</h3>
-        </Link>
+        <h3 className="font-semibold text-sm text-slate-800 line-clamp-2 mb-2 group-hover:text-cyan-700 transition-colors">{product.name}</h3>
         <div className="flex items-center justify-between">
           <div className="flex flex-col">
             {hasDiscount ? (
@@ -102,10 +101,67 @@ function PromoProductCard({ product, salePrice }: { product: Product; salePrice:
   )
 }
 
+// Scheda con le informazioni del prodotto in promo. Non riusiamo la pagina
+// /prodotto/[id] perché i prodotti creati apposta per una promo non
+// esistono nel catalogo vero: qui mostriamo le informazioni scritte
+// dall'admin direttamente nella promo, senza bisogno di una pagina a parte.
+function PromoDetailModal({ product, salePrice, onClose }: { product: Product; salePrice: number; onClose: () => void }) {
+  const addItem = useCartStore(s => s.addItem)
+  const [added, setAdded] = useState(false)
+  const hasDiscount = salePrice < product.price
+  const percentOff = hasDiscount ? Math.round((1 - salePrice / product.price) * 100) : 0
+  const isRealShopProduct = !isCustomPromoProductId(product.id)
+
+  const handleAdd = () => {
+    addItem({ ...product, price: salePrice })
+    setAdded(true)
+    toast.success(`${product.name} aggiunto!`, { style: { background: '#cffafe', border: '1px solid #0891b2', color: '#155e75' } })
+    setTimeout(onClose, 700)
+  }
+
+  return (
+    <div className="fixed inset-0 z-[60] flex items-end sm:items-center justify-center p-0 sm:p-4" style={{ background: 'rgba(12,43,54,0.5)' }} onClick={onClose}>
+      <div onClick={e => e.stopPropagation()} className="bg-white w-full sm:max-w-md sm:rounded-3xl rounded-t-3xl overflow-hidden max-h-[90vh] flex flex-col animate-slide-in-right">
+        <div className="relative aspect-video shrink-0" style={{ background: 'linear-gradient(135deg,#f0fbfd,#cffafe)' }}>
+          {product.cover_image
+            ? <img src={product.cover_image} alt={product.name} className="w-full h-full object-cover" />
+            : <div className="w-full h-full flex items-center justify-center"><ImageIcon className="w-12 h-12" style={{color:'rgba(8,145,178,0.3)'}}/></div>}
+          <button onClick={onClose} className="absolute top-3 right-3 w-8 h-8 rounded-full bg-white/90 flex items-center justify-center hover:scale-110 transition-transform"><X className="w-4 h-4 text-slate-600"/></button>
+          {hasDiscount && <div className="absolute top-3 left-3 text-white text-xs font-bold px-2.5 py-1 rounded-lg" style={{ background: '#dc2626' }}>-{percentOff}%</div>}
+        </div>
+        <div className="p-5 overflow-y-auto space-y-4">
+          <h2 className="text-xl font-bold" style={{color:'#0c2b36'}}>{product.name}</h2>
+          <div className="flex items-baseline gap-2">
+            {hasDiscount && <span className="text-sm text-slate-400 line-through">€{product.price.toFixed(2)}</span>}
+            <span className="text-2xl font-bold" style={{ color: hasDiscount ? '#dc2626' : '#0891b2' }}>€{salePrice.toFixed(2)}</span>
+          </div>
+          {product.description && (
+            <div className="flex gap-2 p-3 rounded-xl" style={{ background: 'rgba(8,145,178,0.05)' }}>
+              <Info className="w-4 h-4 text-cyan-600 shrink-0 mt-0.5" />
+              <p className="text-sm text-slate-600 leading-relaxed whitespace-pre-line">{product.description}</p>
+            </div>
+          )}
+          <button onClick={handleAdd}
+            className="w-full flex items-center justify-center gap-2 text-white font-bold py-3.5 rounded-2xl transition-all active:scale-95"
+            style={{ background: added ? 'linear-gradient(135deg,#16a34a,#22c55e)' : 'linear-gradient(135deg,#0891b2,#06b6d4)', boxShadow: '0 8px 20px rgba(8,145,178,0.3)' }}>
+            <ShoppingCart className="w-4 h-4" /> {added ? 'Aggiunto!' : 'Aggiungi al carrello'}
+          </button>
+          {isRealShopProduct && (
+            <Link href={`/prodotto/${product.id}`} className="block text-center text-sm text-cyan-700 font-medium underline underline-offset-2">
+              Vedi la scheda prodotto completa
+            </Link>
+          )}
+        </div>
+      </div>
+    </div>
+  )
+}
+
 export default function PromoPage() {
   const [promo, setPromo] = useState<PromoData|null>(null)
   const [displayItems, setDisplayItems] = useState<{ product: Product; salePrice: number }[]>([])
   const [loading, setLoading] = useState(true)
+  const [selectedDetail, setSelectedDetail] = useState<{ product: Product; salePrice: number } | null>(null)
   const cartCount = useCartStore(s => s.getTotalItems)()
 
   useEffect(()=>{
@@ -123,11 +179,13 @@ export default function PromoPage() {
         const built = promoItems.map(item => {
           if (item.product_id) {
             const p = shopProducts.find(sp => sp.id === item.product_id)
-            return p ? { product: p, salePrice: item.sale_price } : null
+            if (!p) return null
+            const withPromoInfo = item.description?.trim() ? { ...p, description: item.description } : p
+            return { product: withPromoInfo, salePrice: item.sale_price }
           }
           const custom = buildCustomPromoProduct({
             id: item.id, name: item.name || 'Prodotto', image_url: item.image_url || null,
-            price: item.original_price ?? item.sale_price,
+            price: item.original_price ?? item.sale_price, description: item.description || null,
           })
           return { product: custom, salePrice: item.sale_price }
         }).filter((x): x is { product: Product; salePrice: number } => !!x)
@@ -200,7 +258,7 @@ export default function PromoPage() {
               <h2 className="text-2xl font-bold mb-6" style={{color:'#0c2b36'}}>Prodotti in promozione</h2>
               <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 stagger-children">
                 {displayItems.map(({ product, salePrice }) => (
-                  <PromoProductCard key={product.id} product={product} salePrice={salePrice} />
+                  <PromoProductCard key={product.id} product={product} salePrice={salePrice} onOpenDetail={() => setSelectedDetail({ product, salePrice })} />
                 ))}
               </div>
               {/* Sticky cart button */}
@@ -224,6 +282,9 @@ export default function PromoPage() {
           </Reveal>
         </div>
       </div>
+      {selectedDetail && (
+        <PromoDetailModal product={selectedDetail.product} salePrice={selectedDetail.salePrice} onClose={() => setSelectedDetail(null)} />
+      )}
     </div>
   )
 }

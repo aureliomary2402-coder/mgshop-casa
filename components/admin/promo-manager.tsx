@@ -16,6 +16,7 @@ interface PromoItem {
   image_url?: string | null
   original_price?: number
   sale_price: number
+  description?: string
 }
 
 export function PromoManager() {
@@ -133,6 +134,7 @@ export function PromoManager() {
   const [customImageUrl, setCustomImageUrl] = useState('')
   const [customOriginalPrice, setCustomOriginalPrice] = useState('')
   const [customSalePrice, setCustomSalePrice] = useState('')
+  const [customDescription, setCustomDescription] = useState('')
   const [customUploading, setCustomUploading] = useState(false)
 
   const handleCustomImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -161,8 +163,16 @@ export function PromoManager() {
       image_url: customImageUrl || null,
       original_price: isNaN(original) ? (isNaN(sale) ? 0 : sale) : original,
       sale_price: isNaN(sale) ? 0 : sale,
+      description: customDescription.trim() || undefined,
     }])
-    setCustomName(''); setCustomImageUrl(''); setCustomOriginalPrice(''); setCustomSalePrice(''); setShowCustomForm(false)
+    setCustomName(''); setCustomImageUrl(''); setCustomOriginalPrice(''); setCustomSalePrice(''); setCustomDescription(''); setShowCustomForm(false)
+  }
+
+  // Aggiorna la descrizione/informazioni aggiuntive di un item già in lista
+  // (sia personalizzato che preso dal negozio): è quella che il cliente
+  // vede quando apre la scheda del prodotto dalla pagina promo.
+  const updateDescription = (id: string, text: string) => {
+    setItems(prev => prev.map(i => i.id === id ? { ...i, description: text } : i))
   }
 
   const filteredProducts = allProducts.filter(p =>
@@ -304,6 +314,12 @@ export function PromoManager() {
                   <Input value={customSalePrice} onChange={e => setCustomSalePrice(e.target.value)} inputMode="decimal" placeholder="€" className="bg-white font-bold text-red-600" />
                 </div>
               </div>
+              <div>
+                <label className="text-[11px] text-slate-500 block mb-0.5">Descrizione / informazioni (facoltativo)</label>
+                <textarea value={customDescription} onChange={e => setCustomDescription(e.target.value)}
+                  className="w-full border border-amber-200 bg-white rounded-lg p-2 text-sm resize-none h-16 focus:outline-none focus:ring-2 focus:ring-amber-400"
+                  placeholder="Cosa deve sapere il cliente su questo prodotto..." />
+              </div>
               <div className="flex gap-2">
                 <button onClick={addCustomProduct} disabled={!customName.trim()}
                   className="flex-1 text-sm font-bold text-white py-2 rounded-lg disabled:opacity-40" style={{ background: 'linear-gradient(135deg,#f59e0b,#ea580c)' }}>
@@ -318,25 +334,29 @@ export function PromoManager() {
           {itemProducts.length > 0 && (
             <div className="space-y-2 mb-3">
               {itemProducts.map(({ item, name, image, originalPrice, isCustom }) => (
-                <div key={item.id} className="flex items-center gap-3 p-2.5 rounded-xl border border-cyan-100 bg-cyan-50">
-                  {image ? <img src={image} alt={name} className="w-12 h-12 rounded-lg object-cover shrink-0" /> : <div className="w-12 h-12 rounded-lg bg-slate-200 shrink-0" />}
-                  <div className="flex-1 min-w-0">
-                    <p className="text-sm font-medium text-slate-800 truncate">{name}{isCustom && <span className="ml-1.5 text-[10px] font-semibold text-amber-600 bg-amber-100 px-1.5 py-0.5 rounded">personalizzato</span>}</p>
-                    <p className="text-xs text-slate-400 line-through">€{originalPrice.toFixed(2)}</p>
+                <div key={item.id} className="p-2.5 rounded-xl border border-cyan-100 bg-cyan-50 space-y-2">
+                  <div className="flex items-center gap-3">
+                    {image ? <img src={image} alt={name} className="w-12 h-12 rounded-lg object-cover shrink-0" /> : <div className="w-12 h-12 rounded-lg bg-slate-200 shrink-0" />}
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-medium text-slate-800 truncate">{name}{isCustom && <span className="ml-1.5 text-[10px] font-semibold text-amber-600 bg-amber-100 px-1.5 py-0.5 rounded">personalizzato</span>}</p>
+                      <p className="text-xs text-slate-400 line-through">€{originalPrice.toFixed(2)}</p>
+                    </div>
+                    <div className="flex items-center gap-1 shrink-0">
+                      <Tag className="w-3.5 h-3.5 text-red-500" />
+                      <Input
+                        type="text" inputMode="decimal"
+                        value={priceDrafts[item.id] ?? String(item.sale_price)}
+                        onChange={e => updateSalePrice(item.id, e.target.value)}
+                        className="w-20 h-9 text-sm font-bold text-red-600"
+                      />
+                    </div>
+                    <button onClick={() => removeProduct(item.id)} className="p-1 hover:bg-red-100 rounded-lg transition-colors shrink-0">
+                      <X className="w-4 h-4 text-red-400" />
+                    </button>
                   </div>
-                  <div className="flex items-center gap-1 shrink-0">
-                    <Tag className="w-3.5 h-3.5 text-red-500" />
-                    <Input
-                      type="text" inputMode="decimal"
-                      value={priceDrafts[item.id] ?? String(item.sale_price)}
-                      onChange={e => updateSalePrice(item.id, e.target.value)}
-                      className="w-20 h-9 text-sm font-bold text-red-600"
-                    />
-                  </div>
-                  <button onClick={() => removeProduct(item.id)} className="p-1 hover:bg-red-100 rounded-lg transition-colors shrink-0">
-                    <X className="w-4 h-4 text-red-400" />
-                  </button>
-
+                  <textarea value={item.description || ''} onChange={e => updateDescription(item.id, e.target.value)}
+                    className="w-full border border-cyan-200 bg-white rounded-lg p-2 text-xs resize-none h-12 focus:outline-none focus:ring-2 focus:ring-cyan-400"
+                    placeholder="Informazioni aggiuntive per questo prodotto (facoltativo) — il cliente le vede aprendo la scheda dalla pagina promo" />
                 </div>
               ))}
             </div>

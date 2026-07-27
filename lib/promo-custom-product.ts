@@ -14,12 +14,12 @@ export function isCustomPromoProductId(id: string): boolean {
   return id.startsWith(CUSTOM_PROMO_PREFIX)
 }
 
-export function buildCustomPromoProduct(opts: { id: string; name: string; image_url: string | null; price: number }): Product {
+export function buildCustomPromoProduct(opts: { id: string; name: string; image_url: string | null; price: number; description?: string | null }): Product {
   const now = new Date().toISOString()
   return {
     id: opts.id,
     name: opts.name,
-    description: '',
+    description: opts.description || '',
     price: opts.price,
     category_id: null,
     cover_image: opts.image_url,
