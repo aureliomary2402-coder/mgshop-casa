@@ -2,8 +2,10 @@
 
 import { useState, useEffect, useRef, useCallback } from 'react'
 import { usePathname } from 'next/navigation'
-import { MessageCircle, X, Send, Menu as MenuIcon } from 'lucide-react'
+import Link from 'next/link'
+import { MessageCircle, X, Send, Menu as MenuIcon, ShoppingBag } from 'lucide-react'
 import { SOCIAL_LINKS, InstagramIcon, TikTokIcon, WhatsAppIcon } from './social-icons'
+import { useCartStore } from '@/lib/cart-store'
 
 interface ChatMessage {
   id: string
@@ -34,6 +36,14 @@ export function FloatingMenu() {
   const [sending, setSending] = useState(false)
   const [hasUnseen, setHasUnseen] = useState(false)
   const scrollRef = useRef<HTMLDivElement>(null)
+  const cartCount = useCartStore(s => s.getTotalItems)()
+
+  // Nelle pagine Volantino e Promo lo scroll è lungo e il carrello
+  // rischia di restare "fuori vista": qui aggiungiamo una scorciatoia
+  // sempre a portata di mano, sopra il pulsante social/chat.
+  const showStickyCart = pathname === '/volantino' || pathname === '/promo'
+  const cartHref = pathname === '/promo' ? '/carrello?promo=1' : '/carrello'
+  const menuOffsetClass = showStickyCart ? 'bottom-40' : 'bottom-24'
 
   useEffect(() => {
     const raw = localStorage.getItem(STORAGE_KEY)
@@ -119,9 +129,24 @@ export function FloatingMenu() {
         )}
       </button>
 
+      {/* Scorciatoia carrello, sempre visibile, sopra il pulsante social/chat */}
+      {showStickyCart && cartCount > 0 && !isOpen && (
+        <Link
+          href={cartHref}
+          className="fixed bottom-24 right-5 z-40 w-14 h-14 rounded-full shadow-lg flex items-center justify-center text-white transition-transform hover:scale-105 animate-scale-in"
+          style={{ background: '#0c2b36' }}
+          aria-label="Vai al carrello"
+        >
+          <ShoppingBag className="w-6 h-6" />
+          <span className="absolute -top-1 -right-1 w-5 h-5 text-white text-xs rounded-full flex items-center justify-center font-bold" style={{ background: 'linear-gradient(135deg,#0891b2,#06b6d4)' }}>
+            {cartCount}
+          </span>
+        </Link>
+      )}
+
       {/* Mini-menu a scomparsa: social + chat */}
       {menuOpen && !chatOpen && (
-        <div className="fixed bottom-24 right-5 z-40 flex flex-col items-end gap-3">
+        <div className={`fixed ${menuOffsetClass} right-5 z-40 flex flex-col items-end gap-3`}>
           <a href={SOCIAL_LINKS.instagram} target="_blank" rel="noopener noreferrer"
             className="flex items-center gap-2.5 pl-4 pr-2 py-2 rounded-full shadow-lg bg-white text-sm font-medium text-slate-700 transition-transform hover:scale-105">
             Instagram
@@ -155,7 +180,7 @@ export function FloatingMenu() {
 
       {/* Pannello chat */}
       {chatOpen && (
-        <div className="fixed bottom-24 right-5 z-40 w-[90vw] max-w-sm h-[480px] max-h-[70vh] bg-white rounded-2xl shadow-2xl flex flex-col overflow-hidden border border-slate-100">
+        <div className={`fixed ${menuOffsetClass} right-5 z-40 w-[90vw] max-w-sm h-[480px] max-h-[70vh] bg-white rounded-2xl shadow-2xl flex flex-col overflow-hidden border border-slate-100`}>
           <div className="px-4 py-3 text-white font-semibold flex items-center gap-2" style={{ background: 'linear-gradient(135deg,#0891b2,#06b6d4)' }}>
             <MessageCircle className="w-4 h-4" /> Scrivici
           </div>

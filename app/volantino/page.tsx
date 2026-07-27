@@ -154,16 +154,6 @@ export default function VolantinoPage() {
                   return <FlyerCard key={p.id} product={p} salePrice={item ? item.sale_price : p.price} index={i} />
                 })}
               </div>
-              {cartCount > 0 && (
-                <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 animate-scale-in">
-                  <Link href="/carrello"
-                    className="flex items-center gap-3 px-8 py-4 rounded-2xl text-white font-bold shadow-2xl transition-all hover:scale-105 neon-glow"
-                    style={{ background: 'linear-gradient(135deg,#0891b2,#06b6d4)' }}>
-                    <ShoppingBag className="w-5 h-5" />
-                    Vai al carrello ({cartCount})
-                  </Link>
-                </div>
-              )}
             </Reveal>
           ) : (
             <p className="text-center text-slate-400 py-12">Nessun prodotto nel volantino al momento.</p>
