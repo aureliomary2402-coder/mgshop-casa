@@ -47,9 +47,9 @@ function FlyerCard({ product, salePrice, index }: { product: Product; salePrice:
           -{percentOff}%
         </div>
       )}
-      <div className="aspect-square overflow-hidden" style={{ background: 'linear-gradient(135deg,#f0fbfd,#cffafe)' }}>
+      <div className="aspect-square overflow-hidden p-2" style={{ background: 'linear-gradient(135deg,#f0fbfd,#cffafe)' }}>
         {product.cover_image
-          ? <img src={optimizeImage(product.cover_image, 400) || product.cover_image} alt={product.name} draggable={false} loading="lazy" decoding="async" className="w-full h-full object-cover select-none" />
+          ? <img src={optimizeImage(product.cover_image, 400) || product.cover_image} alt={product.name} draggable={false} loading="lazy" decoding="async" className="w-full h-full object-contain select-none" />
           : <div className="w-full h-full flex items-center justify-center"><ImageIcon className="w-10 h-10" style={{ color: 'rgba(8,145,178,0.3)' }} /></div>}
       </div>
       <div className="p-3">
