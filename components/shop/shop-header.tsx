@@ -2,7 +2,6 @@
 import Link from 'next/link'
 import { ShoppingBag, Search, X, Home, ChevronDown, Tag, Sparkles, Newspaper, ImageIcon } from 'lucide-react'
 import { useCartStore } from '@/lib/cart-store'
-import { useProductDetailStore } from '@/lib/product-detail-store'
 import { useState, useEffect, useRef } from 'react'
 import { useRouter, useSearchParams, usePathname } from 'next/navigation'
 import type { Category, Product } from '@/lib/types'
@@ -113,7 +112,7 @@ export function ShopHeader({ categories }: { categories: Category[] }) {
   const handleSelectProduct = (product: Product) => {
     setDropdownOpen(false)
     setSearchOpen(false)
-    useProductDetailStore.getState().open(product.id)
+    router.push(`/prodotto/${product.id}`)
   }
 
   const handleSeeAllResults = () => {
@@ -177,14 +176,14 @@ export function ShopHeader({ categories }: { categories: Category[] }) {
           </div>
 
           {promoActive && (
-            <Link href="/promo" className="hidden sm:flex items-center gap-1.5 px-3 py-2 rounded-xl text-sm font-medium transition-all hover:bg-cyan-50 btn-press" style={{ color: '#0891b2' }}>
-              <Sparkles className="w-4 h-4" /> Promo
+            <Link href="/promo" className={`${searchOpen ? 'hidden' : 'flex'} items-center gap-1.5 px-2 sm:px-3 py-2 rounded-xl text-sm font-medium transition-all hover:bg-cyan-50 btn-press`} style={{ color: '#0891b2' }}>
+              <Sparkles className="w-4 h-4" /> <span className="hidden sm:inline">Promo</span>
               <span className="text-xs bg-cyan-500 text-white px-1.5 py-0.5 rounded-full font-bold">!</span>
             </Link>
           )}
           {volantinoActive && (
-            <Link href="/volantino" className="hidden sm:flex items-center gap-1.5 px-3 py-2 rounded-xl text-sm font-medium transition-all hover:bg-cyan-50 btn-press" style={{ color: '#0891b2' }}>
-              <Newspaper className="w-4 h-4" /> Volantino
+            <Link href="/volantino" className={`${searchOpen ? 'hidden' : 'flex'} items-center gap-1.5 px-2 sm:px-3 py-2 rounded-xl text-sm font-medium transition-all hover:bg-cyan-50 btn-press`} style={{ color: '#0891b2' }}>
+              <Newspaper className="w-4 h-4" /> <span className="hidden sm:inline">Volantino</span>
               <span className="text-xs bg-cyan-500 text-white px-1.5 py-0.5 rounded-full font-bold">!</span>
             </Link>
           )}
@@ -198,7 +197,7 @@ export function ShopHeader({ categories }: { categories: Category[] }) {
                 onChange={e => handleSearch(e.target.value)}
                 onFocus={() => { setSearchFocused(true); if (searchValue.trim()) setDropdownOpen(true) }}
                 onBlur={() => setSearchFocused(false)}
-                className="search-glow w-full h-9 pl-9 pr-9 rounded-xl text-sm outline-none transition-all duration-300"
+                className="search-glow w-full h-9 pl-9 pr-9 rounded-xl text-base outline-none transition-all duration-300"
                 style={{
                   background: searchFocused ? '#ffffff' : 'rgba(8,145,178,0.06)',
                   border: searchFocused ? '1px solid rgba(8,145,178,0.5)' : '1px solid rgba(8,145,178,0.15)',
@@ -211,7 +210,7 @@ export function ShopHeader({ categories }: { categories: Category[] }) {
               {searchValue && <button onClick={handleClearSearch} className="absolute right-3 top-1/2 -translate-y-1/2 text-cyan-400 hover:text-cyan-600 transition-colors"><X className="w-4 h-4" /></button>}
 
               {dropdownOpen && searchValue.trim() && (
-                <div className="absolute top-full left-0 mt-2 w-full min-w-[280px] rounded-2xl overflow-hidden shadow-xl animate-scale-in z-50"
+                <div className="absolute top-full left-0 mt-2 w-full min-w-0 sm:min-w-[280px] rounded-2xl overflow-hidden shadow-xl animate-scale-in z-50"
                   style={{ background: 'white', border: '1px solid rgba(8,145,178,0.15)', boxShadow: '0 20px 60px rgba(0,0,0,0.15)' }}>
                   {searchResults.length > 0 ? (
                     <>

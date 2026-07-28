@@ -243,7 +243,7 @@ export function CartContent({ scope = 'shop' }: { scope?: string }) {
                   <div className="relative flex-1">
                     <Tag className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-cyan-400"/>
                     <input value={couponInput} onChange={e => setCouponInput(e.target.value.toUpperCase())} onKeyDown={e => e.key==='Enter'&&handleApplyCoupon()} placeholder="Codice coupon"
-                      className="w-full h-10 pl-9 pr-3 rounded-xl text-sm font-mono outline-none" style={{background:'rgba(8,145,178,0.05)',border:'1px solid rgba(8,145,178,0.15)',color:'#0c2b36'}}/>
+                      className="w-full h-10 pl-9 pr-3 rounded-xl text-base font-mono outline-none" style={{background:'rgba(8,145,178,0.05)',border:'1px solid rgba(8,145,178,0.15)',color:'#0c2b36'}}/>
                   </div>
                   <button onClick={handleApplyCoupon} disabled={couponLoading||!couponInput.trim()} className="px-3 py-2 rounded-xl text-sm font-medium text-white disabled:opacity-50 transition-all hover:scale-105 btn-press" style={{background:'linear-gradient(135deg,#0891b2,#06b6d4)'}}>
                     {couponLoading?'...':'Applica'}
@@ -336,7 +336,7 @@ export function CartContent({ scope = 'shop' }: { scope?: string }) {
           </Link>
           <form onSubmit={handleSubmit} className="space-y-3">
             <input type="tel" placeholder="Numero di telefono" value={phone} onChange={e=>setPhone(e.target.value)}
-              className="w-full h-11 px-4 rounded-xl text-sm outline-none" style={{background:'rgba(8,145,178,0.05)',border:'1px solid rgba(8,145,178,0.15)',color:'#0c2b36'}}/>
+              className="w-full h-11 px-4 rounded-xl text-base outline-none" style={{background:'rgba(8,145,178,0.05)',border:'1px solid rgba(8,145,178,0.15)',color:'#0c2b36'}}/>
             {error&&<p className="text-red-500 text-xs">{error}</p>}
             <button type="submit" disabled={submitting} className="w-full py-3.5 rounded-xl font-bold text-white transition-all hover:scale-[1.02] btn-press disabled:opacity-60" style={{background:'linear-gradient(135deg,#0891b2,#06b6d4)',boxShadow:'0 8px 20px rgba(8,145,178,0.3)'}}>
               {submitting?'Invio in corso...':'Invia ordine'}

@@ -192,14 +192,14 @@ export function FloatingMenu() {
                 value={nameInput}
                 onChange={e => setNameInput(e.target.value)}
                 placeholder="Il tuo nome"
-                className="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-cyan-500"
+                className="w-full border border-slate-200 rounded-lg px-3 py-2 text-base focus:outline-none focus:ring-2 focus:ring-cyan-500"
               />
               <input
                 value={phoneInput}
                 onChange={e => setPhoneInput(e.target.value)}
                 placeholder="Numero di telefono"
                 type="tel"
-                className="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-cyan-500"
+                className="w-full border border-slate-200 rounded-lg px-3 py-2 text-base focus:outline-none focus:ring-2 focus:ring-cyan-500"
               />
               <button
                 onClick={startChat}
@@ -233,7 +233,7 @@ export function FloatingMenu() {
                   onChange={e => setText(e.target.value)}
                   onKeyDown={e => e.key === 'Enter' && send()}
                   placeholder="Scrivi un messaggio..."
-                  className="flex-1 border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-cyan-500"
+                  className="flex-1 border border-slate-200 rounded-lg px-3 py-2 text-base focus:outline-none focus:ring-2 focus:ring-cyan-500"
                 />
                 <button
                   onClick={send}
