@@ -3,6 +3,7 @@ import { Inter } from 'next/font/google'
 import { Toaster } from 'sonner'
 import { AnalyticsTracker } from '@/components/analytics-tracker'
 import { FloatingMenu } from '@/components/shop/floating-menu'
+import { ProductDetailModal } from '@/components/shop/product-detail-modal'
 import { Suspense } from 'react'
 import './globals.css'
 
@@ -20,6 +21,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <Suspense><AnalyticsTracker /></Suspense>
         {children}
         <FloatingMenu />
+        <ProductDetailModal />
         <Toaster position="bottom-center" richColors />
       </body>
     </html>

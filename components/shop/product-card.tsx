@@ -1,15 +1,16 @@
 "use client"
 
-import Link from 'next/link'
 import { ImageIcon, ShoppingCart, Eye } from 'lucide-react'
 import { toast } from 'sonner'
 import type { Product } from '@/lib/types'
 import { useCartStore } from '@/lib/cart-store'
+import { useProductDetailStore } from '@/lib/product-detail-store'
 import { useState, useRef } from 'react'
 import { optimizeImage } from '@/lib/image'
 
 export function ProductCard({ product, index = 0 }: { product: Product; index?: number }) {
   const addItem = useCartStore((state) => state.addItem)
+  const openDetail = useProductDetailStore(s => s.open)
   const [imgError, setImgError] = useState(false)
   const [tilt, setTilt] = useState({ x: 0, y: 0 })
   const [isHovered, setIsHovered] = useState(false)
@@ -38,7 +39,7 @@ export function ProductCard({ product, index = 0 }: { product: Product; index?: 
   return (
     <div
       ref={cardRef}
-      className="group relative rounded-2xl overflow-hidden animate-fade-in-up"
+      className="group relative rounded-2xl overflow-hidden animate-fade-in-up cursor-pointer"
       style={{
         animationDelay: `${Math.min(index * 40, 400)}ms`,
         animationFillMode: 'both',
@@ -53,49 +54,47 @@ export function ProductCard({ product, index = 0 }: { product: Product; index?: 
         transition: 'transform 0.3s cubic-bezier(0.22,1,0.36,1), box-shadow 0.3s ease',
         willChange: 'transform',
       }}
+      onClick={() => openDetail(product.id)}
       onMouseMove={handleMouseMove}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => { setIsHovered(false); setTilt({ x: 0, y: 0 }) }}
     >
-      <Link href={`/prodotto/${product.id}`} className="block">
-        <div className="relative aspect-square overflow-hidden" style={{ background: 'linear-gradient(135deg, #f0fbfd, #cffafe)' }}>
-          {imgUrl && !imgError ? (
-            <img
-              src={imgUrl}
-              alt={product.name}
-              loading={index < 8 ? 'eager' : 'lazy'}
-              decoding="async"
-              className="w-full h-full object-cover transition-transform duration-500 ease-out"
-              style={{ transform: isHovered ? 'scale(1.08)' : 'scale(1)' }}
-              onError={() => setImgError(true)}
-            />
-          ) : (
-            <div className="w-full h-full flex items-center justify-center">
-              <ImageIcon className="w-10 h-10" style={{ color: 'rgba(8,145,178,0.3)' }} />
-            </div>
-          )}
-          <div className="absolute inset-0 flex items-center justify-center transition-all duration-300"
-            style={{ background: isHovered ? 'rgba(12,43,54,0.15)' : 'rgba(12,43,54,0)' }}>
-            <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold transition-all duration-300"
-              style={{
-                background: 'rgba(240,251,253,0.95)',
-                color: '#155e75',
-                opacity: isHovered ? 1 : 0,
-                transform: isHovered ? 'translateY(0) scale(1)' : 'translateY(6px) scale(0.9)',
-              }}>
-              <Eye className="w-3.5 h-3.5" /> Vedi dettagli
-            </div>
+      <div className="relative aspect-square overflow-hidden" style={{ background: 'linear-gradient(135deg, #f0fbfd, #cffafe)' }}>
+        {imgUrl && !imgError ? (
+          <img
+            src={imgUrl}
+            alt={product.name}
+            draggable={false}
+            loading={index < 8 ? 'eager' : 'lazy'}
+            decoding="async"
+            className="w-full h-full object-cover transition-transform duration-500 ease-out select-none"
+            style={{ transform: isHovered ? 'scale(1.08)' : 'scale(1)' }}
+            onError={() => setImgError(true)}
+          />
+        ) : (
+          <div className="w-full h-full flex items-center justify-center">
+            <ImageIcon className="w-10 h-10" style={{ color: 'rgba(8,145,178,0.3)' }} />
+          </div>
+        )}
+        <div className="absolute inset-0 flex items-center justify-center transition-all duration-300"
+          style={{ background: isHovered ? 'rgba(12,43,54,0.15)' : 'rgba(12,43,54,0)' }}>
+          <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold transition-all duration-300"
+            style={{
+              background: 'rgba(240,251,253,0.95)',
+              color: '#155e75',
+              opacity: isHovered ? 1 : 0,
+              transform: isHovered ? 'translateY(0) scale(1)' : 'translateY(6px) scale(0.9)',
+            }}>
+            <Eye className="w-3.5 h-3.5" /> Vedi dettagli
           </div>
         </div>
-      </Link>
+      </div>
 
       <div className="p-3">
-        <Link href={`/prodotto/${product.id}`}>
-          <h3 className="font-semibold text-sm line-clamp-2 mb-2 leading-snug transition-colors"
-            style={{ color: isHovered ? '#155e75' : '#0c2b36' }}>
-            {product.name}
-          </h3>
-        </Link>
+        <h3 className="font-semibold text-sm line-clamp-2 mb-2 leading-snug transition-colors"
+          style={{ color: isHovered ? '#155e75' : '#0c2b36' }}>
+          {product.name}
+        </h3>
         <div className="flex items-center justify-between">
           <span className="font-bold text-base" style={{ color: '#0891b2' }}>€{product.price.toFixed(2)}</span>
           <button

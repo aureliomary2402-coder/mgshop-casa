@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { ArrowLeft, Clock, Tag, ShoppingBag, ShoppingCart, ImageIcon, X, Info } from 'lucide-react'
 import { useCartStore } from '@/lib/cart-store'
+import { useProductDetailStore } from '@/lib/product-detail-store'
 import { toast } from 'sonner'
 import type { Product } from '@/lib/types'
 import { Reveal } from '@/components/shop/reveal'
@@ -110,7 +111,6 @@ function PromoDetailModal({ product, salePrice, onClose }: { product: Product; s
   const [added, setAdded] = useState(false)
   const hasDiscount = salePrice < product.price
   const percentOff = hasDiscount ? Math.round((1 - salePrice / product.price) * 100) : 0
-  const isRealShopProduct = !isCustomPromoProductId(product.id)
 
   const handleAdd = () => {
     addItem({ ...product, price: salePrice })
@@ -146,11 +146,6 @@ function PromoDetailModal({ product, salePrice, onClose }: { product: Product; s
             style={{ background: added ? 'linear-gradient(135deg,#16a34a,#22c55e)' : 'linear-gradient(135deg,#0891b2,#06b6d4)', boxShadow: '0 8px 20px rgba(8,145,178,0.3)' }}>
             <ShoppingCart className="w-4 h-4" /> {added ? 'Aggiunto!' : 'Aggiungi al carrello'}
           </button>
-          {isRealShopProduct && (
-            <Link href={`/prodotto/${product.id}`} className="block text-center text-sm text-cyan-700 font-medium underline underline-offset-2">
-              Vedi la scheda prodotto completa
-            </Link>
-          )}
         </div>
       </div>
     </div>
@@ -258,9 +253,24 @@ export default function PromoPage() {
               <h2 className="text-2xl font-bold mb-6" style={{color:'#0c2b36'}}>Prodotti in promozione</h2>
               <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 stagger-children">
                 {displayItems.map(({ product, salePrice }) => (
-                  <PromoProductCard key={product.id} product={product} salePrice={salePrice} onOpenDetail={() => setSelectedDetail({ product, salePrice })} />
+                  <PromoProductCard key={product.id} product={product} salePrice={salePrice}
+                    onOpenDetail={() => {
+                      if (isCustomPromoProductId(product.id)) setSelectedDetail({ product, salePrice })
+                      else useProductDetailStore.getState().open(product.id)
+                    }} />
                 ))}
               </div>
+              {/* Sticky cart button */}
+              {cartCount > 0 && (
+                <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 animate-scale-in">
+                  <Link href="/carrello?promo=1"
+                    className="flex items-center gap-3 px-8 py-4 rounded-2xl text-white font-bold shadow-2xl transition-all hover:scale-105 neon-glow"
+                    style={{ background: 'linear-gradient(135deg,#0891b2,#06b6d4)' }}>
+                    <ShoppingBag className="w-5 h-5"/>
+                    Vai al carrello ({cartCount})
+                  </Link>
+                </div>
+              )}
             </Reveal>
           )}
 

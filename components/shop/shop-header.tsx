@@ -2,6 +2,7 @@
 import Link from 'next/link'
 import { ShoppingBag, Search, X, Home, ChevronDown, Tag, Sparkles, Newspaper, ImageIcon } from 'lucide-react'
 import { useCartStore } from '@/lib/cart-store'
+import { useProductDetailStore } from '@/lib/product-detail-store'
 import { useState, useEffect, useRef } from 'react'
 import { useRouter, useSearchParams, usePathname } from 'next/navigation'
 import type { Category, Product } from '@/lib/types'
@@ -112,7 +113,7 @@ export function ShopHeader({ categories }: { categories: Category[] }) {
   const handleSelectProduct = (product: Product) => {
     setDropdownOpen(false)
     setSearchOpen(false)
-    router.push(`/prodotto/${product.id}`)
+    useProductDetailStore.getState().open(product.id)
   }
 
   const handleSeeAllResults = () => {

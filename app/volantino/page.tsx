@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { ArrowLeft, ShoppingBag, ShoppingCart, ImageIcon, Newspaper } from 'lucide-react'
 import { useCartStore } from '@/lib/cart-store'
+import { useProductDetailStore } from '@/lib/product-detail-store'
 import { toast } from 'sonner'
 import type { Product } from '@/lib/types'
 import { Reveal } from '@/components/shop/reveal'
@@ -23,11 +24,13 @@ interface VolantinoData {
 
 function FlyerCard({ product, salePrice, index }: { product: Product; salePrice: number; index: number }) {
   const addItem = useCartStore(s => s.addItem)
+  const openDetail = useProductDetailStore(s => s.open)
   const [added, setAdded] = useState(false)
   const hasDiscount = salePrice < product.price
   const percentOff = hasDiscount ? Math.round((1 - salePrice / product.price) * 100) : 0
 
-  const handleAdd = () => {
+  const handleAdd = (e: React.MouseEvent) => {
+    e.stopPropagation()
     addItem({ ...product, price: salePrice })
     setAdded(true)
     setTimeout(() => setAdded(false), 1500)
@@ -35,7 +38,8 @@ function FlyerCard({ product, salePrice, index }: { product: Product; salePrice:
   }
 
   return (
-    <div className="relative bg-white rounded-2xl overflow-hidden animate-fade-in-up"
+    <div onClick={() => openDetail(product.id)} role="button"
+      className="relative bg-white rounded-2xl overflow-hidden animate-fade-in-up cursor-pointer"
       style={{ animationDelay: `${index * 40}ms`, animationFillMode: 'both', border: '2px solid #0c2b36', boxShadow: '4px 4px 0 rgba(12,43,54,0.9)' }}>
       {hasDiscount && percentOff > 0 && (
         <div className="absolute top-0 right-0 z-10 flex items-center justify-center w-14 h-14 rounded-bl-2xl font-extrabold text-white text-sm"
@@ -43,17 +47,13 @@ function FlyerCard({ product, salePrice, index }: { product: Product; salePrice:
           -{percentOff}%
         </div>
       )}
-      <Link href={`/prodotto/${product.id}`}>
-        <div className="aspect-square overflow-hidden" style={{ background: 'linear-gradient(135deg,#f0fbfd,#cffafe)' }}>
-          {product.card_image || product.cover_image
-            ? <img src={optimizeImage(product.card_image || product.cover_image, 400) || product.card_image || product.cover_image || ''} alt={product.name} loading="lazy" decoding="async" className="w-full h-full object-cover" />
-            : <div className="w-full h-full flex items-center justify-center"><ImageIcon className="w-10 h-10" style={{ color: 'rgba(8,145,178,0.3)' }} /></div>}
-        </div>
-      </Link>
+      <div className="aspect-square overflow-hidden" style={{ background: 'linear-gradient(135deg,#f0fbfd,#cffafe)' }}>
+        {product.cover_image
+          ? <img src={optimizeImage(product.cover_image, 400) || product.cover_image} alt={product.name} draggable={false} loading="lazy" decoding="async" className="w-full h-full object-cover select-none" />
+          : <div className="w-full h-full flex items-center justify-center"><ImageIcon className="w-10 h-10" style={{ color: 'rgba(8,145,178,0.3)' }} /></div>}
+      </div>
       <div className="p-3">
-        <Link href={`/prodotto/${product.id}`}>
-          <h3 className="font-bold text-sm text-slate-800 line-clamp-2 mb-2 leading-tight">{product.name}</h3>
-        </Link>
+        <h3 className="font-bold text-sm text-slate-800 line-clamp-2 mb-2 leading-tight">{product.name}</h3>
         <div className="flex items-end justify-between gap-2 mb-2">
           <div>
             {hasDiscount && <p className="text-xs text-slate-400 line-through leading-none mb-0.5">€{product.price.toFixed(2)}</p>}
@@ -154,6 +154,16 @@ export default function VolantinoPage() {
                   return <FlyerCard key={p.id} product={p} salePrice={item ? item.sale_price : p.price} index={i} />
                 })}
               </div>
+              {cartCount > 0 && (
+                <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 animate-scale-in">
+                  <Link href="/carrello"
+                    className="flex items-center gap-3 px-8 py-4 rounded-2xl text-white font-bold shadow-2xl transition-all hover:scale-105 neon-glow"
+                    style={{ background: 'linear-gradient(135deg,#0891b2,#06b6d4)' }}>
+                    <ShoppingBag className="w-5 h-5" />
+                    Vai al carrello ({cartCount})
+                  </Link>
+                </div>
+              )}
             </Reveal>
           ) : (
             <p className="text-center text-slate-400 py-12">Nessun prodotto nel volantino al momento.</p>
