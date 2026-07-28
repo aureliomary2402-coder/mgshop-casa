@@ -63,13 +63,15 @@ export function HeroBanner({ banners, categories }: { banners: Banner[]; categor
             </div>
             <div className="flex flex-wrap gap-3">
               {categories.map((cat, i) => (
-                <Link key={cat.id} href={`/shop?categoria=${cat.slug}`}
+                <Link key={cat.id} href={`/shop?categoria=${cat.slug}#prodotti-grid`} scroll={false}
+                  onClick={() => requestAnimationFrame(() => document.getElementById('prodotti-grid')?.scrollIntoView({ behavior: 'smooth', block: 'start' }))}
                   className="animate-bubble-pop-in animate-bubble-bob inline-flex items-center justify-center text-center rounded-full px-5 py-4 min-w-[92px] font-semibold text-xs text-white transition-transform hover:scale-110 btn-press"
                   style={bubbleStyle(i)}>
                   {cat.name}
                 </Link>
               ))}
-              <Link href="/shop"
+              <Link href="/shop#prodotti-grid" scroll={false}
+                onClick={() => requestAnimationFrame(() => document.getElementById('prodotti-grid')?.scrollIntoView({ behavior: 'smooth', block: 'start' }))}
                 className="animate-bubble-pop-in animate-bubble-bob inline-flex items-center justify-center text-center rounded-full px-5 py-4 min-w-[92px] font-semibold text-xs text-cyan-800 bg-white transition-transform hover:scale-110 btn-press"
                 style={{ animationDelay: `${categories.length * 70}ms` }}>
                 Tutti
