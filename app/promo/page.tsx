@@ -68,8 +68,8 @@ function PromoProductCard({ product, salePrice, onOpenDetail }: { product: Produ
       className="bg-white rounded-2xl overflow-hidden shadow-sm hover:-translate-y-1 transition-all group cursor-pointer"
       style={{ border: '1px solid rgba(8,145,178,0.1)', boxShadow: '0 4px 20px rgba(8,145,178,0.08)' }}>
       <div className="aspect-square overflow-hidden relative" style={{ background: 'linear-gradient(135deg,#f0fbfd,#cffafe)' }}>
-        {product.cover_image
-          ? <img src={product.cover_image} alt={product.name} draggable={false} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300 select-none" />
+        {(product.card_image || product.cover_image)
+          ? <img src={product.card_image || product.cover_image || ''} alt={product.name} draggable={false} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300 select-none" />
           : <div className="w-full h-full flex items-center justify-center"><ImageIcon className="w-10 h-10" style={{color:'rgba(8,145,178,0.3)'}}/></div>}
         {hasDiscount && (
           <div className="absolute top-2 left-2 text-white text-xs font-bold px-2 py-1 rounded-lg" style={{ background: '#dc2626' }}>
