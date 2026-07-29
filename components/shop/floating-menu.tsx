@@ -336,23 +336,25 @@ export function FloatingMenu() {
                 </p>
               )}
 
-              <div className="grid grid-cols-5 gap-3 justify-items-center">
+              <div className="grid grid-cols-5 gap-2.5 justify-items-center">
                 {Array.from({ length: pointsData.threshold }).map((_, i) => {
                   const filled = i < pointsData.progress
                   return (
                     <div key={i} className="relative">
                       <div
-                        className="w-11 h-11 rounded-full flex items-center justify-center shrink-0 bg-white"
+                        className="w-14 h-14 rounded-full flex items-center justify-center shrink-0 bg-white overflow-hidden"
                         style={filled
                           ? {
                             border: '2px solid #dc2626',
-                            color: '#dc2626',
                             boxShadow: '0 2px 6px rgba(220,38,38,0.2)',
                             animation: `checkPop 0.5s cubic-bezier(0.34,1.56,0.64,1) ${i * 70}ms both`,
                           }
                           : { border: '2px dashed #cbd5e1', background: '#f8fafc' }}
                       >
-                        {filled && <MGShopStamp size={28} />}
+                        {filled && (
+                          // eslint-disable-next-line @next/next/no-img-element
+                          <img src="/images/mgshop-stamp.png" alt="" className="w-12 h-12 object-contain" />
+                        )}
                       </div>
                       <span
                         className="absolute -bottom-1 -right-1 w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold text-white shadow-sm"
