@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect } from 'react'
-import { Users, Search, X, TrendingUp, ShoppingBag, Phone, Star, Gift, Plus, Minus, ChevronDown, ChevronUp, Clock, ArrowUpDown } from 'lucide-react'
+import { Users, Search, X, TrendingUp, ShoppingBag, Phone, Star, Gift, Plus, Minus, ChevronDown, ChevronUp, Clock, ArrowUpDown, RotateCcw } from 'lucide-react'
 import { Input } from '@/components/ui/input'
 
 interface Cliente {
@@ -26,12 +26,15 @@ interface LoyaltyHistory {
 function LoyaltyPanel({ cliente }: { cliente: Cliente }) {
   const [totalPoints, setTotalPoints] = useState<number | null>(null)
   const [history, setHistory] = useState<LoyaltyHistory[]>([])
+  const [threshold, setThreshold] = useState<number>(10)
+  const [completedCount, setCompletedCount] = useState<number>(0)
   const [loading, setLoading] = useState(true)
   const [showHistory, setShowHistory] = useState(false)
   const [adding, setAdding] = useState(false)
   const [pointsInput, setPointsInput] = useState('')
   const [noteInput, setNoteInput] = useState('')
   const [saving, setSaving] = useState(false)
+  const [resetting, setResetting] = useState(false)
   const [mode, setMode] = useState<'add' | 'remove'>('add')
 
   useEffect(() => { fetchPoints() }, [])
@@ -42,6 +45,8 @@ function LoyaltyPanel({ cliente }: { cliente: Cliente }) {
     const data = await res.json()
     setTotalPoints(data.total)
     setHistory(data.history)
+    setThreshold(data.threshold || 10)
+    setCompletedCount(data.completedCount || 0)
     setLoading(false)
   }
 
@@ -61,16 +66,29 @@ function LoyaltyPanel({ cliente }: { cliente: Cliente }) {
     fetchPoints()
   }
 
+  const handleReset = async () => {
+    if (!totalPoints) return
+    if (!window.confirm(`Azzerare i ${totalPoints} punti di ${cliente.customer_name || cliente.phone_number}? L'operazione non è reversibile, ma il conteggio "schede completate" resta salvato.`)) return
+    setResetting(true)
+    await fetch('/api/admin/loyalty', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ phone: cliente.phone_number, reset: true })
+    })
+    setResetting(false)
+    fetchPoints()
+  }
+
   return (
     <div className="mt-3 pt-3 border-t border-slate-100">
-      <div className="flex items-center justify-between mb-2">
+      <div className="flex items-center justify-between mb-2 flex-wrap gap-2">
         <div className="flex items-center gap-2">
           <Gift className="w-4 h-4 text-cyan-600" />
           <span className="text-sm font-semibold text-slate-700">Punti fedeltà</span>
           {loading ? (
             <span className="text-xs text-slate-400">Caricamento...</span>
           ) : (
-            <span className="text-lg font-bold text-cyan-600">{totalPoints ?? 0} pt</span>
+            <span className="text-lg font-bold text-cyan-600">{totalPoints ?? 0} / {threshold} pt</span>
           )}
         </div>
         <div className="flex items-center gap-2">
@@ -79,6 +97,10 @@ function LoyaltyPanel({ cliente }: { cliente: Cliente }) {
             <Clock className="w-3.5 h-3.5" />
             {showHistory ? 'Nascondi' : 'Storico'}
           </button>
+          <button onClick={handleReset} disabled={resetting || !totalPoints}
+            className="flex items-center gap-1 text-xs font-medium px-3 py-1.5 rounded-lg transition-colors bg-red-50 text-red-600 border border-red-200 hover:bg-red-100 disabled:opacity-40">
+            <RotateCcw className="w-3.5 h-3.5" /> {resetting ? 'Azzero...' : 'Azzera punti'}
+          </button>
           <button onClick={() => { setAdding(v => !v); setMode('add') }}
             className="flex items-center gap-1 text-xs font-medium px-3 py-1.5 rounded-lg transition-colors"
             style={{ background: adding ? 'rgba(8,145,178,0.15)' : 'rgba(8,145,178,0.08)', color: '#0891b2', border: '1px solid rgba(8,145,178,0.2)' }}>
@@ -86,6 +108,10 @@ function LoyaltyPanel({ cliente }: { cliente: Cliente }) {
           </button>
         </div>
       </div>
+
+      {!loading && completedCount > 0 && (
+        <p className="text-xs text-slate-500 mb-2">🎉 Ha completato la scheda {completedCount} {completedCount === 1 ? 'volta' : 'volte'}</p>
+      )}
 
       {/* Form aggiunta/rimozione punti */}
       {adding && (

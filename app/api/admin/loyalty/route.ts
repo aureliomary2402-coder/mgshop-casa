@@ -30,26 +30,48 @@ export async function GET(request: NextRequest) {
 
   const normalized = normalizePhone(phone)
   const supabase = createAdminClient()
-  const { data, error } = await supabase
-    .from('loyalty_points')
-    .select('*')
-    .eq('phone_normalized', normalized)
-    .order('created_at', { ascending: false })
+  const [{ data, error }, { data: settings }] = await Promise.all([
+    supabase.from('loyalty_points').select('*').eq('phone_normalized', normalized).order('created_at', { ascending: false }),
+    supabase.from('loyalty_settings').select('points_threshold').eq('is_active', true).order('updated_at', { ascending: false }).limit(1).single(),
+  ])
 
   if (error) return NextResponse.json({ error: error.message }, { status: 500 })
 
-  const total = (data || []).reduce((s, r) => s + r.points, 0)
-  return NextResponse.json({ total, history: data || [] })
+  const total = Math.max(0, (data || []).reduce((s, r) => s + r.points, 0))
+  const threshold = settings?.points_threshold || 10
+  // Le schede completate contano gli azzeramenti fatti in passato (persistenti anche
+  // dopo il reset) + eventuale scheda già piena non ancora azzerata.
+  const resetCount = (data || []).filter(r => r.type === 'reset').length
+  const completedCount = resetCount + Math.floor(total / threshold)
+
+  return NextResponse.json({ total, history: data || [], threshold, completedCount })
 }
 
-// POST - aggiungi/togli punti
+// POST - aggiungi/togli punti, oppure azzera la scheda (reset: true)
 export async function POST(request: NextRequest) {
   if (!(await isAuthenticated())) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-  const { phone, points, note } = await request.json()
-  if (!phone || points === undefined) return NextResponse.json({ error: 'Missing fields' }, { status: 400 })
+  const body = await request.json()
+  const { phone, points, note, reset } = body
+  if (!phone) return NextResponse.json({ error: 'Missing fields' }, { status: 400 })
 
   const normalized = normalizePhone(phone)
   const supabase = createAdminClient()
+
+  if (reset) {
+    const { data: all } = await supabase.from('loyalty_points').select('points').eq('phone_normalized', normalized)
+    const currentTotal = (all || []).reduce((s, r) => s + r.points, 0)
+    if (currentTotal === 0) return NextResponse.json({ success: true, total: 0 })
+
+    const { error: resetError } = await supabase
+      .from('loyalty_points')
+      .insert({ phone_normalized: normalized, points: -currentTotal, note: 'Scheda completata - punti azzerati', type: 'reset' })
+
+    if (resetError) return NextResponse.json({ error: resetError.message }, { status: 500 })
+    return NextResponse.json({ success: true, total: 0 })
+  }
+
+  if (points === undefined) return NextResponse.json({ error: 'Missing fields' }, { status: 400 })
+
   const { data, error } = await supabase
     .from('loyalty_points')
     .insert({ phone_normalized: normalized, points, note: note || null })
