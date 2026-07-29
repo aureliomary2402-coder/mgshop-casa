@@ -5,7 +5,6 @@ import { usePathname } from 'next/navigation'
 import Link from 'next/link'
 import { MessageCircle, X, Send, Menu as MenuIcon, ShoppingBag, Gift } from 'lucide-react'
 import { SOCIAL_LINKS, InstagramIcon, TikTokIcon, WhatsAppIcon } from './social-icons'
-import { MGShopStamp } from './mgshop-logo'
 import { useCartStore } from '@/lib/cart-store'
 
 interface ChatMessage {
@@ -222,7 +221,7 @@ export function FloatingMenu() {
             I tuoi punti
             <span className="w-9 h-9 rounded-full flex items-center justify-center shrink-0 bg-white border-2"
               style={{ borderColor: '#dc2626', color: '#dc2626' }}>
-              <MGShopStamp size={20} />
+              <img src="/images/mgshop-stamp.png" alt="" className="w-7 h-7 object-contain" />
             </span>
           </button>
         </div>
@@ -304,7 +303,7 @@ export function FloatingMenu() {
         <div className={`fixed ${menuOffsetClass} right-5 z-40 w-[90vw] max-w-sm bg-white rounded-2xl shadow-2xl flex flex-col overflow-hidden border border-slate-100`}>
           <div className="px-4 py-3 text-white font-semibold flex items-center gap-2"
             style={{ background: 'linear-gradient(135deg,#0891b2,#06b6d4)' }}>
-            <MGShopStamp size={16} /> I tuoi punti
+            <img src="/images/mgshop-stamp.png" alt="" className="w-4 h-4 object-contain" /> I tuoi punti
           </div>
 
           {!pointsData ? (
