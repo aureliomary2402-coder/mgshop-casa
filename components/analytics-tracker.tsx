@@ -25,7 +25,7 @@ export function AnalyticsTracker() {
     fetch('/api/analytics', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ page: pathname }),
+      body: JSON.stringify({ page: pathname, sessionId: getSessionId() }),
     }).catch(() => {})
   }, [pathname])
 
