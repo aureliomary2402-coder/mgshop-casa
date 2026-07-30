@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect } from 'react'
-import { ShoppingBag, Euro, Clock, CheckCircle, TrendingUp, Package, Eye, BarChart2, ArrowUp, ArrowDown, Gift, Ticket, Radio } from 'lucide-react'
+import { ShoppingBag, Euro, Clock, CheckCircle, TrendingUp, Package, Gift, Ticket, Radio } from 'lucide-react'
 import { PendingFulfillment } from './pending-fulfillment'
 
 interface OrderStats {
@@ -18,35 +18,8 @@ interface TicketStats {
   todayTickets: number
 }
 
-interface AnalyticsData {
-  total: number
-  today: number
-  yesterday: number
-  last7: number
-  last30: number
-  topPages: { page: string; count: number }[]
-  last7Days: { day: string; count: number }[]
-}
-
 interface Cliente {
   loyaltyReady?: boolean
-}
-
-function MiniChart({ data }: { data: { day: string; count: number }[] }) {
-  const max = Math.max(...data.map(d => d.count), 1)
-  return (
-    <div className="flex items-end gap-1 h-12">
-      {data.map((d, i) => (
-        <div key={i} className="flex-1 flex flex-col items-center gap-1">
-          <div className="w-full rounded-t-sm transition-all"
-            style={{
-              height: `${Math.max((d.count / max) * 44, 2)}px`,
-              background: i === data.length - 1 ? 'linear-gradient(135deg,#0891b2,#06b6d4)' : 'rgba(8,145,178,0.2)'
-            }} />
-        </div>
-      ))}
-    </div>
-  )
 }
 
 interface ActiveVisitors {
@@ -66,22 +39,9 @@ function pageLabel(page: string) {
   return page
 }
 
-function PageLabel({ page }: { page: string }) {
-  const labels: Record<string, string> = {
-    '/': 'Home',
-    '/shop': 'Negozio',
-    '/promo': 'Promo',
-    '/carrello': 'Carrello',
-  }
-  if (labels[page]) return <span>{labels[page]}</span>
-  if (page.startsWith('/prodotto/')) return <span>Prodotto</span>
-  return <span>{page}</span>
-}
-
 export function DashboardStats() {
   const [orders, setOrders] = useState<OrderStats | null>(null)
   const [tickets, setTickets] = useState<TicketStats | null>(null)
-  const [analytics, setAnalytics] = useState<AnalyticsData | null>(null)
   const [loyaltyReadyCount, setLoyaltyReadyCount] = useState<number | null>(null)
   const [activeVisitors, setActiveVisitors] = useState<ActiveVisitors | null>(null)
   const [loading, setLoading] = useState(true)
@@ -98,10 +58,9 @@ export function DashboardStats() {
   useEffect(() => {
     Promise.all([
       fetch('/api/admin/orders').then(r => r.json()),
-      fetch('/api/admin/analytics').then(r => r.json()),
       fetch('/api/admin/clienti').then(r => r.json()),
       fetch('/api/admin/lottery/purchases').then(r => r.json()),
-    ]).then(([ordersData, analyticsData, clientiData, ticketData]) => {
+    ]).then(([ordersData, clientiData, ticketData]) => {
       const ticketGroups = ticketData.purchases || []
       const today = new Date().toDateString()
       // Alcuni ordini includono anche biglietti lotteria: quei €1 a biglietto
@@ -121,7 +80,6 @@ export function DashboardStats() {
           .filter((g: { created_at: string }) => new Date(g.created_at).toDateString() === today)
           .reduce((s: number, g: { numbers: number[] }) => s + g.numbers.length, 0),
       })
-      setAnalytics(analyticsData)
       setLoyaltyReadyCount((clientiData as Cliente[]).filter(c => c.loyaltyReady).length)
       setLoading(false)
     })
@@ -132,8 +90,6 @@ export function DashboardStats() {
       {[...Array(4)].map((_, i) => <div key={i} className="bg-slate-100 rounded-xl h-24 animate-pulse" />)}
     </div>
   )
-
-  const todayVsYesterday = analytics ? analytics.today - analytics.yesterday : 0
 
   return (
     <div className="space-y-6">
@@ -165,69 +121,6 @@ export function DashboardStats() {
 
       {/* Da consegnare e incassare */}
       <PendingFulfillment />
-
-      {/* Visite */}
-      <div>
-        <h2 className="font-semibold text-slate-800 mb-3 flex items-center gap-2">
-          <Eye className="w-4 h-4 text-cyan-600" /> Visite sito
-        </h2>
-        <div className="grid grid-cols-2 gap-3 mb-3">
-          <div className="bg-white border border-slate-100 rounded-xl p-4 shadow-sm col-span-2">
-            <div className="flex items-start justify-between mb-3">
-              <div>
-                <p className="text-3xl font-bold text-slate-800">{analytics?.today ?? 0}</p>
-                <p className="text-xs text-slate-500 mt-0.5">Visite oggi</p>
-              </div>
-              <div className={`flex items-center gap-1 text-xs font-medium px-2 py-1 rounded-full ${todayVsYesterday >= 0 ? 'bg-green-50 text-green-600' : 'bg-red-50 text-red-500'}`}>
-                {todayVsYesterday >= 0 ? <ArrowUp className="w-3 h-3" /> : <ArrowDown className="w-3 h-3" />}
-                {Math.abs(todayVsYesterday)} vs ieri
-              </div>
-            </div>
-            {analytics && <MiniChart data={analytics.last7Days} />}
-            <div className="flex justify-between text-xs text-slate-400 mt-1">
-              {analytics?.last7Days.map((d, i) => (
-                <span key={i}>{new Date(d.day).toLocaleDateString('it-IT', { weekday: 'short' })}</span>
-              ))}
-            </div>
-          </div>
-          {[
-            { label: 'Ieri', value: analytics?.yesterday ?? 0 },
-            { label: '7 giorni', value: analytics?.last7 ?? 0 },
-            { label: '30 giorni', value: analytics?.last30 ?? 0 },
-            { label: 'Totale', value: analytics?.total ?? 0 },
-          ].map(({ label, value }) => (
-            <div key={label} className="bg-white border border-slate-100 rounded-xl p-4 shadow-sm">
-              <p className="text-xl font-bold text-slate-800">{value}</p>
-              <p className="text-xs text-slate-500 mt-0.5">{label}</p>
-            </div>
-          ))}
-        </div>
-
-        {/* Pagine più visitate */}
-        {analytics && analytics.topPages.length > 0 && (
-          <div className="bg-white border border-slate-100 rounded-xl p-4 shadow-sm">
-            <p className="text-xs font-semibold text-slate-500 mb-3 flex items-center gap-1">
-              <BarChart2 className="w-3.5 h-3.5" /> Pagine più visitate (30gg)
-            </p>
-            <div className="space-y-2">
-              {analytics.topPages.map(({ page, count }) => {
-                const pct = Math.round((count / (analytics.topPages[0]?.count || 1)) * 100)
-                return (
-                  <div key={page} className="space-y-1">
-                    <div className="flex justify-between text-xs">
-                      <PageLabel page={page} />
-                      <span className="font-medium text-slate-600">{count}</span>
-                    </div>
-                    <div className="h-1.5 rounded-full bg-slate-100 overflow-hidden">
-                      <div className="h-full rounded-full transition-all" style={{ width: `${pct}%`, background: 'linear-gradient(90deg,#0891b2,#06b6d4)' }} />
-                    </div>
-                  </div>
-                )
-              })}
-            </div>
-          </div>
-        )}
-      </div>
 
       {/* Ordini */}
       <div>
