@@ -2,6 +2,7 @@ export const SOCIAL_LINKS = {
   instagram: 'https://www.instagram.com/mgshopcasa?igsh=MWFyeDNzamU0ZWw3dw%3D%3D&utm_source=qr',
   whatsapp: 'https://whatsapp.com/channel/0029VbChkIv9Bb66CYyUH02u',
   tiktok: 'https://www.tiktok.com/@mgshopcasa?_r=1&_t=ZN-988gqvAdIpi',
+  facebook: 'https://www.facebook.com/share/1EFPpcihdc/?mibextid=wwXIfr',
 }
 
 export function InstagramIcon({ size = 20 }: { size?: number }) {
@@ -18,6 +19,14 @@ export function TikTokIcon({ size = 20 }: { size?: number }) {
   return (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor">
       <path d="M16.6 5.82s.51.5 0 0A4.278 4.278 0 0115.54 3h-3.09v12.4a2.592 2.592 0 01-2.59 2.5c-1.42 0-2.6-1.16-2.6-2.6 0-1.72 1.66-3.01 3.37-2.48V9.66c-3.45-.46-6.47 2.22-6.47 5.64 0 3.33 2.76 5.7 5.69 5.7 3.14 0 5.69-2.55 5.69-5.7V9.01a7.35 7.35 0 004.3 1.38V7.3s-1.88.09-3.24-1.48z" />
+    </svg>
+  )
+}
+
+export function FacebookIcon({ size = 20 }: { size?: number }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor">
+      <path d="M22 12.06C22 6.505 17.523 2 12 2S2 6.505 2 12.06c0 5.02 3.657 9.184 8.438 9.94v-7.03H7.898v-2.91h2.54V9.845c0-2.523 1.492-3.917 3.777-3.917 1.094 0 2.238.197 2.238.197v2.476h-1.26c-1.243 0-1.63.775-1.63 1.57v1.888h2.773l-.443 2.91h-2.33V22c4.78-.756 8.437-4.92 8.437-9.94z" />
     </svg>
   )
 }

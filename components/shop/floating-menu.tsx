@@ -210,6 +210,13 @@ export function FloatingMenu() {
               <WhatsAppIcon size={17} />
             </span>
           </a>
+          <a href={SOCIAL_LINKS.facebook} target="_blank" rel="noopener noreferrer"
+            className="flex items-center gap-2.5 pl-4 pr-2 py-2 rounded-full shadow-lg bg-white text-sm font-medium text-slate-700 transition-transform hover:scale-105">
+            Facebook
+            <span className="w-9 h-9 rounded-full flex items-center justify-center text-white bg-[#1877F2] shrink-0">
+              <FacebookIcon size={17} />
+            </span>
+          </a>
           <button onClick={openChat}
             className="flex items-center gap-2.5 pl-4 pr-2 py-2 rounded-full shadow-lg bg-white text-sm font-medium text-slate-700 transition-transform hover:scale-105">
             Scrivici in chat
