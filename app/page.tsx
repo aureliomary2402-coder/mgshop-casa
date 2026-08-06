@@ -2,7 +2,7 @@
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { ShoppingBag, Sparkles, ArrowRight, Tag, Newspaper, Gift, MapPin } from 'lucide-react'
-import { SOCIAL_LINKS, InstagramIcon, TikTokIcon, WhatsAppIcon } from '@/components/shop/social-icons'
+import { SOCIAL_LINKS, InstagramIcon, TikTokIcon, WhatsAppIcon, FacebookIcon } from '@/components/shop/social-icons'
 import { CodBanner } from '@/components/shop/cod-banner'
 
 export default function WelcomePage() {
@@ -178,6 +178,11 @@ export default function WelcomePage() {
             className="w-11 h-11 rounded-full flex items-center justify-center transition-all hover:scale-110 btn-press neon-glow-green"
             style={{ background: 'rgba(22,163,74,0.15)', border: '1px solid rgba(22,163,74,0.3)', color: '#4ade80' }}>
             <WhatsAppIcon size={19} />
+          </a>
+          <a href={SOCIAL_LINKS.facebook} target="_blank" rel="noopener noreferrer" aria-label="Facebook"
+            className="w-11 h-11 rounded-full flex items-center justify-center transition-all hover:scale-110 btn-press"
+            style={{ background: 'rgba(24,119,242,0.15)', border: '1px solid rgba(24,119,242,0.3)', color: '#60a5fa' }}>
+            <FacebookIcon size={19} />
           </a>
         </div>
 
