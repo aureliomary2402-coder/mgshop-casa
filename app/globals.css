@@ -292,6 +292,13 @@
 .neon-glow-green { animation: neon-pulse-green 2.6s ease-in-out infinite; }
 .neon-glow-green:hover { animation-duration: 1.1s; }
 
+@keyframes neon-pulse-blue {
+  0%, 100% { box-shadow: 0 0 6px rgba(96,165,250,0.55), 0 0 16px rgba(96,165,250,0.35), 0 0 30px rgba(96,165,250,0.2); }
+  50% { box-shadow: 0 0 10px rgba(96,165,250,0.9), 0 0 24px rgba(96,165,250,0.6), 0 0 42px rgba(96,165,250,0.35); }
+}
+.neon-glow-blue { animation: neon-pulse-blue 2.6s ease-in-out infinite; }
+.neon-glow-blue:hover { animation-duration: 1.1s; }
+
 /* ===== SHIMMER TEXT ===== */
 .text-shimmer {
   background: linear-gradient(90deg, #155e75, #0891b2, #06b6d4, #0891b2, #155e75);

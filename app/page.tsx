@@ -180,7 +180,7 @@ export default function WelcomePage() {
             <WhatsAppIcon size={19} />
           </a>
           <a href={SOCIAL_LINKS.facebook} target="_blank" rel="noopener noreferrer" aria-label="Facebook"
-            className="w-11 h-11 rounded-full flex items-center justify-center transition-all hover:scale-110 btn-press"
+            className="w-11 h-11 rounded-full flex items-center justify-center transition-all hover:scale-110 btn-press neon-glow-blue"
             style={{ background: 'rgba(24,119,242,0.15)', border: '1px solid rgba(24,119,242,0.3)', color: '#60a5fa' }}>
             <FacebookIcon size={19} />
           </a>
