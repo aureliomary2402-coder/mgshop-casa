@@ -4,7 +4,7 @@ import { useState, useEffect, useRef, useCallback } from 'react'
 import { usePathname } from 'next/navigation'
 import Link from 'next/link'
 import { MessageCircle, X, Send, Menu as MenuIcon, ShoppingBag, Gift } from 'lucide-react'
-import { SOCIAL_LINKS, InstagramIcon, TikTokIcon, WhatsAppIcon } from './social-icons'
+import { SOCIAL_LINKS, InstagramIcon, TikTokIcon, WhatsAppIcon, FacebookIcon } from './social-icons'
 import { useCartStore } from '@/lib/cart-store'
 
 interface ChatMessage {
