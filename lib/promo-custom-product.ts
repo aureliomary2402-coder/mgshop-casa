@@ -14,7 +14,7 @@ export function isCustomPromoProductId(id: string): boolean {
   return id.startsWith(CUSTOM_PROMO_PREFIX)
 }
 
-export function buildCustomPromoProduct(opts: { id: string; name: string; image_url: string | null; price: number; description?: string | null }): Product {
+export function buildCustomPromoProduct(opts: { id: string; name: string; image_url: string | null; price: number; description?: string | null; torna_presto?: boolean }): Product {
   const now = new Date().toISOString()
   return {
     id: opts.id,
@@ -25,6 +25,7 @@ export function buildCustomPromoProduct(opts: { id: string; name: string; image_
     cover_image: opts.image_url,
     is_active: true,
     stock: null,
+    torna_presto: opts.torna_presto ?? false,
     created_at: now,
     updated_at: now,
   }

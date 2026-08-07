@@ -17,6 +17,7 @@ interface PromoItem {
   original_price?: number
   sale_price: number
   description?: string
+  torna_presto?: boolean
 }
 
 export function PromoManager() {
@@ -173,6 +174,13 @@ export function PromoManager() {
   // vede quando apre la scheda del prodotto dalla pagina promo.
   const updateDescription = (id: string, text: string) => {
     setItems(prev => prev.map(i => i.id === id ? { ...i, description: text } : i))
+  }
+
+  // Segna/toglie un prodotto della promo come "Torna presto" (non acquistabile,
+  // immagine bianco e nero con timbro). Funziona sia per i prodotti presi dal
+  // negozio sia per quelli personalizzati creati solo qui.
+  const updateTornaPresto = (id: string, value: boolean) => {
+    setItems(prev => prev.map(i => i.id === id ? { ...i, torna_presto: value } : i))
   }
 
   const filteredProducts = allProducts.filter(p =>
@@ -357,6 +365,19 @@ export function PromoManager() {
                   <textarea value={item.description || ''} onChange={e => updateDescription(item.id, e.target.value)}
                     className="w-full border border-cyan-200 bg-white rounded-lg p-2 text-xs resize-none h-12 focus:outline-none focus:ring-2 focus:ring-cyan-400"
                     placeholder="Informazioni aggiuntive per questo prodotto (facoltativo) — il cliente le vede aprendo la scheda dalla pagina promo" />
+                  {isCustom && (
+                    <div className={`flex items-center gap-2 p-2 rounded-lg border ${item.torna_presto ? 'bg-red-50 border-red-200' : 'bg-white border-cyan-100'}`}>
+                      <button onClick={() => updateTornaPresto(item.id, !item.torna_presto)} className="shrink-0">
+                        {item.torna_presto ? <ToggleRight className="w-7 h-7 text-red-500" /> : <ToggleLeft className="w-7 h-7 text-slate-400" />}
+                      </button>
+                      <div>
+                        <p className="text-xs font-semibold text-slate-700 flex items-center gap-1">
+                          <Clock className="w-3 h-3" /> Torna presto
+                        </p>
+                        <p className="text-[10px] text-slate-400">Non acquistabile, immagine bianco e nero con timbro</p>
+                      </div>
+                    </div>
+                  )}
                 </div>
               ))}
             </div>

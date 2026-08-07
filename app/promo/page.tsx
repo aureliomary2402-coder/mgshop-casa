@@ -19,6 +19,7 @@ interface PromoItem {
   original_price?: number
   sale_price: number
   description?: string
+  torna_presto?: boolean
 }
 
 interface PromoData {
@@ -119,6 +120,7 @@ function PromoDetailModal({ product, salePrice, onClose }: { product: Product; s
   const percentOff = hasDiscount ? Math.round((1 - salePrice / product.price) * 100) : 0
 
   const handleAdd = () => {
+    if (product.torna_presto) return
     addItem({ ...product, price: salePrice })
     setAdded(true)
     toast.success(`${product.name} aggiunto!`, { style: { background: '#cffafe', border: '1px solid #0891b2', color: '#155e75' } })
@@ -130,10 +132,11 @@ function PromoDetailModal({ product, salePrice, onClose }: { product: Product; s
       <div onClick={e => e.stopPropagation()} className="bg-white w-full sm:max-w-md sm:rounded-3xl rounded-t-3xl overflow-hidden max-h-[90vh] flex flex-col animate-slide-in-right">
         <div className="relative shrink-0" style={{ height: '200px', background: 'linear-gradient(135deg,#f0fbfd,#cffafe)' }}>
           {product.cover_image
-            ? <img src={product.cover_image} alt={product.name} className="w-full h-full object-cover" />
+            ? <img src={product.cover_image} alt={product.name} className="w-full h-full object-cover" style={product.torna_presto ? { filter: 'grayscale(1)' } : undefined} />
             : <div className="w-full h-full flex items-center justify-center"><ImageIcon className="w-12 h-12" style={{color:'rgba(8,145,178,0.3)'}}/></div>}
+          {product.torna_presto && <TornaPrestoStamp size="50%" />}
           <button onClick={onClose} className="absolute top-3 right-3 w-8 h-8 rounded-full bg-white/90 flex items-center justify-center hover:scale-110 transition-transform"><X className="w-4 h-4 text-slate-600"/></button>
-          {hasDiscount && <div className="absolute top-3 left-3 text-white text-xs font-bold px-2.5 py-1 rounded-lg" style={{ background: '#dc2626' }}>-{percentOff}%</div>}
+          {hasDiscount && !product.torna_presto && <div className="absolute top-3 left-3 text-white text-xs font-bold px-2.5 py-1 rounded-lg" style={{ background: '#dc2626' }}>-{percentOff}%</div>}
         </div>
         <div className="p-5 overflow-y-auto flex-1 space-y-4">
           <h2 className="text-xl font-bold" style={{color:'#0c2b36'}}>{product.name}</h2>
@@ -148,9 +151,12 @@ function PromoDetailModal({ product, salePrice, onClose }: { product: Product; s
             </div>
           )}
           <button onClick={handleAdd}
-            className="w-full flex items-center justify-center gap-2 text-white font-bold py-3.5 rounded-2xl transition-all active:scale-95"
-            style={{ background: added ? 'linear-gradient(135deg,#16a34a,#22c55e)' : 'linear-gradient(135deg,#0891b2,#06b6d4)', boxShadow: '0 8px 20px rgba(8,145,178,0.3)' }}>
-            <ShoppingCart className="w-4 h-4" /> {added ? 'Aggiunto!' : 'Aggiungi al carrello'}
+            disabled={product.torna_presto}
+            className="w-full flex items-center justify-center gap-2 text-white font-bold py-3.5 rounded-2xl transition-all active:scale-95 disabled:cursor-not-allowed"
+            style={product.torna_presto
+              ? { background: '#94a3b8', boxShadow: 'none' }
+              : { background: added ? 'linear-gradient(135deg,#16a34a,#22c55e)' : 'linear-gradient(135deg,#0891b2,#06b6d4)', boxShadow: '0 8px 20px rgba(8,145,178,0.3)' }}>
+            <ShoppingCart className="w-4 h-4" /> {product.torna_presto ? 'Non disponibile' : added ? 'Aggiunto!' : 'Aggiungi al carrello'}
           </button>
         </div>
       </div>
@@ -187,6 +193,7 @@ export default function PromoPage() {
           const custom = buildCustomPromoProduct({
             id: item.id, name: item.name || 'Prodotto', image_url: item.image_url || null,
             price: item.original_price ?? item.sale_price, description: item.description || null,
+            torna_presto: item.torna_presto,
           })
           return { product: custom, salePrice: item.sale_price }
         }).filter((x): x is { product: Product; salePrice: number } => !!x)
