@@ -9,6 +9,7 @@ import type { Product } from '@/lib/types'
 import { Reveal } from '@/components/shop/reveal'
 import { AmbientBubbles } from '@/components/shop/ambient-bubbles'
 import { optimizeImage } from '@/lib/image'
+import { TornaPrestoStamp } from '@/components/shop/torna-presto-stamp'
 
 interface VolantinoItem {
   product_id: string
@@ -31,6 +32,7 @@ function FlyerCard({ product, salePrice, index }: { product: Product; salePrice:
 
   const handleAdd = (e: React.MouseEvent) => {
     e.stopPropagation()
+    if (product.torna_presto) return
     addItem({ ...product, price: salePrice })
     setAdded(true)
     setTimeout(() => setAdded(false), 1500)
@@ -41,16 +43,17 @@ function FlyerCard({ product, salePrice, index }: { product: Product; salePrice:
     <div onClick={() => openDetail(product.id)} role="button"
       className="relative bg-white rounded-2xl overflow-hidden animate-fade-in-up cursor-pointer"
       style={{ animationDelay: `${index * 40}ms`, animationFillMode: 'both', border: '2px solid #0c2b36', boxShadow: '4px 4px 0 rgba(12,43,54,0.9)' }}>
-      {hasDiscount && percentOff > 0 && (
+      {hasDiscount && percentOff > 0 && !product.torna_presto && (
         <div className="absolute top-0 right-0 z-10 flex items-center justify-center w-14 h-14 rounded-bl-2xl font-extrabold text-white text-sm"
           style={{ background: '#dc2626' }}>
           -{percentOff}%
         </div>
       )}
-      <div className="aspect-square overflow-hidden" style={{ background: 'linear-gradient(135deg,#f0fbfd,#cffafe)' }}>
+      <div className="aspect-square overflow-hidden relative" style={{ background: 'linear-gradient(135deg,#f0fbfd,#cffafe)' }}>
         {(product.card_image || product.cover_image)
-          ? <img src={optimizeImage(product.card_image || product.cover_image, 400) || product.card_image || product.cover_image || ''} alt={product.name} draggable={false} loading="lazy" decoding="async" className="w-full h-full object-cover select-none" />
+          ? <img src={optimizeImage(product.card_image || product.cover_image, 400) || product.card_image || product.cover_image || ''} alt={product.name} draggable={false} loading="lazy" decoding="async" className="w-full h-full object-cover select-none" style={product.torna_presto ? { filter: 'grayscale(1)' } : undefined} />
           : <div className="w-full h-full flex items-center justify-center"><ImageIcon className="w-10 h-10" style={{ color: 'rgba(8,145,178,0.3)' }} /></div>}
+        {product.torna_presto && <TornaPrestoStamp />}
       </div>
       <div className="p-3">
         <h3 className="font-bold text-sm text-slate-800 line-clamp-2 mb-2 leading-tight">{product.name}</h3>
@@ -61,10 +64,11 @@ function FlyerCard({ product, salePrice, index }: { product: Product; salePrice:
           </div>
         </div>
         <button onClick={handleAdd}
-          className="w-full flex items-center justify-center gap-1.5 text-white text-xs font-bold py-2.5 rounded-xl transition-all active:scale-95"
-          style={{ background: added ? 'linear-gradient(135deg,#16a34a,#22c55e)' : '#0c2b36' }}>
+          disabled={product.torna_presto}
+          className="w-full flex items-center justify-center gap-1.5 text-white text-xs font-bold py-2.5 rounded-xl transition-all active:scale-95 disabled:cursor-not-allowed"
+          style={{ background: product.torna_presto ? '#94a3b8' : added ? 'linear-gradient(135deg,#16a34a,#22c55e)' : '#0c2b36' }}>
           <ShoppingCart className="w-3.5 h-3.5" />
-          {added ? 'Aggiunto!' : 'Aggiungi'}
+          {product.torna_presto ? 'Non disponibile' : added ? 'Aggiunto!' : 'Aggiungi'}
         </button>
       </div>
     </div>

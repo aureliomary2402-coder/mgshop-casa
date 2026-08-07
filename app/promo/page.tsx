@@ -9,6 +9,7 @@ import type { Product } from '@/lib/types'
 import { Reveal } from '@/components/shop/reveal'
 import { AmbientBubbles } from '@/components/shop/ambient-bubbles'
 import { buildCustomPromoProduct, isCustomPromoProductId } from '@/lib/promo-custom-product'
+import { TornaPrestoStamp } from '@/components/shop/torna-presto-stamp'
 
 interface PromoItem {
   id: string
@@ -57,6 +58,7 @@ function PromoProductCard({ product, salePrice, onOpenDetail }: { product: Produ
 
   const handleAdd = (e: React.MouseEvent) => {
     e.stopPropagation()
+    if (product.torna_presto) return
     addItem({ ...product, price: salePrice })
     setAdded(true)
     setTimeout(() => setAdded(false), 1500)
@@ -69,9 +71,10 @@ function PromoProductCard({ product, salePrice, onOpenDetail }: { product: Produ
       style={{ border: '1px solid rgba(8,145,178,0.1)', boxShadow: '0 4px 20px rgba(8,145,178,0.08)' }}>
       <div className="aspect-square overflow-hidden relative" style={{ background: 'linear-gradient(135deg,#f0fbfd,#cffafe)' }}>
         {(product.card_image || product.cover_image)
-          ? <img src={product.card_image || product.cover_image || ''} alt={product.name} draggable={false} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300 select-none" />
+          ? <img src={product.card_image || product.cover_image || ''} alt={product.name} draggable={false} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300 select-none" style={product.torna_presto ? { filter: 'grayscale(1)' } : undefined} />
           : <div className="w-full h-full flex items-center justify-center"><ImageIcon className="w-10 h-10" style={{color:'rgba(8,145,178,0.3)'}}/></div>}
-        {hasDiscount && (
+        {product.torna_presto && <TornaPrestoStamp />}
+        {hasDiscount && !product.torna_presto && (
           <div className="absolute top-2 left-2 text-white text-xs font-bold px-2 py-1 rounded-lg" style={{ background: '#dc2626' }}>
             -{percentOff}%
           </div>
@@ -91,10 +94,13 @@ function PromoProductCard({ product, salePrice, onOpenDetail }: { product: Produ
             )}
           </div>
           <button onClick={handleAdd}
-            className="flex items-center gap-1.5 text-white text-xs font-semibold px-4 py-2 rounded-full transition-all active:scale-95"
-            style={{ background: added ? 'linear-gradient(135deg,#16a34a,#22c55e)' : 'linear-gradient(135deg,#0891b2,#06b6d4)', boxShadow: '0 4px 12px rgba(8,145,178,0.3)' }}>
+            disabled={product.torna_presto}
+            className="flex items-center gap-1.5 text-white text-xs font-semibold px-4 py-2 rounded-full transition-all active:scale-95 disabled:cursor-not-allowed"
+            style={product.torna_presto
+              ? { background: '#94a3b8', boxShadow: 'none' }
+              : { background: added ? 'linear-gradient(135deg,#16a34a,#22c55e)' : 'linear-gradient(135deg,#0891b2,#06b6d4)', boxShadow: '0 4px 12px rgba(8,145,178,0.3)' }}>
             <ShoppingCart className="w-3.5 h-3.5" />
-            {added ? 'Aggiunto!' : 'Aggiungi'}
+            {product.torna_presto ? 'Non disponibile' : added ? 'Aggiunto!' : 'Aggiungi'}
           </button>
         </div>
       </div>

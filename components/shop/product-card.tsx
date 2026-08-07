@@ -7,6 +7,7 @@ import { useCartStore } from '@/lib/cart-store'
 import { useProductDetailStore } from '@/lib/product-detail-store'
 import { useState, useRef } from 'react'
 import { optimizeImage } from '@/lib/image'
+import { TornaPrestoStamp } from './torna-presto-stamp'
 
 export function ProductCard({ product, index = 0 }: { product: Product; index?: number }) {
   const addItem = useCartStore((state) => state.addItem)
@@ -27,6 +28,7 @@ export function ProductCard({ product, index = 0 }: { product: Product; index?: 
   const handleAddToCart = (e: React.MouseEvent) => {
     e.preventDefault()
     e.stopPropagation()
+    if (product.torna_presto) return
     addItem(product)
     toast.success(`${product.name} aggiunto!`, {
       duration: 2000,
@@ -68,7 +70,7 @@ export function ProductCard({ product, index = 0 }: { product: Product; index?: 
             loading={index < 8 ? 'eager' : 'lazy'}
             decoding="async"
             className="w-full h-full object-cover transition-transform duration-500 ease-out select-none"
-            style={{ transform: isHovered ? 'scale(1.08)' : 'scale(1)' }}
+            style={{ transform: isHovered ? 'scale(1.08)' : 'scale(1)', filter: product.torna_presto ? 'grayscale(1)' : undefined }}
             onError={() => setImgError(true)}
           />
         ) : (
@@ -76,6 +78,7 @@ export function ProductCard({ product, index = 0 }: { product: Product; index?: 
             <ImageIcon className="w-10 h-10" style={{ color: 'rgba(8,145,178,0.3)' }} />
           </div>
         )}
+        {product.torna_presto && <TornaPrestoStamp />}
         <div className="absolute inset-0 flex items-center justify-center transition-all duration-300"
           style={{ background: isHovered ? 'rgba(12,43,54,0.15)' : 'rgba(12,43,54,0)' }}>
           <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold transition-all duration-300"
@@ -99,10 +102,13 @@ export function ProductCard({ product, index = 0 }: { product: Product; index?: 
           <span className="font-bold text-base" style={{ color: '#0891b2' }}>€{product.price.toFixed(2)}</span>
           <button
             onClick={handleAddToCart}
-            className="flex items-center gap-1 text-white text-xs font-semibold px-3 py-1.5 rounded-full btn-press transition-all"
-            style={{ background: 'linear-gradient(135deg, #0891b2, #06b6d4)', boxShadow: '0 2px 8px rgba(8,145,178,0.3)' }}>
+            disabled={product.torna_presto}
+            className="flex items-center gap-1 text-white text-xs font-semibold px-3 py-1.5 rounded-full btn-press transition-all disabled:cursor-not-allowed"
+            style={product.torna_presto
+              ? { background: '#94a3b8', boxShadow: 'none' }
+              : { background: 'linear-gradient(135deg, #0891b2, #06b6d4)', boxShadow: '0 2px 8px rgba(8,145,178,0.3)' }}>
             <ShoppingCart className="w-3.5 h-3.5" />
-            <span className="hidden sm:inline">Aggiungi</span>
+            <span className="hidden sm:inline">{product.torna_presto ? 'Non disponibile' : 'Aggiungi'}</span>
           </button>
         </div>
       </div>

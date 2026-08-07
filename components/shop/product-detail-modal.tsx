@@ -55,7 +55,7 @@ export function ProductDetailModal() {
   ] : []
 
   const handleAddToCart = () => {
-    if (!product) return
+    if (!product || product.torna_presto) return
     addItem(product)
     setAddedAnim(true)
     setTimeout(() => setAddedAnim(false), 600)
@@ -93,7 +93,7 @@ export function ProductDetailModal() {
           <div className="px-5 sm:px-8 pb-8 -mt-8">
             <div className="grid md:grid-cols-2 gap-8">
               <div>
-                <ProductGallery images={allImages} productName={product.name} />
+                <ProductGallery images={allImages} productName={product.name} tornaPresto={product.torna_presto} />
               </div>
 
               <div className="space-y-5 animate-slide-in-right">
@@ -111,15 +111,18 @@ export function ProductDetailModal() {
                 )}
                 <div className="flex gap-3 pt-2">
                   <button onClick={handleAddToCart}
-                    className="flex-1 flex items-center justify-center gap-2.5 font-bold py-4 rounded-2xl text-white btn-press"
-                    style={{
-                      background: 'linear-gradient(135deg, #0891b2, #06b6d4)',
-                      boxShadow: addedAnim ? '0 0 0 6px rgba(8,145,178,0.2)' : '0 8px 24px rgba(8,145,178,0.35)',
-                      transform: addedAnim ? 'scale(0.97)' : undefined,
-                      transition: 'all 0.2s ease'
-                    }}>
+                    disabled={product.torna_presto}
+                    className="flex-1 flex items-center justify-center gap-2.5 font-bold py-4 rounded-2xl text-white btn-press disabled:cursor-not-allowed"
+                    style={product.torna_presto
+                      ? { background: '#94a3b8', boxShadow: 'none' }
+                      : {
+                        background: 'linear-gradient(135deg, #0891b2, #06b6d4)',
+                        boxShadow: addedAnim ? '0 0 0 6px rgba(8,145,178,0.2)' : '0 8px 24px rgba(8,145,178,0.35)',
+                        transform: addedAnim ? 'scale(0.97)' : undefined,
+                        transition: 'all 0.2s ease'
+                      }}>
                     <ShoppingCart className="w-5 h-5" />
-                    {addedAnim ? 'Aggiunto!' : 'Aggiungi al carrello'}
+                    {product.torna_presto ? 'Torna presto' : addedAnim ? 'Aggiunto!' : 'Aggiungi al carrello'}
                   </button>
                   <button onClick={() => setLiked(l => !l)}
                     className="w-14 h-14 rounded-2xl flex items-center justify-center transition-all hover:scale-110 btn-press"

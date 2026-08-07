@@ -15,6 +15,7 @@ export interface Product {
   card_image?: string | null
   is_active: boolean
   stock: number | null
+  torna_presto?: boolean
   created_at: string
   updated_at: string
   category?: Category

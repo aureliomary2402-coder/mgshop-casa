@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect } from 'react'
-import { Plus, Pencil, Trash2, Images, ToggleLeft, ToggleRight, ImageIcon, Search, X, Package, AlertTriangle } from 'lucide-react'
+import { Plus, Pencil, Trash2, Images, ToggleLeft, ToggleRight, ImageIcon, Search, X, Package, AlertTriangle, Clock } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { ProductImagesManager } from './product-images-manager'
@@ -32,7 +32,7 @@ export function ProductsManager() {
   const [editing, setEditing] = useState<Product | null>(null)
   const [creating, setCreating] = useState(false)
   const [managingImagesFor, setManagingImagesFor] = useState<string | null>(null)
-  const [form, setForm] = useState({ name: '', description: '', price: '', category_id: '', cover_image: '', card_image: '', is_active: true, stock: '' })
+  const [form, setForm] = useState({ name: '', description: '', price: '', category_id: '', cover_image: '', card_image: '', is_active: true, stock: '', torna_presto: false })
   const [saving, setSaving] = useState(false)
   const [uploadingCover, setUploadingCover] = useState(false)
   const [coverCropFile, setCoverCropFile] = useState<File | null>(null)
@@ -68,7 +68,7 @@ export function ProductsManager() {
   const lowStock = products.filter(p => p.stock !== null && p.stock !== undefined && p.stock > 0 && p.stock <= 5).length
 
   const openCreate = () => {
-    setForm({ name: '', description: '', price: '', category_id: '', cover_image: '', card_image: '', is_active: true, stock: '' })
+    setForm({ name: '', description: '', price: '', category_id: '', cover_image: '', card_image: '', is_active: true, stock: '', torna_presto: false })
     setCreating(true); setEditing(null)
   }
 
@@ -76,7 +76,8 @@ export function ProductsManager() {
     setForm({
       name: p.name, description: p.description || '', price: String(p.price),
       category_id: p.category_id || '', cover_image: p.cover_image || '', card_image: p.card_image || '',
-      is_active: p.is_active, stock: p.stock !== null && p.stock !== undefined ? String(p.stock) : ''
+      is_active: p.is_active, stock: p.stock !== null && p.stock !== undefined ? String(p.stock) : '',
+      torna_presto: p.torna_presto ?? false
     })
     setEditing(p); setCreating(false)
   }
@@ -240,6 +241,17 @@ export function ProductsManager() {
             {form.is_active ? <ToggleRight className="w-8 h-8 text-cyan-600" /> : <ToggleLeft className="w-8 h-8 text-slate-400" />}
           </button>
         </div>
+        <div className={`flex items-center gap-3 p-3 rounded-xl border ${form.torna_presto ? 'bg-red-50 border-red-200' : 'border-slate-100'}`}>
+          <button onClick={() => setForm(f => ({ ...f, torna_presto: !f.torna_presto }))} className="shrink-0">
+            {form.torna_presto ? <ToggleRight className="w-8 h-8 text-red-500" /> : <ToggleLeft className="w-8 h-8 text-slate-400" />}
+          </button>
+          <div>
+            <label className="text-xs font-semibold text-slate-700 flex items-center gap-1">
+              <Clock className="w-3.5 h-3.5" /> Torna presto
+            </label>
+            <p className="text-[11px] text-slate-400">Prodotto momentaneamente assente: non acquistabile, immagine in bianco e nero con timbro</p>
+          </div>
+        </div>
       </div>
       <Button onClick={handleSave} disabled={saving || !form.name} className="w-full bg-cyan-600 hover:bg-cyan-700">
         {saving ? 'Salvataggio...' : 'Salva prodotto'}
@@ -305,10 +317,10 @@ export function ProductsManager() {
 
       <div className="space-y-2">
         {filteredProducts.map(p => (
-          <div key={p.id} className={`flex items-center gap-3 bg-white border rounded-xl p-3 shadow-sm ${p.stock === 0 ? 'border-red-200 bg-red-50/30' : p.stock !== null && p.stock !== undefined && p.stock <= 5 ? 'border-sky-200 bg-sky-50/30' : 'border-slate-100'}`}>
+          <div key={p.id} className={`flex items-center gap-3 bg-white border rounded-xl p-3 shadow-sm ${p.torna_presto ? 'border-red-300 bg-red-50/40' : p.stock === 0 ? 'border-red-200 bg-red-50/30' : p.stock !== null && p.stock !== undefined && p.stock <= 5 ? 'border-sky-200 bg-sky-50/30' : 'border-slate-100'}`}>
             <div className="w-12 h-12 rounded-lg bg-slate-50 overflow-hidden shrink-0">
               {p.cover_image
-                ? <img src={p.cover_image} alt={p.name} className="w-full h-full object-cover" />
+                ? <img src={p.cover_image} alt={p.name} className="w-full h-full object-cover" style={p.torna_presto ? { filter: 'grayscale(1)' } : undefined} />
                 : <div className="w-full h-full flex items-center justify-center"><ImageIcon className="w-5 h-5 text-slate-300" /></div>}
             </div>
             <div className="flex-1 min-w-0">
@@ -316,7 +328,9 @@ export function ProductsManager() {
               <div className="flex items-center gap-2 mt-0.5">
                 <p className="text-xs text-cyan-700 font-semibold">€{p.price.toFixed(2)}</p>
                 <span className="text-slate-300">·</span>
-                <StockBadge stock={p.stock ?? null} />
+                {p.torna_presto
+                  ? <span className="text-xs font-semibold text-red-500 flex items-center gap-0.5"><Clock className="w-3 h-3" /> Torna presto</span>
+                  : <StockBadge stock={p.stock ?? null} />}
               </div>
               {p.category && <p className="text-xs text-slate-400">{p.category.name}</p>}
             </div>

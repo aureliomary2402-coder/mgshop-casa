@@ -2,13 +2,14 @@
 
 import { useState, useRef } from 'react'
 import { ImageIcon, ChevronLeft, ChevronRight, X } from 'lucide-react'
+import { TornaPrestoStamp } from './torna-presto-stamp'
 
 interface GalleryImage {
   id: string
   image_url: string
 }
 
-export function ProductGallery({ images, productName }: { images: GalleryImage[]; productName: string }) {
+export function ProductGallery({ images, productName, tornaPresto = false }: { images: GalleryImage[]; productName: string; tornaPresto?: boolean }) {
   const [currentImg, setCurrentImg] = useState(0)
   const [tilt, setTilt] = useState({ x: 0, y: 0 })
   const [lightboxOpen, setLightboxOpen] = useState(false)
@@ -124,7 +125,8 @@ export function ProductGallery({ images, productName }: { images: GalleryImage[]
           onTouchMove={handleMainTouchMove}
           onTouchEnd={handleMainTouchEnd}
         >
-          <img src={images[currentImg].image_url} alt={productName} className="w-full h-full object-cover transition-transform duration-500 hover:scale-105" draggable={false} />
+          <img src={images[currentImg].image_url} alt={productName} className="w-full h-full object-cover transition-transform duration-500 hover:scale-105" draggable={false} style={tornaPresto ? { filter: 'grayscale(1)' } : undefined} />
+          {tornaPresto && <TornaPrestoStamp size="55%" />}
           {images.length > 1 && (
             <>
               <button onClick={(e) => { e.stopPropagation(); goPrev() }}
@@ -152,7 +154,7 @@ export function ProductGallery({ images, productName }: { images: GalleryImage[]
               <button key={img.id} onClick={() => setCurrentImg(i)}
                 className="w-16 h-16 rounded-xl overflow-hidden shrink-0 transition-all hover:scale-105 btn-press"
                 style={{ border: i === currentImg ? '2px solid #0891b2' : '2px solid transparent' }}>
-                <img src={img.image_url} alt="" className="w-full h-full object-cover" />
+                <img src={img.image_url} alt="" className="w-full h-full object-cover" style={tornaPresto ? { filter: 'grayscale(1)' } : undefined} />
               </button>
             ))}
           </div>
@@ -179,6 +181,7 @@ export function ProductGallery({ images, productName }: { images: GalleryImage[]
               transform: `scale(${zoomScale}) translate(${pan.x / zoomScale}px, ${pan.y / zoomScale}px)`,
               transformOrigin: `${zoomOrigin.x}% ${zoomOrigin.y}%`,
               transition: touchState.current.moved ? 'none' : 'transform 0.25s ease',
+              filter: tornaPresto ? 'grayscale(1)' : undefined,
             }}
             onDoubleClick={() => setZoomScale(z => z > 1 ? 1 : 2.5)}
           />
