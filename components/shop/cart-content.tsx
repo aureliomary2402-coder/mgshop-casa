@@ -106,6 +106,11 @@ export function CartContent({ scope = 'shop' }: { scope?: string }) {
 
   const removeCoupon = () => { setCouponData(null); setCouponCode(''); setCouponError('') }
 
+  const handlePhoneChange = (value: string) => {
+    setPhone(value)
+    try { sessionStorage.setItem('mgshop-checkout-phone', value) } catch {}
+  }
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault(); setError('')
     if (!phone.trim()) { setError('Inserisci il tuo numero di telefono'); return }
@@ -128,6 +133,11 @@ export function CartContent({ scope = 'shop' }: { scope?: string }) {
       if (data.ticket_numbers?.length) setTicketNumbers(data.ticket_numbers)
       setChosenNumbers([])
       setWantsDelivery(false); setAddress('')
+      try {
+        const sessionId = sessionStorage.getItem('mgshop-session-id')
+        sessionStorage.removeItem('mgshop-checkout-phone')
+        if (sessionId) fetch('/api/analytics/cart-abandon', { method: 'DELETE', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ sessionId }) }).catch(() => {})
+      } catch {}
       clearCart(); setSubmitted(true)
     } catch { setError('Si è verificato un errore. Riprova.') }
     finally { setSubmitting(false) }
@@ -367,7 +377,7 @@ export function CartContent({ scope = 'shop' }: { scope?: string }) {
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-3">
-            <input type="tel" placeholder="Numero di telefono" value={phone} onChange={e=>setPhone(e.target.value)}
+            <input type="tel" placeholder="Numero di telefono" value={phone} onChange={e=>handlePhoneChange(e.target.value)}
               className="w-full h-11 px-4 rounded-xl text-base outline-none" style={{background:'rgba(8,145,178,0.05)',border:'1px solid rgba(8,145,178,0.15)',color:'#0c2b36'}}/>
             {error&&<p className="text-red-500 text-xs">{error}</p>}
             <button type="submit" disabled={submitting} className="w-full py-3.5 rounded-xl font-bold text-white transition-all hover:scale-[1.02] btn-press disabled:opacity-60" style={{background:'linear-gradient(135deg,#0891b2,#06b6d4)',boxShadow:'0 8px 20px rgba(8,145,178,0.3)'}}>

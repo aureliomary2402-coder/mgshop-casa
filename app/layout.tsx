@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
 import { Toaster } from 'sonner'
 import { AnalyticsTracker } from '@/components/analytics-tracker'
+import { CartAbandonTracker } from '@/components/cart-abandon-tracker'
 import { FloatingMenu } from '@/components/shop/floating-menu'
 import { ProductDetailModal } from '@/components/shop/product-detail-modal'
 import { Suspense } from 'react'
@@ -19,6 +20,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="it">
       <body className={inter.className}>
         <Suspense><AnalyticsTracker /></Suspense>
+        <CartAbandonTracker />
         {children}
         <FloatingMenu />
         <ProductDetailModal />

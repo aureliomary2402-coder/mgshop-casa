@@ -13,10 +13,11 @@ export async function GET() {
   const supabase = createAdminClient()
   const now = new Date()
   const last30 = new Date(now.getFullYear(), now.getMonth(), now.getDate() - 30).toISOString()
+  const last1 = new Date(now.getTime() - 24 * 60 * 60 * 1000).toISOString()
 
   const [{ data: items }, { data: searches }] = await Promise.all([
     supabase.from('order_items').select('product_id, product_name, product_price, quantity'),
-    supabase.from('search_logs').select('term').gte('created_at', last30),
+    supabase.from('search_logs').select('term, created_at').gte('created_at', last30),
   ])
 
   // Prodotti più venduti: raggruppa per product_id (o nome se manca l'id)
@@ -33,15 +34,18 @@ export async function GET() {
     .sort((a, b) => b.quantity - a.quantity)
     .slice(0, 10)
 
-  // Termini più cercati (ultimi 30 giorni)
-  const termMap: Record<string, number> = {}
-  for (const s of searches || []) {
-    termMap[s.term] = (termMap[s.term] || 0) + 1
+  // Termini più cercati: un conteggio sugli ultimi 30 giorni e uno solo sulle ultime 24 ore
+  const buildTopTerms = (rows: { term: string }[]) => {
+    const termMap: Record<string, number> = {}
+    for (const s of rows) termMap[s.term] = (termMap[s.term] || 0) + 1
+    return Object.entries(termMap)
+      .sort((a, b) => b[1] - a[1])
+      .slice(0, 10)
+      .map(([term, count]) => ({ term, count }))
   }
-  const topSearched = Object.entries(termMap)
-    .sort((a, b) => b[1] - a[1])
-    .slice(0, 10)
-    .map(([term, count]) => ({ term, count }))
+  const allSearches = searches || []
+  const topSearched30 = buildTopTerms(allSearches)
+  const topSearchedToday = buildTopTerms(allSearches.filter(s => s.created_at >= last1))
 
-  return NextResponse.json({ topSelling, topSearched })
+  return NextResponse.json({ topSelling, topSearched30, topSearchedToday })
 }

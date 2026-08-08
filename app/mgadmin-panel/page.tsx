@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect } from 'react'
-import { Package, Tag, Image, ShoppingBag, LogOut, Lock, LayoutDashboard, Megaphone, Ticket, Menu, X, ExternalLink, Users, Gift, MessageCircle, Newspaper, PartyPopper, Hash, TrendingUp, Eye } from 'lucide-react'
+import { Package, Tag, Image, ShoppingBag, LogOut, Lock, LayoutDashboard, Megaphone, Ticket, Menu, X, ExternalLink, Users, Gift, MessageCircle, Newspaper, PartyPopper, Hash, TrendingUp, Eye, AlertTriangle } from 'lucide-react'
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -21,8 +21,9 @@ import { LotteryManager } from '@/components/admin/lottery-manager'
 import { LotteryPurchasesManager } from '@/components/admin/lottery-purchases-manager'
 import { ProductStatsManager } from '@/components/admin/product-stats-manager'
 import { VisitLogManager } from '@/components/admin/visit-log-manager'
+import { AbandonedCartsManager } from '@/components/admin/abandoned-carts-manager'
 
-type Tab = 'dashboard' | 'products' | 'categories' | 'banners' | 'orders' | 'promo' | 'volantino' | 'coupons' | 'clienti' | 'fedelta' | 'chat' | 'lottery' | 'biglietti' | 'statistiche' | 'visite'
+type Tab = 'dashboard' | 'products' | 'categories' | 'banners' | 'orders' | 'promo' | 'volantino' | 'coupons' | 'clienti' | 'fedelta' | 'chat' | 'lottery' | 'biglietti' | 'statistiche' | 'visite' | 'carrelli'
 type Group = 'generale' | 'ordini' | 'catalogo'
 
 const GROUP_LABELS: Record<Group, string> = {
@@ -35,6 +36,7 @@ const TABS: { id: Tab; label: string; icon: typeof Package; color: string; group
   { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard, color: 'text-blue-600 bg-blue-50', group: 'generale' },
   { id: 'visite', label: 'Visite', icon: Eye, color: 'text-cyan-600 bg-cyan-50', group: 'generale' },
   { id: 'orders', label: 'Ordini', icon: ShoppingBag, color: 'text-sky-600 bg-sky-50', group: 'ordini' },
+  { id: 'carrelli', label: 'Carrelli abbandonati', icon: AlertTriangle, color: 'text-orange-600 bg-orange-50', group: 'ordini' },
   { id: 'biglietti', label: 'Biglietti', icon: Hash, color: 'text-amber-600 bg-amber-50', group: 'ordini' },
   { id: 'clienti', label: 'Clienti', icon: Users, color: 'text-pink-600 bg-pink-50', group: 'ordini' },
   { id: 'fedelta', label: 'Fedeltà', icon: Gift, color: 'text-teal-600 bg-teal-50', group: 'ordini' },
@@ -191,6 +193,7 @@ export default function AdminPage() {
         {activeTab === 'categories' && <CategoriesManager />}
         {activeTab === 'banners' && <BannersManager />}
         {activeTab === 'orders' && <OrdersManager />}
+        {activeTab === 'carrelli' && <AbandonedCartsManager />}
         {activeTab === 'biglietti' && <LotteryPurchasesManager />}
         {activeTab === 'promo' && <PromoManager />}
         {activeTab === 'volantino' && <VolantinoManager />}
