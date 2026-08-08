@@ -47,6 +47,8 @@ export interface Order {
   total: number
   customer_name?: string
   created_at: string
+  delivery_method?: 'ritiro' | 'consegna'
+  delivery_address?: string | null
 }
 
 export interface OrderItem {

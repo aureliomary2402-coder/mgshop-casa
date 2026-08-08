@@ -6,9 +6,16 @@ import { isCustomPromoProductId } from '@/lib/promo-custom-product'
 
 export async function POST(request: NextRequest) {
   try {
-    const { phone_number, items, total, coupon_code, ticket_number_choices } = await request.json()
+    const { phone_number, items, total, coupon_code, ticket_number_choices, delivery_method, delivery_address } = await request.json()
     if (!phone_number || !items || items.length === 0)
       return NextResponse.json({ error: 'Missing required fields' }, { status: 400 })
+
+    // Il metodo di consegna è "ritiro" (di default) o "consegna": in quel
+    // caso l'indirizzo è obbligatorio, altrimenti l'ordine non è gestibile.
+    const deliveryMethod = delivery_method === 'consegna' ? 'consegna' : 'ritiro'
+    const deliveryAddress = deliveryMethod === 'consegna' ? String(delivery_address || '').trim() : null
+    if (deliveryMethod === 'consegna' && !deliveryAddress)
+      return NextResponse.json({ error: 'Inserisci l\'indirizzo di consegna' }, { status: 400 })
 
     const supabase = createAdminClient()
 
@@ -74,7 +81,7 @@ export async function POST(request: NextRequest) {
 
     const { data: order, error: orderError } = await supabase
       .from('orders')
-      .insert({ phone_number, total, status: 'pending', is_ticket_only: realItems.length === 0 })
+      .insert({ phone_number, total, status: 'pending', is_ticket_only: realItems.length === 0, delivery_method: deliveryMethod, delivery_address: deliveryAddress })
       .select().single()
     if (orderError) return NextResponse.json({ error: orderError.message }, { status: 500 })
 

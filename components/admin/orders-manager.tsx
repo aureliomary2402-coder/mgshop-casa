@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect } from 'react'
-import { ChevronDown, ChevronUp, Package, Trash2, Pencil, Check, X, User, Plus, Minus, Search, ShoppingBag, Gift } from 'lucide-react'
+import { ChevronDown, ChevronUp, Package, Trash2, Pencil, Check, X, User, Plus, Minus, Search, ShoppingBag, Gift, Truck, Store, MapPin } from 'lucide-react'
 import type { Order, OrderItem, Product } from '@/lib/types'
 
 const STATUS_LABELS: Record<string, string> = {
@@ -137,11 +137,18 @@ export function OrdersManager() {
                       <Gift className="w-3 h-3"/> {order.ticket_count} bigliett{order.ticket_count > 1 ? 'i' : 'o'}
                     </span>
                   )}
+                  <span className={`text-xs px-2 py-0.5 rounded-full font-medium flex items-center gap-1 ${order.delivery_method === 'consegna' ? 'bg-orange-100 text-orange-700' : 'bg-slate-100 text-slate-600'}`}>
+                    {order.delivery_method === 'consegna' ? <Truck className="w-3 h-3"/> : <Store className="w-3 h-3"/>}
+                    {order.delivery_method === 'consegna' ? 'Consegna' : 'Ritiro'}
+                  </span>
                 </div>
                 <p className="text-xs text-slate-400 mt-0.5">
                   {new Date(order.created_at).toLocaleDateString('it-IT',{day:'2-digit',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'})}
                   {' · '}€{order.total.toFixed(2)}
                 </p>
+                {order.delivery_method === 'consegna' && order.delivery_address && (
+                  <p className="text-xs text-orange-600 mt-0.5 flex items-center gap-1"><MapPin className="w-3 h-3 shrink-0"/> {order.delivery_address}</p>
+                )}
               </div>
               <div className="flex items-center gap-1 shrink-0">
                 <button onClick={e => { e.stopPropagation(); setEditingName(order.id); setNameInput(order.customer_name||'') }}
