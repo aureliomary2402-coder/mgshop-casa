@@ -24,6 +24,7 @@ export function CartContent({ scope = 'shop' }: { scope?: string }) {
   const [promoProductIds, setPromoProductIds] = useState<string[]>([])
   const [lotteryActive, setLotteryActive] = useState(false)
   const [lotteryPrizeLabel, setLotteryPrizeLabel] = useState('')
+  const [ticketPrice, setTicketPrice] = useState(1)
   const [ticketQtyToAdd, setTicketQtyToAdd] = useState(1)
   const [ticketNumbers, setTicketNumbers] = useState<number[]>([])
   const [participantsCount, setParticipantsCount] = useState(0)
@@ -59,11 +60,26 @@ export function CartContent({ scope = 'shop' }: { scope?: string }) {
     const existing = items.find(i => i.product.id === LOTTERY_TICKET_PRODUCT_ID)
     if (existing) updateQuantity(LOTTERY_TICKET_PRODUCT_ID, existing.quantity + qty)
     else {
-      addItem(createLotteryTicketProduct(1))
+      addItem(createLotteryTicketProduct(ticketPrice))
       if (qty > 1) updateQuantity(LOTTERY_TICKET_PRODUCT_ID, qty)
     }
     setTicketQtyToAdd(1)
   }
+
+  // Se il biglietto era già nel carrello (salvato nel browser da prima) con
+  // un prezzo diverso da quello attuale impostato dall'admin, lo riallineiamo
+  // così il totale mostrato e quello inviato al checkout sono sempre corretti.
+  useEffect(() => {
+    if (!mounted) return
+    const existing = items.find(i => i.product.id === LOTTERY_TICKET_PRODUCT_ID)
+    if (existing && existing.product.price !== ticketPrice) {
+      const qtyInCart = existing.quantity
+      removeItem(LOTTERY_TICKET_PRODUCT_ID)
+      addItem(createLotteryTicketProduct(ticketPrice))
+      if (qtyInCart > 1) updateQuantity(LOTTERY_TICKET_PRODUCT_ID, qtyInCart)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [mounted, ticketPrice])
 
   useEffect(() => {
     setMounted(true)
@@ -79,6 +95,7 @@ export function CartContent({ scope = 'shop' }: { scope?: string }) {
         setLotteryPrizeLabel(d?.prize_label || '')
         setParticipantsCount(d?.participants_count || 0)
         setTakenNumbers(d?.taken_numbers || [])
+        setTicketPrice(d?.ticket_price ?? 1)
       })
       .catch(() => {})
   }, [])
@@ -127,6 +144,12 @@ export function CartContent({ scope = 'shop' }: { scope?: string }) {
           setChosenNumbers(prev => prev.filter(n => !data.unavailable_numbers.includes(n)))
           setTakenNumbers(prev => Array.from(new Set([...prev, ...data.unavailable_numbers])))
           setShowNumberPicker(true)
+        }
+        // Il prezzo del biglietto era cambiato rispetto a quello nel
+        // carrello: lo riallineiamo subito, così basta premere di nuovo
+        // "Invia ordine" e stavolta passa al prezzo giusto.
+        if (data?.ticket_price_changed && typeof data.ticket_price === 'number') {
+          setTicketPrice(data.ticket_price)
         }
         setError(data?.error || 'Si è verificato un errore. Riprova.'); setSubmitting(false); return
       }
@@ -279,7 +302,7 @@ export function CartContent({ scope = 'shop' }: { scope?: string }) {
           {lotteryActive && (
             <div className="p-3 rounded-xl" style={{ background: ticketQtyInCart > 0 ? 'rgba(8,145,178,0.08)' : 'rgba(8,145,178,0.03)', border: '1px solid rgba(8,145,178,0.15)' }}>
               <span className="text-sm font-bold flex items-center gap-1.5" style={{ color: '#0c2b36' }}><Gift className="w-4 h-4 text-cyan-600" /> Partecipa alla lotteria</span>
-              <span className="text-xs text-slate-400 block mt-0.5 mb-2.5">{lotteryPrizeLabel ? `In palio: ${lotteryPrizeLabel}` : 'Ricevi un numero per l\'estrazione'} — €1 a biglietto, puoi prenderne più di uno.</span>
+              <span className="text-xs text-slate-400 block mt-0.5 mb-2.5">{lotteryPrizeLabel ? `In palio: ${lotteryPrizeLabel}` : 'Ricevi un numero per l\'estrazione'} — €{ticketPrice.toFixed(2)} a biglietto, puoi prenderne più di uno.</span>
 
               {ticketQtyInCart > 0 ? (
                 <div className="space-y-2.5">
@@ -333,7 +356,7 @@ export function CartContent({ scope = 'shop' }: { scope?: string }) {
                   <button type="button" onClick={() => addLotteryTickets(ticketQtyToAdd)}
                     className="text-xs font-bold text-white px-3 py-2 rounded-lg transition-transform hover:scale-105 active:scale-95"
                     style={{ background: 'linear-gradient(135deg,#0891b2,#06b6d4)' }}>
-                    Aggiungi (€{ticketQtyToAdd.toFixed(2)})
+                    Aggiungi (€{(ticketQtyToAdd * ticketPrice).toFixed(2)})
                   </button>
                 </div>
               )}

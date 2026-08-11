@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect } from 'react'
-import { ToggleLeft, ToggleRight, ImageIcon, Save, Eye, Clock, Gift, Search, Award, History, Sparkles, Phone, Trash2, Pencil, Check, X, Lock, Ghost } from 'lucide-react'
+import { ToggleLeft, ToggleRight, ImageIcon, Save, Eye, Clock, Gift, Search, Award, History, Sparkles, Phone, Trash2, Pencil, Check, X, Lock, Ghost, Euro } from 'lucide-react'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import Link from 'next/link'
@@ -32,6 +32,7 @@ export function LotteryManager() {
   const [prizeLabel, setPrizeLabel] = useState('')
   const [participantsCount, setParticipantsCount] = useState('10')
   const [winnerNumber, setWinnerNumber] = useState('1')
+  const [ticketPrice, setTicketPrice] = useState('1')
   const [endsAt, setEndsAt] = useState('')
   const [isActive, setIsActive] = useState(false)
 
@@ -68,6 +69,7 @@ export function LotteryManager() {
       setPrizeLabel(d.prize_label || '')
       setParticipantsCount(String(d.participants_count || 10))
       setWinnerNumber(String(d.winner_number || 1))
+      setTicketPrice(String(d.ticket_price ?? 1))
       setEndsAt(d.ends_at ? isoToLocalInputValue(d.ends_at) : '')
       setIsActive(d.is_active === true)
       setLoading(false)
@@ -101,6 +103,7 @@ export function LotteryManager() {
       if (!prizeLabel.trim()) { setError('Inserisci o seleziona un premio'); return }
     }
     const winnerNum = Math.min(participantsNum, Math.max(1, parseInt(winnerNumber) || 1))
+    const priceNum = Math.min(9999, Math.max(0.10, Math.round((parseFloat(ticketPrice) || 1) * 100) / 100))
     setSaving(true); setError('')
     const res = await fetch('/api/admin/lottery', {
       method: 'POST', headers: { 'Content-Type': 'application/json' },
@@ -108,10 +111,11 @@ export function LotteryManager() {
         title, description, image_url: imageUrl || null,
         prize_type: prizeType, prize_product_id: prizeProductId || null, prize_coupon_id: prizeCouponId || null,
         prize_label: prizeLabel, participants_count: participantsNum, winner_number: winnerNum,
+        ticket_price: priceNum,
         ends_at: endsAt ? new Date(endsAt).toISOString() : null, is_active: isActive,
       })
     })
-    if (res.ok) { setSaved(true); setTimeout(() => setSaved(false), 2000); setWinnerNumber(String(winnerNum)) }
+    if (res.ok) { setSaved(true); setTimeout(() => setSaved(false), 2000); setWinnerNumber(String(winnerNum)); setTicketPrice(String(priceNum)) }
     else {
       const data = await res.json().catch(() => null)
       setError(data?.error ? `Errore salvataggio: ${data.error}` : 'Errore salvataggio')
@@ -393,6 +397,18 @@ export function LotteryManager() {
             })}
           </div>
           {reserveError && <p className="text-red-500 text-xs mt-2">{reserveError}</p>}
+        </div>
+
+        {/* Prezzo del biglietto */}
+        <div className="p-3 rounded-xl" style={{ background: 'rgba(16,185,129,0.05)', border: '1px solid rgba(16,185,129,0.15)' }}>
+          <label className="text-xs font-medium text-emerald-700 mb-1 flex items-center gap-1"><Euro className="w-3.5 h-3.5" /> Prezzo del singolo biglietto</label>
+          <div className="relative mt-1">
+            <span className="absolute left-3 top-1/2 -translate-y-1/2 text-sm text-slate-400">€</span>
+            <Input type="number" min={0.10} max={9999} step="0.10" value={ticketPrice} onChange={e => setTicketPrice(e.target.value)} className="pl-6" />
+          </div>
+          <p className="text-xs text-slate-400 mt-1.5">
+            Vale sia per i biglietti aggiunti al carrello sia per l'acquisto diretto. Se aumenti il premio in palio, alza qui il prezzo: si aggiorna ovunque non appena salvi.
+          </p>
         </div>
 
         <div className="grid grid-cols-2 gap-3">

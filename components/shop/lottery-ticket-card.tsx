@@ -12,9 +12,8 @@ interface LotteryData {
   is_active: boolean
   title?: string
   prize_label?: string
+  ticket_price?: number
 }
-
-const TICKET_PRICE = 1
 
 export function LotteryTicketCard() {
   const [data, setData] = useState<LotteryData | null>(null)
@@ -24,17 +23,35 @@ export function LotteryTicketCard() {
   const items = useCartStore(s => s.items)
   const addItem = useCartStore(s => s.addItem)
   const updateQuantity = useCartStore(s => s.updateQuantity)
+  const removeItem = useCartStore(s => s.removeItem)
 
   useEffect(() => {
     fetch('/api/lottery', { cache: 'no-store' }).then(r => r.json()).then(d => setData(d)).catch(() => {})
   }, [])
 
+  const ticketPrice = data?.ticket_price ?? 1
+  const cartTicket = items.find(i => i.product.id === LOTTERY_TICKET_PRODUCT_ID)
+
+  // Se l'admin ha cambiato il prezzo dopo che il cliente aveva già messo
+  // biglietti nel carrello (magari in una visita precedente, dato che il
+  // carrello resta salvato nel browser), aggiorniamo il prezzo dell'articolo
+  // già presente invece di lasciarlo al vecchio importo.
+  useEffect(() => {
+    if (data && cartTicket && cartTicket.product.price !== ticketPrice) {
+      const qtyInCart = cartTicket.quantity
+      removeItem(LOTTERY_TICKET_PRODUCT_ID)
+      addItem(createLotteryTicketProduct(ticketPrice))
+      if (qtyInCart > 1) updateQuantity(LOTTERY_TICKET_PRODUCT_ID, qtyInCart)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [data, ticketPrice])
+
   if (!data || !data.is_active) return null
 
-  const inCart = items.find(i => i.product.id === LOTTERY_TICKET_PRODUCT_ID)?.quantity || 0
+  const inCart = cartTicket?.quantity || 0
 
   const handleAdd = () => {
-    const ticket = createLotteryTicketProduct(TICKET_PRICE)
+    const ticket = createLotteryTicketProduct(ticketPrice)
     const existing = items.find(i => i.product.id === LOTTERY_TICKET_PRODUCT_ID)
     if (existing) {
       updateQuantity(LOTTERY_TICKET_PRODUCT_ID, existing.quantity + qty)
@@ -69,7 +86,7 @@ export function LotteryTicketCard() {
           <p className="text-base font-bold text-slate-900 mb-1">{data.title || 'Partecipa e vinci'}</p>
           <p className="text-sm text-slate-600 leading-relaxed">
             {data.prize_label && <>In palio: <strong className="text-slate-900">{data.prize_label}</strong>. </>}
-            Non vuoi comprare nulla ma vuoi comunque tentare la fortuna? Aggiungi un biglietto al carrello, <strong className="text-slate-900">€{TICKET_PRICE} l'uno</strong> — puoi prenderne quanti vuoi.
+            Non vuoi comprare nulla ma vuoi comunque tentare la fortuna? Aggiungi un biglietto al carrello, <strong className="text-slate-900">€{ticketPrice.toFixed(2)} l'uno</strong> — puoi prenderne quanti vuoi.
           </p>
 
           <div className="mt-3 flex flex-wrap items-center gap-3">
@@ -82,7 +99,7 @@ export function LotteryTicketCard() {
             <button onClick={handleAdd}
               className="inline-flex items-center gap-2 text-sm font-bold text-white px-5 py-2.5 rounded-xl transition-transform hover:scale-105 active:scale-95"
               style={{ background: added ? 'linear-gradient(135deg,#16a34a,#22c55e)' : 'linear-gradient(135deg,#f59e0b,#ea580c)' }}>
-              {added ? <><Ticket className="w-4 h-4" /> Aggiunto!</> : <><ShoppingCart className="w-4 h-4" /> Aggiungi al carrello (€{(qty * TICKET_PRICE).toFixed(2)})</>}
+              {added ? <><Ticket className="w-4 h-4" /> Aggiunto!</> : <><ShoppingCart className="w-4 h-4" /> Aggiungi al carrello (€{(qty * ticketPrice).toFixed(2)})</>}
             </button>
 
             {inCart > 0 && (

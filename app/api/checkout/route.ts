@@ -33,6 +33,23 @@ export async function POST(request: NextRequest) {
       const { data: lotteryRow } = await supabase.from('lottery').select('*').limit(1).single()
       lottery = lotteryRow ? await autoArchiveIfExpired(supabase, lotteryRow) : null
 
+      // Il prezzo del biglietto arriva dal carrello del cliente, ma potrebbe
+      // essere rimasto in cache da prima che l'admin cambiasse il prezzo
+      // (il carrello resta salvato nel browser). Controlliamo che coincida
+      // con quello impostato ora nel pannello admin: se non coincide,
+      // blocchiamo l'ordine invece di venderlo al prezzo sbagliato.
+      if (lottery) {
+        const currentPrice = lottery.ticket_price != null ? Number(lottery.ticket_price) : 1
+        const sentPrice = Number(ticketItem?.product?.price)
+        if (Number.isFinite(sentPrice) && Math.abs(sentPrice - currentPrice) > 0.001) {
+          return NextResponse.json({
+            error: 'Il prezzo del biglietto lotteria è cambiato: aggiorna la pagina e riprova',
+            ticket_price_changed: true,
+            ticket_price: currentPrice,
+          }, { status: 409 })
+        }
+      }
+
       if (lottery?.is_active && lottery.round_id) {
         const taken = await getTakenLotteryNumbers(supabase, lottery.round_id)
 

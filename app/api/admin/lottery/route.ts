@@ -25,6 +25,7 @@ async function getOrCreateLotteryRow(supabase: ReturnType<typeof createAdminClie
     prize_label: '',
     participants_count: 10,
     winner_number: 1,
+    ticket_price: 1,
     status: 'draft',
   }).select().single()
 
@@ -49,6 +50,10 @@ export async function POST(request: NextRequest) {
 
   const participants = Math.min(500, Math.max(2, parseInt(body.participants_count) || 2))
   const winner = Math.min(participants, Math.max(1, parseInt(body.winner_number) || 1))
+  // Prezzo del singolo biglietto: cambia da un'estrazione all'altra a seconda
+  // del valore del premio in palio. Min 0.10€ per evitare biglietti gratis
+  // per errore, max 9999€ come tetto di sicurezza contro input assurdi.
+  const ticketPrice = Math.min(9999, Math.max(0.10, Math.round((parseFloat(body.ticket_price) || 1) * 100) / 100))
   // Nuovo turno: se la lotteria viene (ri)attivata partendo da spenta, i numeri
   // assegnati ai clienti al checkout devono ripartire da 1.
   const isNewRound = body.is_active === true && existing.is_active !== true
@@ -63,6 +68,7 @@ export async function POST(request: NextRequest) {
     prize_label: body.prize_label || '',
     participants_count: participants,
     winner_number: winner,
+    ticket_price: ticketPrice,
     ends_at: body.ends_at || null,
     is_active: body.is_active ?? false,
     status: body.is_active ? 'running' : 'draft',

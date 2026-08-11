@@ -36,6 +36,7 @@ export async function GET() {
     image_url: lottery.image_url,
     prize_label: lottery.prize_label,
     participants_count: lottery.participants_count,
+    ticket_price: lottery.ticket_price != null ? Number(lottery.ticket_price) : 1,
     ends_at: lottery.ends_at,
     revealed,
     winner_number: revealed ? lottery.winner_number : null,
