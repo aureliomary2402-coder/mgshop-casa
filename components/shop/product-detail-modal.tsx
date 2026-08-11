@@ -11,7 +11,6 @@ import { toast } from 'sonner'
 import type { Product, ProductImage } from '@/lib/types'
 import Link from 'next/link'
 import { ProductGallery } from '@/components/shop/product-gallery'
-import { RelatedProducts } from '@/components/shop/related-products'
 import { ProductCustomizeForm } from '@/components/shop/product-customize-form'
 
 // Stessa scheda prodotto di prima (galleria con zoom, descrizione, aggiungi
@@ -165,7 +164,6 @@ export function ProductDetailModal() {
                     </div>
                   ))}
                 </div>
-                <RelatedProducts categorySlug={product.category?.slug} excludeId={product.id} />
               </div>
             </div>
           </div>

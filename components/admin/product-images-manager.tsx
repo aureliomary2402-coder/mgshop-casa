@@ -6,6 +6,7 @@ import { Input } from '@/components/ui/input'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { ArrowLeft, Upload, Trash2, ImageIcon, Link, Video, PlayCircle } from 'lucide-react'
 import type { ProductImage } from '@/lib/types'
+import { createClient } from '@/lib/supabase/client'
 
 // Estensioni video riconosciute quando l'admin incolla un URL diretto
 // (l'upload da file invece rileva il tipo dal file stesso).
@@ -52,6 +53,27 @@ export function ProductImagesManager({ productId, onBack }: ProductImagesManager
     }
   }
 
+  // I video (file pesanti) non passano dal server Next.js/Vercel, che
+  // rifiuta corpi sopra ~4.5MB: vanno caricati direttamente su Supabase
+  // Storage dal browser, usando un URL di upload firmato generato dal server.
+  const uploadVideoDirect = async (file: File): Promise<string> => {
+    const signRes = await fetch('/api/admin/upload-url', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ fileName: file.name }),
+    })
+    const signData = await signRes.json()
+    if (!signRes.ok) throw new Error(signData.error || `Errore preparazione upload (${signRes.status})`)
+
+    const supabase = createClient()
+    const { error } = await supabase.storage
+      .from('images')
+      .uploadToSignedUrl(signData.path, signData.token, file, { contentType: file.type })
+    if (error) throw new Error(error.message)
+
+    return signData.publicUrl
+  }
+
   // Upload file (foto o video) → Supabase Storage
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files
@@ -61,20 +83,24 @@ export function ProductImagesManager({ productId, onBack }: ProductImagesManager
     const errors: string[] = []
 
     for (const file of Array.from(files)) {
-      const formData = new FormData()
-      formData.append('file', file)
-
+      const isVideo = file.type.startsWith('video/')
       try {
-        const uploadRes = await fetch('/api/upload', {
-          method: 'POST',
-          body: formData,
-        })
-        const uploadData = await uploadRes.json()
-
-        if (!uploadRes.ok || !uploadData.url) {
-          throw new Error(uploadData.error || `Errore caricamento (${uploadRes.status})`)
+        if (isVideo) {
+          const url = await uploadVideoDirect(file)
+          await saveImageUrl(url, 'video')
+        } else {
+          const formData = new FormData()
+          formData.append('file', file)
+          const uploadRes = await fetch('/api/upload', {
+            method: 'POST',
+            body: formData,
+          })
+          const uploadData = await uploadRes.json()
+          if (!uploadRes.ok || !uploadData.url) {
+            throw new Error(uploadData.error || `Errore caricamento (${uploadRes.status})`)
+          }
+          await saveImageUrl(uploadData.url, 'image')
         }
-        await saveImageUrl(uploadData.url, file.type.startsWith('video/') ? 'video' : 'image')
       } catch (error: any) {
         console.error('Upload failed:', error)
         errors.push(`${file.name}: ${error?.message || 'errore sconosciuto'}`)
@@ -150,7 +176,7 @@ export function ProductImagesManager({ productId, onBack }: ProductImagesManager
             <p className="text-sm text-muted-foreground">
               {uploading ? 'Caricamento in corso...' : 'Clicca o trascina foto o video qui'}
             </p>
-            <p className="text-xs text-muted-foreground mt-1">Puoi selezionare più file. Video consigliati: max ~30-60 secondi, formato mp4</p>
+            <p className="text-xs text-muted-foreground mt-1">Puoi selezionare più file. I video vengono caricati direttamente, anche se pesanti</p>
             <input
               type="file"
               accept="image/*,video/*"
