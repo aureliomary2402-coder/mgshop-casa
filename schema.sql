@@ -26,6 +26,7 @@ create table products (
   -- via WhatsApp dopo l'ordine in base alle scelte fatte.
   is_customizable boolean not null default false,
   customization_options jsonb not null default '[]'::jsonb,
+  customization_note text,
   created_at timestamptz default now(),
   updated_at timestamptz default now()
 );

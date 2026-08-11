@@ -6,11 +6,13 @@ import { ArrowLeft, ShoppingCart, Heart } from 'lucide-react'
 import { useCartStore } from '@/lib/cart-store'
 import { useWishlistStore } from '@/lib/wishlist-store'
 import { useRecentlyViewedStore } from '@/lib/recently-viewed-store'
+import { missingRequiredOptions, buildCustomizationSelections } from '@/lib/customization'
 import { toast } from 'sonner'
 import type { Product, ProductImage } from '@/lib/types'
 import Link from 'next/link'
 import { ProductGallery } from '@/components/shop/product-gallery'
 import { RelatedProducts } from '@/components/shop/related-products'
+import { ProductCustomizeForm } from '@/components/shop/product-customize-form'
 
 export default function ProductPage() {
   const { id } = useParams<{ id: string }>()
@@ -19,12 +21,14 @@ export default function ProductPage() {
   const [images, setImages] = useState<ProductImage[]>([])
   const [loading, setLoading] = useState(true)
   const [addedAnim, setAddedAnim] = useState(false)
+  const [customValues, setCustomValues] = useState<Record<string, string>>({})
   const addItem = useCartStore(s => s.addItem)
   const isWishlisted = useWishlistStore(s => product ? s.has(product.id) : false)
   const toggleWishlist = useWishlistStore(s => s.toggle)
   const addRecentlyViewed = useRecentlyViewedStore(s => s.add)
 
   useEffect(() => {
+    setCustomValues({})
     Promise.all([
       fetch('/api/admin/products').then(r => r.json()),
       fetch(`/api/admin/product-images?product_id=${id}`).then(r => r.json()),
@@ -77,9 +81,19 @@ export default function ProductPage() {
     ...images,
   ]
 
+  const options = product.customization_options || []
+
   const handleAddToCart = () => {
     if (product.torna_presto) return
-    addItem(product)
+    if (product.is_customizable) {
+      const missing = missingRequiredOptions(options, customValues)
+      if (missing.length > 0) {
+        toast.error(`Completa prima: ${missing.map(o => o.label).join(', ')}`)
+        return
+      }
+    }
+    const selections = product.is_customizable ? buildCustomizationSelections(options, customValues) : undefined
+    addItem(product, selections)
     setAddedAnim(true)
     setTimeout(() => setAddedAnim(false), 600)
     toast.success(`${product.name} aggiunto!`, {
@@ -113,6 +127,14 @@ export default function ProductPage() {
             <p className="text-4xl font-extrabold" style={{ color: '#0891b2' }}>€{product.price.toFixed(2)}</p>
             {product.description && (
               <p className="leading-relaxed text-slate-600 border-t border-cyan-100 pt-4">{product.description}</p>
+            )}
+            {product.is_customizable && (
+              <ProductCustomizeForm
+                options={options}
+                values={customValues}
+                onChange={(optId, value) => setCustomValues(v => ({ ...v, [optId]: value }))}
+                note={product.customization_note}
+              />
             )}
             <div className="flex gap-3 pt-2">
               <button onClick={handleAddToCart}

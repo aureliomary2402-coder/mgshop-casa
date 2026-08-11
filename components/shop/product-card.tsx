@@ -32,6 +32,13 @@ export function ProductCard({ product, index = 0 }: { product: Product; index?: 
     e.preventDefault()
     e.stopPropagation()
     if (product.torna_presto) return
+    // I prodotti personalizzabili richiedono delle scelte (colore, testo...)
+    // prima di poter finire nel carrello: il tasto rapido apre la scheda
+    // invece di aggiungere un prodotto "vuoto" senza personalizzazione.
+    if (product.is_customizable) {
+      openDetail(product.id)
+      return
+    }
     addItem(product)
     toast.success(`${product.name} aggiunto!`, {
       duration: 2000,
@@ -124,7 +131,7 @@ export function ProductCard({ product, index = 0 }: { product: Product; index?: 
               ? { background: '#94a3b8', boxShadow: 'none' }
               : { background: 'linear-gradient(135deg, #0891b2, #06b6d4)', boxShadow: '0 2px 8px rgba(8,145,178,0.3)' }}>
             <ShoppingCart className="w-3.5 h-3.5" />
-            <span className="hidden sm:inline">{product.torna_presto ? 'Non disponibile' : 'Aggiungi'}</span>
+            <span className="hidden sm:inline">{product.torna_presto ? 'Non disponibile' : product.is_customizable ? 'Personalizza' : 'Aggiungi'}</span>
           </button>
         </div>
       </div>

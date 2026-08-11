@@ -38,6 +38,10 @@ export interface Product {
   torna_presto?: boolean
   is_customizable?: boolean
   customization_options?: CustomizationOption[]
+  // Testo introduttivo mostrato al cliente sopra le opzioni di
+  // personalizzazione (es. "Scrivi il nome da ricamare e scegli il colore
+  // della base"). Facoltativo: se vuoto non compare nulla.
+  customization_note?: string | null
   created_at: string
   updated_at: string
   category?: Category

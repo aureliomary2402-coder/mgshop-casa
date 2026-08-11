@@ -6,16 +6,20 @@ interface Props {
   options: CustomizationOption[]
   values: Record<string, string>
   onChange: (optionId: string, value: string) => void
+  note?: string | null
 }
 
 // Form mostrato sui prodotti personalizzabili (dettaglio prodotto): il
 // cliente sceglie colore/dimensione/altro prima di poter aggiungere al
 // carrello. Usato sia nel modale sia nella pagina prodotto a tutto schermo.
-export function ProductCustomizeForm({ options, values, onChange }: Props) {
+export function ProductCustomizeForm({ options, values, onChange, note }: Props) {
   if (!options || options.length === 0) return null
 
   return (
     <div className="space-y-4 rounded-2xl p-4" style={{ background: 'rgba(217,70,239,0.05)', border: '1px solid rgba(217,70,239,0.15)' }}>
+      {note && note.trim() && (
+        <p className="text-sm leading-relaxed" style={{ color: '#701a75' }}>{note}</p>
+      )}
       {options.map(opt => (
         <div key={opt.id}>
           <label className="text-sm font-semibold block mb-2" style={{ color: '#0c2b36' }}>

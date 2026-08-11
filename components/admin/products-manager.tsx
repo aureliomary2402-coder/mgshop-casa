@@ -106,7 +106,7 @@ export function ProductsManager() {
   const [editing, setEditing] = useState<Product | null>(null)
   const [creating, setCreating] = useState(false)
   const [managingImagesFor, setManagingImagesFor] = useState<string | null>(null)
-  const [form, setForm] = useState({ name: '', description: '', price: '', category_id: '', cover_image: '', card_image: '', is_active: true, stock: '', torna_presto: false, is_customizable: false, customization_options: [] as CustomizationOption[] })
+  const [form, setForm] = useState({ name: '', description: '', price: '', category_id: '', cover_image: '', card_image: '', is_active: true, stock: '', torna_presto: false, is_customizable: false, customization_options: [] as CustomizationOption[], customization_note: '' })
   const [saving, setSaving] = useState(false)
   const [uploadingCover, setUploadingCover] = useState(false)
   const [coverCropFile, setCoverCropFile] = useState<File | null>(null)
@@ -142,7 +142,7 @@ export function ProductsManager() {
   const lowStock = products.filter(p => p.stock !== null && p.stock !== undefined && p.stock > 0 && p.stock <= 5).length
 
   const openCreate = () => {
-    setForm({ name: '', description: '', price: '', category_id: '', cover_image: '', card_image: '', is_active: true, stock: '', torna_presto: false, is_customizable: false, customization_options: [] })
+    setForm({ name: '', description: '', price: '', category_id: '', cover_image: '', card_image: '', is_active: true, stock: '', torna_presto: false, is_customizable: false, customization_options: [], customization_note: '' })
     setCreating(true); setEditing(null)
   }
 
@@ -154,6 +154,7 @@ export function ProductsManager() {
       torna_presto: p.torna_presto ?? false,
       is_customizable: p.is_customizable ?? false,
       customization_options: p.customization_options ?? [],
+      customization_note: p.customization_note || '',
     })
     setEditing(p); setCreating(false)
   }
@@ -333,12 +334,25 @@ export function ProductsManager() {
         </div>
 
         {form.is_customizable && (
-          <div className="rounded-xl border border-cyan-200 p-3 space-y-2 bg-white">
-            <label className="text-xs font-semibold text-slate-700">Opzioni di personalizzazione</label>
-            <CustomizationOptionsEditor
-              options={form.customization_options}
-              onChange={opts => setForm(f => ({ ...f, customization_options: opts }))}
-            />
+          <div className="rounded-xl border border-cyan-200 p-3 space-y-3 bg-white">
+            <div>
+              <label className="text-xs font-semibold text-slate-700 mb-1 block">Testo per il cliente</label>
+              <textarea
+                value={form.customization_note}
+                onChange={e => setForm(f => ({ ...f, customization_note: e.target.value }))}
+                placeholder="Es. Scrivi il nome da ricamare e scegli il colore della base. Ti confermiamo il prezzo finale via WhatsApp."
+                rows={2}
+                className="w-full rounded-xl p-3 text-sm outline-none resize-none border border-cyan-100 focus:border-cyan-400"
+              />
+              <p className="text-[11px] text-slate-400 mt-1">Facoltativo. Compare in cima al riquadro di personalizzazione, prima delle opzioni, quando il cliente apre la scheda del prodotto.</p>
+            </div>
+            <div>
+              <label className="text-xs font-semibold text-slate-700 mb-1 block">Opzioni di personalizzazione</label>
+              <CustomizationOptionsEditor
+                options={form.customization_options}
+                onChange={opts => setForm(f => ({ ...f, customization_options: opts }))}
+              />
+            </div>
           </div>
         )}
 
