@@ -24,7 +24,12 @@ export async function POST(request: NextRequest) {
   const supabase = createAdminClient()
   const { data, error } = await supabase
     .from('product_images')
-    .insert({ product_id: body.product_id, image_url: body.image_url, display_order: body.display_order ?? 0 })
+    .insert({
+      product_id: body.product_id,
+      image_url: body.image_url,
+      display_order: body.display_order ?? 0,
+      media_type: body.media_type === 'video' ? 'video' : 'image',
+    })
     .select().single()
   if (error) return NextResponse.json({ error: error.message }, { status: 500 })
   return NextResponse.json(data)

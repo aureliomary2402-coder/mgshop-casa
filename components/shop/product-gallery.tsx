@@ -1,12 +1,13 @@
 "use client"
 
 import { useState, useRef } from 'react'
-import { ImageIcon, ChevronLeft, ChevronRight, X } from 'lucide-react'
+import { ImageIcon, ChevronLeft, ChevronRight, X, PlayCircle } from 'lucide-react'
 import { TornaPrestoStamp } from './torna-presto-stamp'
 
 interface GalleryImage {
   id: string
   image_url: string
+  media_type?: 'image' | 'video'
 }
 
 export function ProductGallery({ images, productName, tornaPresto = false }: { images: GalleryImage[]; productName: string; tornaPresto?: boolean }) {
@@ -37,7 +38,8 @@ export function ProductGallery({ images, productName, tornaPresto = false }: { i
     const dx = e.changedTouches[0].clientX - touchState.current.startX
     if (Math.abs(dx) > 45 && images.length > 1) {
       if (dx < 0) goNext(); else goPrev()
-    } else if (!touchState.current.moved) {
+    } else if (!touchState.current.moved && images[currentImg].media_type !== 'video') {
+      // Sui video il tap serve per play/pause coi controlli nativi, non per aprire il lightbox
       openLightbox()
     }
   }
@@ -120,13 +122,24 @@ export function ProductGallery({ images, productName, tornaPresto = false }: { i
             setTilt({ x: ((e.clientY - rect.top) / rect.height - 0.5) * 8, y: ((e.clientX - rect.left) / rect.width - 0.5) * -8 })
           }}
           onMouseLeave={() => setTilt({ x: 0, y: 0 })}
-          onClick={() => !touchState.current.moved && openLightbox()}
+          onClick={() => !touchState.current.moved && images[currentImg].media_type !== 'video' && openLightbox()}
           onTouchStart={handleMainTouchStart}
           onTouchMove={handleMainTouchMove}
           onTouchEnd={handleMainTouchEnd}
         >
-          <img src={images[currentImg].image_url} alt={productName} className="w-full h-full object-cover transition-transform duration-500 hover:scale-105" draggable={false} style={tornaPresto ? { filter: 'grayscale(1)' } : undefined} />
-          {tornaPresto && <TornaPrestoStamp size="55%" />}
+          {images[currentImg].media_type === 'video' ? (
+            <video
+              key={images[currentImg].id}
+              src={images[currentImg].image_url}
+              className="w-full h-full object-cover"
+              controls
+              playsInline
+              preload="metadata"
+            />
+          ) : (
+            <img src={images[currentImg].image_url} alt={productName} className="w-full h-full object-cover transition-transform duration-500 hover:scale-105" draggable={false} style={tornaPresto ? { filter: 'grayscale(1)' } : undefined} />
+          )}
+          {tornaPresto && images[currentImg].media_type !== 'video' && <TornaPrestoStamp size="55%" />}
           {images.length > 1 && (
             <>
               <button onClick={(e) => { e.stopPropagation(); goPrev() }}
@@ -152,9 +165,18 @@ export function ProductGallery({ images, productName, tornaPresto = false }: { i
           <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-hide">
             {images.map((img, i) => (
               <button key={img.id} onClick={() => setCurrentImg(i)}
-                className="w-16 h-16 rounded-xl overflow-hidden shrink-0 transition-all hover:scale-105 btn-press"
+                className="relative w-16 h-16 rounded-xl overflow-hidden shrink-0 transition-all hover:scale-105 btn-press"
                 style={{ border: i === currentImg ? '2px solid #0891b2' : '2px solid transparent' }}>
-                <img src={img.image_url} alt="" className="w-full h-full object-cover" style={tornaPresto ? { filter: 'grayscale(1)' } : undefined} />
+                {img.media_type === 'video' ? (
+                  <>
+                    <video src={img.image_url} className="w-full h-full object-cover bg-black" muted playsInline preload="metadata" />
+                    <div className="absolute inset-0 flex items-center justify-center bg-black/20">
+                      <PlayCircle className="w-6 h-6 text-white drop-shadow" />
+                    </div>
+                  </>
+                ) : (
+                  <img src={img.image_url} alt="" className="w-full h-full object-cover" style={tornaPresto ? { filter: 'grayscale(1)' } : undefined} />
+                )}
               </button>
             ))}
           </div>

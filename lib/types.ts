@@ -53,6 +53,9 @@ export interface ProductImage {
   image_url: string
   display_order: number
   created_at: string
+  // 'video' per i filmati caricati in galleria (mp4/webm/mov...). Le righe
+  // già esistenti non hanno questo campo: vanno trattate come immagine.
+  media_type?: 'image' | 'video'
 }
 
 export interface Banner {

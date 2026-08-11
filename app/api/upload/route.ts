@@ -17,11 +17,17 @@ export async function POST(request: NextRequest) {
 
     if (error) return NextResponse.json({ error: 'Upload failed' }, { status: 500 })
 
-    const { data: urlData } = supabase.storage.from('images').getPublicUrl(fileName, {
-      transform: { width: 2000, height: 2000, resize: 'contain', quality: 90 }
-    })
+    // La trasformazione "render/image" di Supabase esiste solo per le
+    // immagini: per i video (o altri file non-immagine) va restituito
+    // l'URL pubblico "grezzo", altrimenti il file non si carica più.
+    const isVideo = file.type.startsWith('video/')
+    const { data: urlData } = isVideo
+      ? supabase.storage.from('images').getPublicUrl(fileName)
+      : supabase.storage.from('images').getPublicUrl(fileName, {
+          transform: { width: 2000, height: 2000, resize: 'contain', quality: 90 }
+        })
 
-    return NextResponse.json({ url: urlData.publicUrl })
+    return NextResponse.json({ url: urlData.publicUrl, isVideo })
   } catch {
     return NextResponse.json({ error: 'Upload failed' }, { status: 500 })
   }

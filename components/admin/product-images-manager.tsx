@@ -4,8 +4,13 @@ import { useState, useEffect } from 'react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { ArrowLeft, Upload, Trash2, ImageIcon, Link } from 'lucide-react'
+import { ArrowLeft, Upload, Trash2, ImageIcon, Link, Video, PlayCircle } from 'lucide-react'
 import type { ProductImage } from '@/lib/types'
+
+// Estensioni video riconosciute quando l'admin incolla un URL diretto
+// (l'upload da file invece rileva il tipo dal file stesso).
+const VIDEO_EXTENSIONS = ['.mp4', '.webm', '.mov', '.m4v', '.ogv']
+const looksLikeVideoUrl = (url: string) => VIDEO_EXTENSIONS.some(ext => url.toLowerCase().split('?')[0].endsWith(ext))
 
 interface ProductImagesManagerProps {
   productId: string
@@ -30,7 +35,7 @@ export function ProductImagesManager({ productId, onBack }: ProductImagesManager
     setLoading(false)
   }
 
-  const saveImageUrl = async (url: string) => {
+  const saveImageUrl = async (url: string, mediaType: 'image' | 'video' = 'image') => {
     await fetch('/api/admin/product-images', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -38,11 +43,12 @@ export function ProductImagesManager({ productId, onBack }: ProductImagesManager
         product_id: productId,
         image_url: url,
         display_order: images.length,
+        media_type: mediaType,
       }),
     })
   }
 
-  // Upload file → Vercel Blob (esistente)
+  // Upload file (foto o video) → Supabase Storage
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files
     if (!files || files.length === 0) return
@@ -61,7 +67,7 @@ export function ProductImagesManager({ productId, onBack }: ProductImagesManager
         const uploadData = await uploadRes.json()
 
         if (uploadData.url) {
-          await saveImageUrl(uploadData.url)
+          await saveImageUrl(uploadData.url, file.type.startsWith('video/') ? 'video' : 'image')
         }
       } catch (error) {
         console.error('Upload failed:', error)
@@ -72,7 +78,7 @@ export function ProductImagesManager({ productId, onBack }: ProductImagesManager
     fetchImages()
   }
 
-  // Aggiunta tramite URL
+  // Aggiunta tramite URL (foto o video, riconosciuto dall'estensione)
   const handleAddUrl = async () => {
     const trimmed = urlInput.trim()
     if (!trimmed) return
@@ -86,7 +92,7 @@ export function ProductImagesManager({ productId, onBack }: ProductImagesManager
 
     setUrlError('')
     setUploading(true)
-    await saveImageUrl(trimmed)
+    await saveImageUrl(trimmed, looksLikeVideoUrl(trimmed) ? 'video' : 'image')
     setUrlInput('')
     setUploading(false)
     fetchImages()
@@ -116,7 +122,7 @@ export function ProductImagesManager({ productId, onBack }: ProductImagesManager
         <Button variant="ghost" size="icon" onClick={onBack}>
           <ArrowLeft className="w-4 h-4" />
         </Button>
-        <h2 className="text-lg font-semibold">Galleria Immagini</h2>
+        <h2 className="text-lg font-semibold">Galleria Foto e Video</h2>
       </div>
 
       {/* Upload file */}
@@ -130,12 +136,12 @@ export function ProductImagesManager({ productId, onBack }: ProductImagesManager
           <label className="block w-full p-8 border-2 border-dashed rounded-lg text-center cursor-pointer hover:border-primary transition-colors">
             <Upload className="w-8 h-8 mx-auto text-muted-foreground mb-2" />
             <p className="text-sm text-muted-foreground">
-              {uploading ? 'Caricamento in corso...' : 'Clicca o trascina le immagini qui'}
+              {uploading ? 'Caricamento in corso...' : 'Clicca o trascina foto o video qui'}
             </p>
-            <p className="text-xs text-muted-foreground mt-1">Puoi selezionare più immagini</p>
+            <p className="text-xs text-muted-foreground mt-1">Puoi selezionare più file. Video consigliati: max ~30-60 secondi, formato mp4</p>
             <input
               type="file"
-              accept="image/*"
+              accept="image/*,video/*"
               multiple
               className="hidden"
               onChange={handleImageUpload}
@@ -155,7 +161,7 @@ export function ProductImagesManager({ productId, onBack }: ProductImagesManager
         <CardContent className="space-y-2">
           <div className="flex gap-2">
             <Input
-              placeholder="https://esempio.com/immagine.jpg"
+              placeholder="https://esempio.com/immagine.jpg oppure video.mp4"
               value={urlInput}
               onChange={(e) => {
                 setUrlInput(e.target.value)
@@ -170,7 +176,7 @@ export function ProductImagesManager({ productId, onBack }: ProductImagesManager
           </div>
           {urlError && <p className="text-xs text-destructive">{urlError}</p>}
           <p className="text-xs text-muted-foreground">
-            Incolla l'URL di un'immagine già online (es. da Vercel Blob, Google Drive, Imgur…)
+            Incolla l'URL di una foto o di un video già online. Se il link finisce con .mp4, .webm o .mov viene riconosciuto automaticamente come video.
           </p>
         </CardContent>
       </Card>
@@ -180,16 +186,34 @@ export function ProductImagesManager({ productId, onBack }: ProductImagesManager
         {images.length === 0 ? (
           <div className="col-span-full text-center py-8 text-muted-foreground">
             <ImageIcon className="w-12 h-12 mx-auto mb-2 opacity-50" />
-            <p>Nessuna immagine aggiuntiva</p>
+            <p>Nessuna foto o video aggiuntivo</p>
           </div>
         ) : (
           images.map((image) => (
             <div key={image.id} className="relative group aspect-square">
-              <img
-                src={image.image_url}
-                alt=""
-                className="w-full h-full object-cover rounded-lg"
-              />
+              {image.media_type === 'video' ? (
+                <>
+                  <video
+                    src={image.image_url}
+                    className="w-full h-full object-cover rounded-lg bg-black"
+                    muted
+                    playsInline
+                    preload="metadata"
+                  />
+                  <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                    <PlayCircle className="w-10 h-10 text-white drop-shadow" />
+                  </div>
+                  <div className="absolute bottom-2 left-2 flex items-center gap-1 px-2 py-0.5 rounded-full bg-black/60 text-white text-[10px] font-medium">
+                    <Video className="w-3 h-3" /> Video
+                  </div>
+                </>
+              ) : (
+                <img
+                  src={image.image_url}
+                  alt=""
+                  className="w-full h-full object-cover rounded-lg"
+                />
+              )}
               <Button
                 variant="destructive"
                 size="icon"
