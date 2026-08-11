@@ -1,6 +1,5 @@
 "use client"
 
-import { MessageCircle } from 'lucide-react'
 import type { CustomizationOption } from '@/lib/types'
 
 interface Props {
@@ -17,13 +16,6 @@ export function ProductCustomizeForm({ options, values, onChange }: Props) {
 
   return (
     <div className="space-y-4 rounded-2xl p-4" style={{ background: 'rgba(217,70,239,0.05)', border: '1px solid rgba(217,70,239,0.15)' }}>
-      <div className="flex items-start gap-2">
-        <MessageCircle className="w-4 h-4 text-fuchsia-600 shrink-0 mt-0.5" />
-        <p className="text-xs text-slate-600 leading-relaxed">
-          <strong className="text-fuchsia-700">Prodotto personalizzabile:</strong> scegli le opzioni qui sotto. Il prezzo finale, in base alla personalizzazione, ti verrà confermato su WhatsApp dopo l&apos;ordine.
-        </p>
-      </div>
-
       {options.map(opt => (
         <div key={opt.id}>
           <label className="text-sm font-semibold block mb-2" style={{ color: '#0c2b36' }}>
