@@ -1,6 +1,6 @@
 "use client"
 
-import { ImageIcon, ShoppingCart, Eye } from 'lucide-react'
+import { ImageIcon, ShoppingCart, Eye, Palette } from 'lucide-react'
 import { toast } from 'sonner'
 import type { Product } from '@/lib/types'
 import { useCartStore } from '@/lib/cart-store'
@@ -29,6 +29,9 @@ export function ProductCard({ product, index = 0 }: { product: Product; index?: 
     e.preventDefault()
     e.stopPropagation()
     if (product.torna_presto) return
+    // I prodotti personalizzabili non si aggiungono con un click: si apre
+    // la scheda dettaglio dove il cliente sceglie colore/dimensione/altro.
+    if (product.is_customizable) { openDetail(product.id); return }
     addItem(product)
     toast.success(`${product.name} aggiunto!`, {
       duration: 2000,
@@ -79,6 +82,12 @@ export function ProductCard({ product, index = 0 }: { product: Product; index?: 
           </div>
         )}
         {product.torna_presto && <TornaPrestoStamp />}
+        {!product.torna_presto && product.is_customizable && (
+          <div className="absolute top-2 left-2 flex items-center gap-1 px-2 py-1 rounded-full text-[10px] font-bold text-white"
+            style={{ background: 'linear-gradient(135deg,#d946ef,#c026d3)', boxShadow: '0 2px 6px rgba(217,70,239,0.4)' }}>
+            <Palette className="w-3 h-3" /> Personalizzabile
+          </div>
+        )}
         <div className="absolute inset-0 flex items-center justify-center transition-all duration-300"
           style={{ background: isHovered ? 'rgba(12,43,54,0.15)' : 'rgba(12,43,54,0)' }}>
           <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold transition-all duration-300"
@@ -106,9 +115,13 @@ export function ProductCard({ product, index = 0 }: { product: Product; index?: 
             className="flex items-center gap-1 text-white text-xs font-semibold px-3 py-1.5 rounded-full btn-press transition-all disabled:cursor-not-allowed"
             style={product.torna_presto
               ? { background: '#94a3b8', boxShadow: 'none' }
-              : { background: 'linear-gradient(135deg, #0891b2, #06b6d4)', boxShadow: '0 2px 8px rgba(8,145,178,0.3)' }}>
-            <ShoppingCart className="w-3.5 h-3.5" />
-            <span className="hidden sm:inline">{product.torna_presto ? 'Non disponibile' : 'Aggiungi'}</span>
+              : product.is_customizable
+                ? { background: 'linear-gradient(135deg, #d946ef, #c026d3)', boxShadow: '0 2px 8px rgba(217,70,239,0.3)' }
+                : { background: 'linear-gradient(135deg, #0891b2, #06b6d4)', boxShadow: '0 2px 8px rgba(8,145,178,0.3)' }}>
+            {product.is_customizable ? <Palette className="w-3.5 h-3.5" /> : <ShoppingCart className="w-3.5 h-3.5" />}
+            <span className="hidden sm:inline">
+              {product.torna_presto ? 'Non disponibile' : product.is_customizable ? 'Personalizza' : 'Aggiungi'}
+            </span>
           </button>
         </div>
       </div>

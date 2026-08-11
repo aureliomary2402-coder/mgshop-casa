@@ -1,13 +1,15 @@
 "use client"
 
 import { useState, useEffect } from 'react'
-import { X, ShoppingCart, Heart } from 'lucide-react'
+import { X, ShoppingCart, Heart, Palette } from 'lucide-react'
 import { useCartStore } from '@/lib/cart-store'
 import { useProductDetailStore } from '@/lib/product-detail-store'
 import { toast } from 'sonner'
 import type { Product, ProductImage } from '@/lib/types'
 import Link from 'next/link'
 import { ProductGallery } from '@/components/shop/product-gallery'
+import { ProductCustomizeForm } from '@/components/shop/product-customize-form'
+import { missingRequiredOptions, buildCustomizationSelections } from '@/lib/customization'
 
 // Stessa scheda prodotto di prima (galleria con zoom, descrizione, aggiungi
 // al carrello), ma in un popup invece che in una pagina a parte: si apre
@@ -21,6 +23,7 @@ export function ProductDetailModal() {
   const [loading, setLoading] = useState(true)
   const [liked, setLiked] = useState(false)
   const [addedAnim, setAddedAnim] = useState(false)
+  const [customValues, setCustomValues] = useState<Record<string, string>>({})
   const addItem = useCartStore(s => s.addItem)
 
   useEffect(() => {
@@ -28,6 +31,7 @@ export function ProductDetailModal() {
     setLoading(true)
     setProduct(null)
     setLiked(false)
+    setCustomValues({})
     Promise.all([
       fetch('/api/admin/products').then(r => r.json()),
       fetch(`/api/admin/product-images?product_id=${openProductId}`).then(r => r.json()),
@@ -54,9 +58,14 @@ export function ProductDetailModal() {
     ...images,
   ] : []
 
+  const customOptions = product?.customization_options || []
+  const missing = product?.is_customizable ? missingRequiredOptions(customOptions, customValues) : []
+
   const handleAddToCart = () => {
     if (!product || product.torna_presto) return
-    addItem(product)
+    if (product.is_customizable && missing.length > 0) return
+    const selections = product.is_customizable ? buildCustomizationSelections(customOptions, customValues) : undefined
+    addItem(product, selections)
     setAddedAnim(true)
     setTimeout(() => setAddedAnim(false), 600)
     toast.success(`${product.name} aggiunto!`, { style: { background: '#cffafe', border: '1px solid #0891b2', color: '#155e75' } })
@@ -109,20 +118,35 @@ export function ProductDetailModal() {
                 {product.description && (
                   <p className="leading-relaxed text-slate-600 border-t border-cyan-100 pt-4 whitespace-pre-line">{product.description}</p>
                 )}
+                {product.is_customizable && (
+                  <ProductCustomizeForm
+                    options={customOptions}
+                    values={customValues}
+                    onChange={(id, value) => setCustomValues(v => ({ ...v, [id]: value }))}
+                  />
+                )}
                 <div className="flex gap-3 pt-2">
                   <button onClick={handleAddToCart}
-                    disabled={product.torna_presto}
-                    className="flex-1 flex items-center justify-center gap-2.5 font-bold py-4 rounded-2xl text-white btn-press disabled:cursor-not-allowed"
+                    disabled={product.torna_presto || (product.is_customizable && missing.length > 0)}
+                    className="flex-1 flex items-center justify-center gap-2.5 font-bold py-4 rounded-2xl text-white btn-press disabled:cursor-not-allowed disabled:opacity-60"
                     style={product.torna_presto
                       ? { background: '#94a3b8', boxShadow: 'none' }
-                      : {
-                        background: 'linear-gradient(135deg, #0891b2, #06b6d4)',
-                        boxShadow: addedAnim ? '0 0 0 6px rgba(8,145,178,0.2)' : '0 8px 24px rgba(8,145,178,0.35)',
-                        transform: addedAnim ? 'scale(0.97)' : undefined,
-                        transition: 'all 0.2s ease'
-                      }}>
-                    <ShoppingCart className="w-5 h-5" />
-                    {product.torna_presto ? 'Torna presto' : addedAnim ? 'Aggiunto!' : 'Aggiungi al carrello'}
+                      : product.is_customizable
+                        ? { background: 'linear-gradient(135deg, #d946ef, #c026d3)', boxShadow: addedAnim ? '0 0 0 6px rgba(217,70,239,0.2)' : '0 8px 24px rgba(217,70,239,0.3)', transition: 'all 0.2s ease' }
+                        : {
+                          background: 'linear-gradient(135deg, #0891b2, #06b6d4)',
+                          boxShadow: addedAnim ? '0 0 0 6px rgba(8,145,178,0.2)' : '0 8px 24px rgba(8,145,178,0.35)',
+                          transform: addedAnim ? 'scale(0.97)' : undefined,
+                          transition: 'all 0.2s ease'
+                        }}>
+                    {product.is_customizable ? <Palette className="w-5 h-5" /> : <ShoppingCart className="w-5 h-5" />}
+                    {product.torna_presto
+                      ? 'Torna presto'
+                      : addedAnim
+                        ? 'Aggiunto!'
+                        : product.is_customizable
+                          ? (missing.length > 0 ? `Scegli ${missing[0].label.toLowerCase()}` : 'Aggiungi al carrello')
+                          : 'Aggiungi al carrello'}
                   </button>
                   <button onClick={() => setLiked(l => !l)}
                     className="w-14 h-14 rounded-2xl flex items-center justify-center transition-all hover:scale-110 btn-press"

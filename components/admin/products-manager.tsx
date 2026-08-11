@@ -1,12 +1,86 @@
 "use client"
 
 import { useState, useEffect } from 'react'
-import { Plus, Pencil, Trash2, Images, ToggleLeft, ToggleRight, ImageIcon, Search, X, Package, AlertTriangle, Clock } from 'lucide-react'
+import { Plus, Pencil, Trash2, Images, ToggleLeft, ToggleRight, ImageIcon, Search, X, Package, AlertTriangle, Clock, Palette, GripVertical } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { ProductImagesManager } from './product-images-manager'
 import { ImageCropper } from './image-cropper'
-import type { Product, Category } from '@/lib/types'
+import type { Product, Category, CustomizationOption } from '@/lib/types'
+import { createCustomizationOptionId } from '@/lib/customization'
+
+function emptyOption(): CustomizationOption {
+  return { id: createCustomizationOptionId(), label: '', type: 'select', required: true, choices: [] }
+}
+
+// Editor delle opzioni di personalizzazione (colore, dimensione, testo libero...)
+// mostrato nel form prodotto quando è attiva la modalità "Personalizzabile".
+function CustomizationOptionsEditor({ options, onChange }: { options: CustomizationOption[]; onChange: (opts: CustomizationOption[]) => void }) {
+  const updateOption = (id: string, patch: Partial<CustomizationOption>) => {
+    onChange(options.map(o => o.id === id ? { ...o, ...patch } : o))
+  }
+  const removeOption = (id: string) => onChange(options.filter(o => o.id !== id))
+  const addOption = () => onChange([...options, emptyOption()])
+
+  return (
+    <div className="space-y-3">
+      {options.map((opt, idx) => (
+        <div key={opt.id} className="rounded-xl border border-cyan-100 bg-cyan-50/30 p-3 space-y-2">
+          <div className="flex items-center gap-2">
+            <GripVertical className="w-4 h-4 text-slate-300 shrink-0" />
+            <Input
+              value={opt.label}
+              onChange={e => updateOption(opt.id, { label: e.target.value })}
+              placeholder={`Nome opzione ${idx + 1} (es. Colore, Dimensione, Scritta...)`}
+              className="flex-1"
+            />
+            <button onClick={() => removeOption(opt.id)} className="p-1.5 hover:bg-red-50 rounded-lg transition-colors shrink-0">
+              <Trash2 className="w-4 h-4 text-red-400" />
+            </button>
+          </div>
+          <div className="flex items-center gap-4 pl-6">
+            <label className="flex items-center gap-1.5 text-xs text-slate-600 cursor-pointer">
+              <input type="radio" checked={opt.type === 'select'} onChange={() => updateOption(opt.id, { type: 'select' })} />
+              Scelta tra opzioni
+            </label>
+            <label className="flex items-center gap-1.5 text-xs text-slate-600 cursor-pointer">
+              <input type="radio" checked={opt.type === 'text'} onChange={() => updateOption(opt.id, { type: 'text' })} />
+              Testo libero
+            </label>
+            <label className="flex items-center gap-1.5 text-xs text-slate-600 cursor-pointer ml-auto">
+              <input type="checkbox" checked={opt.required} onChange={e => updateOption(opt.id, { required: e.target.checked })} />
+              Obbligatoria
+            </label>
+          </div>
+          {opt.type === 'select' ? (
+            <div className="pl-6">
+              <Input
+                value={(opt.choices || []).join(', ')}
+                onChange={e => updateOption(opt.id, { choices: e.target.value.split(',').map(v => v.trim()).filter(Boolean) })}
+                placeholder="Valori separati da virgola (es. Rosso, Blu, Nero)"
+              />
+              <p className="text-[11px] text-slate-400 mt-1">Il cliente vedrà questi valori come pulsanti tra cui scegliere</p>
+            </div>
+          ) : (
+            <div className="pl-6">
+              <Input
+                value={opt.placeholder || ''}
+                onChange={e => updateOption(opt.id, { placeholder: e.target.value })}
+                placeholder="Testo di esempio nel campo (facoltativo, es. Scrivi qui la scritta da ricamare)"
+              />
+            </div>
+          )}
+        </div>
+      ))}
+      <Button variant="ghost" size="sm" onClick={addOption} className="gap-1">
+        <Plus className="w-4 h-4" /> Aggiungi opzione
+      </Button>
+      {options.length === 0 && (
+        <p className="text-xs text-slate-400">Nessuna opzione ancora. Aggiungine una (es. Colore, Dimensione) perché il cliente possa personalizzare il prodotto prima di aggiungerlo al carrello.</p>
+      )}
+    </div>
+  )
+}
 
 function StockBadge({ stock }: { stock: number | null }) {
   if (stock === null || stock === undefined) return (
@@ -32,7 +106,7 @@ export function ProductsManager() {
   const [editing, setEditing] = useState<Product | null>(null)
   const [creating, setCreating] = useState(false)
   const [managingImagesFor, setManagingImagesFor] = useState<string | null>(null)
-  const [form, setForm] = useState({ name: '', description: '', price: '', category_id: '', cover_image: '', card_image: '', is_active: true, stock: '', torna_presto: false })
+  const [form, setForm] = useState({ name: '', description: '', price: '', category_id: '', cover_image: '', card_image: '', is_active: true, stock: '', torna_presto: false, is_customizable: false, customization_options: [] as CustomizationOption[] })
   const [saving, setSaving] = useState(false)
   const [uploadingCover, setUploadingCover] = useState(false)
   const [coverCropFile, setCoverCropFile] = useState<File | null>(null)
@@ -68,7 +142,7 @@ export function ProductsManager() {
   const lowStock = products.filter(p => p.stock !== null && p.stock !== undefined && p.stock > 0 && p.stock <= 5).length
 
   const openCreate = () => {
-    setForm({ name: '', description: '', price: '', category_id: '', cover_image: '', card_image: '', is_active: true, stock: '', torna_presto: false })
+    setForm({ name: '', description: '', price: '', category_id: '', cover_image: '', card_image: '', is_active: true, stock: '', torna_presto: false, is_customizable: false, customization_options: [] })
     setCreating(true); setEditing(null)
   }
 
@@ -77,7 +151,9 @@ export function ProductsManager() {
       name: p.name, description: p.description || '', price: String(p.price),
       category_id: p.category_id || '', cover_image: p.cover_image || '', card_image: p.card_image || '',
       is_active: p.is_active, stock: p.stock !== null && p.stock !== undefined ? String(p.stock) : '',
-      torna_presto: p.torna_presto ?? false
+      torna_presto: p.torna_presto ?? false,
+      is_customizable: p.is_customizable ?? false,
+      customization_options: p.customization_options ?? [],
     })
     setEditing(p); setCreating(false)
   }
@@ -235,6 +311,37 @@ export function ProductsManager() {
             </div>
           )}
         </div>
+        <div>
+          <label className="text-xs font-medium text-slate-500 mb-1.5 flex items-center gap-1">
+            <Palette className="w-3.5 h-3.5" /> Tipo di scheda prodotto
+          </label>
+          <div className="grid grid-cols-2 gap-2">
+            <button type="button" onClick={() => setForm(f => ({ ...f, is_customizable: false }))}
+              className={`text-sm font-medium py-2.5 rounded-xl border transition-all ${!form.is_customizable ? 'bg-cyan-600 text-white border-cyan-600' : 'bg-white text-slate-500 border-slate-200'}`}>
+              Classica
+            </button>
+            <button type="button" onClick={() => setForm(f => ({ ...f, is_customizable: true }))}
+              className={`text-sm font-medium py-2.5 rounded-xl border transition-all ${form.is_customizable ? 'bg-cyan-600 text-white border-cyan-600' : 'bg-white text-slate-500 border-slate-200'}`}>
+              Personalizzabile
+            </button>
+          </div>
+          <p className="text-[11px] text-slate-400 mt-1.5">
+            {form.is_customizable
+              ? 'Il cliente sceglie colore, dimensione o altro prima di aggiungere al carrello. Il prezzo qui sopra resta indicativo: comunicalo poi via WhatsApp in base alla scelta.'
+              : 'Il cliente aggiunge il prodotto al carrello con un click, come al solito.'}
+          </p>
+        </div>
+
+        {form.is_customizable && (
+          <div className="rounded-xl border border-cyan-200 p-3 space-y-2 bg-white">
+            <label className="text-xs font-semibold text-slate-700">Opzioni di personalizzazione</label>
+            <CustomizationOptionsEditor
+              options={form.customization_options}
+              onChange={opts => setForm(f => ({ ...f, customization_options: opts }))}
+            />
+          </div>
+        )}
+
         <div className="flex items-center gap-3">
           <label className="text-xs font-medium text-slate-500">Attivo</label>
           <button onClick={() => setForm(f => ({ ...f, is_active: !f.is_active }))}>
@@ -327,6 +434,11 @@ export function ProductsManager() {
               <p className="font-medium text-sm text-slate-800 truncate">{p.name}</p>
               <div className="flex items-center gap-2 mt-0.5">
                 <p className="text-xs text-cyan-700 font-semibold">€{p.price.toFixed(2)}</p>
+                {p.is_customizable && (
+                  <span className="text-xs font-semibold text-fuchsia-600 flex items-center gap-0.5">
+                    <Palette className="w-3 h-3" /> Personalizzabile
+                  </span>
+                )}
                 <span className="text-slate-300">·</span>
                 {p.torna_presto
                   ? <span className="text-xs font-semibold text-red-500 flex items-center gap-0.5"><Clock className="w-3 h-3" /> Torna presto</span>

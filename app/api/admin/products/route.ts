@@ -33,6 +33,8 @@ export async function POST(request: NextRequest) {
       is_active: body.is_active ?? true,
       stock: body.stock !== '' && body.stock !== null && body.stock !== undefined ? parseInt(body.stock) : null,
       torna_presto: body.torna_presto ?? false,
+      is_customizable: body.is_customizable ?? false,
+      customization_options: body.is_customizable ? (body.customization_options ?? []) : [],
     })
     .select().single()
   if (error) return NextResponse.json({ error: error.message }, { status: 500 })
@@ -55,6 +57,8 @@ export async function PUT(request: NextRequest) {
       is_active: body.is_active,
       stock: body.stock !== '' && body.stock !== null && body.stock !== undefined ? parseInt(body.stock) : null,
       torna_presto: body.torna_presto ?? false,
+      is_customizable: body.is_customizable ?? false,
+      customization_options: body.is_customizable ? (body.customization_options ?? []) : [],
       updated_at: new Date().toISOString(),
     })
     .eq('id', body.id).select().single()

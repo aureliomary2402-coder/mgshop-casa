@@ -17,7 +17,15 @@ create table products (
   price numeric(10,2) not null default 0,
   category_id uuid references categories(id) on delete set null,
   cover_image text,
+  card_image text,
   is_active boolean not null default true,
+  stock integer,
+  torna_presto boolean not null default false,
+  -- Prodotti personalizzabili (es. borse su cui il cliente sceglie colore,
+  -- dimensione, testo...): il prezzo resta indicativo e viene confermato
+  -- via WhatsApp dopo l'ordine in base alle scelte fatte.
+  is_customizable boolean not null default false,
+  customization_options jsonb not null default '[]'::jsonb,
   created_at timestamptz default now(),
   updated_at timestamptz default now()
 );
@@ -60,6 +68,9 @@ create table order_items (
   product_name text not null,
   product_price numeric(10,2) not null,
   quantity integer not null default 1,
+  -- Scelte di personalizzazione fatte dal cliente (colore, dimensione, testo...)
+  customization jsonb,
+  is_customized boolean not null default false,
   created_at timestamptz default now()
 );
 

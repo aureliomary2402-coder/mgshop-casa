@@ -5,6 +5,26 @@ export interface Category {
   created_at: string
 }
 
+// Una singola opzione di personalizzazione definita dall'admin sul prodotto
+// (es. "Colore" a scelta multipla, oppure "Scritta" a testo libero).
+export interface CustomizationOption {
+  id: string
+  label: string
+  type: 'select' | 'text'
+  required: boolean
+  choices?: string[]
+  placeholder?: string
+}
+
+// Scelta del cliente per una singola opzione: teniamo anche l'etichetta e il
+// valore "fotografati" al momento dell'acquisto, così l'ordine resta leggibile
+// anche se in futuro l'admin cambia o rimuove quell'opzione dal prodotto.
+export interface CustomizationSelection {
+  option_id: string
+  label: string
+  value: string
+}
+
 export interface Product {
   id: string
   name: string
@@ -16,6 +36,8 @@ export interface Product {
   is_active: boolean
   stock: number | null
   torna_presto?: boolean
+  is_customizable?: boolean
+  customization_options?: CustomizationOption[]
   created_at: string
   updated_at: string
   category?: Category
@@ -59,9 +81,19 @@ export interface OrderItem {
   product_price: number
   quantity: number
   created_at: string
+  customization?: CustomizationSelection[] | null
+  is_customized?: boolean
 }
 
 export interface CartItem {
   product: Product
   quantity: number
+  // Presente solo per i prodotti personalizzabili: le scelte fatte dal
+  // cliente prima di aggiungere al carrello.
+  customization?: CustomizationSelection[]
+  // Identificativo della riga nel carrello. Di norma coincide con
+  // product.id, ma per i prodotti personalizzati include anche le scelte
+  // fatte, così due configurazioni diverse dello stesso prodotto restano
+  // righe separate invece di sommarsi.
+  lineId?: string
 }

@@ -125,7 +125,7 @@ export async function POST(request: NextRequest) {
     }
 
     if (realItems.length > 0) {
-      const orderItems = realItems.map((item: { product: { id: string; name: string; price: number }; quantity: number }) => ({
+      const orderItems = realItems.map((item: { product: { id: string; name: string; price: number }; quantity: number; customization?: { option_id: string; label: string; value: string }[] }) => ({
         order_id: order.id,
         // I prodotti creati apposta per una promo (non presenti nel negozio)
         // non hanno una riga vera in "products": mettere qui il loro id
@@ -135,6 +135,11 @@ export async function POST(request: NextRequest) {
         product_name: item.product.name,
         product_price: item.product.price,
         quantity: item.quantity,
+        // Scelte di personalizzazione fatte dal cliente (colore, dimensione,
+        // testo...): restano salvate sull'ordine anche se in futuro il
+        // prodotto o le sue opzioni cambiano.
+        customization: item.customization && item.customization.length > 0 ? item.customization : null,
+        is_customized: !!(item.customization && item.customization.length > 0),
       }))
       const { error: itemsError } = await supabase.from('order_items').insert(orderItems)
       if (itemsError) return NextResponse.json({ error: itemsError.message }, { status: 500 })
@@ -162,9 +167,11 @@ export async function POST(request: NextRequest) {
 
     // Notifica push
     const itemsCount = realItems.reduce((s: number, i: { quantity: number }) => s + i.quantity, 0)
+    const hasCustomized = realItems.some((i: { customization?: unknown[] }) => i.customization && i.customization.length > 0)
+    const customizedSuffix = hasCustomized ? ' 🎨 con personalizzazioni: contatta il cliente per confermare il prezzo' : ''
     const notifBody = ticketQty > 0
-      ? `${phone_number} — ${itemsCount} articoli + ${ticketQty} bigliett${ticketQty > 1 ? 'i' : 'o'} lotteria — €${total.toFixed(2)}`
-      : `${phone_number} — ${itemsCount} articoli — €${total.toFixed(2)}`
+      ? `${phone_number} — ${itemsCount} articoli + ${ticketQty} bigliett${ticketQty > 1 ? 'i' : 'o'} lotteria — €${total.toFixed(2)}${customizedSuffix}`
+      : `${phone_number} — ${itemsCount} articoli — €${total.toFixed(2)}${customizedSuffix}`
     const baseUrl = request.headers.get('origin') || 'https://mgshop-2.vercel.app'
     fetch(`${baseUrl}/api/push`, {
       method: 'POST',

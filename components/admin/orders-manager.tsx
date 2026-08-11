@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect } from 'react'
-import { ChevronDown, ChevronUp, Package, Trash2, Pencil, Check, X, User, Plus, Minus, Search, ShoppingBag, Gift, Truck, Store, MapPin } from 'lucide-react'
+import { ChevronDown, ChevronUp, Package, Trash2, Pencil, Check, X, User, Plus, Minus, Search, ShoppingBag, Gift, Truck, Store, MapPin, MessageCircle } from 'lucide-react'
 import type { Order, OrderItem, Product } from '@/lib/types'
 
 const STATUS_LABELS: Record<string, string> = {
@@ -95,6 +95,21 @@ export function OrdersManager() {
 
   const filteredProducts = allProducts.filter(p => p.name.toLowerCase().includes(productSearch.toLowerCase()))
 
+  // Link WhatsApp diretto verso il cliente, con un messaggio già pronto che
+  // elenca i prodotti scelti: utile soprattutto per gli ordini con articoli
+  // personalizzati, dove il prezzo finale va confermato via chat.
+  const buildWhatsappLink = (order: OrderWithItems) => {
+    const digits = order.phone_number.replace(/\D/g, '')
+    const itemsText = order.order_items.map(i => {
+      const custom = i.customization && i.customization.length > 0
+        ? ` (${i.customization.map(c => `${c.label}: ${c.value}`).join(', ')})`
+        : ''
+      return `- ${i.product_name}${custom} x${i.quantity}`
+    }).join('\n')
+    const msg = `Ciao${order.customer_name ? ' ' + order.customer_name : ''}! Ti scrivo per il tuo ordine:\n${itemsText}\n\nTi confermo a breve i dettagli.`
+    return `https://wa.me/${digits}?text=${encodeURIComponent(msg)}`
+  }
+
   if (loading) return <div className="text-center py-8 text-slate-400">Caricamento...</div>
 
   return (
@@ -151,6 +166,8 @@ export function OrdersManager() {
                 )}
               </div>
               <div className="flex items-center gap-1 shrink-0">
+                <a href={buildWhatsappLink(order)} target="_blank" rel="noopener noreferrer" onClick={e => e.stopPropagation()}
+                  className="p-1.5 hover:bg-green-50 rounded-lg transition-colors" title="Scrivi su WhatsApp"><MessageCircle className="w-4 h-4 text-green-500"/></a>
                 <button onClick={e => { e.stopPropagation(); setEditingName(order.id); setNameInput(order.customer_name||'') }}
                   className="p-1.5 hover:bg-cyan-50 rounded-lg transition-colors"><User className="w-4 h-4 text-cyan-500"/></button>
                 <button onClick={() => { setEditingOrder(editingOrder===order.id?null:order.id); if(editingOrder!==order.id){fetchProducts();setExpanded(order.id)} }}
@@ -174,7 +191,16 @@ export function OrdersManager() {
                     <div key={item.id} className="flex items-center gap-3 p-2 rounded-xl" style={{background:'rgba(8,145,178,0.04)',border:'1px solid rgba(8,145,178,0.08)'}}>
                       <div className="flex-1 min-w-0">
                         <p className="text-sm font-medium text-slate-800 truncate">{item.product_name}</p>
-                        <p className="text-xs text-cyan-700 font-semibold">€{item.product_price.toFixed(2)} cad.</p>
+                        {item.customization && item.customization.length > 0 && (
+                          <div className="flex flex-wrap gap-1 my-1">
+                            {item.customization.map(c => (
+                              <span key={c.option_id} className="text-[11px] font-medium px-2 py-0.5 rounded-full" style={{background:'rgba(217,70,239,0.08)',color:'#a21caf',border:'1px solid rgba(217,70,239,0.2)'}}>
+                                {c.label}: {c.value}
+                              </span>
+                            ))}
+                          </div>
+                        )}
+                        <p className="text-xs text-cyan-700 font-semibold">€{item.product_price.toFixed(2)} cad.{item.is_customized && <span className="text-slate-400 font-normal"> · da confermare</span>}</p>
                       </div>
                       {editingOrder === order.id ? (
                         <div className="flex items-center gap-2 shrink-0">
