@@ -1,3 +1,21 @@
+// Attivazione immediata: non serve una cache offline dedicata (il sito è
+// quasi tutto dinamico), ma un service worker registrato con un listener
+// "fetch" è uno dei requisiti che i browser controllano prima di proporre
+// "Aggiungi a schermata Home". Qui ci limitiamo a lasciar passare le
+// richieste così come sono, senza introdurre cache che rischierebbero di
+// mostrare prezzi o disponibilità non aggiornati.
+self.addEventListener('install', (event) => {
+  self.skipWaiting()
+})
+
+self.addEventListener('activate', (event) => {
+  event.waitUntil(self.clients.claim())
+})
+
+self.addEventListener('fetch', (event) => {
+  event.respondWith(fetch(event.request))
+})
+
 self.addEventListener('push', function(event) {
   const data = event.data ? event.data.json() : {}
   const title = data.title || 'MGShop Casa'

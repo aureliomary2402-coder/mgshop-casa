@@ -7,8 +7,8 @@ import type { Product } from '@/lib/types'
 const PAGE_SIZE = 30
 const CACHE_TTL = 30 * 60 * 1000 // 30 minuti
 
-function cacheKey(q?: string, categoria?: string) {
-  return `mgshop-grid:${categoria || ''}:${q || ''}`
+function cacheKey(q?: string, categoria?: string, ordina?: string) {
+  return `mgshop-grid:${categoria || ''}:${q || ''}:${ordina || ''}`
 }
 
 function readCache(key: string, minLength: number): { products: Product[]; page: number; scrollY: number } | null {
@@ -30,13 +30,15 @@ export function ProductGrid({
   count,
   q,
   categoria,
+  ordina,
 }: {
   initialProducts: Product[]
   count: number
   q?: string
   categoria?: string
+  ordina?: string
 }) {
-  const key = cacheKey(q, categoria)
+  const key = cacheKey(q, categoria, ordina)
   // Al primo render controlla se esiste già una lista più lunga salvata (es. tornando da un prodotto)
   const cachedOnMount = useRef(readCache(key, initialProducts.length)).current
   const [products, setProducts] = useState<Product[]>(cachedOnMount ? cachedOnMount.products : initialProducts)
@@ -95,6 +97,7 @@ export function ProductGrid({
     const params = new URLSearchParams()
     if (q) params.set('q', q)
     if (categoria) params.set('categoria', categoria)
+    if (ordina) params.set('ordina', ordina)
     params.set('pagina', String(nextPage))
     try {
       const res = await fetch(`/api/shop/products?${params.toString()}`)
@@ -106,7 +109,7 @@ export function ProductGrid({
     } finally {
       setLoading(false)
     }
-  }, [loading, hasMore, page, q, categoria])
+  }, [loading, hasMore, page, q, categoria, ordina])
 
   useEffect(() => {
     const el = sentinelRef.current

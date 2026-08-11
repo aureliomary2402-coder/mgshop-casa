@@ -1,7 +1,8 @@
 "use client"
 import Link from 'next/link'
-import { ShoppingBag, Search, X, Home, ChevronDown, Tag, Sparkles, Newspaper, ImageIcon } from 'lucide-react'
+import { ShoppingBag, Search, X, Home, ChevronDown, Tag, Sparkles, Newspaper, ImageIcon, Heart } from 'lucide-react'
 import { useCartStore } from '@/lib/cart-store'
+import { useWishlistStore } from '@/lib/wishlist-store'
 import { useState, useEffect, useRef } from 'react'
 import { useRouter, useSearchParams, usePathname } from 'next/navigation'
 import type { Category, Product } from '@/lib/types'
@@ -36,6 +37,7 @@ export function ShopHeader({ categories }: { categories: Category[] }) {
   const [searchFocused, setSearchFocused] = useState(false)
   const getTotalItems = useCartStore(s => s.getTotalItems)
   const lastAdded = useCartStore(s => s.lastAdded)
+  const wishlistCount = useWishlistStore(s => s.ids.length)
   const router = useRouter()
   const searchParams = useSearchParams()
   const pathname = usePathname()
@@ -251,6 +253,15 @@ export function ShopHeader({ categories }: { categories: Category[] }) {
             onClick={() => { searchOpen ? handleClearSearch() : setSearchOpen(true) }}>
             {searchOpen ? <X className="w-5 h-5" /> : <Search className="w-5 h-5" />}
           </button>
+          <Link href="/preferiti" className={`${searchOpen ? 'hidden sm:flex' : 'flex'} relative items-center gap-2 px-2 sm:px-3 py-2 rounded-xl transition-all hover:bg-cyan-50 btn-press group`}>
+            <Heart className="w-5 h-5 text-cyan-700 group-hover:scale-110 transition-transform" />
+            {mounted && wishlistCount > 0 && (
+              <span className="absolute -top-1 -right-1 w-5 h-5 text-white text-xs rounded-full flex items-center justify-center font-bold"
+                style={{ background: '#ef4444' }}>
+                {wishlistCount > 9 ? '9+' : wishlistCount}
+              </span>
+            )}
+          </Link>
           <Link href="/carrello" className="relative flex items-center gap-2 px-3 py-2 rounded-xl transition-all hover:bg-cyan-50 btn-press group">
             <ShoppingBag className={`w-5 h-5 text-cyan-700 group-hover:scale-110 transition-transform ${cartBump ? 'animate-cart-bounce' : ''}`} />
             {itemCount > 0 && (

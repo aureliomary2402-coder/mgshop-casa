@@ -3,19 +3,26 @@ import { HeroBanner } from '@/components/shop/hero-banner'
 import { ProductGrid } from '@/components/shop/product-grid'
 import { LoyaltyBanner } from '@/components/shop/loyalty-banner'
 import { LotteryTicketCard } from '@/components/shop/lottery-ticket-card'
+import { SortDropdown } from '@/components/shop/sort-dropdown'
+import { RecentlyViewed } from '@/components/shop/recently-viewed'
+import { Suspense } from 'react'
 import type { Product, Category, Banner } from '@/lib/types'
 
 export const revalidate = 0
 
 const PAGE_SIZE = 30
 
-async function getData(searchParams: { q?: string; categoria?: string }) {
+async function getData(searchParams: { q?: string; categoria?: string; ordina?: string }) {
   const supabase = createAdminClient()
   const [{ data: banners }, { data: categories }] = await Promise.all([
     supabase.from('banners').select('*').eq('is_active', true).order('display_order'),
     supabase.from('categories').select('*').order('name'),
   ])
-  let query = supabase.from('products').select('*, category:categories(*)', { count: 'exact' }).eq('is_active', true).order('created_at', { ascending: false })
+  let query = supabase.from('products').select('*, category:categories(*)', { count: 'exact' }).eq('is_active', true)
+  query = searchParams.ordina === 'prezzo_asc' ? query.order('price', { ascending: true })
+    : searchParams.ordina === 'prezzo_desc' ? query.order('price', { ascending: false })
+    : searchParams.ordina === 'nome' ? query.order('name', { ascending: true })
+    : query.order('created_at', { ascending: false })
   if (searchParams.categoria) {
     const cat = (categories || []).find((c: Category) => c.slug === searchParams.categoria)
     if (cat) query = query.eq('category_id', cat.id)
@@ -28,7 +35,7 @@ async function getData(searchParams: { q?: string; categoria?: string }) {
   return { banners: banners || [], products: products || [], categories: categories || [], count: count || 0 }
 }
 
-export default async function ShopPage({ searchParams }: { searchParams: Promise<{ q?: string; categoria?: string }> }) {
+export default async function ShopPage({ searchParams }: { searchParams: Promise<{ q?: string; categoria?: string; ordina?: string }> }) {
   const params = await searchParams
   const { banners, products, categories, count } = await getData(params)
 
@@ -38,6 +45,7 @@ export default async function ShopPage({ searchParams }: { searchParams: Promise
       <div className="max-w-7xl mx-auto px-4 py-6 space-y-5">
         <LotteryTicketCard />
         <LoyaltyBanner />
+        <Suspense><RecentlyViewed /></Suspense>
         {products.length === 0 ? (
           <div className="text-center py-20 animate-fade-in">
             <div className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4" style={{ background: 'rgba(8,145,178,0.08)' }}>
@@ -46,12 +54,19 @@ export default async function ShopPage({ searchParams }: { searchParams: Promise
             <p className="text-lg font-medium text-slate-600">Nessun prodotto trovato</p>
           </div>
         ) : (
-          <ProductGrid
-            initialProducts={products as Product[]}
-            count={count}
-            q={params.q}
-            categoria={params.categoria}
-          />
+          <>
+            <div className="flex items-center justify-between">
+              <p className="text-sm text-slate-500">{count} prodott{count === 1 ? 'o' : 'i'}</p>
+              <Suspense><SortDropdown /></Suspense>
+            </div>
+            <ProductGrid
+              initialProducts={products as Product[]}
+              count={count}
+              q={params.q}
+              categoria={params.categoria}
+              ordina={params.ordina}
+            />
+          </>
         )}
       </div>
     </main>

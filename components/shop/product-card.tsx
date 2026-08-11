@@ -1,10 +1,11 @@
 "use client"
 
-import { ImageIcon, ShoppingCart, Eye, Palette } from 'lucide-react'
+import { ImageIcon, ShoppingCart, Eye, Heart } from 'lucide-react'
 import { toast } from 'sonner'
 import type { Product } from '@/lib/types'
 import { useCartStore } from '@/lib/cart-store'
 import { useProductDetailStore } from '@/lib/product-detail-store'
+import { useWishlistStore } from '@/lib/wishlist-store'
 import { useState, useRef } from 'react'
 import { optimizeImage } from '@/lib/image'
 import { TornaPrestoStamp } from './torna-presto-stamp'
@@ -12,6 +13,8 @@ import { TornaPrestoStamp } from './torna-presto-stamp'
 export function ProductCard({ product, index = 0 }: { product: Product; index?: number }) {
   const addItem = useCartStore((state) => state.addItem)
   const openDetail = useProductDetailStore(s => s.open)
+  const isWishlisted = useWishlistStore(s => s.has(product.id))
+  const toggleWishlist = useWishlistStore(s => s.toggle)
   const [imgError, setImgError] = useState(false)
   const [tilt, setTilt] = useState({ x: 0, y: 0 })
   const [isHovered, setIsHovered] = useState(false)
@@ -29,14 +32,18 @@ export function ProductCard({ product, index = 0 }: { product: Product; index?: 
     e.preventDefault()
     e.stopPropagation()
     if (product.torna_presto) return
-    // I prodotti personalizzabili non si aggiungono con un click: si apre
-    // la scheda dettaglio dove il cliente sceglie colore/dimensione/altro.
-    if (product.is_customizable) { openDetail(product.id); return }
     addItem(product)
     toast.success(`${product.name} aggiunto!`, {
       duration: 2000,
       style: { background: '#cffafe', border: '1px solid #0891b2', color: '#155e75' }
     })
+  }
+
+  const handleToggleWishlist = (e: React.MouseEvent) => {
+    e.preventDefault()
+    e.stopPropagation()
+    toggleWishlist(product.id)
+    if (!isWishlisted) toast.success('Aggiunto ai preferiti', { duration: 1500 })
   }
 
   const imgUrl = optimizeImage(product.card_image || product.cover_image, 400)
@@ -82,12 +89,12 @@ export function ProductCard({ product, index = 0 }: { product: Product; index?: 
           </div>
         )}
         {product.torna_presto && <TornaPrestoStamp />}
-        {!product.torna_presto && product.is_customizable && (
-          <div className="absolute top-2 left-2 flex items-center gap-1 px-2 py-1 rounded-full text-[10px] font-bold text-white"
-            style={{ background: 'linear-gradient(135deg,#d946ef,#c026d3)', boxShadow: '0 2px 6px rgba(217,70,239,0.4)' }}>
-            <Palette className="w-3 h-3" /> Personalizzabile
-          </div>
-        )}
+        <button onClick={handleToggleWishlist}
+          className="absolute top-2 right-2 w-8 h-8 rounded-full flex items-center justify-center btn-press transition-all z-10"
+          style={{ background: 'rgba(255,255,255,0.9)', boxShadow: '0 2px 8px rgba(0,0,0,0.12)' }}
+          aria-label="Aggiungi ai preferiti">
+          <Heart className="w-4 h-4 transition-all" style={{ color: isWishlisted ? '#ef4444' : '#94a3b8', fill: isWishlisted ? '#ef4444' : 'none' }} />
+        </button>
         <div className="absolute inset-0 flex items-center justify-center transition-all duration-300"
           style={{ background: isHovered ? 'rgba(12,43,54,0.15)' : 'rgba(12,43,54,0)' }}>
           <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold transition-all duration-300"
@@ -115,13 +122,9 @@ export function ProductCard({ product, index = 0 }: { product: Product; index?: 
             className="flex items-center gap-1 text-white text-xs font-semibold px-3 py-1.5 rounded-full btn-press transition-all disabled:cursor-not-allowed"
             style={product.torna_presto
               ? { background: '#94a3b8', boxShadow: 'none' }
-              : product.is_customizable
-                ? { background: 'linear-gradient(135deg, #d946ef, #c026d3)', boxShadow: '0 2px 8px rgba(217,70,239,0.3)' }
-                : { background: 'linear-gradient(135deg, #0891b2, #06b6d4)', boxShadow: '0 2px 8px rgba(8,145,178,0.3)' }}>
-            {product.is_customizable ? <Palette className="w-3.5 h-3.5" /> : <ShoppingCart className="w-3.5 h-3.5" />}
-            <span className="hidden sm:inline">
-              {product.torna_presto ? 'Non disponibile' : product.is_customizable ? 'Personalizza' : 'Aggiungi'}
-            </span>
+              : { background: 'linear-gradient(135deg, #0891b2, #06b6d4)', boxShadow: '0 2px 8px rgba(8,145,178,0.3)' }}>
+            <ShoppingCart className="w-3.5 h-3.5" />
+            <span className="hidden sm:inline">{product.torna_presto ? 'Non disponibile' : 'Aggiungi'}</span>
           </button>
         </div>
       </div>
