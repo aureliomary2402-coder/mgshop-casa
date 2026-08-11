@@ -15,7 +15,10 @@ export async function POST(request: NextRequest) {
       .from('images')
       .upload(fileName, file, { contentType: file.type, upsert: false })
 
-    if (error) return NextResponse.json({ error: 'Upload failed' }, { status: 500 })
+    if (error) {
+      console.error('Upload failed:', error)
+      return NextResponse.json({ error: `Upload fallito: ${error.message}` }, { status: 500 })
+    }
 
     // La trasformazione "render/image" di Supabase esiste solo per le
     // immagini: per i video (o altri file non-immagine) va restituito
@@ -28,7 +31,8 @@ export async function POST(request: NextRequest) {
         })
 
     return NextResponse.json({ url: urlData.publicUrl, isVideo })
-  } catch {
-    return NextResponse.json({ error: 'Upload failed' }, { status: 500 })
+  } catch (e: any) {
+    console.error('Upload exception:', e)
+    return NextResponse.json({ error: `Upload fallito: ${e?.message || 'errore sconosciuto'}` }, { status: 500 })
   }
 }

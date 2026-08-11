@@ -36,7 +36,7 @@ export function ProductImagesManager({ productId, onBack }: ProductImagesManager
   }
 
   const saveImageUrl = async (url: string, mediaType: 'image' | 'video' = 'image') => {
-    await fetch('/api/admin/product-images', {
+    const res = await fetch('/api/admin/product-images', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -46,6 +46,10 @@ export function ProductImagesManager({ productId, onBack }: ProductImagesManager
         media_type: mediaType,
       }),
     })
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}))
+      throw new Error(err.error || `Errore salvataggio (${res.status})`)
+    }
   }
 
   // Upload file (foto o video) → Supabase Storage
@@ -54,6 +58,7 @@ export function ProductImagesManager({ productId, onBack }: ProductImagesManager
     if (!files || files.length === 0) return
 
     setUploading(true)
+    const errors: string[] = []
 
     for (const file of Array.from(files)) {
       const formData = new FormData()
@@ -66,15 +71,18 @@ export function ProductImagesManager({ productId, onBack }: ProductImagesManager
         })
         const uploadData = await uploadRes.json()
 
-        if (uploadData.url) {
-          await saveImageUrl(uploadData.url, file.type.startsWith('video/') ? 'video' : 'image')
+        if (!uploadRes.ok || !uploadData.url) {
+          throw new Error(uploadData.error || `Errore caricamento (${uploadRes.status})`)
         }
-      } catch (error) {
+        await saveImageUrl(uploadData.url, file.type.startsWith('video/') ? 'video' : 'image')
+      } catch (error: any) {
         console.error('Upload failed:', error)
+        errors.push(`${file.name}: ${error?.message || 'errore sconosciuto'}`)
       }
     }
 
     setUploading(false)
+    if (errors.length > 0) alert('Alcuni file non sono stati caricati:\n\n' + errors.join('\n'))
     fetchImages()
   }
 
@@ -92,8 +100,12 @@ export function ProductImagesManager({ productId, onBack }: ProductImagesManager
 
     setUrlError('')
     setUploading(true)
-    await saveImageUrl(trimmed, looksLikeVideoUrl(trimmed) ? 'video' : 'image')
-    setUrlInput('')
+    try {
+      await saveImageUrl(trimmed, looksLikeVideoUrl(trimmed) ? 'video' : 'image')
+      setUrlInput('')
+    } catch (error: any) {
+      alert('Errore: ' + (error?.message || 'salvataggio non riuscito'))
+    }
     setUploading(false)
     fetchImages()
   }
