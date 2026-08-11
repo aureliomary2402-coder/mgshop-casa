@@ -54,6 +54,8 @@ export function LotteryManager() {
   const [saving, setSaving] = useState(false)
   const [saved, setSaved] = useState(false)
   const [drawing, setDrawing] = useState(false)
+  const [resetting, setResetting] = useState(false)
+  const [confirmingReset, setConfirmingReset] = useState(false)
   const [uploading, setUploading] = useState(false)
   const [cropFile, setCropFile] = useState<File | null>(null)
   const [error, setError] = useState('')
@@ -130,6 +132,22 @@ export function LotteryManager() {
     if (res.ok) load()
     else setError('Errore archiviazione')
     setDrawing(false)
+  }
+
+  // Primo tap: mostra il riquadro di conferma (non cancella ancora nulla).
+  // Secondo tap: chiede una seconda conferma nativa del browser, con il
+  // testo che spiega cosa sta per sparire. Solo a quel punto cancella
+  // davvero — così un tap per sbaglio sul primo bottone non ha nessun
+  // effetto, e serve un'azione deliberata in più per andare fino in fondo.
+  const handleResetClick = () => setConfirmingReset(true)
+
+  const handleResetConfirm = async () => {
+    if (!confirm('Sei sicuro? Titolo, descrizione, foto, premio, partecipanti e prezzo del biglietto di questa scheda verranno cancellati per iniziare una nuova estrazione da zero. Lo storico vincitori NON viene toccato. Operazione non annullabile.')) return
+    setResetting(true); setError('')
+    const res = await fetch('/api/admin/lottery/reset', { method: 'POST' })
+    if (res.ok) { setConfirmingReset(false); load() }
+    else setError('Errore nella cancellazione dei dati')
+    setResetting(false)
   }
 
   const startEditEntry = (e: Entry) => {
@@ -445,6 +463,34 @@ export function LotteryManager() {
         <Sparkles className="w-4 h-4" />
         {drawing ? 'Archiviazione...' : 'Chiudi ora e archivia nello storico'}
       </Button>
+
+      {/* Reset scheda: da usare dopo aver archiviato/disattivato, per non
+          dover svuotare a mano titolo/premio/partecipanti a ogni nuova
+          estrazione. Doppia conferma: prima il riquadro qui sotto, poi il
+          popup nativo del browser. */}
+      <div className="pt-2 border-t border-slate-100">
+        {!confirmingReset ? (
+          <button type="button" onClick={handleResetClick}
+            className="w-full flex items-center justify-center gap-2 text-xs font-medium text-red-500 hover:text-red-600 py-2">
+            <Trash2 className="w-3.5 h-3.5" /> Elimina tutti i dati di questa estrazione
+          </button>
+        ) : (
+          <div className="p-3.5 rounded-xl" style={{ background: 'rgba(239,68,68,0.06)', border: '1px solid rgba(239,68,68,0.25)' }}>
+            <p className="text-xs font-semibold text-red-600 mb-1">Confermi la cancellazione?</p>
+            <p className="text-xs text-slate-500 mb-3">
+              Titolo, descrizione, foto, premio, partecipanti e prezzo del biglietto verranno azzerati per iniziare una nuova estrazione da zero. Lo storico vincitori resta intatto. Non si può annullare.
+            </p>
+            <div className="flex gap-2">
+              <Button type="button" variant="outline" onClick={() => setConfirmingReset(false)} className="flex-1 border-slate-200 text-slate-600 hover:bg-slate-50">
+                Annulla
+              </Button>
+              <Button type="button" onClick={handleResetConfirm} disabled={resetting} className="flex-1 gap-1.5 bg-red-500 hover:bg-red-600 text-white">
+                <Trash2 className="w-3.5 h-3.5" /> {resetting ? 'Cancellazione...' : 'Sì, elimina tutto'}
+              </Button>
+            </div>
+          </div>
+        )}
+      </div>
 
       {/* Storico */}
       <div>
