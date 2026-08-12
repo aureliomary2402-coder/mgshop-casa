@@ -90,7 +90,7 @@ export default function WelcomePage() {
             alt="MGShop Casa"
             width={280}
             height={280}
-            className="neon-glow-logo w-40 h-40 md:w-56 md:h-56 object-contain animate-float"
+            className="neon-glow-logo w-52 h-52 md:w-72 md:h-72 object-contain animate-float"
             priority
           />
         </div>
