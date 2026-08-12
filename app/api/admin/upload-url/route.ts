@@ -29,7 +29,14 @@ export async function POST(request: NextRequest) {
 
     const { data: urlData } = supabase.storage.from('images').getPublicUrl(path)
 
-    return NextResponse.json({ path, token: data.token, publicUrl: urlData.publicUrl })
+    // createSignedUploadUrl a volte restituisce un percorso relativo (a
+    // seconda della versione della libreria): lo rendiamo sempre assoluto,
+    // così il browser può chiamarlo direttamente senza ambiguità.
+    const absoluteSignedUrl = data.signedUrl.startsWith('http')
+      ? data.signedUrl
+      : `${process.env.NEXT_PUBLIC_SUPABASE_URL}${data.signedUrl.startsWith('/') ? '' : '/'}${data.signedUrl}`
+
+    return NextResponse.json({ path, token: data.token, signedUrl: absoluteSignedUrl, publicUrl: urlData.publicUrl })
   } catch (e: any) {
     return NextResponse.json({ error: e?.message || 'Errore sconosciuto' }, { status: 500 })
   }

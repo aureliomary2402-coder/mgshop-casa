@@ -6,12 +6,33 @@ import { Input } from '@/components/ui/input'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { ArrowLeft, Upload, Trash2, ImageIcon, Link, Video, PlayCircle } from 'lucide-react'
 import type { ProductImage } from '@/lib/types'
-import { createClient } from '@/lib/supabase/client'
 
 // Estensioni video riconosciute quando l'admin incolla un URL diretto
 // (l'upload da file invece rileva il tipo dal file stesso).
 const VIDEO_EXTENSIONS = ['.mp4', '.webm', '.mov', '.m4v', '.ogv']
 const looksLikeVideoUrl = (url: string) => VIDEO_EXTENSIONS.some(ext => url.toLowerCase().split('?')[0].endsWith(ext))
+
+// Il metodo "fetch" della libreria Supabase per l'upload diretto ha un bug
+// noto su Safari/iOS: in certi casi il corpo della richiesta (il file)
+// risulta vuoto ("No content provided"). XMLHttpRequest è più affidabile
+// per l'invio di file binari su Safari, quindi lo usiamo al posto del
+// metodo di libreria per caricare i video direttamente su Supabase Storage.
+function uploadFileViaXHR(signedUrl: string, file: File): Promise<void> {
+  return new Promise((resolve, reject) => {
+    const xhr = new XMLHttpRequest()
+    xhr.open('PUT', signedUrl, true)
+    const anonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || ''
+    xhr.setRequestHeader('apikey', anonKey)
+    xhr.setRequestHeader('Authorization', `Bearer ${anonKey}`)
+    xhr.setRequestHeader('Content-Type', file.type || 'application/octet-stream')
+    xhr.onload = () => {
+      if (xhr.status >= 200 && xhr.status < 300) resolve()
+      else reject(new Error(`Caricamento fallito (${xhr.status}). ${xhr.responseText?.slice(0, 200) || ''}`))
+    }
+    xhr.onerror = () => reject(new Error('Errore di rete durante il caricamento del video'))
+    xhr.send(file)
+  })
+}
 
 interface ProductImagesManagerProps {
   productId: string
@@ -57,6 +78,10 @@ export function ProductImagesManager({ productId, onBack }: ProductImagesManager
   // rifiuta corpi sopra ~4.5MB: vanno caricati direttamente su Supabase
   // Storage dal browser, usando un URL di upload firmato generato dal server.
   const uploadVideoDirect = async (file: File): Promise<string> => {
+    if (!file || file.size === 0) {
+      throw new Error('Il file risulta vuoto (0 byte). Se il video è salvato solo su iCloud, aprilo prima nell\'app Foto per scaricarlo sul telefono, poi riprova.')
+    }
+
     const signRes = await fetch('/api/admin/upload-url', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -65,11 +90,7 @@ export function ProductImagesManager({ productId, onBack }: ProductImagesManager
     const signData = await signRes.json()
     if (!signRes.ok) throw new Error(signData.error || `Errore preparazione upload (${signRes.status})`)
 
-    const supabase = createClient()
-    const { error } = await supabase.storage
-      .from('images')
-      .uploadToSignedUrl(signData.path, signData.token, file, { contentType: file.type })
-    if (error) throw new Error(error.message)
+    await uploadFileViaXHR(signData.signedUrl, file)
 
     return signData.publicUrl
   }
