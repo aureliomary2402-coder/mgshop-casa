@@ -66,6 +66,7 @@ export function SiteTicker() {
       ))}
     </div>
     <div className="fixed left-0 right-0 pointer-events-none site-ticker-foam-wrap" style={{ bottom: 32, zIndex: 50 }}>
+      <div className="site-ticker-foam site-ticker-foam-solid" />
       <div className="site-ticker-foam site-ticker-foam-back" />
       <div className="site-ticker-foam site-ticker-foam-front" />
       {FOAM_SPARKLES.map((s, i) => (
@@ -133,6 +134,15 @@ export function SiteTicker() {
           background-repeat: repeat-x;
           background-position: bottom;
           filter: drop-shadow(0 1px 1px rgba(8,145,178,0.25));
+        }
+        .site-ticker-foam-solid {
+          bottom: -9px;
+          height: 22px;
+          background-image:
+            radial-gradient(circle at 7px 12px, rgba(255,255,255,0.98) 0 9px, transparent 10px),
+            radial-gradient(circle at 21px 12px, rgba(224,247,250,0.98) 0 9px, transparent 10px);
+          background-size: 28px 22px;
+          opacity: 1;
         }
         .site-ticker-foam-back {
           background-image:
