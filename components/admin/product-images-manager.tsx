@@ -14,23 +14,42 @@ const looksLikeVideoUrl = (url: string) => VIDEO_EXTENSIONS.some(ext => url.toLo
 
 // Il metodo "fetch" della libreria Supabase per l'upload diretto ha un bug
 // noto su Safari/iOS: in certi casi il corpo della richiesta (il file)
-// risulta vuoto ("No content provided"). XMLHttpRequest è più affidabile
-// per l'invio di file binari su Safari, quindi lo usiamo al posto del
-// metodo di libreria per caricare i video direttamente su Supabase Storage.
+// risulta vuoto ("No content provided") o troncato. XMLHttpRequest è più
+// affidabile per l'invio di file binari su Safari, quindi lo usiamo al
+// posto del metodo di libreria per caricare i video direttamente su
+// Supabase Storage. Inoltre leggiamo il file per intero in memoria prima
+// di inviarlo (invece di passare l'oggetto File "grezzo"): su Safari
+// l'invio diretto di un File di grandi dimensioni può venire interrotto a
+// metà senza generare un errore visibile, mentre inviare i byte già letti
+// evita questo problema.
 function uploadFileViaXHR(signedUrl: string, file: File): Promise<void> {
   return new Promise((resolve, reject) => {
-    const xhr = new XMLHttpRequest()
-    xhr.open('PUT', signedUrl, true)
-    const anonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || ''
-    xhr.setRequestHeader('apikey', anonKey)
-    xhr.setRequestHeader('Authorization', `Bearer ${anonKey}`)
-    xhr.setRequestHeader('Content-Type', file.type || 'application/octet-stream')
-    xhr.onload = () => {
-      if (xhr.status >= 200 && xhr.status < 300) resolve()
-      else reject(new Error(`Caricamento fallito (${xhr.status}). ${xhr.responseText?.slice(0, 200) || ''}`))
+    const reader = new FileReader()
+    reader.onerror = () => reject(new Error('Impossibile leggere il file dal telefono'))
+    reader.onload = () => {
+      const buffer = reader.result as ArrayBuffer
+      if (!buffer || buffer.byteLength === 0) {
+        reject(new Error('Il file letto risulta vuoto (0 byte)'))
+        return
+      }
+      if (buffer.byteLength !== file.size) {
+        reject(new Error(`Lettura incompleta del file (${buffer.byteLength} di ${file.size} byte)`))
+        return
+      }
+      const xhr = new XMLHttpRequest()
+      xhr.open('PUT', signedUrl, true)
+      const anonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || ''
+      xhr.setRequestHeader('apikey', anonKey)
+      xhr.setRequestHeader('Authorization', `Bearer ${anonKey}`)
+      xhr.setRequestHeader('Content-Type', file.type || 'application/octet-stream')
+      xhr.onload = () => {
+        if (xhr.status >= 200 && xhr.status < 300) resolve()
+        else reject(new Error(`Caricamento fallito (${xhr.status}). ${xhr.responseText?.slice(0, 200) || ''}`))
+      }
+      xhr.onerror = () => reject(new Error('Errore di rete durante il caricamento del video'))
+      xhr.send(buffer)
     }
-    xhr.onerror = () => reject(new Error('Errore di rete durante il caricamento del video'))
-    xhr.send(file)
+    reader.readAsArrayBuffer(file)
   })
 }
 
