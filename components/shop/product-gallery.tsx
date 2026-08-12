@@ -17,11 +17,22 @@ export function ProductGallery({ images, productName, tornaPresto = false }: { i
   const [zoomScale, setZoomScale] = useState(1)
   const [zoomOrigin, setZoomOrigin] = useState({ x: 50, y: 50 })
   const [pan, setPan] = useState({ x: 0, y: 0 })
+  const [videoError, setVideoError] = useState<string | null>(null)
+
+  const videoErrorMessage = (video: HTMLVideoElement) => {
+    switch (video.error?.code) {
+      case 1: return 'Caricamento interrotto'
+      case 2: return 'Errore di rete durante il caricamento'
+      case 3: return 'File video danneggiato o incompleto'
+      case 4: return 'Formato video non supportato da questo browser'
+      default: return 'Impossibile riprodurre il video'
+    }
+  }
 
   const touchState = useRef({ startX: 0, startY: 0, moved: false, lastTap: 0, panStart: { x: 0, y: 0 } })
 
-  const goNext = () => setCurrentImg(i => (i + 1) % images.length)
-  const goPrev = () => setCurrentImg(i => (i - 1 + images.length) % images.length)
+  const goNext = () => { setCurrentImg(i => (i + 1) % images.length); setVideoError(null) }
+  const goPrev = () => { setCurrentImg(i => (i - 1 + images.length) % images.length); setVideoError(null) }
 
   // Swipe sull'immagine principale (fuori dal lightbox)
   const handleMainTouchStart = (e: React.TouchEvent) => {
@@ -128,14 +139,22 @@ export function ProductGallery({ images, productName, tornaPresto = false }: { i
           onTouchEnd={handleMainTouchEnd}
         >
           {images[currentImg].media_type === 'video' ? (
-            <video
-              key={images[currentImg].id}
-              src={images[currentImg].image_url}
-              className="w-full h-full object-cover"
-              controls
-              playsInline
-              preload="metadata"
-            />
+            <>
+              <video
+                key={images[currentImg].id}
+                src={images[currentImg].image_url}
+                className="w-full h-full object-cover"
+                controls
+                playsInline
+                preload="metadata"
+                onError={(e) => setVideoError(videoErrorMessage(e.currentTarget))}
+              />
+              {videoError && (
+                <div className="absolute inset-x-0 top-0 p-3 text-center text-xs font-medium text-white bg-black/70 pointer-events-none">
+                  ⚠️ {videoError}
+                </div>
+              )}
+            </>
           ) : (
             <img src={images[currentImg].image_url} alt={productName} className="w-full h-full object-cover transition-transform duration-500 hover:scale-105" draggable={false} style={tornaPresto ? { filter: 'grayscale(1)' } : undefined} />
           )}
