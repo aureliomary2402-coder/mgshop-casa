@@ -269,7 +269,7 @@ export function PromoManager() {
           </div>
           <label className="inline-flex items-center gap-2 cursor-pointer text-sm text-cyan-700 font-medium">
             <ImageIcon className="w-4 h-4" /> {uploading ? 'Caricamento...' : 'Carica file'}
-            <input type="file" accept="image/*" className="hidden" onChange={handleImageSelect} disabled={uploading} />
+            <input type="file" accept="image/*" className="sr-only" onChange={handleImageSelect} disabled={uploading} />
           </label>
           {imageUrl && (
             <div className="mt-2 relative">
@@ -308,7 +308,7 @@ export function PromoManager() {
               <div className="flex items-center gap-2">
                 <label className="inline-flex items-center gap-1.5 cursor-pointer text-xs text-cyan-700 font-medium px-3 py-2 rounded-lg border border-cyan-200 bg-white shrink-0">
                   <ImageIcon className="w-3.5 h-3.5" /> {customUploading ? 'Caricamento...' : 'Immagine'}
-                  <input type="file" accept="image/*" className="hidden" onChange={handleCustomImageUpload} disabled={customUploading} />
+                  <input type="file" accept="image/*" className="sr-only" onChange={handleCustomImageUpload} disabled={customUploading} />
                 </label>
                 {customImageUrl && <img src={customImageUrl} alt="" className="w-9 h-9 rounded-lg object-cover" />}
               </div>
