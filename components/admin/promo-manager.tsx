@@ -81,8 +81,10 @@ export function PromoManager() {
   }
 
   const handleImageSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    alert('onChange scattato. files.length=' + (e.target.files?.length ?? 'undefined'))
     const file = e.target.files?.[0]
-    if (!file) return
+    if (!file) { alert('nessun file trovato, esco'); return }
+    alert('file ok: ' + file.name + ' - ' + file.size + ' bytes - ' + file.type)
     setCropFile(file)
     e.target.value = ''
   }
