@@ -81,10 +81,8 @@ export function PromoManager() {
   }
 
   const handleImageSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
-    alert('onChange scattato. files.length=' + (e.target.files?.length ?? 'undefined'))
     const file = e.target.files?.[0]
-    if (!file) { alert('nessun file trovato, esco'); return }
-    alert('file ok: ' + file.name + ' - ' + file.size + ' bytes - ' + file.type)
+    if (!file) return
     setCropFile(file)
     e.target.value = ''
   }
@@ -140,24 +138,30 @@ export function PromoManager() {
   const [customDescription, setCustomDescription] = useState('')
   const [customUploading, setCustomUploading] = useState(false)
 
-  const handleCustomImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    alert('custom onChange scattato. files.length=' + (e.target.files?.length ?? 'undefined'))
+  const [customCropFile, setCustomCropFile] = useState<File | null>(null)
+
+  const handleCustomImageSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
+    if (!file) return
+    setCustomCropFile(file)
     e.target.value = ''
-    if (!file) { alert('nessun file, esco'); return }
-    alert('file: ' + file.name + ' - ' + file.size + ' bytes - ' + file.type)
+  }
+
+  const handleCustomCropConfirm = async (blob: Blob) => {
+    setCustomCropFile(null)
     setCustomUploading(true)
     try {
+      const croppedFile = new File([blob], 'custom-product.jpg', { type: 'image/jpeg' })
       const formData = new FormData()
-      formData.append('file', file)
+      formData.append('file', croppedFile)
       const res = await fetch('/api/upload', { method: 'POST', body: formData })
-      alert('risposta server: status ' + res.status)
       const data = await res.json()
-      alert('dati ricevuti: ' + JSON.stringify(data))
       if (data.url) setCustomImageUrl(data.url)
-    } catch (err) { alert('ERRORE upload: ' + String(err)) }
+    } catch { console.error('Upload failed') }
     setCustomUploading(false)
   }
+
+  const handleCustomCropCancel = () => setCustomCropFile(null)
 
   const addCustomProduct = () => {
     if (!customName.trim()) return
@@ -314,7 +318,7 @@ export function PromoManager() {
               <div className="flex items-center gap-2">
                 <label className="inline-flex items-center gap-1.5 cursor-pointer text-xs text-cyan-700 font-medium px-3 py-2 rounded-lg border border-cyan-200 bg-white shrink-0">
                   <ImageIcon className="w-3.5 h-3.5" /> {customUploading ? 'Caricamento...' : 'Immagine'}
-                  <input type="file" accept="image/*" className="sr-only" onChange={handleCustomImageUpload} disabled={customUploading} />
+                  <input type="file" accept="image/*" className="sr-only" onChange={handleCustomImageSelect} disabled={customUploading} />
                 </label>
                 {customImageUrl && <img src={customImageUrl} alt="" className="w-9 h-9 rounded-lg object-cover" />}
               </div>
@@ -438,6 +442,15 @@ export function PromoManager() {
           outputWidth={1800}
           onCancel={handleCropCancel}
           onConfirm={handleCropConfirm}
+        />
+      )}
+      {customCropFile && (
+        <ImageCropper
+          file={customCropFile}
+          aspectRatio={1}
+          outputWidth={1000}
+          onCancel={handleCustomCropCancel}
+          onConfirm={handleCustomCropConfirm}
         />
       )}
     </div>
