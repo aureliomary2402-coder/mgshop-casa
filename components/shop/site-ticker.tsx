@@ -16,12 +16,22 @@ const TICKER_BUBBLES = Array.from({ length: 10 }).map((_, i) => ({
 // Scintillii sparsi lungo la cresta di schiuma (posizioni in %, va bene:
 // sono solo accenti sparkle sopra al pattern di schiuma che invece
 // si ripete a piastrelle su tutta la larghezza, senza buchi)
-const FOAM_SPARKLES = Array.from({ length: 14 }).map((_, i) => ({
-  left: `${(i * 7.3 + (i % 3) * 11) % 100}%`,
+const FOAM_SPARKLES = Array.from({ length: 16 }).map((_, i) => ({
+  left: `${(i * 6.4 + (i % 3) * 9) % 100}%`,
   size: 3 + ((i * 5) % 4),
-  bottom: -2 + ((i * 7) % 14),
+  bottom: -2 + ((i * 7) % 16),
   dur: 1.8 + ((i * 0.6) % 2.2),
   delay: (i * 0.35) % 3,
+}))
+
+// Bollicine che "scoppiano" sulla cresta della schiuma: nascono, si gonfiano
+// e fanno pop, dando movimento vivo e tridimensionale invece di una texture ferma
+const POP_BUBBLES = Array.from({ length: 12 }).map((_, i) => ({
+  left: `${(i * 8.3 + (i % 4) * 5) % 100}%`,
+  size: 7 + ((i * 11) % 13),
+  bottom: -1 + ((i * 5) % 12),
+  dur: 3.2 + ((i * 0.9) % 3),
+  delay: (i * 1.1) % 8,
 }))
 
 export function SiteTicker() {
@@ -66,14 +76,24 @@ export function SiteTicker() {
       ))}
     </div>
     <div className="fixed left-0 right-0 pointer-events-none site-ticker-foam-wrap" style={{ bottom: 32, zIndex: 50 }}>
-      <div className="site-ticker-foam site-ticker-foam-solid" />
+      <div className="site-ticker-foam site-ticker-foam-wave" />
       <div className="site-ticker-foam site-ticker-foam-back" />
+      <div className="site-ticker-foam site-ticker-foam-mid" />
+      <div className="site-ticker-foam site-ticker-foam-solid" />
       <div className="site-ticker-foam site-ticker-foam-front" />
+      <div className="site-ticker-foam-shine" />
       {FOAM_SPARKLES.map((s, i) => (
         <span key={i} className="absolute rounded-full site-ticker-foam-sparkle"
           style={{
             left: s.left, bottom: s.bottom, width: s.size, height: s.size,
             animationDuration: `${s.dur}s`, animationDelay: `${s.delay}s`,
+          }} />
+      ))}
+      {POP_BUBBLES.map((p, i) => (
+        <span key={i} className="absolute rounded-full site-ticker-pop-bubble"
+          style={{
+            left: p.left, bottom: p.bottom, width: p.size, height: p.size,
+            animationDuration: `${p.dur}s`, animationDelay: `${p.delay}s`,
           }} />
       ))}
     </div>
@@ -122,8 +142,11 @@ export function SiteTicker() {
           35% { left: 130%; }
           100% { left: 130%; }
         }
+
+        /* ===== SCHIUMA 3D ===== */
         .site-ticker-foam-wrap {
           height: 0;
+          perspective: 300px;
         }
         .site-ticker-foam {
           position: absolute;
@@ -133,51 +156,101 @@ export function SiteTicker() {
           height: 26px;
           background-repeat: repeat-x;
           background-position: bottom;
-          filter: drop-shadow(0 1px 1px rgba(8,145,178,0.25));
+        }
+
+        /* Onda liquida di base: bordo superiore che ondeggia davvero,
+           non un pattern fisso. Da' il senso di superficie viva. */
+        .site-ticker-foam-wave {
+          bottom: -16px;
+          height: 36px;
+          background: linear-gradient(180deg, rgba(255,255,255,0.98) 0%, rgba(207,250,254,0.92) 45%, rgba(8,145,178,0.4) 100%);
+          clip-path: polygon(0% 55%, 8% 28%, 16% 55%, 24% 22%, 32% 55%, 40% 18%, 48% 55%, 56% 26%, 64% 55%, 72% 16%, 80% 55%, 88% 30%, 96% 55%, 100% 42%, 100% 100%, 0% 100%);
+          filter: drop-shadow(0 -1px 2px rgba(8,145,178,0.25));
+          animation: site-ticker-wave-morph 4.2s ease-in-out infinite, site-ticker-wave-drift 6.5s linear infinite;
+        }
+        @keyframes site-ticker-wave-morph {
+          0%, 100% { clip-path: polygon(0% 55%, 8% 28%, 16% 55%, 24% 22%, 32% 55%, 40% 18%, 48% 55%, 56% 26%, 64% 55%, 72% 16%, 80% 55%, 88% 30%, 96% 55%, 100% 42%, 100% 100%, 0% 100%); }
+          50% { clip-path: polygon(0% 44%, 8% 58%, 16% 24%, 24% 58%, 32% 20%, 40% 58%, 48% 26%, 56% 58%, 64% 18%, 72% 58%, 80% 28%, 88% 58%, 96% 22%, 100% 56%, 100% 100%, 0% 100%); }
+        }
+        @keyframes site-ticker-wave-drift {
+          from { transform: translateX(0); }
+          to { transform: translateX(-48px); }
+        }
+
+        /* Bolle glossy con vera ombreggiatura sferica (luce in alto a sx,
+           corpo cangiante, bordo in ombra): questo e' cio' che le fa
+           sembrare 3D invece di semplici cerchi piatti. */
+        .site-ticker-foam-back {
+          bottom: -3px;
+          height: 20px;
+          opacity: 0.5;
+          filter: blur(1.4px);
+          background-image:
+            radial-gradient(circle at 30% 24%, #fff 0%, #fff 10%, rgba(224,247,250,0.85) 26%, rgba(103,212,231,0.5) 52%, rgba(8,145,178,0.28) 76%, transparent 100%);
+          background-position: 4px 10px, 22px 14px, 40px 9px;
+          background-size: 46px 20px;
+          animation: site-ticker-foam-drift-back 12s linear infinite, site-ticker-foam-bob 4.4s ease-in-out infinite;
+        }
+        .site-ticker-foam-mid {
+          bottom: -6px;
+          height: 23px;
+          opacity: 0.72;
+          filter: blur(0.5px);
+          background-image:
+            radial-gradient(circle at 30% 24%, #fff 0%, #fff 11%, rgba(224,247,250,0.88) 28%, rgba(103,212,231,0.52) 54%, rgba(8,145,178,0.3) 78%, transparent 100%);
+          background-size: 34px 23px;
+          animation: site-ticker-foam-drift-mid 8.5s linear infinite reverse, site-ticker-foam-bob 3.1s ease-in-out infinite 0.5s;
         }
         .site-ticker-foam-solid {
           bottom: -9px;
           height: 22px;
           background-image:
-            radial-gradient(circle at 7px 12px, rgba(255,255,255,0.98) 0 9px, transparent 10px),
-            radial-gradient(circle at 21px 12px, rgba(224,247,250,0.98) 0 9px, transparent 10px);
+            radial-gradient(circle at 28% 22%, #fff 0%, #fff 13%, rgba(224,247,250,0.92) 30%, rgba(120,220,235,0.55) 56%, rgba(8,145,178,0.32) 80%, transparent 100%);
+          background-position: 7px 12px, 21px 12px;
           background-size: 28px 22px;
-          opacity: 1;
-        }
-        .site-ticker-foam-back {
-          background-image:
-            radial-gradient(circle at 9px 20px, rgba(255,255,255,0.9) 0 5px, transparent 6px),
-            radial-gradient(circle at 22px 22px, rgba(224,247,250,0.85) 0 7px, transparent 8px),
-            radial-gradient(circle at 38px 19px, rgba(255,255,255,0.9) 0 5px, transparent 6px),
-            radial-gradient(circle at 52px 22px, rgba(224,247,250,0.85) 0 6px, transparent 7px),
-            radial-gradient(circle at 66px 20px, rgba(255,255,255,0.9) 0 5px, transparent 6px);
-          background-size: 76px 26px;
-          opacity: 0.7;
-          animation: site-ticker-foam-drift-back 10s linear infinite,
-                     site-ticker-foam-bob 3.4s ease-in-out infinite;
+          animation: site-ticker-foam-bob 3.7s ease-in-out infinite 0.2s;
         }
         .site-ticker-foam-front {
           background-image:
-            radial-gradient(circle at 6px 22px, rgba(255,255,255,0.98) 0 7px, transparent 8px),
-            radial-gradient(circle at 20px 24px, rgba(255,255,255,0.95) 0 9px, transparent 10px),
-            radial-gradient(circle at 36px 21px, rgba(240,253,255,0.95) 0 6px, transparent 7px),
-            radial-gradient(circle at 49px 24px, rgba(255,255,255,0.98) 0 8px, transparent 9px);
-          background-size: 58px 26px;
-          animation: site-ticker-foam-drift-front 6.5s linear infinite reverse,
-                     site-ticker-foam-bob 2.5s ease-in-out infinite 0.3s;
+            radial-gradient(circle at 32% 24%, #fff 0%, #fff 14%, rgba(240,253,255,0.95) 32%, rgba(150,230,245,0.5) 58%, rgba(8,145,178,0.25) 82%, transparent 100%);
+          background-size: 26px 26px;
+          animation: site-ticker-foam-drift-front 5.8s linear infinite reverse, site-ticker-foam-bob 2.4s ease-in-out infinite 0.3s;
         }
         @keyframes site-ticker-foam-drift-back {
           from { background-position-x: 0; }
-          to { background-position-x: -76px; }
+          to { background-position-x: -92px; }
+        }
+        @keyframes site-ticker-foam-drift-mid {
+          from { background-position-x: 0; }
+          to { background-position-x: -68px; }
         }
         @keyframes site-ticker-foam-drift-front {
           from { background-position-x: 0; }
-          to { background-position-x: 58px; }
+          to { background-position-x: 52px; }
         }
         @keyframes site-ticker-foam-bob {
-          0%, 100% { transform: translateY(0); }
-          50% { transform: translateY(-2px); }
+          0%, 100% { transform: translateY(0) scaleY(1); }
+          50% { transform: translateY(-2.5px) scaleY(1.04); }
         }
+
+        /* Riflesso di luce che scorre sopra la cresta di schiuma */
+        .site-ticker-foam-shine {
+          position: absolute;
+          bottom: -14px;
+          left: -40%;
+          width: 40%;
+          height: 30px;
+          background: linear-gradient(100deg, transparent 0%, rgba(255,255,255,0.55) 50%, transparent 100%);
+          mix-blend-mode: screen;
+          animation: site-ticker-foam-shine-sweep 4.5s ease-in-out infinite;
+          pointer-events: none;
+        }
+        @keyframes site-ticker-foam-shine-sweep {
+          0% { left: -40%; }
+          40% { left: 130%; }
+          100% { left: 130%; }
+        }
+
         .site-ticker-foam-sparkle {
           background: #fff;
           box-shadow: 0 0 4px rgba(255,255,255,0.9), 0 0 8px rgba(150,235,250,0.6);
@@ -189,6 +262,25 @@ export function SiteTicker() {
           0%, 100% { opacity: 0; transform: scale(0.4); }
           50% { opacity: 1; transform: scale(1); }
         }
+
+        /* Bollicine che nascono, si gonfiano e scoppiano sulla cresta */
+        .site-ticker-pop-bubble {
+          background: radial-gradient(circle at 32% 26%, #fff 0%, rgba(255,255,255,0.9) 18%, rgba(190,240,250,0.55) 45%, rgba(8,145,178,0.25) 72%, transparent 100%);
+          border: 1px solid rgba(255,255,255,0.55);
+          box-shadow: inset -1px -1px 2px rgba(8,145,178,0.25), inset 1px 1px 2px rgba(255,255,255,0.7);
+          animation-name: site-ticker-pop;
+          animation-timing-function: cubic-bezier(0.3, 0, 0.4, 1);
+          animation-iteration-count: infinite;
+        }
+        @keyframes site-ticker-pop {
+          0% { transform: scale(0.3); opacity: 0; }
+          12% { opacity: 0.85; }
+          55% { transform: scale(1); opacity: 0.9; }
+          78% { transform: scale(1.25); opacity: 0.7; }
+          88% { transform: scale(1.7); opacity: 0.35; box-shadow: 0 0 0 3px rgba(255,255,255,0.4), inset -1px -1px 2px rgba(8,145,178,0.25), inset 1px 1px 2px rgba(255,255,255,0.7); }
+          100% { transform: scale(2.1); opacity: 0; box-shadow: 0 0 0 9px rgba(255,255,255,0); }
+        }
+
         .site-ticker-bubble {
           background: radial-gradient(circle at 32% 28%, rgba(255,255,255,0.75), rgba(8,145,178,0.12) 60%, transparent 100%);
           box-shadow: inset -1px -1px 3px rgba(255,255,255,0.3), inset 1px 1px 2px rgba(8,145,178,0.1);
@@ -203,11 +295,6 @@ export function SiteTicker() {
           65% { transform: translateY(-30px) scale(0.9); opacity: 0.6; }
           88% { transform: translateY(-42px) scale(1.1); opacity: 0.25; }
           100% { transform: translateY(-48px) scale(1.3); opacity: 0; }
-        }
-        .site-ticker-bubble {
-          animation-name: site-ticker-bubble-rise;
-          animation-timing-function: ease-out;
-          animation-iteration-count: infinite;
         }
       `}</style>
     </div>
