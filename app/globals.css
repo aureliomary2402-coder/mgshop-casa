@@ -360,3 +360,23 @@ main { animation: fadeIn 0.3s ease-out; }
   border-radius: 30% 60% 70% 40% / 50% 60% 30% 60%;
   animation: floatSlow 8s ease-in-out infinite;
 }
+
+
+/* ===== NEON LOGO GLOW ===== */
+@keyframes neon-pulse-logo {
+  0%, 100% {
+    filter:
+      drop-shadow(0 0 10px rgba(34,211,238,0.55))
+      drop-shadow(0 0 26px rgba(34,211,238,0.35))
+      drop-shadow(0 0 48px rgba(8,145,178,0.28));
+  }
+  50% {
+    filter:
+      drop-shadow(0 0 16px rgba(165,243,252,0.85))
+      drop-shadow(0 0 40px rgba(34,211,238,0.55))
+      drop-shadow(0 0 70px rgba(8,145,178,0.4));
+  }
+}
+.neon-glow-logo {
+  animation: neon-pulse-logo 2.8s ease-in-out infinite;
+}
