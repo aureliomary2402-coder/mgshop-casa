@@ -88,7 +88,7 @@ export function SiteTicker() {
       <button onClick={handleDismiss} aria-label="Chiudi" className="shrink-0 h-full px-2.5 flex items-center justify-center hover:bg-black/10 transition-colors relative z-10">
         <X className="w-3.5 h-3.5 text-white/80" />
       </button>
-      <style jsx>{`
+      <style jsx global>{`
         .site-ticker-bg {
           background: linear-gradient(270deg, #0891b2, #0e7490, #06b6d4, #0891b2);
           background-size: 300% 100%;
