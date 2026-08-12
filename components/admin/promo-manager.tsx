@@ -156,6 +156,7 @@ export function PromoManager() {
   const [customUploading, setCustomUploading] = useState(false)
 
   const [customCropFile, setCustomCropFile] = useState<File | null>(null)
+  const [editingItemId, setEditingItemId] = useState<string | null>(null)
 
   const handleCustomImageSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
@@ -165,7 +166,9 @@ export function PromoManager() {
   }
 
   const handleCustomCropConfirm = async (blob: Blob) => {
+    const targetItemId = editingItemId
     setCustomCropFile(null)
+    setEditingItemId(null)
     setCustomUploading(true)
     try {
       const croppedFile = new File([blob], 'custom-product.jpg', { type: 'image/jpeg' })
@@ -173,12 +176,32 @@ export function PromoManager() {
       formData.append('file', croppedFile)
       const res = await fetch('/api/upload', { method: 'POST', body: formData })
       const data = await res.json()
-      if (data.url) setCustomImageUrl(data.url)
+      if (data.url) {
+        if (targetItemId) {
+          // Aggiorna la foto di un prodotto gia' in lista. Se e' un prodotto
+          // preso dal negozio, da qui in poi mostra la foto modificata al
+          // posto di quella del catalogo (image_url la sovrascrive).
+          setItems(prev => prev.map(i => i.id === targetItemId ? { ...i, image_url: data.url } : i))
+        } else {
+          setCustomImageUrl(data.url)
+        }
+      }
     } catch { console.error('Upload failed') }
     setCustomUploading(false)
   }
 
-  const handleCustomCropCancel = () => setCustomCropFile(null)
+  const handleCustomCropCancel = () => { setCustomCropFile(null); setEditingItemId(null) }
+
+  const openItemEditCropper = async (itemId: string, currentImage: string | null) => {
+    if (!currentImage) return
+    setFetchingEdit(true)
+    try {
+      const file = await urlToFile(currentImage, 'item.jpg')
+      setEditingItemId(itemId)
+      setCustomCropFile(file)
+    } catch { setError('Impossibile aprire la foto per modificarla') }
+    setFetchingEdit(false)
+  }
 
   const openCustomEditCropper = async () => {
     if (!customImageUrl) return
@@ -231,7 +254,7 @@ export function PromoManager() {
     if (item.product_id) {
       const product = allProducts.find(p => p.id === item.product_id)
       if (!product) return null
-      return { item, name: product.name, image: product.cover_image, originalPrice: product.price, isCustom: false }
+      return { item, name: product.name, image: item.image_url || product.cover_image, originalPrice: product.price, isCustom: false }
     }
     return { item, name: item.name || 'Prodotto personalizzato', image: item.image_url || null, originalPrice: item.original_price ?? item.sale_price, isCustom: true }
   }).filter((x): x is { item: PromoItem; name: string; image: string | null; originalPrice: number; isCustom: boolean } => !!x)
@@ -395,7 +418,15 @@ export function PromoManager() {
               {itemProducts.map(({ item, name, image, originalPrice, isCustom }) => (
                 <div key={item.id} className="p-2.5 rounded-xl border border-cyan-100 bg-cyan-50 space-y-2">
                   <div className="flex items-center gap-3">
-                    {image ? <img src={image} alt={name} className="w-12 h-12 rounded-lg object-cover shrink-0" /> : <div className="w-12 h-12 rounded-lg bg-slate-200 shrink-0" />}
+                    <div className="shrink-0 flex flex-col items-center gap-1">
+                      {image ? <img src={image} alt={name} className="w-12 h-12 rounded-lg object-cover" /> : <div className="w-12 h-12 rounded-lg bg-slate-200" />}
+                      {image && (
+                        <button type="button" onClick={() => openItemEditCropper(item.id, image)} disabled={fetchingEdit}
+                          className="text-[9px] leading-none text-cyan-700 font-medium px-1.5 py-0.5 rounded border border-cyan-200 bg-white disabled:opacity-50">
+                          {fetchingEdit ? '...' : 'Modifica'}
+                        </button>
+                      )}
+                    </div>
                     <div className="flex-1 min-w-0">
                       <p className="text-sm font-medium text-slate-800 truncate">{name}{isCustom && <span className="ml-1.5 text-[10px] font-semibold text-amber-600 bg-amber-100 px-1.5 py-0.5 rounded">personalizzato</span>}</p>
                       <p className="text-xs text-slate-400 line-through">€{originalPrice.toFixed(2)}</p>
