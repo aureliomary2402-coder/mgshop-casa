@@ -141,17 +141,21 @@ export function PromoManager() {
   const [customUploading, setCustomUploading] = useState(false)
 
   const handleCustomImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    alert('custom onChange scattato. files.length=' + (e.target.files?.length ?? 'undefined'))
     const file = e.target.files?.[0]
     e.target.value = ''
-    if (!file) return
+    if (!file) { alert('nessun file, esco'); return }
+    alert('file: ' + file.name + ' - ' + file.size + ' bytes - ' + file.type)
     setCustomUploading(true)
     try {
       const formData = new FormData()
       formData.append('file', file)
       const res = await fetch('/api/upload', { method: 'POST', body: formData })
+      alert('risposta server: status ' + res.status)
       const data = await res.json()
+      alert('dati ricevuti: ' + JSON.stringify(data))
       if (data.url) setCustomImageUrl(data.url)
-    } catch { console.error('Upload failed') }
+    } catch (err) { alert('ERRORE upload: ' + String(err)) }
     setCustomUploading(false)
   }
 
