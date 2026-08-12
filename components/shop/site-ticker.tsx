@@ -56,7 +56,7 @@ export function SiteTicker() {
 
   return (
     <>
-    <div className="fixed bottom-8 left-0 right-0 z-40 h-14 overflow-hidden pointer-events-none">
+    <div className="fixed bottom-8 left-0 right-0 z-[60] h-14 overflow-hidden pointer-events-none">
       {TICKER_BUBBLES.map((b, i) => (
         <div key={i} className="absolute rounded-full site-ticker-bubble"
           style={{
