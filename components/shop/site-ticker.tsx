@@ -37,22 +37,25 @@ interface BubbleData {
 }
 
 function createBubble(id: number, width: number): BubbleData {
+  const isMobile = typeof window !== 'undefined' && window.innerWidth < 768
+  const sizeBase = isMobile ? 10 : 14
+  const sizeRange = isMobile ? 10 : 14
   return {
     id,
     x: Math.random() * width,
-    y: Math.random() * 12,
-    size: 16 + Math.random() * 24,
-    speedY: 0.3 + Math.random() * 0.55,
-    speedX: (Math.random() - 0.5) * 0.7,
+    y: -6 - Math.random() * 10,
+    size: sizeBase + Math.random() * sizeRange,
+    speedY: 0.25 + Math.random() * 0.45,
+    speedX: (Math.random() - 0.5) * 0.6,
     phase: Math.random() * Math.PI * 2,
-    wobbleSpeed: 0.018 + Math.random() * 0.028,
-    wobbleAmp: 0.5 + Math.random() * 1.5,
-    life: Math.random() * 80,
-    maxLife: 280 + Math.random() * 320,
+    wobbleSpeed: 0.015 + Math.random() * 0.025,
+    wobbleAmp: 0.4 + Math.random() * 1.2,
+    life: Math.random() * 60,
+    maxLife: 320 + Math.random() * 280,
   }
 }
 
-const BUBBLE_COUNT = 10
+const BUBBLE_COUNT = 8
 
 export function SiteTicker() {
   const pathname = usePathname()
@@ -66,7 +69,6 @@ export function SiteTicker() {
   const containerRef = useRef<HTMLDivElement>(null)
   const widthRef = useRef(1200)
 
-  // Inietta CSS nel head
   useEffect(() => {
     const style = document.createElement('style')
     style.textContent = CSS
@@ -74,7 +76,6 @@ export function SiteTicker() {
     return () => { document.head.removeChild(style) }
   }, [])
 
-  // Fetch ticker
   useEffect(() => {
     fetch('/api/ticker')
       .then(r => r.json())
@@ -88,7 +89,6 @@ export function SiteTicker() {
     }
   }, [])
 
-  // Resize
   useEffect(() => {
     const updateWidth = () => {
       widthRef.current = containerRef.current?.offsetWidth || window.innerWidth
@@ -98,14 +98,12 @@ export function SiteTicker() {
     return () => window.removeEventListener('resize', updateWidth)
   }, [])
 
-  // Animazione bolle via requestAnimationFrame
   useEffect(() => {
     if (!isActive || dismissed) return
 
     const width = widthRef.current
     bubblesRef.current = Array.from({ length: BUBBLE_COUNT }, (_, i) => createBubble(i, width))
 
-    // Dimensioni iniziali
     bubblesRef.current.forEach((b, i) => {
       const el = elsRef.current[i]
       if (el) {
@@ -127,33 +125,27 @@ export function SiteTicker() {
         b.life += dt
         b.phase += b.wobbleSpeed * dt
 
-        // Movimento: salita + drift ondulatorio laterale
         b.y += b.speedY * dt
-        b.x += (b.speedX + Math.sin(b.phase) * b.wobbleAmp * 0.25) * dt
+        b.x += (b.speedX + Math.sin(b.phase) * b.wobbleAmp * 0.2) * dt
 
-        // Wrap orizzontale
         if (b.x < -b.size) b.x = widthRef.current + b.size
         if (b.x > widthRef.current + b.size) b.x = -b.size
 
-        // Opacity: fade in + fade out
-        const birth = Math.min(b.life / 30, 1)
-        const death = b.life > b.maxLife - 55 ? (b.maxLife - b.life) / 55 : 1
+        const birth = Math.min(b.life / 25, 1)
+        const death = b.life > b.maxLife - 50 ? (b.maxLife - b.life) / 50 : 1
         const opacity = Math.min(birth, death)
 
-        // Wobble di forma (non perfettamente sferiche, come le bolle vere)
-        const wobbleX = 1 + Math.sin(b.phase * 1.3) * 0.07
-        const wobbleY = 1 + Math.cos(b.phase * 1.7) * 0.07
+        const wobbleX = 1 + Math.sin(b.phase * 1.3) * 0.06
+        const wobbleY = 1 + Math.cos(b.phase * 1.7) * 0.06
 
-        // Pop finale: si gonfia e scoppia
         let pop = 1
-        if (b.life > b.maxLife - 40) {
-          pop = 1 + (b.life - (b.maxLife - 40)) / 40 * 1.4
+        if (b.life > b.maxLife - 35) {
+          pop = 1 + (b.life - (b.maxLife - 35)) / 35 * 1.2
         }
 
         el.style.transform = `translate(${b.x}px, ${-b.y}px) scale(${wobbleX * pop}, ${wobbleY * pop})`
-        el.style.opacity = String(opacity * 0.92)
+        el.style.opacity = String(opacity)
 
-        // Reset quando muore
         if (b.life >= b.maxLife) {
           const nb = createBubble(b.id, widthRef.current)
           Object.assign(b, nb)
@@ -179,27 +171,25 @@ export function SiteTicker() {
 
   return (
     <>
-      {/* SCHIUMA 3D */}
+      {/* SCHIUMA — dietro la striscia, z-index inferiore */}
       <div
         ref={containerRef}
         className="fixed left-0 right-0 pointer-events-none"
-        style={{ bottom: 30, height: 90, zIndex: 50 }}
+        style={{ bottom: 22, height: 60, zIndex: 39 }}
       >
-        {/* Cresta continua che copre tutto il bordo superiore del ticker */}
+        {/* Cresta compatta sul bordo superiore della striscia */}
         <div
           style={{
             position: 'absolute',
-            left: '-5%',
-            right: '-5%',
-            bottom: -6,
-            height: 32,
-            background: 'radial-gradient(ellipse 20px 16px at 50% 100%, rgba(255,255,255,0.95) 0%, rgba(255,255,255,0.5) 40%, rgba(210,248,255,0.2) 72%, transparent 100%)',
-            backgroundSize: '24px 22px',
-            opacity: 0.9,
+            left: '-4%',
+            right: '-4%',
+            bottom: -4,
+            height: 22,
+            background: 'radial-gradient(ellipse 18px 14px at 50% 100%, rgba(255,255,255,0.92) 0%, rgba(255,255,255,0.45) 42%, rgba(210,248,255,0.15) 75%, transparent 100%)',
+            backgroundSize: '20px 18px',
           }}
         />
 
-        {/* 10 bolle dinamiche animate via rAF — GPU fluido */}
         {Array.from({ length: BUBBLE_COUNT }).map((_, i) => (
           <div
             key={i}
@@ -208,12 +198,12 @@ export function SiteTicker() {
               position: 'absolute',
               left: 0,
               bottom: 0,
-              width: 22,
-              height: 22,
+              width: 18,
+              height: 18,
               borderRadius: '50%',
-              background: 'radial-gradient(circle at 32% 28%, rgba(255,255,255,0.98) 0%, rgba(255,255,255,0.8) 14%, rgba(224,247,250,0.5) 38%, rgba(103,212,231,0.25) 66%, rgba(8,145,178,0.1) 90%, transparent 100%)',
-              border: '1.2px solid rgba(255,255,255,0.55)',
-              boxShadow: 'inset -2px -2px 4px rgba(8,145,178,0.1), inset 2px 2px 5px rgba(255,255,255,0.9), 0 1px 5px rgba(8,145,178,0.06)',
+              background: 'radial-gradient(circle at 30% 26%, rgba(255,255,255,0.98) 0%, rgba(255,255,255,0.78) 16%, rgba(224,247,250,0.45) 40%, rgba(103,212,231,0.22) 68%, rgba(8,145,178,0.08) 92%, transparent 100%)',
+              border: '1px solid rgba(255,255,255,0.6)',
+              boxShadow: 'inset -1.5px -1.5px 3px rgba(8,145,178,0.1), inset 1.5px 1.5px 4px rgba(255,255,255,0.85)',
               opacity: 0,
               willChange: 'transform, opacity',
             }}
@@ -221,10 +211,11 @@ export function SiteTicker() {
         ))}
       </div>
 
-      {/* TICKER */}
+      {/* TICKER — in primo piano, copre la base delle bolle */}
       <div
-        className="fixed bottom-0 left-0 right-0 z-40 flex items-center h-9 overflow-hidden"
+        className="fixed bottom-0 left-0 right-0 flex items-center h-9 overflow-hidden"
         style={{
+          zIndex: 40,
           background: 'linear-gradient(90deg, #0c4a6e, #075985, #0891b2, #06b6d4, #0891b2, #075985, #0c4a6e)',
           backgroundSize: '400% 100%',
           animation: 'ticker-gradient 12s ease infinite',
