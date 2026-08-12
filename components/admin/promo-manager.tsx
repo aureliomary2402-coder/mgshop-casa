@@ -20,6 +20,12 @@ interface PromoItem {
   torna_presto?: boolean
 }
 
+async function urlToFile(url: string, filename: string): Promise<File> {
+  const res = await fetch(url)
+  const blob = await res.blob()
+  return new File([blob], filename, { type: blob.type || 'image/jpeg' })
+}
+
 export function PromoManager() {
   const [isActive, setIsActive] = useState(false)
   const [title, setTitle] = useState('')
@@ -36,6 +42,7 @@ export function PromoManager() {
   const [error, setError] = useState('')
   const [allProducts, setAllProducts] = useState<Product[]>([])
   const [cropFile, setCropFile] = useState<File | null>(null)
+  const [fetchingEdit, setFetchingEdit] = useState(false)
   const [cropAspect, setCropAspect] = useState(16 / 9)
   const [productSearch, setProductSearch] = useState('')
   const [showProductPicker, setShowProductPicker] = useState(false)
@@ -103,6 +110,16 @@ export function PromoManager() {
 
   const handleCropCancel = () => setCropFile(null)
 
+  const openEditCropper = async () => {
+    if (!imageUrl) return
+    setFetchingEdit(true)
+    try {
+      const file = await urlToFile(imageUrl, 'promo.jpg')
+      setCropFile(file)
+    } catch { setError('Impossibile aprire la foto per modificarla') }
+    setFetchingEdit(false)
+  }
+
   const addProduct = (product: Product) => {
     if (items.some(i => i.product_id === product.id)) return
     setItems(prev => [...prev, { id: product.id, product_id: product.id, sale_price: product.price }])
@@ -162,6 +179,16 @@ export function PromoManager() {
   }
 
   const handleCustomCropCancel = () => setCustomCropFile(null)
+
+  const openCustomEditCropper = async () => {
+    if (!customImageUrl) return
+    setFetchingEdit(true)
+    try {
+      const file = await urlToFile(customImageUrl, 'custom-product.jpg')
+      setCustomCropFile(file)
+    } catch { setError('Impossibile aprire la foto per modificarla') }
+    setFetchingEdit(false)
+  }
 
   const addCustomProduct = () => {
     if (!customName.trim()) return
@@ -284,7 +311,13 @@ export function PromoManager() {
           {imageUrl && (
             <div className="mt-2 relative">
               <div className="rounded-xl overflow-hidden h-28 bg-slate-100"><img src={imageUrl} alt="preview" className="w-full h-full object-cover" /></div>
-              <button onClick={() => setImageUrl('')} className="absolute top-2 right-2 bg-red-500 text-white text-xs px-2 py-1 rounded-lg">Rimuovi</button>
+              <div className="absolute top-2 right-2 flex gap-1.5">
+                <button onClick={openEditCropper} disabled={fetchingEdit}
+                  className="bg-cyan-600 text-white text-xs px-2 py-1 rounded-lg disabled:opacity-50">
+                  {fetchingEdit ? '...' : 'Modifica'}
+                </button>
+                <button onClick={() => setImageUrl('')} className="bg-red-500 text-white text-xs px-2 py-1 rounded-lg">Rimuovi</button>
+              </div>
             </div>
           )}
         </div>
@@ -320,7 +353,15 @@ export function PromoManager() {
                   <ImageIcon className="w-3.5 h-3.5" /> {customUploading ? 'Caricamento...' : 'Immagine'}
                   <input type="file" accept="image/*" className="sr-only" onChange={handleCustomImageSelect} disabled={customUploading} />
                 </label>
-                {customImageUrl && <img src={customImageUrl} alt="" className="w-9 h-9 rounded-lg object-cover" />}
+                {customImageUrl && (
+                  <div className="flex items-center gap-1.5">
+                    <img src={customImageUrl} alt="" className="w-9 h-9 rounded-lg object-cover" />
+                    <button type="button" onClick={openCustomEditCropper} disabled={fetchingEdit}
+                      className="text-xs text-cyan-700 font-medium px-2 py-1 rounded-lg border border-cyan-200 bg-white disabled:opacity-50">
+                      {fetchingEdit ? '...' : 'Modifica'}
+                    </button>
+                  </div>
+                )}
               </div>
               <div className="flex items-center gap-2">
                 <div className="flex-1">
