@@ -1,63 +1,77 @@
 "use client"
 
-import { useState, useEffect, useRef, useCallback } from 'react'
+import { useState, useEffect } from 'react'
 import { usePathname } from 'next/navigation'
 import { X } from 'lucide-react'
 
 const DISMISS_KEY = 'mgshop_ticker_dismissed'
 
-interface Bubble {
-  id: number
-  x: number
-  y: number
-  size: number
-  dur: number
-  delay: number
-  born: number
-}
+const CSS = [
+  '@keyframes ticker-gradient {',
+  '  0%, 100% { background-position: 0% 50%; }',
+  '  50% { background-position: 100% 50%; }',
+  '}',
+  '@keyframes ticker-scroll {',
+  '  from { transform: translateX(0); }',
+  '  to { transform: translateX(-25%); }',
+  '}',
+  '@keyframes shine-sweep {',
+  '  0% { left: -20%; }',
+  '  35% { left: 120%; }',
+  '  100% { left: 120%; }',
+  '}',
+  '@keyframes bubble-pop {',
+  '  0% { transform: scale(0); opacity: 0; }',
+  '  10% { opacity: 0.95; }',
+  '  20% { transform: scale(1); opacity: 0.92; }',
+  '  65% { transform: scale(1.08); opacity: 0.85; }',
+  '  80% { transform: scale(1.3); opacity: 0.4; }',
+  '  100% { transform: scale(1.9); opacity: 0; }',
+  '}',
+  '@keyframes bubble-rise {',
+  '  0% { transform: scale(0.3) translateY(0); opacity: 0; }',
+  '  12% { opacity: 0.9; }',
+  '  35% { transform: scale(1) translateY(-18px); opacity: 0.8; }',
+  '  75% { transform: scale(1.15) translateY(-40px); opacity: 0.35; }',
+  '  100% { transform: scale(1.6) translateY(-55px); opacity: 0; }',
+  '}',
+].join('\n')
 
-const CSS = `
-@keyframes ticker-gradient {
-  0%, 100% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
+function makeBubbles(count: number, minSize: number, maxSize: number, minBottom: number, maxBottom: number, anim: string) {
+  const bubbles = []
+  for (let i = 0; i < count; i++) {
+    const seed = i * 997
+    const size = minSize + (seed % (maxSize - minSize + 1))
+    const left = (seed * 6.7) % 98
+    const bottom = minBottom + (seed % (maxBottom - minBottom + 1))
+    const dur = 3 + (seed % 40) / 10
+    const delay = (seed % 60) / 10
+    bubbles.push({
+      id: i,
+      left: left + '%',
+      bottom: bottom + 'px',
+      size,
+      dur,
+      delay,
+      anim,
+    })
+  }
+  return bubbles
 }
-@keyframes ticker-scroll {
-  from { transform: translateX(0); }
-  to { transform: translateX(-25%); }
-}
-@keyframes shine-sweep {
-  0% { left: -20%; }
-  35% { left: 120%; }
-  100% { left: 120%; }
-}
-@keyframes bubble-wobble {
-  0%, 100% { transform: scale(1, 1); }
-  25% { transform: scale(1.06, 0.94); }
-  50% { transform: scale(0.94, 1.06); }
-  75% { transform: scale(1.03, 0.97); }
-}
-`
 
 export function SiteTicker() {
   const pathname = usePathname()
   const [message, setMessage] = useState('')
   const [isActive, setIsActive] = useState(false)
   const [dismissed, setDismissed] = useState(false)
-  const [bubbles, setBubbles] = useState<Bubble[]>([])
-  const idRef = useRef(0)
-  const containerRef = useRef<HTMLDivElement>(null)
 
-  // Inietta CSS nel head
   useEffect(() => {
     const style = document.createElement('style')
     style.textContent = CSS
     document.head.appendChild(style)
-    return () => {
-      document.head.removeChild(style)
-    }
+    return () => { document.head.removeChild(style) }
   }, [])
 
-  // Fetch ticker
   useEffect(() => {
     fetch('/api/ticker')
       .then(r => r.json())
@@ -71,54 +85,9 @@ export function SiteTicker() {
     }
   }, [])
 
-  const spawnBubble = useCallback(() => {
-    const w = containerRef.current?.offsetWidth || 1200
-    const size = 8 + Math.random() * 22
-    const bubble: Bubble = {
-      id: idRef.current++,
-      x: Math.random() * w,
-      y: 10 + Math.random() * 50,
-      size,
-      dur: 3.5 + Math.random() * 4.5,
-      delay: Math.random() * 1.5,
-      born: Date.now(),
-    }
-    setBubbles(prev => {
-      const now = Date.now()
-      const alive = prev.filter(b => now - b.born < (b.dur + b.delay) * 1000)
-      return [...alive, bubble].slice(-40)
-    })
-  }, [])
-
-  useEffect(() => {
-    if (!isActive || dismissed) return
-    const initial: Bubble[] = []
-    for (let i = 0; i < 18; i++) {
-      const w = containerRef.current?.offsetWidth || 1200
-      const size = 8 + Math.random() * 22
-      initial.push({
-        id: idRef.current++,
-        x: Math.random() * w,
-        y: 10 + Math.random() * 50,
-        size,
-        dur: 3.5 + Math.random() * 4.5,
-        delay: Math.random() * 2,
-        born: Date.now() - Math.random() * 3000,
-      })
-    }
-    setBubbles(initial)
-    const interval = setInterval(spawnBubble, 250 + Math.random() * 350)
-    return () => clearInterval(interval)
-  }, [isActive, dismissed, spawnBubble])
-
-  useEffect(() => {
-    if (!isActive || dismissed) return
-    const cleanup = setInterval(() => {
-      const now = Date.now()
-      setBubbles(prev => prev.filter(b => now - b.born < (b.dur + b.delay) * 1000 + 500))
-    }, 1000)
-    return () => clearInterval(cleanup)
-  }, [isActive, dismissed])
+  const largeBubbles = makeBubbles(30, 16, 32, 0, 20, 'bubble-pop')
+  const mediumBubbles = makeBubbles(25, 10, 18, 5, 30, 'bubble-pop')
+  const smallBubbles = makeBubbles(20, 5, 12, 10, 45, 'bubble-rise')
 
   if (pathname?.startsWith('/mgadmin-panel')) return null
   if (!isActive || !message.trim() || dismissed) return null
@@ -128,103 +97,65 @@ export function SiteTicker() {
     try { sessionStorage.setItem(DISMISS_KEY, '1') } catch {}
   }
 
+  const bubbleBase = {
+    position: 'absolute' as const,
+    borderRadius: '50%',
+    pointerEvents: 'none' as const,
+  }
+
+  const renderBubble = (b: ReturnType<typeof makeBubbles>[0], isLarge: boolean) => {
+    const opacity = isLarge ? 0.9 : 0.75
+    const blur = isLarge ? 0 : 0.3
+
+    return (
+      <div
+        key={b.id + '-' + b.anim}
+        style={{
+          ...bubbleBase,
+          left: b.left,
+          bottom: b.bottom,
+          width: b.size,
+          height: b.size,
+          background: isLarge
+            ? 'radial-gradient(circle at 32% 28%, rgba(255,255,255,0.98) 0%, rgba(255,255,255,0.88) 14%, rgba(224,247,250,0.65) 34%, rgba(103,212,231,0.35) 62%, rgba(8,145,178,0.18) 88%, transparent 100%)'
+            : 'radial-gradient(circle at 30% 26%, rgba(255,255,255,0.94) 0%, rgba(255,255,255,0.75) 18%, rgba(210,248,255,0.5) 42%, rgba(100,200,230,0.25) 70%, rgba(8,145,178,0.1) 92%, transparent 100%)',
+          border: '1px solid rgba(255,255,255,' + (isLarge ? '0.65' : '0.45') + ')',
+          boxShadow: isLarge
+            ? 'inset -2px -2px 4px rgba(8,145,178,0.18), inset 2px 2px 5px rgba(255,255,255,0.92), 0 1px 4px rgba(8,145,178,0.12), 0 0 10px rgba(255,255,255,0.25)'
+            : 'inset -1px -1px 2px rgba(8,145,178,0.12), inset 1px 1px 3px rgba(255,255,255,0.8), 0 0 5px rgba(255,255,255,0.15)',
+          opacity,
+          filter: blur ? 'blur(' + blur + 'px)' : undefined,
+          animation: b.anim + ' ' + b.dur + 's ease-out ' + b.delay + 's infinite',
+          zIndex: isLarge ? 3 : 2,
+        }}
+      />
+    )
+  }
+
   return (
     <>
-      {/* SCHIUMA DI SAPONE */}
+      {/* SCHIUMA 3D — copre tutto il bordo superiore del ticker */}
       <div
-        ref={containerRef}
         className="fixed left-0 right-0 pointer-events-none"
-        style={{ bottom: 36, height: 72, zIndex: 50 }}
+        style={{ bottom: 30, height: 70, zIndex: 50 }}
       >
-        <svg width="100%" height="100%" style={{ overflow: 'visible' }}>
-          <defs>
-            <radialGradient id="bubbleGrad" cx="35%" cy="30%" r="65%">
-              <stop offset="0%" stopColor="rgba(255,255,255,0.96)" />
-              <stop offset="12%" stopColor="rgba(255,255,255,0.88)" />
-              <stop offset="30%" stopColor="rgba(210,248,255,0.55)" />
-              <stop offset="55%" stopColor="rgba(100,200,230,0.28)" />
-              <stop offset="80%" stopColor="rgba(8,145,178,0.15)" />
-              <stop offset="100%" stopColor="rgba(8,145,178,0.04)" />
-            </radialGradient>
-            <radialGradient id="highlightGrad" cx="30%" cy="25%" r="45%">
-              <stop offset="0%" stopColor="rgba(255,255,255,1)" />
-              <stop offset="25%" stopColor="rgba(255,255,255,0.75)" />
-              <stop offset="55%" stopColor="rgba(255,255,255,0.25)" />
-              <stop offset="100%" stopColor="rgba(255,255,255,0)" />
-            </radialGradient>
-            <linearGradient id="iridescent" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" stopColor="rgba(255,200,220,0.65)" />
-              <stop offset="20%" stopColor="rgba(200,230,255,0.75)" />
-              <stop offset="40%" stopColor="rgba(180,255,200,0.55)" />
-              <stop offset="60%" stopColor="rgba(255,235,180,0.6)" />
-              <stop offset="80%" stopColor="rgba(220,200,255,0.55)" />
-              <stop offset="100%" stopColor="rgba(255,200,220,0.5)" />
-            </linearGradient>
-          </defs>
+        {smallBubbles.map(b => renderBubble(b, false))}
+        {mediumBubbles.map(b => renderBubble(b, false))}
+        {largeBubbles.map(b => renderBubble(b, true))}
 
-          {bubbles.map(b => {
-            const age = (Date.now() - b.born) / 1000
-            const progress = Math.max(0, Math.min(1, (age - b.delay) / b.dur))
-            const isPopping = progress > 0.75
-
-            let scale = 0
-            let opacity = 0
-            if (progress < 0.15) {
-              const t = progress / 0.15
-              scale = t * t * (3 - 2 * t)
-              opacity = t
-            } else if (progress < 0.75) {
-              scale = 1
-              opacity = 0.88
-            } else {
-              const t = (progress - 0.75) / 0.25
-              scale = 1 + t * 0.8
-              opacity = 0.88 * (1 - t * t)
-            }
-
-            return (
-              <g
-                key={b.id}
-                transform={`translate(${b.x}, ${b.y}) scale(${scale})`}
-                style={{
-                  opacity,
-                  transformOrigin: 'center',
-                  animation: progress < 0.15
-                    ? `bubble-wobble ${b.dur * 0.5}s ease-in-out ${b.delay}s infinite`
-                    : 'none',
-                }}
-              >
-                <circle
-                  cx={0} cy={0} r={b.size / 2}
-                  fill="url(#bubbleGrad)"
-                  stroke="url(#iridescent)"
-                  strokeWidth={isPopping ? 0.3 : 0.9}
-                  opacity={isPopping ? 0.5 : 0.9}
-                />
-                <ellipse
-                  cx={-b.size * 0.12} cy={-b.size * 0.18}
-                  rx={b.size * 0.22} ry={b.size * 0.14}
-                  fill="url(#highlightGrad)"
-                  opacity={isPopping ? 0.3 : 0.92}
-                />
-                <ellipse
-                  cx={b.size * 0.16} cy={b.size * 0.1}
-                  rx={b.size * 0.07} ry={b.size * 0.05}
-                  fill="rgba(255,255,255,0.65)"
-                  opacity={isPopping ? 0.2 : 0.55}
-                />
-                {b.size > 18 && (
-                  <circle
-                    cx={-b.size * 0.05} cy={-b.size * 0.22}
-                    r={b.size * 0.04}
-                    fill="white"
-                    opacity={isPopping ? 0.15 : 0.8}
-                  />
-                )}
-              </g>
-            )
-          })}
-        </svg>
+        {/* Cresta di schiuma compatta sul bordo */}
+        <div
+          style={{
+            position: 'absolute',
+            left: '-5%',
+            right: '-5%',
+            bottom: -2,
+            height: 24,
+            background: 'radial-gradient(ellipse 14px 10px at 50% 100%, rgba(255,255,255,0.9) 0%, rgba(255,255,255,0.6) 45%, rgba(210,248,255,0.3) 75%, transparent 100%)',
+            backgroundSize: '18px 16px',
+            opacity: 0.8,
+          }}
+        />
       </div>
 
       {/* TICKER */}
