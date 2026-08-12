@@ -65,7 +65,7 @@ export function SiteTicker() {
           }} />
       ))}
     </div>
-    <div className="fixed left-0 right-0 z-40 pointer-events-none site-ticker-foam-wrap" style={{ bottom: 32 }}>
+    <div className="fixed left-0 right-0 z-50 pointer-events-none site-ticker-foam-wrap" style={{ bottom: 32 }}>
       <div className="site-ticker-foam site-ticker-foam-back" />
       <div className="site-ticker-foam site-ticker-foam-front" />
       {FOAM_SPARKLES.map((s, i) => (
