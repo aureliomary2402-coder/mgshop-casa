@@ -85,13 +85,11 @@ export default function WelcomePage() {
 
       <div className={`relative z-10 text-center px-6 max-w-2xl mx-auto ${mounted ? 'animate-bubble-reveal' : 'opacity-0'}`}>
         <div className="mb-10 flex flex-col items-center">
-          <Image
+          <img
             src="/logo/mgshop-logo-neon.png"
             alt="MGShop Casa"
-            width={280}
-            height={280}
             className="neon-glow-logo w-40 h-40 md:w-56 md:h-56 object-contain animate-float"
-            priority
+            style={{ border: '2px solid red', minWidth: '160px', minHeight: '160px', display: 'block' }}
           />
         </div>
 
