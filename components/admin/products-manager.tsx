@@ -99,6 +99,12 @@ function StockBadge({ stock }: { stock: number | null }) {
   return <span className="text-xs text-green-600 font-medium">{stock} disponibili</span>
 }
 
+async function urlToFile(url: string, filename: string): Promise<File> {
+  const res = await fetch(url)
+  const blob = await res.blob()
+  return new File([blob], filename, { type: blob.type || 'image/jpeg' })
+}
+
 export function ProductsManager() {
   const [products, setProducts] = useState<Product[]>([])
   const [categories, setCategories] = useState<Category[]>([])
@@ -112,6 +118,7 @@ export function ProductsManager() {
   const [coverCropFile, setCoverCropFile] = useState<File | null>(null)
   const [uploadingCard, setUploadingCard] = useState(false)
   const [cardCropFile, setCardCropFile] = useState<File | null>(null)
+  const [fetchingEdit, setFetchingEdit] = useState(false)
   const [search, setSearch] = useState('')
   const [filterCategory, setFilterCategory] = useState('')
   const [filterStock, setFilterStock] = useState<'all' | 'low' | 'out'>('all')
@@ -205,6 +212,22 @@ export function ProductsManager() {
 
   const handleCardCropCancel = () => setCardCropFile(null)
 
+  const openCoverEditCropper = async () => {
+    if (!form.cover_image) return
+    setFetchingEdit(true)
+    try { setCoverCropFile(await urlToFile(form.cover_image, 'copertina.jpg')) }
+    catch { alert('Impossibile aprire la foto per modificarla') }
+    setFetchingEdit(false)
+  }
+
+  const openCardEditCropper = async () => {
+    if (!form.card_image) return
+    setFetchingEdit(true)
+    try { setCardCropFile(await urlToFile(form.card_image, 'card.jpg')) }
+    catch { alert('Impossibile aprire la foto per modificarla') }
+    setFetchingEdit(false)
+  }
+
   const handleSave = async () => {
     setSaving(true)
     const body = { ...form, price: parseFloat(form.price) || 0, category_id: form.category_id || null, stock: form.stock }
@@ -289,8 +312,14 @@ export function ProductsManager() {
             <input type="file" accept="image/*" className="hidden" onChange={handleCoverSelect} disabled={uploadingCover} />
           </label>
           {form.cover_image && (
-            <div className="mt-2 w-24 h-24 rounded-lg overflow-hidden border border-slate-200">
-              <img src={form.cover_image} alt="preview" className="w-full h-full object-cover" />
+            <div className="mt-2 flex items-center gap-2">
+              <div className="w-24 h-24 rounded-lg overflow-hidden border border-slate-200">
+                <img src={form.cover_image} alt="preview" className="w-full h-full object-cover" />
+              </div>
+              <button type="button" onClick={openCoverEditCropper} disabled={fetchingEdit}
+                className="text-xs text-cyan-700 font-medium px-2.5 py-1.5 rounded-lg border border-cyan-200 bg-white disabled:opacity-50">
+                {fetchingEdit ? '...' : 'Modifica'}
+              </button>
             </div>
           )}
         </div>
@@ -304,11 +333,17 @@ export function ProductsManager() {
             <input type="file" accept="image/*" className="hidden" onChange={handleCardSelect} disabled={uploadingCard} />
           </label>
           {form.card_image && (
-            <div className="mt-2 relative w-24 h-24">
-              <div className="w-24 h-24 rounded-lg overflow-hidden border border-slate-200">
-                <img src={form.card_image} alt="preview" className="w-full h-full object-cover" />
+            <div className="mt-2 flex items-center gap-2">
+              <div className="relative w-24 h-24">
+                <div className="w-24 h-24 rounded-lg overflow-hidden border border-slate-200">
+                  <img src={form.card_image} alt="preview" className="w-full h-full object-cover" />
+                </div>
+                <button onClick={() => setForm(f => ({ ...f, card_image: '' }))} className="absolute -top-1.5 -right-1.5 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs">×</button>
               </div>
-              <button onClick={() => setForm(f => ({ ...f, card_image: '' }))} className="absolute -top-1.5 -right-1.5 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs">×</button>
+              <button type="button" onClick={openCardEditCropper} disabled={fetchingEdit}
+                className="text-xs text-cyan-700 font-medium px-2.5 py-1.5 rounded-lg border border-cyan-200 bg-white disabled:opacity-50">
+                {fetchingEdit ? '...' : 'Modifica'}
+              </button>
             </div>
           )}
         </div>

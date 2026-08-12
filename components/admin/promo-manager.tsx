@@ -20,6 +20,12 @@ interface PromoItem {
   torna_presto?: boolean
 }
 
+async function urlToFile(url: string, filename: string): Promise<File> {
+  const res = await fetch(url)
+  const blob = await res.blob()
+  return new File([blob], filename, { type: blob.type || 'image/jpeg' })
+}
+
 export function PromoManager() {
   const [isActive, setIsActive] = useState(false)
   const [title, setTitle] = useState('')
@@ -36,6 +42,7 @@ export function PromoManager() {
   const [error, setError] = useState('')
   const [allProducts, setAllProducts] = useState<Product[]>([])
   const [cropFile, setCropFile] = useState<File | null>(null)
+  const [fetchingEdit, setFetchingEdit] = useState(false)
   const [cropAspect, setCropAspect] = useState(16 / 9)
   const [productSearch, setProductSearch] = useState('')
   const [showProductPicker, setShowProductPicker] = useState(false)
@@ -103,6 +110,16 @@ export function PromoManager() {
 
   const handleCropCancel = () => setCropFile(null)
 
+  const openEditCropper = async () => {
+    if (!imageUrl) return
+    setFetchingEdit(true)
+    try {
+      const file = await urlToFile(imageUrl, 'promo.jpg')
+      setCropFile(file)
+    } catch { setError('Impossibile aprire la foto per modificarla') }
+    setFetchingEdit(false)
+  }
+
   const addProduct = (product: Product) => {
     if (items.some(i => i.product_id === product.id)) return
     setItems(prev => [...prev, { id: product.id, product_id: product.id, sale_price: product.price }])
@@ -138,19 +155,62 @@ export function PromoManager() {
   const [customDescription, setCustomDescription] = useState('')
   const [customUploading, setCustomUploading] = useState(false)
 
-  const handleCustomImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  const [customCropFile, setCustomCropFile] = useState<File | null>(null)
+  const [editingItemId, setEditingItemId] = useState<string | null>(null)
+
+  const handleCustomImageSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
-    e.target.value = ''
     if (!file) return
+    setCustomCropFile(file)
+    e.target.value = ''
+  }
+
+  const handleCustomCropConfirm = async (blob: Blob) => {
+    const targetItemId = editingItemId
+    setCustomCropFile(null)
+    setEditingItemId(null)
     setCustomUploading(true)
     try {
+      const croppedFile = new File([blob], 'custom-product.jpg', { type: 'image/jpeg' })
       const formData = new FormData()
-      formData.append('file', file)
+      formData.append('file', croppedFile)
       const res = await fetch('/api/upload', { method: 'POST', body: formData })
       const data = await res.json()
-      if (data.url) setCustomImageUrl(data.url)
+      if (data.url) {
+        if (targetItemId) {
+          // Aggiorna la foto di un prodotto gia' in lista. Se e' un prodotto
+          // preso dal negozio, da qui in poi mostra la foto modificata al
+          // posto di quella del catalogo (image_url la sovrascrive).
+          setItems(prev => prev.map(i => i.id === targetItemId ? { ...i, image_url: data.url } : i))
+        } else {
+          setCustomImageUrl(data.url)
+        }
+      }
     } catch { console.error('Upload failed') }
     setCustomUploading(false)
+  }
+
+  const handleCustomCropCancel = () => { setCustomCropFile(null); setEditingItemId(null) }
+
+  const openItemEditCropper = async (itemId: string, currentImage: string | null) => {
+    if (!currentImage) return
+    setFetchingEdit(true)
+    try {
+      const file = await urlToFile(currentImage, 'item.jpg')
+      setEditingItemId(itemId)
+      setCustomCropFile(file)
+    } catch { setError('Impossibile aprire la foto per modificarla') }
+    setFetchingEdit(false)
+  }
+
+  const openCustomEditCropper = async () => {
+    if (!customImageUrl) return
+    setFetchingEdit(true)
+    try {
+      const file = await urlToFile(customImageUrl, 'custom-product.jpg')
+      setCustomCropFile(file)
+    } catch { setError('Impossibile aprire la foto per modificarla') }
+    setFetchingEdit(false)
   }
 
   const addCustomProduct = () => {
@@ -194,7 +254,7 @@ export function PromoManager() {
     if (item.product_id) {
       const product = allProducts.find(p => p.id === item.product_id)
       if (!product) return null
-      return { item, name: product.name, image: product.cover_image, originalPrice: product.price, isCustom: false }
+      return { item, name: product.name, image: item.image_url || product.cover_image, originalPrice: product.price, isCustom: false }
     }
     return { item, name: item.name || 'Prodotto personalizzato', image: item.image_url || null, originalPrice: item.original_price ?? item.sale_price, isCustom: true }
   }).filter((x): x is { item: PromoItem; name: string; image: string | null; originalPrice: number; isCustom: boolean } => !!x)
@@ -269,12 +329,18 @@ export function PromoManager() {
           </div>
           <label className="inline-flex items-center gap-2 cursor-pointer text-sm text-cyan-700 font-medium">
             <ImageIcon className="w-4 h-4" /> {uploading ? 'Caricamento...' : 'Carica file'}
-            <input type="file" accept="image/*" className="hidden" onChange={handleImageSelect} disabled={uploading} />
+            <input type="file" accept="image/*" className="sr-only" onChange={handleImageSelect} disabled={uploading} />
           </label>
           {imageUrl && (
             <div className="mt-2 relative">
               <div className="rounded-xl overflow-hidden h-28 bg-slate-100"><img src={imageUrl} alt="preview" className="w-full h-full object-cover" /></div>
-              <button onClick={() => setImageUrl('')} className="absolute top-2 right-2 bg-red-500 text-white text-xs px-2 py-1 rounded-lg">Rimuovi</button>
+              <div className="absolute top-2 right-2 flex gap-1.5">
+                <button onClick={openEditCropper} disabled={fetchingEdit}
+                  className="bg-cyan-600 text-white text-xs px-2 py-1 rounded-lg disabled:opacity-50">
+                  {fetchingEdit ? '...' : 'Modifica'}
+                </button>
+                <button onClick={() => setImageUrl('')} className="bg-red-500 text-white text-xs px-2 py-1 rounded-lg">Rimuovi</button>
+              </div>
             </div>
           )}
         </div>
@@ -308,9 +374,17 @@ export function PromoManager() {
               <div className="flex items-center gap-2">
                 <label className="inline-flex items-center gap-1.5 cursor-pointer text-xs text-cyan-700 font-medium px-3 py-2 rounded-lg border border-cyan-200 bg-white shrink-0">
                   <ImageIcon className="w-3.5 h-3.5" /> {customUploading ? 'Caricamento...' : 'Immagine'}
-                  <input type="file" accept="image/*" className="hidden" onChange={handleCustomImageUpload} disabled={customUploading} />
+                  <input type="file" accept="image/*" className="sr-only" onChange={handleCustomImageSelect} disabled={customUploading} />
                 </label>
-                {customImageUrl && <img src={customImageUrl} alt="" className="w-9 h-9 rounded-lg object-cover" />}
+                {customImageUrl && (
+                  <div className="flex items-center gap-1.5">
+                    <img src={customImageUrl} alt="" className="w-9 h-9 rounded-lg object-cover" />
+                    <button type="button" onClick={openCustomEditCropper} disabled={fetchingEdit}
+                      className="text-xs text-cyan-700 font-medium px-2 py-1 rounded-lg border border-cyan-200 bg-white disabled:opacity-50">
+                      {fetchingEdit ? '...' : 'Modifica'}
+                    </button>
+                  </div>
+                )}
               </div>
               <div className="flex items-center gap-2">
                 <div className="flex-1">
@@ -344,7 +418,15 @@ export function PromoManager() {
               {itemProducts.map(({ item, name, image, originalPrice, isCustom }) => (
                 <div key={item.id} className="p-2.5 rounded-xl border border-cyan-100 bg-cyan-50 space-y-2">
                   <div className="flex items-center gap-3">
-                    {image ? <img src={image} alt={name} className="w-12 h-12 rounded-lg object-cover shrink-0" /> : <div className="w-12 h-12 rounded-lg bg-slate-200 shrink-0" />}
+                    <div className="shrink-0 flex flex-col items-center gap-1">
+                      {image ? <img src={image} alt={name} className="w-12 h-12 rounded-lg object-cover" /> : <div className="w-12 h-12 rounded-lg bg-slate-200" />}
+                      {image && (
+                        <button type="button" onClick={() => openItemEditCropper(item.id, image)} disabled={fetchingEdit}
+                          className="text-[9px] leading-none text-cyan-700 font-medium px-1.5 py-0.5 rounded border border-cyan-200 bg-white disabled:opacity-50">
+                          {fetchingEdit ? '...' : 'Modifica'}
+                        </button>
+                      )}
+                    </div>
                     <div className="flex-1 min-w-0">
                       <p className="text-sm font-medium text-slate-800 truncate">{name}{isCustom && <span className="ml-1.5 text-[10px] font-semibold text-amber-600 bg-amber-100 px-1.5 py-0.5 rounded">personalizzato</span>}</p>
                       <p className="text-xs text-slate-400 line-through">€{originalPrice.toFixed(2)}</p>
@@ -432,6 +514,15 @@ export function PromoManager() {
           outputWidth={1800}
           onCancel={handleCropCancel}
           onConfirm={handleCropConfirm}
+        />
+      )}
+      {customCropFile && (
+        <ImageCropper
+          file={customCropFile}
+          aspectRatio={1}
+          outputWidth={1000}
+          onCancel={handleCustomCropCancel}
+          onConfirm={handleCustomCropConfirm}
         />
       )}
     </div>

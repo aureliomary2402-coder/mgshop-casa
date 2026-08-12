@@ -57,7 +57,7 @@ export function FloatingMenu() {
   // sempre a portata di mano, sopra il pulsante social/chat.
   const showStickyCart = pathname === '/volantino' || pathname === '/promo'
   const cartHref = pathname === '/promo' ? '/carrello?promo=1' : '/carrello'
-  const menuOffsetClass = showStickyCart ? 'bottom-40' : 'bottom-24'
+  const menuOffsetClass = showStickyCart ? 'bottom-48' : 'bottom-32'
 
   useEffect(() => {
     const raw = localStorage.getItem(STORAGE_KEY)
@@ -160,7 +160,7 @@ export function FloatingMenu() {
       {/* Bolla principale */}
       <button
         onClick={() => (isOpen ? closeAll() : setMenuOpen(true))}
-        className="fixed bottom-5 right-5 z-40 w-14 h-14 rounded-full shadow-lg flex items-center justify-center text-white transition-transform hover:scale-105"
+        className="fixed bottom-12 right-5 z-40 w-14 h-14 rounded-full shadow-lg flex items-center justify-center text-white transition-transform hover:scale-105"
         style={{ background: 'linear-gradient(135deg,#0891b2,#06b6d4)' }}
         aria-label="Apri menu"
       >
@@ -174,7 +174,7 @@ export function FloatingMenu() {
       {showStickyCart && cartCount > 0 && !isOpen && (
         <Link
           href={cartHref}
-          className="fixed bottom-24 right-5 z-40 w-14 h-14 rounded-full shadow-lg flex items-center justify-center text-white transition-transform hover:scale-105 animate-scale-in"
+          className="fixed bottom-32 right-5 z-40 w-14 h-14 rounded-full shadow-lg flex items-center justify-center text-white transition-transform hover:scale-105 animate-scale-in"
           style={{ background: '#0c2b36' }}
           aria-label="Vai al carrello"
         >

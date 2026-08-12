@@ -7,6 +7,7 @@ import { FloatingMenu } from '@/components/shop/floating-menu'
 import { ProductDetailModal } from '@/components/shop/product-detail-modal'
 import { BackToTop } from '@/components/shop/back-to-top'
 import { ServiceWorkerRegister } from '@/components/sw-register'
+import { SiteTicker } from '@/components/shop/site-ticker'
 import { Suspense } from 'react'
 import './globals.css'
 
@@ -49,6 +50,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <FloatingMenu />
         <Suspense><BackToTop /></Suspense>
         <ProductDetailModal />
+        <SiteTicker />
         <Toaster position="bottom-center" richColors />
       </body>
     </html>

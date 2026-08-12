@@ -22,6 +22,12 @@ function isoToLocalInputValue(iso: string) {
   return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`
 }
 
+async function urlToFile(url: string, filename: string): Promise<File> {
+  const res = await fetch(url)
+  const blob = await res.blob()
+  return new File([blob], filename, { type: blob.type || 'image/jpeg' })
+}
+
 export function LotteryManager() {
   const [title, setTitle] = useState('')
   const [description, setDescription] = useState('')
@@ -58,6 +64,7 @@ export function LotteryManager() {
   const [confirmingReset, setConfirmingReset] = useState(false)
   const [uploading, setUploading] = useState(false)
   const [cropFile, setCropFile] = useState<File | null>(null)
+  const [fetchingEdit, setFetchingEdit] = useState(false)
   const [error, setError] = useState('')
 
   const load = () => {
@@ -242,6 +249,14 @@ export function LotteryManager() {
     setUploading(false)
   }
 
+  const openEditCropper = async () => {
+    if (!imageUrl) return
+    setFetchingEdit(true)
+    try { setCropFile(await urlToFile(imageUrl, 'lottery.jpg')) }
+    catch { setError('Impossibile aprire la foto per modificarla') }
+    setFetchingEdit(false)
+  }
+
   const filteredProducts = allProducts.filter(p => p.name.toLowerCase().includes(productSearch.toLowerCase()))
 
   if (loading) return <div className="text-center py-8 text-slate-400">Caricamento...</div>
@@ -352,7 +367,13 @@ export function LotteryManager() {
           {imageUrl && (
             <div className="mt-2 relative w-32">
               <div className="rounded-xl overflow-hidden aspect-square bg-slate-100"><img src={imageUrl} alt="preview" className="w-full h-full object-cover" /></div>
-              <button onClick={() => setImageUrl('')} className="absolute top-1.5 right-1.5 bg-red-500 text-white text-xs px-2 py-1 rounded-lg">Rimuovi</button>
+              <div className="absolute top-1.5 right-1.5 flex gap-1">
+                <button onClick={openEditCropper} disabled={fetchingEdit}
+                  className="bg-cyan-600 text-white text-xs px-2 py-1 rounded-lg disabled:opacity-50">
+                  {fetchingEdit ? '...' : 'Modifica'}
+                </button>
+                <button onClick={() => setImageUrl('')} className="bg-red-500 text-white text-xs px-2 py-1 rounded-lg">Rimuovi</button>
+              </div>
             </div>
           )}
         </div>

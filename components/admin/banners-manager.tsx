@@ -7,6 +7,12 @@ import { Input } from '@/components/ui/input'
 import type { Banner } from '@/lib/types'
 import { ImageCropper } from './image-cropper'
 
+async function urlToFile(url: string, filename: string): Promise<File> {
+  const res = await fetch(url)
+  const blob = await res.blob()
+  return new File([blob], filename, { type: blob.type || 'image/jpeg' })
+}
+
 export function BannersManager() {
   const [banners, setBanners] = useState<Banner[]>([])
   const [loading, setLoading] = useState(true)
@@ -16,6 +22,7 @@ export function BannersManager() {
   const [saving, setSaving] = useState(false)
   const [uploading, setUploading] = useState(false)
   const [cropFile, setCropFile] = useState<File | null>(null)
+  const [fetchingEdit, setFetchingEdit] = useState(false)
 
   useEffect(() => { fetchBanners() }, [])
 
@@ -57,6 +64,14 @@ export function BannersManager() {
   }
 
   const handleCropCancel = () => setCropFile(null)
+
+  const openEditCropper = async () => {
+    if (!form.image_url) return
+    setFetchingEdit(true)
+    try { setCropFile(await urlToFile(form.image_url, 'banner.jpg')) }
+    catch { alert('Impossibile aprire la foto per modificarla') }
+    setFetchingEdit(false)
+  }
 
   const handleSave = async () => {
     if (!form.image_url) return
@@ -112,8 +127,14 @@ export function BannersManager() {
             <input type="file" accept="image/*" className="hidden" onChange={handleImageSelect} disabled={uploading} />
           </label>
           {form.image_url && (
-            <div className="mt-2 rounded-lg overflow-hidden h-32 bg-slate-100">
-              <img src={form.image_url} alt="preview" className="w-full h-full object-cover" />
+            <div className="mt-2 relative">
+              <div className="rounded-lg overflow-hidden h-32 bg-slate-100">
+                <img src={form.image_url} alt="preview" className="w-full h-full object-cover" />
+              </div>
+              <button type="button" onClick={openEditCropper} disabled={fetchingEdit}
+                className="absolute top-2 right-2 bg-cyan-600 text-white text-xs px-2 py-1 rounded-lg disabled:opacity-50">
+                {fetchingEdit ? '...' : 'Modifica'}
+              </button>
             </div>
           )}
         </div>
