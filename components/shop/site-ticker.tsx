@@ -6,11 +6,11 @@ import { X } from 'lucide-react'
 
 const DISMISS_KEY = 'mgshop_ticker_dismissed'
 
-const TICKER_BUBBLES = Array.from({ length: 18 }).map((_, i) => ({
-  left: `${(i * 61) % 100}%`,
-  size: 6 + ((i * 23) % 16),
-  dur: 3.5 + ((i * 11) % 4),
-  delay: (i * 0.9) % 5,
+const TICKER_BUBBLES = Array.from({ length: 10 }).map((_, i) => ({
+  left: `${(i * 97) % 100}%`,
+  size: 4 + ((i * 13) % 8),
+  dur: 4 + ((i * 11) % 4),
+  delay: (i * 1.4) % 6,
 }))
 
 // Scintillii sparsi lungo la cresta di schiuma (posizioni in %, va bene:
@@ -56,7 +56,7 @@ export function SiteTicker() {
 
   return (
     <>
-    <div className="fixed bottom-8 left-0 right-0 z-[60] h-14 overflow-hidden pointer-events-none">
+    <div className="fixed left-0 right-0 h-14 overflow-visible pointer-events-none" style={{ bottom: 24, zIndex: 60 }}>
       {TICKER_BUBBLES.map((b, i) => (
         <div key={i} className="absolute rounded-full site-ticker-bubble"
           style={{
@@ -65,7 +65,7 @@ export function SiteTicker() {
           }} />
       ))}
     </div>
-    <div className="fixed left-0 right-0 z-50 pointer-events-none site-ticker-foam-wrap" style={{ bottom: 32 }}>
+    <div className="fixed left-0 right-0 pointer-events-none site-ticker-foam-wrap" style={{ bottom: 32, zIndex: 50 }}>
       <div className="site-ticker-foam site-ticker-foam-back" />
       <div className="site-ticker-foam site-ticker-foam-front" />
       {FOAM_SPARKLES.map((s, i) => (
@@ -180,19 +180,24 @@ export function SiteTicker() {
           50% { opacity: 1; transform: scale(1); }
         }
         .site-ticker-bubble {
-          background: radial-gradient(circle at 32% 28%, rgba(255,255,255,0.9), rgba(8,145,178,0.2) 55%, transparent 100%);
-          box-shadow: inset -2px -2px 5px rgba(255,255,255,0.4), inset 2px 2px 4px rgba(8,145,178,0.15), 0 0 6px rgba(150,235,250,0.15);
-          border: 1px solid rgba(255,255,255,0.35);
+          background: radial-gradient(circle at 32% 28%, rgba(255,255,255,0.75), rgba(8,145,178,0.12) 60%, transparent 100%);
+          box-shadow: inset -1px -1px 3px rgba(255,255,255,0.3), inset 1px 1px 2px rgba(8,145,178,0.1);
+          border: 1px solid rgba(255,255,255,0.25);
           animation-name: site-ticker-bubble-rise;
           animation-timing-function: ease-out;
           animation-iteration-count: infinite;
         }
         @keyframes site-ticker-bubble-rise {
-          0% { transform: translateY(0) scale(0.5); opacity: 0; }
-          12% { opacity: 0.9; }
-          70% { transform: translateY(-38px) scale(1); opacity: 0.85; }
-          88% { transform: translateY(-48px) scale(1.35); opacity: 0.35; }
-          100% { transform: translateY(-52px) scale(1.6); opacity: 0; }
+          0% { transform: translateY(0) scale(0.4); opacity: 0; }
+          10% { opacity: 0.75; }
+          65% { transform: translateY(-30px) scale(0.9); opacity: 0.6; }
+          88% { transform: translateY(-42px) scale(1.1); opacity: 0.25; }
+          100% { transform: translateY(-48px) scale(1.3); opacity: 0; }
+        }
+        .site-ticker-bubble {
+          animation-name: site-ticker-bubble-rise;
+          animation-timing-function: ease-out;
+          animation-iteration-count: infinite;
         }
       `}</style>
     </div>
