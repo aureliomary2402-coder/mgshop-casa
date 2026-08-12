@@ -1,5 +1,6 @@
 "use client"
 import { useEffect, useState } from 'react'
+import Image from 'next/image'
 import Link from 'next/link'
 import { ShoppingBag, Sparkles, ArrowRight, Tag, Newspaper, Gift, MapPin } from 'lucide-react'
 import { SOCIAL_LINKS, InstagramIcon, TikTokIcon, WhatsAppIcon, FacebookIcon } from '@/components/shop/social-icons'
@@ -83,15 +84,15 @@ export default function WelcomePage() {
       <div className="absolute inset-0 opacity-[0.03]" style={{ backgroundImage: 'linear-gradient(rgba(34,211,238,0.8) 1px,transparent 1px),linear-gradient(90deg,rgba(34,211,238,0.8) 1px,transparent 1px)', backgroundSize: '60px 60px' }} />
 
       <div className={`relative z-10 text-center px-6 max-w-2xl mx-auto ${mounted ? 'animate-bubble-reveal' : 'opacity-0'}`}>
-        <div className="mb-10">
-          <div className="inline-flex items-center justify-center w-20 h-20 rounded-2xl mb-6 animate-float"
-            style={{ background: 'linear-gradient(135deg,#0891b2,#06b6d4)', boxShadow: '0 20px 60px rgba(8,145,178,0.5)' }}>
-            <ShoppingBag className="w-10 h-10 text-white" />
-          </div>
-          <h1 className="text-6xl md:text-8xl font-extrabold tracking-tight text-white leading-none mb-3">
-            MG<span className="text-shimmer">Shop</span>
-          </h1>
-          <p className="text-xl text-cyan-200/40 tracking-[0.3em] uppercase font-light">Casa</p>
+        <div className="mb-10 flex flex-col items-center">
+          <Image
+            src="/logo/mgshop-logo-neon.png"
+            alt="MGShop Casa"
+            width={280}
+            height={280}
+            className="neon-glow-logo w-40 h-40 md:w-56 md:h-56 object-contain animate-float"
+            priority
+          />
         </div>
 
         <p className="text-slate-400 text-lg mb-10 leading-relaxed">
