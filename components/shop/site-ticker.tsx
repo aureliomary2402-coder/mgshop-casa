@@ -13,6 +13,17 @@ const TICKER_BUBBLES = Array.from({ length: 18 }).map((_, i) => ({
   delay: (i * 0.9) % 5,
 }))
 
+// Scintillii sparsi lungo la cresta di schiuma (posizioni in %, va bene:
+// sono solo accenti sparkle sopra al pattern di schiuma che invece
+// si ripete a piastrelle su tutta la larghezza, senza buchi)
+const FOAM_SPARKLES = Array.from({ length: 14 }).map((_, i) => ({
+  left: `${(i * 7.3 + (i % 3) * 11) % 100}%`,
+  size: 3 + ((i * 5) % 4),
+  bottom: -2 + ((i * 7) % 14),
+  dur: 1.8 + ((i * 0.6) % 2.2),
+  delay: (i * 0.35) % 3,
+}))
+
 export function SiteTicker() {
   const pathname = usePathname()
   const [message, setMessage] = useState('')
@@ -51,6 +62,17 @@ export function SiteTicker() {
           style={{
             left: b.left, bottom: 0, width: b.size, height: b.size,
             animationDuration: `${b.dur}s`, animationDelay: `${b.delay}s`,
+          }} />
+      ))}
+    </div>
+    <div className="fixed left-0 right-0 z-40 pointer-events-none site-ticker-foam-wrap" style={{ bottom: 32 }}>
+      <div className="site-ticker-foam site-ticker-foam-back" />
+      <div className="site-ticker-foam site-ticker-foam-front" />
+      {FOAM_SPARKLES.map((s, i) => (
+        <span key={i} className="absolute rounded-full site-ticker-foam-sparkle"
+          style={{
+            left: s.left, bottom: s.bottom, width: s.size, height: s.size,
+            animationDuration: `${s.dur}s`, animationDelay: `${s.delay}s`,
           }} />
       ))}
     </div>
@@ -98,6 +120,64 @@ export function SiteTicker() {
           0% { left: -30%; }
           35% { left: 130%; }
           100% { left: 130%; }
+        }
+        .site-ticker-foam-wrap {
+          height: 0;
+        }
+        .site-ticker-foam {
+          position: absolute;
+          left: 0;
+          right: 0;
+          bottom: -7px;
+          height: 26px;
+          background-repeat: repeat-x;
+          background-position: bottom;
+          filter: drop-shadow(0 1px 1px rgba(8,145,178,0.25));
+        }
+        .site-ticker-foam-back {
+          background-image:
+            radial-gradient(circle at 9px 20px, rgba(255,255,255,0.9) 0 5px, transparent 6px),
+            radial-gradient(circle at 22px 22px, rgba(224,247,250,0.85) 0 7px, transparent 8px),
+            radial-gradient(circle at 38px 19px, rgba(255,255,255,0.9) 0 5px, transparent 6px),
+            radial-gradient(circle at 52px 22px, rgba(224,247,250,0.85) 0 6px, transparent 7px),
+            radial-gradient(circle at 66px 20px, rgba(255,255,255,0.9) 0 5px, transparent 6px);
+          background-size: 76px 26px;
+          opacity: 0.7;
+          animation: site-ticker-foam-drift-back 10s linear infinite,
+                     site-ticker-foam-bob 3.4s ease-in-out infinite;
+        }
+        .site-ticker-foam-front {
+          background-image:
+            radial-gradient(circle at 6px 22px, rgba(255,255,255,0.98) 0 7px, transparent 8px),
+            radial-gradient(circle at 20px 24px, rgba(255,255,255,0.95) 0 9px, transparent 10px),
+            radial-gradient(circle at 36px 21px, rgba(240,253,255,0.95) 0 6px, transparent 7px),
+            radial-gradient(circle at 49px 24px, rgba(255,255,255,0.98) 0 8px, transparent 9px);
+          background-size: 58px 26px;
+          animation: site-ticker-foam-drift-front 6.5s linear infinite reverse,
+                     site-ticker-foam-bob 2.5s ease-in-out infinite 0.3s;
+        }
+        @keyframes site-ticker-foam-drift-back {
+          from { background-position-x: 0; }
+          to { background-position-x: -76px; }
+        }
+        @keyframes site-ticker-foam-drift-front {
+          from { background-position-x: 0; }
+          to { background-position-x: 58px; }
+        }
+        @keyframes site-ticker-foam-bob {
+          0%, 100% { transform: translateY(0); }
+          50% { transform: translateY(-2px); }
+        }
+        .site-ticker-foam-sparkle {
+          background: #fff;
+          box-shadow: 0 0 4px rgba(255,255,255,0.9), 0 0 8px rgba(150,235,250,0.6);
+          animation-name: site-ticker-foam-sparkle-twinkle;
+          animation-timing-function: ease-in-out;
+          animation-iteration-count: infinite;
+        }
+        @keyframes site-ticker-foam-sparkle-twinkle {
+          0%, 100% { opacity: 0; transform: scale(0.4); }
+          50% { opacity: 1; transform: scale(1); }
         }
         .site-ticker-bubble {
           background: radial-gradient(circle at 32% 28%, rgba(255,255,255,0.9), rgba(8,145,178,0.2) 55%, transparent 100%);
