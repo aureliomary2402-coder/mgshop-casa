@@ -6,6 +6,13 @@ import { X } from 'lucide-react'
 
 const DISMISS_KEY = 'mgshop_ticker_dismissed'
 
+const TICKER_BUBBLES = Array.from({ length: 18 }).map((_, i) => ({
+  left: `${(i * 61) % 100}%`,
+  size: 6 + ((i * 23) % 16),
+  dur: 3.5 + ((i * 11) % 4),
+  delay: (i * 0.9) % 5,
+}))
+
 export function SiteTicker() {
   const pathname = usePathname()
   const [message, setMessage] = useState('')
@@ -37,6 +44,16 @@ export function SiteTicker() {
   }
 
   return (
+    <>
+    <div className="fixed bottom-8 left-0 right-0 z-40 h-14 overflow-hidden pointer-events-none">
+      {TICKER_BUBBLES.map((b, i) => (
+        <div key={i} className="absolute rounded-full site-ticker-bubble"
+          style={{
+            left: b.left, bottom: 0, width: b.size, height: b.size,
+            animationDuration: `${b.dur}s`, animationDelay: `${b.delay}s`,
+          }} />
+      ))}
+    </div>
     <div className="fixed bottom-0 left-0 right-0 z-40 flex items-center h-8 overflow-hidden shadow-[0_-2px_8px_rgba(0,0,0,0.06)] site-ticker-bg">
       <div className="flex-1 overflow-hidden relative h-full flex items-center">
         <div className="flex items-center whitespace-nowrap animate-site-ticker">
@@ -82,7 +99,23 @@ export function SiteTicker() {
           35% { left: 130%; }
           100% { left: 130%; }
         }
+        .site-ticker-bubble {
+          background: radial-gradient(circle at 32% 28%, rgba(255,255,255,0.9), rgba(8,145,178,0.2) 55%, transparent 100%);
+          box-shadow: inset -2px -2px 5px rgba(255,255,255,0.4), inset 2px 2px 4px rgba(8,145,178,0.15), 0 0 6px rgba(150,235,250,0.15);
+          border: 1px solid rgba(255,255,255,0.35);
+          animation-name: site-ticker-bubble-rise;
+          animation-timing-function: ease-out;
+          animation-iteration-count: infinite;
+        }
+        @keyframes site-ticker-bubble-rise {
+          0% { transform: translateY(0) scale(0.5); opacity: 0; }
+          12% { opacity: 0.9; }
+          70% { transform: translateY(-38px) scale(1); opacity: 0.85; }
+          88% { transform: translateY(-48px) scale(1.35); opacity: 0.35; }
+          100% { transform: translateY(-52px) scale(1.6); opacity: 0; }
+        }
       `}</style>
     </div>
+    </>
   )
 }
