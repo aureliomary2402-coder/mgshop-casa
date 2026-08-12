@@ -1,6 +1,7 @@
 "use client"
 
 import { useState, useEffect } from 'react'
+import Image from 'next/image'
 import Link from 'next/link'
 import { ChevronLeft, ChevronRight, ShoppingBag, ArrowRight, ChevronUp } from 'lucide-react'
 import type { Banner, Category } from '@/lib/types'
@@ -33,7 +34,8 @@ export function HeroBanner({ banners, categories }: { banners: Banner[]; categor
       <div className="absolute inset-0 opacity-[0.06]" style={{ backgroundImage: 'linear-gradient(rgba(255,255,255,0.8) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,0.8) 1px,transparent 1px)', backgroundSize: '48px 48px' }} />
       <div className="absolute -right-16 -top-16 w-64 h-64 rounded-full blur-[70px] opacity-30" style={{ background: 'radial-gradient(circle,#a5f3fc,transparent)' }} />
 
-      <div className="relative z-10 max-w-7xl mx-auto px-6 py-14 md:py-20 flex flex-col items-start">
+      <div className="relative z-10 max-w-7xl mx-auto px-6 py-14 md:py-20 flex flex-col md:flex-row md:items-center md:justify-between gap-8">
+        <div className="flex flex-col items-start">
         <div className="inline-flex items-center justify-center w-12 h-12 rounded-xl mb-5 animate-float"
           style={{ background: 'rgba(255,255,255,0.15)', border: '1px solid rgba(255,255,255,0.25)' }}>
           <ShoppingBag className="w-6 h-6 text-white" />
@@ -79,6 +81,17 @@ export function HeroBanner({ banners, categories }: { banners: Banner[]; categor
             </div>
           </div>
         )}
+        </div>
+        <div className="hidden md:block shrink-0 pointer-events-none">
+          <Image
+            src="/logo/mgshop-logo-neon.png"
+            alt="MGShop Casa"
+            width={220}
+            height={220}
+            className="neon-glow-logo w-32 h-32 lg:w-44 lg:h-44 object-contain"
+            priority
+          />
+        </div>
       </div>
 
       {banners.length > 1 && (
