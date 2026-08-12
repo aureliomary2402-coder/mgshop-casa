@@ -1,33 +1,31 @@
 "use client"
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef, useCallback } from 'react'
 import { usePathname } from 'next/navigation'
 import { X } from 'lucide-react'
 
 const DISMISS_KEY = 'mgshop_ticker_dismissed'
 
-// 6 bolle che salgono — pochi elementi, ben visibili
-const RISING_BUBBLES = Array.from({ length: 6 }).map((_, i) => ({
-  left: `${15 + (i * 14) % 70}%`,
-  size: 6 + ((i * 8) % 9),
-  dur: 5.5 + ((i * 3) % 5),
-  delay: i * 1.8,
-}))
-
-// 8 scintillii sulla cresta
-const SPARKLES = Array.from({ length: 8 }).map((_, i) => ({
-  left: `${12 + (i * 11) % 76}%`,
-  size: 2 + ((i * 3) % 3),
-  dur: 2 + ((i * 0.9) % 2.5),
-  delay: i * 0.7,
-}))
+interface Bubble {
+  id: number
+  x: number
+  y: number
+  size: number
+  dur: number
+  delay: number
+  born: number
+}
 
 export function SiteTicker() {
   const pathname = usePathname()
   const [message, setMessage] = useState('')
   const [isActive, setIsActive] = useState(false)
   const [dismissed, setDismissed] = useState(false)
+  const [bubbles, setBubbles] = useState<Bubble[]>([])
+  const idRef = useRef(0)
+  const containerRef = useRef<HTMLDivElement>(null)
 
+  // Fetch ticker data
   useEffect(() => {
     fetch('/api/ticker')
       .then(r => r.json())
@@ -35,6 +33,271 @@ export function SiteTicker() {
         setMessage(d.message || '')
         setIsActive(d.is_active === true)
       })
+      .catch(() => {})
+    if (typeof window !== 'undefined' && sessionStorage.getItem(DISMISS_KEY)) {
+      setDismissed(true)
+    }
+  }, [])
+
+  // Genera bolle in modo continuo
+  const spawnBubble = useCallback(() => {
+    const w = containerRef.current?.offsetWidth || 1200
+    const size = 8 + Math.random() * 22
+    const x = Math.random() * w
+    const y = 10 + Math.random() * 50
+    const dur = 3.5 + Math.random() * 4.5
+    const delay = Math.random() * 1.5
+
+    const bubble: Bubble = {
+      id: idRef.current++,
+      x,
+      y,
+      size,
+      dur,
+      delay,
+      born: Date.now(),
+    }
+
+    setBubbles(prev => {
+      const now = Date.now()
+      const alive = prev.filter(b => now - b.born < (b.dur + b.delay) * 1000)
+      return [...alive, bubble].slice(-40) // max 40 bolle
+    })
+  }, [])
+
+  useEffect(() => {
+    if (!isActive || dismissed) return
+
+    // Popola inizialmente
+    const initial: Bubble[] = []
+    for (let i = 0; i < 18; i++) {
+      const w = containerRef.current?.offsetWidth || 1200
+      const size = 8 + Math.random() * 22
+      initial.push({
+        id: idRef.current++,
+        x: Math.random() * w,
+        y: 10 + Math.random() * 50,
+        size,
+        dur: 3.5 + Math.random() * 4.5,
+        delay: Math.random() * 2,
+        born: Date.now() - Math.random() * 3000,
+      })
+    }
+    setBubbles(initial)
+
+    const interval = setInterval(() => {
+      spawnBubble()
+    }, 250 + Math.random() * 350)
+
+    return () => clearInterval(interval)
+  }, [isActive, dismissed, spawnBubble])
+
+  // Pulizia bolle morte
+  useEffect(() => {
+    if (!isActive || dismissed) return
+    const cleanup = setInterval(() => {
+      const now = Date.now()
+      setBubbles(prev => prev.filter(b => now - b.born < (b.dur + b.delay) * 1000 + 500))
+    }, 1000)
+    return () => clearInterval(cleanup)
+  }, [isActive, dismissed])
+
+  if (pathname?.startsWith('/mgadmin-panel')) return null
+  if (!isActive || !message.trim() || dismissed) return null
+
+  const handleDismiss = () => {
+    setDismissed(true)
+    try { sessionStorage.setItem(DISMISS_KEY, '1') } catch {}
+  }
+
+  return (
+    <>
+      {/* SCHIUMA DI SAPONE REALISTICA */}
+      <div
+        ref={containerRef}
+        className="fixed left-0 right-0 pointer-events-none"
+        style={{ bottom: 36, height: 72, zIndex: 50 }}
+      >
+        <svg width="100%" height="100%" style={{ overflow: 'visible' }}>
+          <defs>
+            {/* Gradiente sferico 3D della bolla */}
+            <radialGradient id="bubbleGrad" cx="35%" cy="30%" r="65%">
+              <stop offset="0%" stopColor="rgba(255,255,255,0.96)" />
+              <stop offset="12%" stopColor="rgba(255,255,255,0.88)" />
+              <stop offset="30%" stopColor="rgba(210,248,255,0.55)" />
+              <stop offset="55%" stopColor="rgba(100,200,230,0.28)" />
+              <stop offset="80%" stopColor="rgba(8,145,178,0.15)" />
+              <stop offset="100%" stopColor="rgba(8,145,178,0.04)" />
+            </radialGradient>
+
+            {/* Riflesso speculare principale */}
+            <radialGradient id="highlightGrad" cx="30%" cy="25%" r="45%">
+              <stop offset="0%" stopColor="rgba(255,255,255,1)" />
+              <stop offset="25%" stopColor="rgba(255,255,255,0.75)" />
+              <stop offset="55%" stopColor="rgba(255,255,255,0.25)" />
+              <stop offset="100%" stopColor="rgba(255,255,255,0)" />
+            </radialGradient>
+
+            {/* Bordo iridescente arcobaleno */}
+            <linearGradient id="iridescent" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stopColor="rgba(255,200,220,0.65)" />
+              <stop offset="20%" stopColor="rgba(200,230,255,0.75)" />
+              <stop offset="40%" stopColor="rgba(180,255,200,0.55)" />
+              <stop offset="60%" stopColor="rgba(255,235,180,0.6)" />
+              <stop offset="80%" stopColor="rgba(220,200,255,0.55)" />
+              <stop offset="100%" stopColor="rgba(255,200,220,0.5)" />
+            </linearGradient>
+          </defs>
+
+          {bubbles.map(b => {
+            const age = (Date.now() - b.born) / 1000
+            const progress = Math.max(0, Math.min(1, (age - b.delay) / b.dur))
+            const isPopping = progress > 0.75
+
+            let scale = 0
+            let opacity = 0
+
+            if (progress < 0.15) {
+              // Formazione: da 0 a dimensione piena
+              const t = progress / 0.15
+              scale = t * t * (3 - 2 * t) // smoothstep
+              opacity = t
+            } else if (progress < 0.75) {
+              // Vita stabile
+              scale = 1
+              opacity = 0.88
+            } else {
+              // Scoppio
+              const t = (progress - 0.75) / 0.25
+              scale = 1 + t * 0.8
+              opacity = 0.88 * (1 - t * t)
+            }
+
+            return (
+              <g
+                key={b.id}
+                transform={`translate(${b.x}, ${b.y}) scale(${scale})`}
+                style={{
+                  opacity,
+                  transformOrigin: 'center',
+                  animation: progress < 0.15
+                    ? `bubbleWobble ${b.dur * 0.5}s ease-in-out ${b.delay}s infinite`
+                    : 'none',
+                }}
+              >
+                {/* Bolla principale */}
+                <circle
+                  cx={0}
+                  cy={0}
+                  r={b.size / 2}
+                  fill="url(#bubbleGrad)"
+                  stroke="url(#iridescent)"
+                  strokeWidth={isPopping ? 0.3 : 0.9}
+                  opacity={isPopping ? 0.5 : 0.9}
+                />
+                {/* Riflesso speculare grande */}
+                <ellipse
+                  cx={-b.size * 0.12}
+                  cy={-b.size * 0.18}
+                  rx={b.size * 0.22}
+                  ry={b.size * 0.14}
+                  fill="url(#highlightGrad)"
+                  opacity={isPopping ? 0.3 : 0.92}
+                />
+                {/* Riflesso secondario piccolo */}
+                <ellipse
+                  cx={b.size * 0.16}
+                  cy={b.size * 0.1}
+                  rx={b.size * 0.07}
+                  ry={b.size * 0.05}
+                  fill="rgba(255,255,255,0.65)"
+                  opacity={isPopping ? 0.2 : 0.55}
+                />
+                {/* Scintilla extra su bolla grande */}
+                {b.size > 18 && (
+                  <circle
+                    cx={-b.size * 0.05}
+                    cy={-b.size * 0.22}
+                    r={b.size * 0.04}
+                    fill="white"
+                    opacity={isPopping ? 0.15 : 0.8}
+                  />
+                )}
+              </g>
+            )
+          })}
+        </svg>
+      </div>
+
+      {/* TICKER */}
+      <div className="fixed bottom-0 left-0 right-0 z-40 flex items-center h-9 overflow-hidden ticker-bar">
+        <div className="flex-1 overflow-hidden relative h-full flex items-center">
+          <div className="flex items-center whitespace-nowrap animate-ticker">
+            {[...Array(4)].map((_, i) => (
+              <span key={i} className="text-white text-xs font-semibold px-10 tracking-wide">
+                {message}
+              </span>
+            ))}
+          </div>
+          <div className="ticker-shine" />
+        </div>
+        <button
+          onClick={handleDismiss}
+          aria-label="Chiudi"
+          className="shrink-0 h-full px-3 flex items-center justify-center hover:bg-black/15 transition-colors relative z-10"
+        >
+          <X className="w-4 h-4 text-white/90" />
+        </button>
+      </div>
+
+      <style jsx global>{`
+        .ticker-bar {
+          background: linear-gradient(90deg, #0c4a6e, #075985, #0891b2, #06b6d4, #0891b2, #075985, #0c4a6e);
+          background-size: 400% 100%;
+          animation: ticker-gradient 12s ease infinite;
+          box-shadow:
+            0 -1px 0 rgba(255,255,255,0.15) inset,
+            0 -3px 12px rgba(8,145,178,0.25);
+        }
+        @keyframes ticker-gradient {
+          0%, 100% { background-position: 0% 50%; }
+          50% { background-position: 100% 50%; }
+        }
+
+        .animate-ticker {
+          animation: ticker-scroll 24s linear infinite;
+        }
+        @keyframes ticker-scroll {
+          from { transform: translateX(0); }
+          to { transform: translateX(-25%); }
+        }
+
+        .ticker-shine {
+          position: absolute;
+          top: 0;
+          left: -20%;
+          width: 20%;
+          height: 100%;
+          background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+          animation: shine-sweep 6s ease-in-out infinite;
+          pointer-events: none;
+        }
+        @keyframes shine-sweep {
+          0% { left: -20%; }
+          35% { left: 120%; }
+          100% { left: 120%; }
+        }
+
+        @keyframes bubbleWobble {
+          0%, 100% { transform: scale(1, 1); }
+          25% { transform: scale(1.06, 0.94); }
+          50% { transform: scale(0.94, 1.06); }
+          75% { transform: scale(1.03, 0.97); }
+        }
+      `}</style>
+    </>
+  )
+}      })
       .catch(() => {})
     if (typeof window !== 'undefined' && sessionStorage.getItem(DISMISS_KEY)) {
       setDismissed(true)
