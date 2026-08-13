@@ -2,7 +2,7 @@
   "name": "MGShop Casa",
   "short_name": "MGShop",
   "description": "Il tuo negozio di articoli per la casa",
-  "start_url": "/shop",
+  "start_url": "/",
   "scope": "/",
   "display": "standalone",
   "background_color": "#f0fbfd",
