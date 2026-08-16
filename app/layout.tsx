@@ -10,6 +10,7 @@ import { ServiceWorkerRegister } from '@/components/sw-register'
 import { SiteTicker } from '@/components/shop/site-ticker'
 import { SiteFooter } from '@/components/shop/site-footer'
 import { BottomNav } from '@/components/shop/bottom-nav'
+import { GlobalHeader } from '@/components/shop/global-header'
 import { Suspense } from 'react'
 import './globals.css'
 
@@ -45,17 +46,20 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="it">
       <body className={inter.className}>
-        <Suspense><AnalyticsTracker /></Suspense>
+        <GlobalHeader />
+        <main className="min-h-screen">
+          {children}
+        </main>
+        <SiteFooter />
+        <SiteTicker />
+        <BottomNav />
+        <BackToTop />
+        <FloatingMenu />
+        <ProductDetailModal />
+        <Toaster position="top-center" richColors />
+        <AnalyticsTracker />
         <CartAbandonTracker />
         <ServiceWorkerRegister />
-        {children}
-        <SiteFooter />
-        <BottomNav />
-        <FloatingMenu />
-        <Suspense><BackToTop /></Suspense>
-        <ProductDetailModal />
-        <SiteTicker />
-        <Toaster position="bottom-center" richColors />
       </body>
     </html>
   )

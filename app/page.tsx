@@ -5,7 +5,6 @@ import {
   Tag, Package, Star,
   Truck, Banknote, ShieldCheck, Headphones, Sparkles,
 } from 'lucide-react'
-import { HomeHeader } from '@/components/shop/home-header'
 import { AmbientBubbles } from '@/components/shop/ambient-bubbles'
 
 const HERO_ADVANTAGES = [
@@ -19,133 +18,82 @@ const BOTTOM_ADVANTAGES = [
   { icon: Truck, title: 'CONSEGNA RAPIDA', sub: 'Consegna a mano nella tua zona' },
   { icon: Banknote, title: 'PAGAMENTO COMODO', sub: 'Paga alla consegna' },
   { icon: ShieldCheck, title: 'ACQUISTI SICURI', sub: 'Sito sicuro e affidabile' },
-  { icon: Headphones, title: 'ASSISTENZA DEDICATA', sub: 'Siamo sempre disponibili per aiutarti' },
+  { icon: Headphones, title: 'ASSISTENZA DEDICATA', sub: 'Sempre a tua disposizione' },
 ]
 
-export default function WelcomePage() {
+export default function HomePage() {
   const [mounted, setMounted] = useState(false)
-  const [mousePos, setMousePos] = useState({ x: 0, y: 0 })
-
-  useEffect(() => {
-    setMounted(true)
-  }, [])
-
-  // Parallax leggero dei glow nella hero, solo desktop (mousemove non esiste su touch)
-  useEffect(() => {
-    const handleMouse = (e: MouseEvent) => {
-      setMousePos({ x: e.clientX / window.innerWidth - 0.5, y: e.clientY / window.innerHeight - 0.5 })
-    }
-    window.addEventListener('mousemove', handleMouse, { passive: true })
-    return () => window.removeEventListener('mousemove', handleMouse)
-  }, [])
+  useEffect(() => { setMounted(true) }, [])
 
   return (
-    <div className="min-h-screen" style={{ background: '#ffffff' }}>
-      <HomeHeader />
+    <div className="theme-page-bg relative overflow-hidden">
+      <AmbientBubbles />
 
-      {/* ===== HERO IMMERSIVA (scura, solo sulla home: distingue la home dal resto del sito) ===== */}
-      <section className="relative overflow-hidden"
-        style={{ background: 'linear-gradient(135deg, #04202b 0%, #06303d 30%, #0c2b36 60%, #03131a 100%)' }}>
-
-        {/* Orb animati con leggero parallax al movimento del mouse */}
-        <div className="absolute inset-0 pointer-events-none">
-          <div className="absolute top-1/4 left-1/4 w-[500px] h-[500px] rounded-full blur-[100px] opacity-20"
-            style={{ background: 'radial-gradient(circle, #0891b2, #155e75)', transform: `translate(${mousePos.x * -30}px, ${mousePos.y * -20}px)`, transition: 'transform 0.8s ease' }} />
-          <div className="absolute bottom-0 right-1/4 w-[400px] h-[400px] rounded-full blur-[80px] opacity-15"
-            style={{ background: 'radial-gradient(circle, #06b6d4, #0e7490)', transform: `translate(${mousePos.x * 20}px, ${mousePos.y * 15}px)`, transition: 'transform 1s ease' }} />
-          <div className="absolute top-1/2 right-1/3 w-[300px] h-[300px] rounded-full blur-[60px] opacity-10"
-            style={{ background: 'radial-gradient(circle, #22d3ee, #0891b2)', transform: `translate(${mousePos.x * -15}px, ${mousePos.y * 25}px)`, transition: 'transform 1.2s ease' }} />
-        </div>
-
-        {/* Griglia decorativa */}
-        <div className="absolute inset-0 opacity-[0.05] pointer-events-none" style={{
-          backgroundImage: 'linear-gradient(rgba(34,211,238,0.8) 1px, transparent 1px), linear-gradient(90deg, rgba(34,211,238,0.8) 1px, transparent 1px)',
-          backgroundSize: '80px 80px',
-        }} />
-
-        {/* Anelli decorativi, solo desktop */}
-        <div className="absolute top-20 left-10 hidden xl:block opacity-20 animate-spin-slow pointer-events-none">
-          <div className="w-28 h-28 rounded-full border-2 border-dashed border-cyan-400" />
-        </div>
-        <div className="absolute bottom-16 right-14 hidden xl:block opacity-10 animate-spin-slow pointer-events-none" style={{ animationDirection: 'reverse', animationDuration: '20s' }}>
-          <div className="w-40 h-40 rounded-full border border-cyan-300" />
-        </div>
-
-        <AmbientBubbles count={16} theme="dark" />
-
-        <div className={`relative z-10 max-w-3xl mx-auto px-6 pt-10 pb-14 lg:py-20 text-center ${mounted ? 'animate-fade-in-up' : 'opacity-0'}`}>
-          <div className="flex justify-center mb-5">
-            <img src="/logo/mgshop-logo-neon.png" alt="MGShop Casa"
-              className="w-20 h-20 sm:w-24 sm:h-24 rounded-full neon-glow-logo" />
-          </div>
-
-          <div className="inline-flex items-center gap-2 border border-cyan-500/30 rounded-full px-4 py-1.5 text-cyan-300 text-xs sm:text-sm font-medium mb-5"
-            style={{ background: 'rgba(8,145,178,0.1)', backdropFilter: 'blur(10px)' }}>
-            <Sparkles className="w-3.5 h-3.5" /> Il tuo negozio di fiducia, sotto casa
-          </div>
-
-          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight leading-[1.08]">
-            <span className="text-white">TUTTO PER<br />LA TUA CASA.</span><br />
-            <span className="text-shimmer">CONSEGNATO<br />A CASA TUA.</span>
+      {/* HERO */}
+      <section className="theme-hero relative pt-10 pb-16 px-4 sm:px-6">
+        <div className="max-w-7xl mx-auto text-center">
+          <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-slate-900 mb-4">
+            TUTTO PER <span className="text-shimmer">LA TUA CASA</span>
           </h1>
-          <p className="mt-5 text-sm sm:text-base leading-relaxed max-w-xl mx-auto text-cyan-100/60">
-            Detersivi, prodotti per la pulizia, cura della persona e articoli per la casa.
-            Ordina online e paga comodamente alla consegna.
+          <p className="text-lg sm:text-xl text-slate-600 max-w-2xl mx-auto mb-2">
+            CONSEGNA A CASA TUA.
+          </p>
+          <p className="text-base text-slate-500 max-w-xl mx-auto mb-8">
+            Il tuo negozio di fiducia, sotto casa. Detersivi, prodotti per la pulizia, cura della persona e articoli per la casa.
           </p>
 
-          {/* Vantaggi: card 2x2 su mobile, riga orizzontale su desktop */}
-          <div className="mt-6 grid grid-cols-2 gap-3 rounded-2xl p-4 text-left sm:hidden"
-            style={{ background: 'rgba(255,255,255,0.06)', backdropFilter: 'blur(10px)', border: '1px solid rgba(255,255,255,0.1)' }}>
-            {HERO_ADVANTAGES.map((a, i) => (
-              <div key={i} className="flex items-center gap-2.5">
-                <span className="w-8 h-8 rounded-full flex items-center justify-center shrink-0 text-cyan-300"
-                  style={{ background: 'rgba(255,255,255,0.08)' }}>
-                  <a.icon className="w-4 h-4" />
-                </span>
-                <span className="text-xs font-medium leading-snug text-cyan-50/90">{a.label}</span>
-              </div>
-            ))}
-          </div>
-          <div className="hidden sm:flex sm:flex-wrap sm:justify-center gap-x-6 gap-y-3 mt-7">
-            {HERO_ADVANTAGES.map((a, i) => (
-              <div key={i} className="flex items-center gap-3">
-                <span className="w-9 h-9 rounded-full flex items-center justify-center shrink-0 text-cyan-300"
-                  style={{ background: 'rgba(255,255,255,0.08)' }}>
-                  <a.icon className="w-[18px] h-[18px]" />
-                </span>
-                <span className="text-sm font-medium text-cyan-50/90">{a.label}</span>
-              </div>
-            ))}
+          <div className="flex flex-wrap justify-center gap-3 mb-10">
+            <Link href="/shop" className="inline-flex items-center gap-2 px-6 py-3 rounded-2xl bg-cyan-600 text-white font-semibold shadow-lg shadow-cyan-600/25 hover:bg-cyan-700 transition-colors">
+              <Sparkles className="w-5 h-5" />
+              Scopri i prodotti
+            </Link>
+            <Link href="/promo" className="inline-flex items-center gap-2 px-6 py-3 rounded-2xl bg-white text-cyan-700 font-semibold border border-cyan-200 shadow-sm hover:bg-cyan-50 transition-colors">
+              <Tag className="w-5 h-5" />
+              Vedi le promo
+            </Link>
           </div>
 
-          <Link href="/promo"
-            className="inline-flex items-center gap-2 mt-6 lg:mt-8 px-6 py-3 rounded-full font-bold text-sm text-white transition-transform hover:scale-105 btn-press"
-            style={{ background: 'linear-gradient(135deg,#db2777,#ec4899)', boxShadow: '0 8px 24px rgba(219,39,119,0.4)' }}>
-            <Tag className="w-4 h-4" /> Scopri le offerte della settimana
-          </Link>
+          {/* Vantaggi */}
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3 max-w-3xl mx-auto">
+            {HERO_ADVANTAGES.map((a, i) => (
+              <div key={i} className="glass-card rounded-2xl p-4 flex flex-col items-center gap-2 animate-fade-in-up" style={{ animationDelay: `${i * 100}ms` }}>
+                <a.icon className="w-6 h-6 text-cyan-600" />
+                <span className="text-xs sm:text-sm font-medium text-slate-700 text-center leading-tight">{a.label}</span>
+              </div>
+            ))}
+          </div>
         </div>
       </section>
 
-      {/* ===== AREA VANTAGGI ===== */}
-      <section className="max-w-5xl mx-auto px-4 sm:px-6 py-10 sm:py-14">
-        <div className="rounded-2xl overflow-hidden"
-          style={{ background: 'rgba(255,255,255,0.75)', backdropFilter: 'blur(10px)', border: '1px solid rgba(8,145,178,0.1)', boxShadow: '0 10px 30px rgba(8,145,178,0.08)' }}>
-          <div className="grid grid-cols-2 sm:grid-cols-4">
-            {BOTTOM_ADVANTAGES.map((a, i) => (
-              <div key={i}
-                className="flex items-center gap-3 p-4 sm:p-5 sm:border-r last:border-r-0 [&:nth-child(-n+2)]:border-b [&:nth-child(-n+2)]:sm:border-b-0"
-                style={{ borderColor: 'rgba(8,145,178,0.08)' }}>
-                <span className="w-9 h-9 sm:w-10 sm:h-10 rounded-full flex items-center justify-center shrink-0"
-                  style={{ background: 'rgba(8,145,178,0.08)', color: '#0891b2' }}>
-                  <a.icon className="w-4 h-4 sm:w-5 sm:h-5" />
-                </span>
-                <div>
-                  <p className="text-[11px] sm:text-xs font-bold tracking-wide" style={{ color: '#0c2b36' }}>{a.title}</p>
-                  <p className="text-[10px] sm:text-[11px] text-slate-500 mt-0.5 leading-snug">{a.sub}</p>
-                </div>
-              </div>
-            ))}
+      {/* CTA Shop */}
+      <section className="py-12 px-4 sm:px-6">
+        <div className="max-w-7xl mx-auto">
+          <div className="glass-card rounded-3xl p-8 sm:p-12 text-center relative overflow-hidden">
+            <div className="relative z-10">
+              <h2 className="text-2xl sm:text-3xl font-bold text-slate-900 mb-3">Scopri le offerte della settimana</h2>
+              <p className="text-slate-600 mb-6 max-w-lg mx-auto">Trova i migliori prodotti per la tua casa a prezzi imbattibili.</p>
+              <Link href="/shop" className="inline-flex items-center gap-2 px-8 py-3.5 rounded-2xl bg-cyan-600 text-white font-semibold shadow-lg shadow-cyan-600/25 hover:bg-cyan-700 transition-colors text-lg">
+                Vai allo shop
+              </Link>
+            </div>
           </div>
+        </div>
+      </section>
+
+      {/* Vantaggi bottom */}
+      <section className="py-12 px-4 sm:px-6">
+        <div className="max-w-7xl mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          {BOTTOM_ADVANTAGES.map((a, i) => (
+            <div key={i} className="glass-card rounded-2xl p-5 flex items-start gap-3">
+              <div className="p-2.5 rounded-xl bg-cyan-50 text-cyan-600 shrink-0">
+                <a.icon className="w-5 h-5" />
+              </div>
+              <div>
+                <h3 className="font-semibold text-slate-900 text-sm">{a.title}</h3>
+                <p className="text-xs text-slate-500 mt-0.5">{a.sub}</p>
+              </div>
+            </div>
+          ))}
         </div>
       </section>
     </div>
