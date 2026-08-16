@@ -6,6 +6,7 @@ import Link from 'next/link'
 import { MessageCircle, X, Send, Menu as MenuIcon, ShoppingBag, Gift } from 'lucide-react'
 import { SOCIAL_LINKS, InstagramIcon, TikTokIcon, WhatsAppIcon, FacebookIcon } from './social-icons'
 import { useCartStore } from '@/lib/cart-store'
+import { useUIPanelsStore } from '@/lib/ui-panels-store'
 
 interface ChatMessage {
   id: string
@@ -51,13 +52,17 @@ export function FloatingMenu() {
   const [hasUnseen, setHasUnseen] = useState(false)
   const scrollRef = useRef<HTMLDivElement>(null)
   const cartCount = useCartStore(s => s.getTotalItems)()
+  const requestPoints = useUIPanelsStore(s => s.requestPoints)
+  const requestChat = useUIPanelsStore(s => s.requestChat)
 
   // Nelle pagine Volantino e Promo lo scroll è lungo e il carrello
   // rischia di restare "fuori vista": qui aggiungiamo una scorciatoia
   // sempre a portata di mano, sopra il pulsante social/chat.
   const showStickyCart = pathname === '/volantino' || pathname === '/promo'
   const cartHref = pathname === '/promo' ? '/carrello?promo=1' : '/carrello'
-  const menuOffsetClass = showStickyCart ? 'bottom-48' : 'bottom-32'
+  // Su mobile c'è anche la bottom nav fissa: alziamo tutto di uno "scalino"
+  // in più (bottom-[...]) solo sotto md, dove la barra è visibile.
+  const menuOffsetClass = showStickyCart ? 'bottom-[13.5rem] md:bottom-48' : 'bottom-[9.5rem] md:bottom-32'
 
   useEffect(() => {
     const raw = localStorage.getItem(STORAGE_KEY)
@@ -128,6 +133,20 @@ export function FloatingMenu() {
   }
   const closeAll = () => { setMenuOpen(false); setChatOpen(false); setPointsOpen(false) }
 
+  // La bolla "Punti"/"Account" e la bolla "Contatti" della homepage (e la
+  // bottom nav) chiamano useUIPanelsStore().openPoints()/openChat() per
+  // aprire questi stessi pannelli senza duplicare la logica.
+  useEffect(() => {
+    if (requestPoints === 0) return
+    openPoints()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [requestPoints])
+  useEffect(() => {
+    if (requestChat === 0) return
+    openChat()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [requestChat])
+
   const checkPoints = async () => {
     if (!pointsPhone.trim()) return
     setPointsChecking(true)
@@ -160,7 +179,7 @@ export function FloatingMenu() {
       {/* Bolla principale */}
       <button
         onClick={() => (isOpen ? closeAll() : setMenuOpen(true))}
-        className="fixed bottom-12 right-5 z-40 w-14 h-14 rounded-full shadow-lg flex items-center justify-center text-white transition-transform hover:scale-105"
+        className="fixed bottom-[5.5rem] md:bottom-12 right-5 z-40 w-14 h-14 rounded-full shadow-lg flex items-center justify-center text-white transition-transform hover:scale-105"
         style={{ background: 'linear-gradient(135deg,#0891b2,#06b6d4)' }}
         aria-label="Apri menu"
       >
@@ -174,7 +193,7 @@ export function FloatingMenu() {
       {showStickyCart && cartCount > 0 && !isOpen && (
         <Link
           href={cartHref}
-          className="fixed bottom-32 right-5 z-40 w-14 h-14 rounded-full shadow-lg flex items-center justify-center text-white transition-transform hover:scale-105 animate-scale-in"
+          className="fixed bottom-[9.5rem] md:bottom-32 right-5 z-40 w-14 h-14 rounded-full shadow-lg flex items-center justify-center text-white transition-transform hover:scale-105 animate-scale-in"
           style={{ background: '#0c2b36' }}
           aria-label="Vai al carrello"
         >

@@ -1,201 +1,191 @@
 "use client"
 import { useEffect, useState } from 'react'
-import Image from 'next/image'
+import type { ComponentType, CSSProperties } from 'react'
 import Link from 'next/link'
-import { ShoppingBag, Sparkles, ArrowRight, Tag, Newspaper, Gift, MapPin } from 'lucide-react'
-import { SOCIAL_LINKS, InstagramIcon, TikTokIcon, WhatsAppIcon, FacebookIcon } from '@/components/shop/social-icons'
-import { CodBanner } from '@/components/shop/cod-banner'
+import { toast } from 'sonner'
+import {
+  ShoppingBag, Tag, Package, Ticket, Star, Newspaper, MapPin, Phone, User,
+  Truck, Banknote, ShieldCheck, Headphones,
+} from 'lucide-react'
+import { HomeHeader } from '@/components/shop/home-header'
+import { AmbientBubbles } from '@/components/shop/ambient-bubbles'
+import { useUIPanelsStore } from '@/lib/ui-panels-store'
+
+interface BubbleDef {
+  key: string
+  label: string
+  sub: string
+  icon: ComponentType<{ className?: string }>
+  color: string
+  big?: boolean
+  badge?: boolean
+  action: { type: 'link'; href: string } | { type: 'points' } | { type: 'chat' } | { type: 'soon' }
+}
+
+const HERO_ADVANTAGES = [
+  { icon: Truck, label: 'Consegna a mano nella tua zona' },
+  { icon: Banknote, label: 'Paghi alla consegna' },
+  { icon: Star, label: 'Raccogli punti ad ogni acquisto' },
+  { icon: Package, label: 'Nuova lotteria ogni settimana' },
+]
+
+const BOTTOM_ADVANTAGES = [
+  { icon: Truck, title: 'CONSEGNA RAPIDA', sub: 'Consegna a mano nella tua zona' },
+  { icon: Banknote, title: 'PAGAMENTO COMODO', sub: 'Paga alla consegna' },
+  { icon: ShieldCheck, title: 'ACQUISTI SICURI', sub: 'Sito sicuro e affidabile' },
+  { icon: Headphones, title: 'ASSISTENZA DEDICATA', sub: 'Siamo sempre disponibili per aiutarti' },
+]
 
 export default function WelcomePage() {
   const [mounted, setMounted] = useState(false)
-  const [mousePos, setMousePos] = useState({ x: 0, y: 0 })
   const [promoActive, setPromoActive] = useState(false)
   const [volantinoActive, setVolantinoActive] = useState(false)
   const [lotteryActive, setLotteryActive] = useState(false)
+  const openPoints = useUIPanelsStore(s => s.openPoints)
+  const openChat = useUIPanelsStore(s => s.openChat)
 
   useEffect(() => {
     setMounted(true)
     fetch('/api/promo').then(r => r.json()).then(d => setPromoActive(d.is_active === true)).catch(() => {})
     fetch('/api/volantino').then(r => r.json()).then(d => setVolantinoActive(d.is_active === true)).catch(() => {})
     fetch('/api/lottery').then(r => r.json()).then(d => setLotteryActive(d.is_active === true)).catch(() => {})
-    const h = (e: MouseEvent) => setMousePos({ x: e.clientX / window.innerWidth - 0.5, y: e.clientY / window.innerHeight - 0.5 })
-    window.addEventListener('mousemove', h, { passive: true })
-    return () => window.removeEventListener('mousemove', h)
   }, [])
 
+  const BUBBLES: BubbleDef[] = [
+    { key: 'promo', label: 'Promozioni', sub: 'Scopri le offerte della settimana', icon: Tag, color: '#f59e0b', badge: promoActive, action: { type: 'link', href: '/promo' } },
+    { key: 'promobox', label: 'Promo Box', sub: 'Più prodotti, più convenienza', icon: Package, color: '#9333ea', action: { type: 'soon' } },
+    { key: 'lotteria', label: 'Lotteria', sub: 'Scegli il numero e prova a vincere', icon: Ticket, color: '#e11d48', badge: lotteryActive, action: { type: 'link', href: '/lotteria' } },
+    { key: 'punti', label: 'Punti', sub: 'Accumula punti e ottieni premi', icon: Star, color: '#eab308', action: { type: 'points' } },
+    { key: 'negozio', label: 'Negozio', sub: 'Scopri tutti i prodotti', icon: ShoppingBag, color: '#db2777', big: true, action: { type: 'link', href: '/shop' } },
+    { key: 'volantino', label: 'Volantino', sub: 'Sfoglia le nostre offerte', icon: Newspaper, color: '#2563eb', badge: volantinoActive, action: { type: 'link', href: '/volantino' } },
+    { key: 'zona', label: 'Zone di Consegna', sub: 'Scopri se consegniamo da te', icon: MapPin, color: '#0891b2', action: { type: 'link', href: '/consegne' } },
+    { key: 'contatti', label: 'Contatti', sub: 'Siamo qui per te', icon: Phone, color: '#16a34a', action: { type: 'chat' } },
+    { key: 'account', label: 'Il Mio Account', sub: 'Ordini, punti e premi', icon: User, color: '#2563eb', action: { type: 'soon' } },
+  ]
+
+  const handleSoon = (label: string) => toast(`${label}: disponibile a breve! ✨`, { duration: 2000 })
+
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center relative overflow-hidden"
-      style={{ background: 'linear-gradient(135deg,#03131a 0%,#0c2b36 40%,#06303d 70%,#0c2b36 100%)' }}>
+    <div className="min-h-screen" style={{ background: 'linear-gradient(180deg,#eafbff 0%,#f5fdff 45%,#ffffff 100%)' }}>
+      <HomeHeader />
 
-      <div className="absolute inset-0 pointer-events-none">
-        <div className="absolute w-[600px] h-[600px] rounded-full"
-          style={{ top: '50%', left: '50%', transform: `translate(calc(-50% + ${mousePos.x * 80}px),calc(-50% + ${mousePos.y * 60}px))`, transition: 'transform 1.2s cubic-bezier(0.22,1,0.36,1)' }}>
-          <div className="w-full h-full rounded-full blur-[120px] opacity-25 animate-breathe" style={{ background: 'radial-gradient(circle,#0891b2,#155e75)' }} />
-        </div>
-        <div className="absolute w-[400px] h-[400px] rounded-full"
-          style={{ top: '30%', left: '30%', transform: `translate(calc(-50% + ${mousePos.x * -50}px),calc(-50% + ${mousePos.y * -40}px))`, transition: 'transform 0.8s cubic-bezier(0.22,1,0.36,1)' }}>
-          <div className="w-full h-full rounded-full blur-[80px] opacity-15 animate-breathe" style={{ background: 'radial-gradient(circle,#06b6d4,#0e7490)', animationDelay: '2s' }} />
-        </div>
-        {/* Bolle di sapone in salita */}
-        {[
-          { left: '5%', size: 46, dur: 11, delay: 0 },
-          { left: '13%', size: 22, dur: 9, delay: 1.2 },
-          { left: '20%', size: 60, dur: 14, delay: 2.5 },
-          { left: '28%', size: 16, dur: 8, delay: 0.5 },
-          { left: '35%', size: 34, dur: 12, delay: 3.8 },
-          { left: '43%', size: 20, dur: 9.5, delay: 1.8 },
-          { left: '50%', size: 52, dur: 13, delay: 4.5 },
-          { left: '58%', size: 26, dur: 10, delay: 0.2 },
-          { left: '65%', size: 40, dur: 11.5, delay: 2.2 },
-          { left: '72%', size: 18, dur: 8.5, delay: 3.2 },
-          { left: '79%', size: 58, dur: 15, delay: 1 },
-          { left: '86%', size: 24, dur: 9, delay: 4 },
-          { left: '92%', size: 36, dur: 12.5, delay: 2.8 },
-          { left: '96%', size: 14, dur: 7.5, delay: 0.8 },
-          { left: '9%', size: 28, dur: 10.5, delay: 5.2 },
-          { left: '62%', size: 44, dur: 13.5, delay: 5.8 },
-        ].map((b, i) => (
-          <div key={i} className="absolute rounded-full animate-bubble-rise"
-            style={{
-              left: b.left, bottom: '-80px', width: b.size, height: b.size,
-              background: 'radial-gradient(circle at 32% 28%, rgba(255,255,255,0.85), rgba(110,210,230,0.18) 45%, rgba(70,150,175,0.06) 72%, transparent 100%)',
-              boxShadow: 'inset -4px -4px 10px rgba(255,255,255,0.35), inset 3px 3px 8px rgba(8,145,178,0.15), 0 0 14px rgba(150,235,250,0.12)',
-              border: '1px solid rgba(255,255,255,0.2)',
-              animationDuration: `${b.dur}s`, animationDelay: `${b.delay}s`,
-            }} />
-        ))}
+      {/* ===== HERO ===== */}
+      <section className="relative overflow-hidden"
+        style={{ background: 'linear-gradient(160deg,#dff7fc 0%,#eafbff 55%,#ffffff 100%)' }}>
+        <AmbientBubbles count={16} theme="light" />
+        <div className="absolute inset-0 opacity-[0.04] pointer-events-none"
+          style={{ backgroundImage: 'linear-gradient(rgba(8,145,178,0.8) 1px,transparent 1px),linear-gradient(90deg,rgba(8,145,178,0.8) 1px,transparent 1px)', backgroundSize: '48px 48px' }} />
 
-        {/* Bolle che scoppiano vicino al centro */}
-        {[
-          { left: '30%', top: '35%', size: 30, delay: 0.5 },
-          { left: '68%', top: '28%', size: 22, delay: 2 },
-          { left: '48%', top: '55%', size: 18, delay: 3.5 },
-        ].map((b, i) => (
-          <div key={`pop-${i}`} className="absolute rounded-full animate-bubble-pop"
-            style={{
-              left: b.left, top: b.top, width: b.size, height: b.size,
-              background: 'radial-gradient(circle at 32% 28%, rgba(255,255,255,0.8), rgba(110,210,230,0.15) 50%, transparent 100%)',
-              border: '1px solid rgba(255,255,255,0.25)',
-              animationDuration: '5s', animationDelay: `${b.delay}s`,
-            }} />
-        ))}
-      </div>
+        <div className={`relative z-10 max-w-3xl mx-auto px-6 pt-10 pb-8 text-center ${mounted ? 'animate-fade-in-up' : 'opacity-0'}`}>
+          <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-tight leading-[1.08]">
+            <span style={{ color: '#0c2b36' }}>TUTTO PER<br />LA TUA CASA.</span><br />
+            <span style={{ color: '#db2777' }}>CONSEGNATO<br />A CASA TUA.</span>
+          </h1>
+          <p className="mt-5 text-sm sm:text-base leading-relaxed max-w-xl mx-auto" style={{ color: '#0c2b36cc' }}>
+            Detersivi, prodotti per la pulizia, cura della persona e articoli per la casa.
+            Ordina online e paga comodamente alla consegna.
+          </p>
 
-      <div className="absolute inset-0 opacity-[0.03]" style={{ backgroundImage: 'linear-gradient(rgba(34,211,238,0.8) 1px,transparent 1px),linear-gradient(90deg,rgba(34,211,238,0.8) 1px,transparent 1px)', backgroundSize: '60px 60px' }} />
+          <div className="mt-6 grid grid-cols-2 gap-3 rounded-2xl p-4 text-left"
+            style={{ background: 'rgba(255,255,255,0.7)', backdropFilter: 'blur(10px)', border: '1px solid rgba(8,145,178,0.12)', boxShadow: '0 8px 24px rgba(8,145,178,0.08)' }}>
+            {HERO_ADVANTAGES.map((a, i) => (
+              <div key={i} className="flex items-center gap-2.5">
+                <span className="w-8 h-8 rounded-full flex items-center justify-center shrink-0"
+                  style={{ background: 'rgba(8,145,178,0.1)', color: '#0891b2' }}>
+                  <a.icon className="w-4 h-4" />
+                </span>
+                <span className="text-xs font-medium leading-snug" style={{ color: '#0c2b36' }}>{a.label}</span>
+              </div>
+            ))}
+          </div>
 
-      <div className={`relative z-10 text-center px-6 max-w-2xl mx-auto ${mounted ? 'animate-bubble-reveal' : 'opacity-0'}`}>
-        <div className="mb-10 flex flex-col items-center">
-          <Image
-            src="/logo/mgshop-logo-neon.png"
-            alt="MGShop Casa"
-            width={280}
-            height={280}
-            className="neon-glow-logo w-52 h-52 md:w-72 md:h-72 object-contain animate-float"
-            priority
-          />
-        </div>
-
-        <p className="text-slate-400 text-lg mb-10 leading-relaxed">
-          Prodotti selezionati per la tua casa.<br />Qualità e stile in ogni angolo.
-        </p>
-
-        <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-8">
-          <Link href="/shop"
-            className="group w-full sm:w-auto flex items-center justify-center gap-3 font-bold text-lg px-10 py-5 rounded-2xl text-white transition-all hover:scale-105 active:scale-95 btn-press neon-glow"
-            style={{ background: 'linear-gradient(135deg,#0891b2,#06b6d4)' }}>
-            <ShoppingBag className="w-5 h-5" /> Sfoglia il negozio
-            <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-          </Link>
-
-          {promoActive ? (
-            <Link href="/promo"
-              className="group w-full sm:w-auto flex items-center justify-center gap-3 font-bold text-lg px-10 py-5 rounded-2xl transition-all hover:scale-105 active:scale-95 btn-press neon-glow"
-              style={{ background: 'rgba(8,145,178,0.1)', border: '1px solid rgba(8,145,178,0.3)', color: '#ffffff' }}>
-              <Sparkles className="w-5 h-5" /> Vedi le promo
-              <span className="text-xs bg-cyan-500 text-black px-2 py-0.5 rounded-full font-semibold">OFFERTE</span>
-            </Link>
-          ) : (
-            <Link href="/promo"
-              className="w-full sm:w-auto flex items-center justify-center gap-3 font-bold text-lg px-10 py-5 rounded-2xl transition-all hover:scale-105 btn-press"
-              style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', color: 'rgba(255,255,255,0.4)' }}>
-              <Tag className="w-5 h-5" /> Promozioni
-            </Link>
-          )}
-
-          {volantinoActive ? (
-            <Link href="/volantino"
-              className="group w-full sm:w-auto flex items-center justify-center gap-3 font-bold text-lg px-10 py-5 rounded-2xl transition-all hover:scale-105 active:scale-95 btn-press neon-glow"
-              style={{ background: 'rgba(8,145,178,0.1)', border: '1px solid rgba(8,145,178,0.3)', color: '#ffffff' }}>
-              <Newspaper className="w-5 h-5" /> Vedi il volantino
-              <span className="text-xs bg-cyan-500 text-black px-2 py-0.5 rounded-full font-semibold">VOLANTINO</span>
-            </Link>
-          ) : (
-            <Link href="/volantino"
-              className="w-full sm:w-auto flex items-center justify-center gap-3 font-bold text-lg px-10 py-5 rounded-2xl transition-all hover:scale-105 btn-press"
-              style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', color: 'rgba(255,255,255,0.4)' }}>
-              <Newspaper className="w-5 h-5" /> Volantino
-            </Link>
-          )}
-
-          {lotteryActive ? (
-            <Link href="/lotteria"
-              className="group w-full sm:w-auto flex items-center justify-center gap-3 font-bold text-lg px-10 py-5 rounded-2xl transition-all hover:scale-105 active:scale-95 btn-press neon-glow"
-              style={{ background: 'rgba(8,145,178,0.1)', border: '1px solid rgba(8,145,178,0.3)', color: '#ffffff' }}>
-              <Gift className="w-5 h-5" /> Partecipa alla lotteria
-              <span className="text-xs bg-cyan-500 text-black px-2 py-0.5 rounded-full font-semibold">LOTTERIA</span>
-            </Link>
-          ) : (
-            <Link href="/lotteria"
-              className="w-full sm:w-auto flex items-center justify-center gap-3 font-bold text-lg px-10 py-5 rounded-2xl transition-all hover:scale-105 btn-press"
-              style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', color: 'rgba(255,255,255,0.4)' }}>
-              <Gift className="w-5 h-5" /> Lotteria
-            </Link>
-          )}
-        </div>
-
-        <div className="flex justify-center mb-6">
-          <CodBanner variant="dark" />
-        </div>
-
-        <div className="flex justify-center mb-6 -mt-3">
-          <Link href="/consegne" className="inline-flex items-center gap-1.5 text-xs text-cyan-300/70 hover:text-cyan-200 transition-colors underline underline-offset-2">
-            <MapPin className="w-3.5 h-3.5" /> Zone di consegna
+          <Link href="/promo"
+            className="inline-flex items-center gap-2 mt-6 px-6 py-3 rounded-full font-bold text-sm text-white transition-transform hover:scale-105 btn-press"
+            style={{ background: 'linear-gradient(135deg,#db2777,#ec4899)', boxShadow: '0 8px 24px rgba(219,39,119,0.3)' }}>
+            <Tag className="w-4 h-4" /> Scopri le offerte della settimana
           </Link>
         </div>
+      </section>
 
-        {/* Icone social */}
-        <div className="flex items-center justify-center gap-3 mt-2">
-          <a href={SOCIAL_LINKS.instagram} target="_blank" rel="noopener noreferrer" aria-label="Instagram"
-            className="w-11 h-11 rounded-full flex items-center justify-center transition-all hover:scale-110 btn-press neon-glow-pink"
-            style={{ background: 'rgba(217,70,160,0.15)', border: '1px solid rgba(217,70,160,0.3)', color: '#f472b6' }}>
-            <InstagramIcon size={19} />
-          </a>
-          <a href={SOCIAL_LINKS.tiktok} target="_blank" rel="noopener noreferrer" aria-label="TikTok"
-            className="w-11 h-11 rounded-full flex items-center justify-center transition-all hover:scale-110 btn-press neon-glow-white"
-            style={{ background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.15)', color: '#e5e5e5' }}>
-            <TikTokIcon size={18} />
-          </a>
-          <a href={SOCIAL_LINKS.whatsapp} target="_blank" rel="noopener noreferrer" aria-label="WhatsApp"
-            className="w-11 h-11 rounded-full flex items-center justify-center transition-all hover:scale-110 btn-press neon-glow-green"
-            style={{ background: 'rgba(22,163,74,0.15)', border: '1px solid rgba(22,163,74,0.3)', color: '#4ade80' }}>
-            <WhatsAppIcon size={19} />
-          </a>
-          <a href={SOCIAL_LINKS.facebook} target="_blank" rel="noopener noreferrer" aria-label="Facebook"
-            className="w-11 h-11 rounded-full flex items-center justify-center transition-all hover:scale-110 btn-press neon-glow-blue"
-            style={{ background: 'rgba(24,119,242,0.15)', border: '1px solid rgba(24,119,242,0.3)', color: '#60a5fa' }}>
-            <FacebookIcon size={19} />
-          </a>
-        </div>
+      {/* ===== BOLLE INTERATTIVE ===== */}
+      <section className="relative max-w-3xl mx-auto px-4 sm:px-6 py-10 sm:py-14">
+        <div className="grid grid-cols-3 gap-3 sm:gap-5 place-items-center">
+          {BUBBLES.map((b, i) => {
+            const Icon = b.icon
+            const size = b.big ? 'w-24 h-24 sm:w-36 sm:h-36 md:w-44 md:h-44' : 'w-[4.7rem] h-[4.7rem] sm:w-24 sm:h-24 md:w-28 md:h-28'
+            const iconSize = b.big ? 'w-7 h-7 sm:w-9 sm:h-9' : 'w-5 h-5 sm:w-6 sm:h-6'
+            const labelSize = b.big ? 'text-xs sm:text-base font-bold' : 'text-[10px] sm:text-xs font-semibold'
+            const wrapperClass = `relative ${size} ${b.big ? 'z-10 scale-110 md:scale-100' : ''} rounded-full flex flex-col items-center justify-center text-center px-1.5 transition-transform hover:scale-105 active:scale-95 btn-press animate-bubble-bob`
+            const wrapperStyle: CSSProperties = {
+              background: 'radial-gradient(circle at 30% 25%, rgba(255,255,255,0.95), rgba(255,255,255,0.55) 60%, rgba(255,255,255,0.35) 100%)',
+              backdropFilter: 'blur(6px)',
+              border: '1px solid rgba(255,255,255,0.8)',
+              boxShadow: `0 10px 24px rgba(8,45,60,0.12), inset 0 0 0 1px rgba(${hexToRgb(b.color)},0.08)`,
+              animationDelay: `${(i % 5) * 0.3}s`,
+            }
 
-        <div className="flex items-center justify-center gap-8 mt-10">
-          {[['400+', 'Prodotti'], ['⭐⭐⭐⭐⭐', 'Qualità'], ['🚚', 'Consegna rapida']].map(([v, l]) => (
-            <div key={l} className="text-center">
-              <div className="text-lg font-bold text-cyan-400">{v}</div>
-              <div className="text-xs text-cyan-200/30 mt-1">{l}</div>
-            </div>
-          ))}
+            const content = (
+              <>
+                {b.badge && (
+                  <span className="absolute top-1.5 right-2 w-2.5 h-2.5 rounded-full animate-pulse-warm"
+                    style={{ background: '#ef4444', boxShadow: '0 0 0 2px white' }} />
+                )}
+                <span className="w-7 h-7 sm:w-9 sm:h-9 rounded-full flex items-center justify-center mb-1"
+                  style={{ background: `${b.color}1a`, color: b.color }}>
+                  <Icon className={iconSize} />
+                </span>
+                <span className={labelSize} style={{ color: '#0c2b36' }}>{b.label}</span>
+                {b.big && <span className="hidden sm:block text-[10px] text-slate-500 mt-0.5 leading-tight px-2">{b.sub}</span>}
+              </>
+            )
+
+            if (b.action.type === 'link') {
+              return (
+                <Link key={b.key} href={b.action.href} className={wrapperClass} style={wrapperStyle}>
+                  {content}
+                </Link>
+              )
+            }
+            const onClick = b.action.type === 'points' ? openPoints : b.action.type === 'chat' ? openChat : () => handleSoon(b.label)
+            return (
+              <button key={b.key} onClick={onClick} className={wrapperClass} style={wrapperStyle}>
+                {content}
+              </button>
+            )
+          })}
         </div>
-      </div>
+      </section>
+
+      {/* ===== AREA VANTAGGI ===== */}
+      <section className="max-w-5xl mx-auto px-4 sm:px-6 pb-14">
+        <div className="rounded-2xl overflow-hidden"
+          style={{ background: 'rgba(255,255,255,0.75)', backdropFilter: 'blur(10px)', border: '1px solid rgba(8,145,178,0.1)', boxShadow: '0 10px 30px rgba(8,145,178,0.08)' }}>
+          <div className="flex sm:grid sm:grid-cols-4 overflow-x-auto scrollbar-hide snap-x snap-mandatory">
+            {BOTTOM_ADVANTAGES.map((a, i) => (
+              <div key={i}
+                className="shrink-0 w-[78%] sm:w-auto snap-start flex items-center gap-3 p-5 sm:border-r last:border-r-0"
+                style={{ borderColor: 'rgba(8,145,178,0.08)' }}>
+                <span className="w-10 h-10 rounded-full flex items-center justify-center shrink-0"
+                  style={{ background: 'rgba(8,145,178,0.08)', color: '#0891b2' }}>
+                  <a.icon className="w-5 h-5" />
+                </span>
+                <div>
+                  <p className="text-xs font-bold tracking-wide" style={{ color: '#0c2b36' }}>{a.title}</p>
+                  <p className="text-[11px] text-slate-500 mt-0.5 leading-snug">{a.sub}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
     </div>
   )
+}
+
+function hexToRgb(hex: string) {
+  const h = hex.replace('#', '')
+  const r = parseInt(h.substring(0, 2), 16)
+  const g = parseInt(h.substring(2, 4), 16)
+  const b = parseInt(h.substring(4, 6), 16)
+  return `${r},${g},${b}`
 }

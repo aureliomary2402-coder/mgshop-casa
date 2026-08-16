@@ -8,6 +8,8 @@ import { ProductDetailModal } from '@/components/shop/product-detail-modal'
 import { BackToTop } from '@/components/shop/back-to-top'
 import { ServiceWorkerRegister } from '@/components/sw-register'
 import { SiteTicker } from '@/components/shop/site-ticker'
+import { SiteFooter } from '@/components/shop/site-footer'
+import { BottomNav } from '@/components/shop/bottom-nav'
 import { Suspense } from 'react'
 import './globals.css'
 
@@ -47,6 +49,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <CartAbandonTracker />
         <ServiceWorkerRegister />
         {children}
+        <SiteFooter />
+        <BottomNav />
         <FloatingMenu />
         <Suspense><BackToTop /></Suspense>
         <ProductDetailModal />
