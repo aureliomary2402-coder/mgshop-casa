@@ -42,7 +42,7 @@ function Countdown({ expiresAt }: { expiresAt: string }) {
         <div key={l} className="flex items-center gap-3">
           <div className="text-center">
             <div className="w-14 h-14 rounded-xl flex items-center justify-center font-bold text-2xl text-white" style={{background:'linear-gradient(135deg,#0891b2,#06b6d4)',boxShadow:'0 4px 16px rgba(8,145,178,0.3)'}}>{String(v).padStart(2,'0')}</div>
-            <p className="text-xs mt-1" style={{ color: '#0c2b3699' }}>{l}</p>
+            <p className="text-xs mt-1" style={{ color: 'rgba(224,247,250,0.65)' }}>{l}</p>
           </div>
           {i<3&&<span className="text-cyan-500 font-bold text-xl mb-4">:</span>}
         </div>
@@ -230,23 +230,23 @@ export default function PromoPage() {
   return (
     <div className="min-h-screen" style={{ background: 'linear-gradient(180deg,#eafbff 0%,#f5fdff 45%,#ffffff 100%)' }}>
       {/* Hero */}
-      <div className="relative overflow-hidden theme-hero">
-        <AmbientBubbles count={9} theme="light" />
+      <div className="relative overflow-hidden theme-hero-dark">
+        <AmbientBubbles count={9} theme="dark" />
         <div className="relative z-10 max-w-4xl mx-auto px-4 py-12 text-center">
           <div className="flex items-center justify-between mb-6">
-            <Link href="/shop" className="inline-flex items-center gap-2 text-sm transition-colors" style={{ color: '#0891b2' }}><ArrowLeft className="w-4 h-4"/> Negozio</Link>
-            <Link href="/carrello?promo=1" className="relative flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium transition-all hover:bg-white"
-              style={{ color: '#0c2b36', border: '1px solid rgba(8,145,178,0.2)', background: 'rgba(255,255,255,0.6)' }}>
+            <Link href="/shop" className="inline-flex items-center gap-2 text-sm transition-colors" style={{ color: '#67e8f9' }}><ArrowLeft className="w-4 h-4"/> Negozio</Link>
+            <Link href="/carrello?promo=1" className="relative flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium transition-all hover:bg-white/10"
+              style={{ color: '#e0f7fa', border: '1px solid rgba(255,255,255,0.15)', background: 'rgba(255,255,255,0.08)' }}>
               <ShoppingBag className="w-4 h-4"/>
               Carrello
               {cartCount > 0 && <span className="absolute -top-1 -right-1 w-5 h-5 text-white text-xs rounded-full flex items-center justify-center font-bold" style={{background:'linear-gradient(135deg,#0891b2,#06b6d4)'}}>{cartCount}</span>}
             </Link>
           </div>
           <PageHeroIcon icon={Tag} color="#f59e0b" />
-          {promo.badge_text&&<div className="inline-flex items-center gap-2 rounded-full px-4 py-1.5 text-sm font-medium mb-4" style={{background:'rgba(8,145,178,0.1)', color: '#0891b2', border:'1px solid rgba(8,145,178,0.2)'}}><Tag className="w-4 h-4"/> {promo.badge_text}</div>}
+          {promo.badge_text&&<div className="inline-flex items-center gap-2 rounded-full px-4 py-1.5 text-sm font-medium mb-4" style={{background:'rgba(8,145,178,0.15)', color: '#67e8f9', border:'1px solid rgba(103,232,249,0.3)'}}><Tag className="w-4 h-4"/> {promo.badge_text}</div>}
           <h1 className="text-4xl md:text-5xl font-extrabold mb-3 text-shimmer">{promo.title}</h1>
-          {promo.subtitle&&<p className="text-lg mb-6" style={{ color: '#0c2b36cc' }}>{promo.subtitle}</p>}
-          {promo.expires_at&&<div className="mb-4"><div className="flex items-center justify-center gap-2 text-sm mb-3" style={{ color: '#0891b2' }}><Clock className="w-4 h-4"/> Offerta valida ancora per:</div><Countdown expiresAt={promo.expires_at}/></div>}
+          {promo.subtitle&&<p className="text-lg mb-6" style={{ color: 'rgba(224,247,250,0.75)' }}>{promo.subtitle}</p>}
+          {promo.expires_at&&<div className="mb-4"><div className="flex items-center justify-center gap-2 text-sm mb-3" style={{ color: '#67e8f9' }}><Clock className="w-4 h-4"/> Offerta valida ancora per:</div><Countdown expiresAt={promo.expires_at}/></div>}
         </div>
       </div>
 

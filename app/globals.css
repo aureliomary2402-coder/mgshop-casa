@@ -48,6 +48,10 @@
 /* ===== TEMA HOME/NEGOZIO (riusato su tutte le pagine) ===== */
 .theme-page-bg { background: linear-gradient(180deg,#eafbff 0%,#f5fdff 45%,#ffffff 100%); }
 .theme-hero { background: linear-gradient(160deg,#dff7fc 0%,#eafbff 55%,#ffffff 100%); }
+/* Stesso gradiente scuro immersivo dell'hero della home, riusato come sfondo
+   dell'hero di Lotteria/Promo/Volantino/Zone di consegna per dare a tutto il
+   sito la stessa identità visiva, non solo alla home. */
+.theme-hero-dark { background: linear-gradient(135deg, #04202b 0%, #06303d 30%, #0c2b36 60%, #03131a 100%); }
 .glass-card {
   background: rgba(255,255,255,0.75);
   backdrop-filter: blur(10px);

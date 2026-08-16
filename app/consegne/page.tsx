@@ -24,19 +24,19 @@ export default function ConsegnePage() {
   return (
     <div className="min-h-screen" style={{ background: 'linear-gradient(180deg,#eafbff 0%,#f5fdff 45%,#ffffff 100%)' }}>
       {/* Hero */}
-      <div className="relative overflow-hidden theme-hero">
-        <AmbientBubbles count={9} theme="light" />
+      <div className="relative overflow-hidden theme-hero-dark">
+        <AmbientBubbles count={9} theme="dark" />
         <div className="relative z-10 max-w-4xl mx-auto px-4 py-12 text-center">
-          <Link href="/shop" className="inline-flex items-center gap-2 text-sm transition-colors mb-6" style={{ color: '#0891b2' }}>
+          <Link href="/shop" className="inline-flex items-center gap-2 text-sm transition-colors mb-6" style={{ color: '#67e8f9' }}>
             <ArrowLeft className="w-4 h-4" /> Negozio
           </Link>
-          <PageHeroIcon icon={MapPin} color="#0891b2" />
+          <PageHeroIcon icon={MapPin} color="#22d3ee" />
           <div className="inline-flex items-center gap-2 rounded-full px-4 py-1.5 text-sm font-medium mb-4"
-            style={{ background: 'rgba(8,145,178,0.1)', color: '#0891b2', border: '1px solid rgba(8,145,178,0.2)' }}>
+            style={{ background: 'rgba(8,145,178,0.15)', color: '#67e8f9', border: '1px solid rgba(103,232,249,0.3)' }}>
             <Truck className="w-4 h-4" /> Zone di consegna
           </div>
           <h1 className="text-4xl md:text-5xl font-extrabold mb-3 text-shimmer">Dove consegniamo</h1>
-          <p className="text-lg max-w-xl mx-auto" style={{ color: '#0c2b36cc' }}>
+          <p className="text-lg max-w-xl mx-auto" style={{ color: 'rgba(224,247,250,0.75)' }}>
             Siamo un negozio online: Consegniamo direttamente a casa tua nelle zone qui sotto.
           </p>
         </div>
