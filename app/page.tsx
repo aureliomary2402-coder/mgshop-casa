@@ -5,7 +5,10 @@ import {
   Tag, Package, Star,
   Truck, Banknote, ShieldCheck, Headphones, Sparkles,
 } from 'lucide-react'
+import { GlobalHeader } from '@/components/shop/global-header'
 import { AmbientBubbles } from '@/components/shop/ambient-bubbles'
+import { createAdminClient } from '@/lib/supabase/admin'
+import type { Category } from '@/lib/types'
 
 const HERO_ADVANTAGES = [
   { icon: Truck, label: 'Consegna a mano nella tua zona' },
@@ -29,6 +32,7 @@ export default function WelcomePage() {
     setMounted(true)
   }, [])
 
+  // Parallax leggero dei glow nella hero, solo desktop (mousemove non esiste su touch)
   useEffect(() => {
     const handleMouse = (e: MouseEvent) => {
       setMousePos({ x: e.clientX / window.innerWidth - 0.5, y: e.clientY / window.innerHeight - 0.5 })
@@ -39,10 +43,13 @@ export default function WelcomePage() {
 
   return (
     <div className="min-h-screen" style={{ background: '#ffffff' }}>
+      <GlobalHeader />
 
+      {/* ===== HERO IMMERSIVA (scura, solo sulla home: distingue la home dal resto del sito) ===== */}
       <section className="relative overflow-hidden"
         style={{ background: 'linear-gradient(135deg, #04202b 0%, #06303d 30%, #0c2b36 60%, #03131a 100%)' }}>
 
+        {/* Orb animati con leggero parallax al movimento del mouse */}
         <div className="absolute inset-0 pointer-events-none">
           <div className="absolute top-1/4 left-1/4 w-[500px] h-[500px] rounded-full blur-[100px] opacity-20"
             style={{ background: 'radial-gradient(circle, #0891b2, #155e75)', transform: `translate(${mousePos.x * -30}px, ${mousePos.y * -20}px)`, transition: 'transform 0.8s ease' }} />
@@ -52,11 +59,13 @@ export default function WelcomePage() {
             style={{ background: 'radial-gradient(circle, #22d3ee, #0891b2)', transform: `translate(${mousePos.x * -15}px, ${mousePos.y * 25}px)`, transition: 'transform 1.2s ease' }} />
         </div>
 
+        {/* Griglia decorativa */}
         <div className="absolute inset-0 opacity-[0.05] pointer-events-none" style={{
           backgroundImage: 'linear-gradient(rgba(34,211,238,0.8) 1px, transparent 1px), linear-gradient(90deg, rgba(34,211,238,0.8) 1px, transparent 1px)',
           backgroundSize: '80px 80px',
         }} />
 
+        {/* Anelli decorativi, solo desktop */}
         <div className="absolute top-20 left-10 hidden xl:block opacity-20 animate-spin-slow pointer-events-none">
           <div className="w-28 h-28 rounded-full border-2 border-dashed border-cyan-400" />
         </div>
@@ -86,6 +95,7 @@ export default function WelcomePage() {
             Ordina online e paga comodamente alla consegna.
           </p>
 
+          {/* Vantaggi: card 2x2 su mobile, riga orizzontale su desktop */}
           <div className="mt-6 grid grid-cols-2 gap-3 rounded-2xl p-4 text-left sm:hidden"
             style={{ background: 'rgba(255,255,255,0.06)', backdropFilter: 'blur(10px)', border: '1px solid rgba(255,255,255,0.1)' }}>
             {HERO_ADVANTAGES.map((a, i) => (
@@ -118,6 +128,7 @@ export default function WelcomePage() {
         </div>
       </section>
 
+      {/* ===== AREA VANTAGGI ===== */}
       <section className="max-w-5xl mx-auto px-4 sm:px-6 py-10 sm:py-14">
         <div className="rounded-2xl overflow-hidden"
           style={{ background: 'rgba(255,255,255,0.75)', backdropFilter: 'blur(10px)', border: '1px solid rgba(8,145,178,0.1)', boxShadow: '0 10px 30px rgba(8,145,178,0.08)' }}>

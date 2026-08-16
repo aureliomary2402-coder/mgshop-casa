@@ -1,119 +1,296 @@
 "use client"
-
 import Link from 'next/link'
-import { usePathname } from 'next/navigation'
-import { useState, useEffect, useRef } from 'react'
-import { Menu, X, ShoppingBag, User, Tag, Newspaper, Ticket, MapPin } from 'lucide-react'
+import { ShoppingBag, Search, X, ChevronDown, Tag, Sparkles, Newspaper, ImageIcon, Heart, Ticket, User, MapPin, MessageCircle, Home as HomeIcon } from 'lucide-react'
 import { useCartStore } from '@/lib/cart-store'
+import { useWishlistStore } from '@/lib/wishlist-store'
 import { useUIPanelsStore } from '@/lib/ui-panels-store'
+import { useState, useEffect, useRef } from 'react'
+import { useRouter, useSearchParams, usePathname } from 'next/navigation'
+import type { Category, Product } from '@/lib/types'
+import { optimizeImage } from '@/lib/image'
 
-// Header usato SOLO nelle pagine prive di un proprio header (Lotteria,
-// Volantino, Promo, Zone di consegna): va importato esplicitamente nel
-// layout/page di quelle sezioni, MAI nel layout root, per evitare che
-// compaia insieme a HomeHeader o ShopHeader (doppia barra).
-type NavItem =
-  | { label: string; href: string; icon: typeof Tag }
-  | { label: string; action: 'points'; icon: typeof Tag }
+function HighlightedText({ text, query }: { text: string; query: string }) {
+  if (!query.trim()) return <>{text}</>
+  const idx = text.toLowerCase().indexOf(query.toLowerCase())
+  if (idx === -1) return <>{text}</>
+  return (
+    <>
+      {text.slice(0, idx)}
+      <span style={{ color: '#0891b2', fontWeight: 700 }}>{text.slice(idx, idx + query.length)}</span>
+      {text.slice(idx + query.length)}
+    </>
+  )
+}
 
-const NAV_ITEMS: NavItem[] = [
-  { label: 'Home', href: '/', icon: Tag },
-  { label: 'Negozio', href: '/shop', icon: Tag },
-  { label: 'Promozioni', href: '/promo', icon: Tag },
-  { label: 'Lotteria', href: '/lotteria', icon: Ticket },
-  { label: 'Volantino', href: '/volantino', icon: Newspaper },
-  { label: 'Zone di Consegna', href: '/consegne', icon: MapPin },
-]
-
-export function GlobalHeader() {
-  const pathname = usePathname() || '/'
+// Header unico usato in TUTTE le pagine del sito (Home, Negozio, Prodotto,
+// Preferiti, Carrello, Lotteria, Volantino, Promo, Consegne), cosi' il menu
+// resta sempre identico e sempre visibile, senza barre doppie o mancanti.
+// "categories" è opzionale: le pagine senza filtro categorie (es. Lotteria)
+// possono ometterlo, il pulsante "Categorie" allora resta con un solo item.
+export function GlobalHeader({ categories = [] }: { categories?: Category[] }) {
   const [mounted, setMounted] = useState(false)
-  const [menuOpen, setMenuOpen] = useState(false)
-  const menuRef = useRef<HTMLDivElement>(null)
+  const [searchOpen, setSearchOpen] = useState(false)
+  const [searchValue, setSearchValue] = useState('')
+  const [scrolled, setScrolled] = useState(false)
+  const [catOpen, setCatOpen] = useState(false)
+  const [promoActive, setPromoActive] = useState(false)
+  const [volantinoActive, setVolantinoActive] = useState(false)
+  const [cartBump, setCartBump] = useState(false)
+  const [searchResults, setSearchResults] = useState<Product[]>([])
+  const [searchCount, setSearchCount] = useState(0)
+  const [searchLoading, setSearchLoading] = useState(false)
+  const [dropdownOpen, setDropdownOpen] = useState(false)
+  const [searchFocused, setSearchFocused] = useState(false)
   const getTotalItems = useCartStore(s => s.getTotalItems)
-  const itemCount = mounted ? getTotalItems() : 0
+  const lastAdded = useCartStore(s => s.lastAdded)
+  const wishlistCount = useWishlistStore(s => s.ids.length)
   const openPoints = useUIPanelsStore(s => s.openPoints)
-
-  useEffect(() => { setMounted(true) }, [])
+  const openChat = useUIPanelsStore(s => s.openChat)
+  const router = useRouter()
+  const searchParams = useSearchParams()
+  const pathname = usePathname()
+  const inputRef = useRef<HTMLInputElement>(null)
+  const catRef = useRef<HTMLDivElement>(null)
+  const searchBoxRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
-    const onClick = (e: MouseEvent) => { if (menuRef.current && !menuRef.current.contains(e.target as Node)) setMenuOpen(false) }
-    document.addEventListener('mousedown', onClick)
-    return () => document.removeEventListener('mousedown', onClick)
+    setMounted(true)
+    const q = searchParams.get('q')
+    if (q) { setSearchValue(q); setSearchOpen(true) }
+    const hs = () => setScrolled(window.scrollY > 20)
+    window.addEventListener('scroll', hs, { passive: true })
+    fetch('/api/promo').then(r => r.json()).then(d => setPromoActive(d.is_active === true)).catch(() => {})
+    fetch('/api/volantino').then(r => r.json()).then(d => setVolantinoActive(d.is_active === true)).catch(() => {})
+    const hc = (e: MouseEvent) => {
+      if (catRef.current && !catRef.current.contains(e.target as Node)) setCatOpen(false)
+      if (searchBoxRef.current && !searchBoxRef.current.contains(e.target as Node)) setDropdownOpen(false)
+    }
+    document.addEventListener('mousedown', hc)
+    return () => { window.removeEventListener('scroll', hs); document.removeEventListener('mousedown', hc) }
   }, [])
 
-  useEffect(() => { setMenuOpen(false) }, [pathname])
+  useEffect(() => { if (searchOpen) setTimeout(() => inputRef.current?.focus(), 50) }, [searchOpen])
+
+  useEffect(() => {
+    const term = searchValue.trim()
+    if (!term) { setSearchResults([]); setSearchCount(0); setSearchLoading(false); return }
+    setSearchLoading(true)
+    const t = setTimeout(() => {
+      fetch(`/api/shop/products?q=${encodeURIComponent(term)}&pagina=1`)
+        .then(r => r.json())
+        .then(d => { setSearchResults((d.products || []).slice(0, 6)); setSearchCount(d.count || 0) })
+        .catch(() => { setSearchResults([]); setSearchCount(0) })
+        .finally(() => setSearchLoading(false))
+      fetch('/api/analytics/search', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ term }),
+      }).catch(() => {})
+    }, 250)
+    return () => clearTimeout(t)
+  }, [searchValue])
+
+  useEffect(() => {
+    if (lastAdded === 0) return
+    setCartBump(true)
+    const t = setTimeout(() => setCartBump(false), 500)
+    return () => clearTimeout(t)
+  }, [lastAdded])
+
+  const itemCount = mounted ? getTotalItems() : 0
+  const activeCategory = searchParams.get('categoria')
+  const activeCategoryName = categories.find(c => c.slug === activeCategory)?.name
+
+  const handleSearch = (value: string) => {
+    setSearchValue(value)
+    setDropdownOpen(value.trim().length > 0)
+    const params = new URLSearchParams(searchParams.toString())
+    if (value.trim()) { params.set('q', value.trim()) } else { params.delete('q') }
+    router.replace(`${pathname}?${params.toString()}`)
+  }
+
+  const handleClearSearch = () => {
+    setSearchValue('')
+    setSearchResults([])
+    setDropdownOpen(false)
+    const params = new URLSearchParams(searchParams.toString())
+    params.delete('q')
+    router.replace(`${pathname}?${params.toString()}`)
+    setSearchOpen(false)
+  }
+
+  const handleSelectProduct = (product: Product) => {
+    setDropdownOpen(false)
+    setSearchOpen(false)
+    router.push(`/prodotto/${product.id}`)
+  }
+
+  const handleSeeAllResults = () => {
+    setDropdownOpen(false)
+    setSearchOpen(false)
+    const term = searchValue.trim()
+    router.push(`/shop?q=${encodeURIComponent(term)}#prodotti-grid`)
+    // fallback per quando siamo già sulla pagina shop (l'url q non cambia)
+    requestAnimationFrame(() => {
+      document.getElementById('prodotti-grid')?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+    })
+  }
+
+  const handleCategorySelect = (slug: string | null) => {
+    const params = new URLSearchParams(searchParams.toString())
+    if (slug) { params.set('categoria', slug) } else { params.delete('categoria') }
+    router.replace(`/shop?${params.toString()}`)
+    setCatOpen(false)
+  }
 
   return (
-    <header className="sticky top-0 z-50 liquid-glass-header"
-      style={{ background: 'rgba(240,251,253,0.98)', backdropFilter: 'blur(16px)', WebkitBackdropFilter: 'blur(16px)', borderBottom: '1px solid rgba(8,145,178,0.1)' }}>
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between gap-4">
-        {/* Logo */}
-        <Link href="/" className="flex items-center gap-2.5 shrink-0 select-none group">
+    <header className={`sticky top-0 z-50 transition-all duration-300 liquid-glass-header ${scrolled ? 'shadow-lg' : ''}`}
+      style={{ background: scrolled ? 'rgba(240,251,253,0.97)' : 'rgba(240,251,253,0.98)', backdropFilter: 'blur(16px)', borderBottom: '1px solid rgba(8,145,178,0.1)' }}>
+      <div className="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between gap-3">
+        <Link href="/" className="flex items-center gap-2 shrink-0 group">
           <img src="/logo/mgshop-logo-neon.png" alt="MGShop Casa"
-            className="w-10 h-10 rounded-full object-cover transition-transform group-hover:scale-105" />
-          <span className="hidden sm:block text-lg font-bold tracking-tight" style={{ color: '#0c2b36' }}>
-            MG<span style={{ color: '#0891b2' }}>Shop</span> Casa
+            className="w-9 h-9 rounded-full object-cover transition-transform group-hover:scale-110" />
+          <span className="text-lg font-bold tracking-tight hidden sm:block" style={{ color: '#0c2b36' }}>
+            MG<span style={{ color: '#0891b2' }}>Shop</span>
           </span>
         </Link>
 
-        {/* Nav orizzontale, solo desktop */}
-        <nav className="hidden lg:flex items-center gap-5 xl:gap-6 flex-1 justify-center px-4">
-          {NAV_ITEMS.map(item => (
-            'href' in item ? (
-              <Link key={item.label} href={item.href}
-                className="text-sm font-medium whitespace-nowrap transition-colors hover:text-cyan-600"
-                style={{ color: pathname === item.href ? '#0891b2' : '#44403c' }}>
-                {item.label}
-              </Link>
-            ) : (
-              <button key={item.label} onClick={openPoints}
-                className="text-sm font-medium whitespace-nowrap transition-colors hover:text-cyan-600" style={{ color: '#44403c' }}>
-                {item.label}
-              </button>
-            )
-          ))}
-        </nav>
-
-        {/* Hamburger, solo mobile/tablet */}
-        <div className="relative lg:hidden" ref={menuRef}>
-          <button onClick={() => setMenuOpen(v => !v)} aria-label="Apri menu"
-            className="w-9 h-9 flex items-center justify-center rounded-lg hover:bg-cyan-50 btn-press" style={{ color: '#0891b2' }}>
-            {menuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
-          </button>
-          {menuOpen && (
-            <div className="absolute top-full right-0 mt-2 w-64 rounded-2xl overflow-hidden shadow-xl animate-scale-in z-50"
-              style={{ background: 'white', border: '1px solid rgba(8,145,178,0.1)', boxShadow: '0 20px 60px rgba(0,0,0,0.12)' }}>
-              <div className="p-2 max-h-[70vh] overflow-y-auto">
-                {NAV_ITEMS.map(item => (
-                  'href' in item ? (
-                    <Link key={item.label} href={item.href} onClick={() => setMenuOpen(false)}
-                      className="block px-3 py-2.5 rounded-xl text-sm font-medium text-slate-700 hover:bg-cyan-50 hover:text-cyan-700 transition-colors">
-                      {item.label}
-                    </Link>
-                  ) : (
-                    <button key={item.label} onClick={() => { setMenuOpen(false); openPoints() }}
-                      className="w-full text-left px-3 py-2.5 rounded-xl text-sm font-medium text-slate-700 hover:bg-cyan-50 hover:text-cyan-700 transition-colors">
-                      {item.label}
+        <div className="flex items-center gap-1">
+          <Link href="/" className="hidden lg:flex items-center gap-1.5 px-3 py-2 rounded-xl text-sm font-medium transition-all hover:bg-cyan-50 btn-press" style={{ color: pathname === '/' ? '#0891b2' : '#44403c' }}>
+            <HomeIcon className="w-4 h-4" /> Home
+          </Link>
+          <div className="relative" ref={catRef}>
+            <button onClick={() => setCatOpen(v => !v)}
+              className="flex items-center gap-1.5 px-3 py-2 rounded-xl text-sm font-medium transition-all hover:bg-cyan-50 btn-press"
+              style={{ color: catOpen || activeCategory ? '#0891b2' : '#44403c' }}>
+              <Tag className="w-4 h-4" />
+              <span className="hidden sm:inline">{activeCategoryName || 'Categorie'}</span>
+              <ChevronDown className={`w-3.5 h-3.5 transition-transform duration-200 ${catOpen ? 'rotate-180' : ''}`} />
+            </button>
+            {catOpen && (
+              <div className="absolute top-full left-0 mt-2 w-56 rounded-2xl overflow-hidden shadow-xl animate-scale-in z-50"
+                style={{ background: 'white', border: '1px solid rgba(8,145,178,0.1)', boxShadow: '0 20px 60px rgba(0,0,0,0.12)' }}>
+                <div className="p-2">
+                  <button onClick={() => handleCategorySelect(null)}
+                    className={`w-full text-left px-3 py-2.5 rounded-xl text-sm font-medium transition-all hover:bg-cyan-50 ${!activeCategory ? 'bg-cyan-50 text-cyan-700' : 'text-slate-700'}`}>
+                    Tutti i prodotti
+                  </button>
+                  {categories.map(cat => (
+                    <button key={cat.id} onClick={() => handleCategorySelect(cat.slug)}
+                      className={`w-full text-left px-3 py-2.5 rounded-xl text-sm font-medium transition-all hover:bg-cyan-50 ${activeCategory === cat.slug ? 'bg-cyan-50 text-cyan-700' : 'text-slate-700'}`}>
+                      {cat.name}
                     </button>
-                  )
-                ))}
+                  ))}
+                </div>
               </div>
-            </div>
+            )}
+          </div>
+
+          {promoActive && (
+            <Link href="/promo" className={`${searchOpen ? 'hidden' : 'flex'} items-center gap-1.5 px-2 sm:px-3 py-2 rounded-xl text-sm font-medium transition-all hover:bg-cyan-50 btn-press`} style={{ color: '#0891b2' }}>
+              <Sparkles className="w-4 h-4" /> <span className="hidden sm:inline">Promo</span>
+              <span className="text-xs bg-cyan-500 text-white px-1.5 py-0.5 rounded-full font-bold">!</span>
+            </Link>
           )}
+          {volantinoActive && (
+            <Link href="/volantino" className={`${searchOpen ? 'hidden' : 'flex'} items-center gap-1.5 px-2 sm:px-3 py-2 rounded-xl text-sm font-medium transition-all hover:bg-cyan-50 btn-press`} style={{ color: '#0891b2' }}>
+              <Newspaper className="w-4 h-4" /> <span className="hidden sm:inline">Volantino</span>
+              <span className="text-xs bg-cyan-500 text-white px-1.5 py-0.5 rounded-full font-bold">!</span>
+            </Link>
+          )}
+
+          {/* Solo desktop: su mobile questi collegamenti restano nella tab bar
+              in basso, qui servirebbero solo a duplicarla. */}
+          <Link href="/lotteria" className="hidden lg:flex items-center gap-1.5 px-3 py-2 rounded-xl text-sm font-medium transition-all hover:bg-cyan-50 btn-press" style={{ color: '#44403c' }}>
+            <Ticket className="w-4 h-4" /> Lotteria
+          </Link>
+          <Link href="/consegne" className="hidden lg:flex items-center gap-1.5 px-3 py-2 rounded-xl text-sm font-medium transition-all hover:bg-cyan-50 btn-press" style={{ color: '#44403c' }}>
+            <MapPin className="w-4 h-4" /> Consegne
+          </Link>
+          <button onClick={openChat} className="hidden lg:flex items-center gap-1.5 px-3 py-2 rounded-xl text-sm font-medium transition-all hover:bg-cyan-50 btn-press" style={{ color: '#44403c' }}>
+            <MessageCircle className="w-4 h-4" /> Contatti
+          </button>
+          <button onClick={openPoints} className="hidden lg:flex items-center gap-1.5 px-3 py-2 rounded-xl text-sm font-medium transition-all hover:bg-cyan-50 btn-press" style={{ color: '#44403c' }}>
+            <User className="w-4 h-4" /> Account
+          </button>
         </div>
 
-        {/* Account + carrello */}
-        <div className="flex items-center gap-1 shrink-0">
-          <button onClick={openPoints} aria-label="Il mio account"
-            className="w-9 h-9 flex items-center justify-center rounded-lg hover:bg-cyan-50 btn-press" style={{ color: '#0891b2' }}>
-            <User className="w-5 h-5" />
+        <div className="flex items-center gap-2">
+          <div ref={searchBoxRef} className={`transition-all duration-300 ${searchOpen ? 'flex w-56 sm:w-64' : 'hidden md:flex md:w-40'} ${searchFocused ? '!w-64 sm:!w-72' : ''}`}>
+            <div className="relative w-full">
+              <Search className={`absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 pointer-events-none transition-colors duration-300 ${searchFocused ? 'text-cyan-500' : 'text-cyan-400'}`} />
+              <input ref={inputRef} type="search" placeholder="Cerca prodotti..." value={searchValue}
+                onChange={e => handleSearch(e.target.value)}
+                onFocus={() => { setSearchFocused(true); if (searchValue.trim()) setDropdownOpen(true) }}
+                onBlur={() => setSearchFocused(false)}
+                className="search-glow w-full h-9 pl-9 pr-9 rounded-xl text-base outline-none transition-all duration-300"
+                style={{
+                  background: searchFocused ? '#ffffff' : 'rgba(8,145,178,0.06)',
+                  border: searchFocused ? '1px solid rgba(8,145,178,0.5)' : '1px solid rgba(8,145,178,0.15)',
+                  color: '#0c2b36',
+                  boxShadow: searchFocused ? '0 0 0 4px rgba(34,211,238,0.15), 0 4px 16px rgba(8,145,178,0.18)' : 'none',
+                }} />
+              {searchLoading && (
+                <span className="absolute right-9 top-1/2 -translate-y-1/2 w-3.5 h-3.5 rounded-full border-2 border-cyan-300 border-t-cyan-600 animate-spin" />
+              )}
+              {searchValue && <button onClick={handleClearSearch} className="absolute right-3 top-1/2 -translate-y-1/2 text-cyan-400 hover:text-cyan-600 transition-colors"><X className="w-4 h-4" /></button>}
+
+              {dropdownOpen && searchValue.trim() && (
+                <div className="absolute top-full left-0 mt-2 w-full min-w-0 sm:min-w-[280px] rounded-2xl overflow-hidden shadow-xl animate-scale-in z-50"
+                  style={{ background: 'white', border: '1px solid rgba(8,145,178,0.15)', boxShadow: '0 20px 60px rgba(0,0,0,0.15)' }}>
+                  {searchResults.length > 0 ? (
+                    <>
+                      <div className="max-h-96 overflow-y-auto p-1.5">
+                        {searchResults.map(product => {
+                          const imgUrl = optimizeImage(product.card_image || product.cover_image, 80)
+                          return (
+                            <button key={product.id} onClick={() => handleSelectProduct(product)}
+                              className="w-full flex items-center gap-3 p-2 rounded-xl text-left hover:bg-cyan-50 transition-colors">
+                              <div className="w-10 h-10 rounded-lg flex items-center justify-center shrink-0 overflow-hidden" style={{ background: 'rgba(8,145,178,0.06)' }}>
+                                {imgUrl ? <img src={imgUrl} alt={product.name} className="w-full h-full object-cover" /> : <ImageIcon className="w-4 h-4 text-cyan-300" />}
+                              </div>
+                              <span className="flex-1 min-w-0 text-sm font-medium truncate" style={{ color: '#0c2b36' }}>
+                                <HighlightedText text={product.name} query={searchValue} />
+                              </span>
+                              <span className="text-sm font-bold shrink-0" style={{ color: '#0891b2' }}>€{product.price.toFixed(2)}</span>
+                            </button>
+                          )
+                        })}
+                      </div>
+                      <button onClick={handleSeeAllResults}
+                        className="w-full flex items-center justify-center gap-1.5 py-3 text-sm font-semibold border-t transition-colors hover:bg-cyan-50"
+                        style={{ borderColor: 'rgba(8,145,178,0.12)', color: '#0891b2' }}>
+                        Vedi tutti i risultati{searchCount > 0 ? ` (${searchCount})` : ''}
+                        <ChevronDown className="w-3.5 h-3.5 -rotate-90" />
+                      </button>
+                    </>
+                  ) : !searchLoading ? (
+                    <div className="px-4 py-6 text-center text-sm text-slate-500">Nessun prodotto trovato</div>
+                  ) : (
+                    <div className="px-4 py-6 text-center text-sm text-slate-400">Cerco...</div>
+                  )}
+                </div>
+              )}
+            </div>
+          </div>
+          <button className="md:hidden w-9 h-9 flex items-center justify-center rounded-lg hover:bg-cyan-50 text-cyan-700"
+            onClick={() => { searchOpen ? handleClearSearch() : setSearchOpen(true) }}>
+            {searchOpen ? <X className="w-5 h-5" /> : <Search className="w-5 h-5" />}
           </button>
-          <Link href="/carrello" aria-label="Vai al carrello"
-            className="relative w-9 h-9 flex items-center justify-center rounded-lg hover:bg-cyan-50 btn-press" style={{ color: '#0891b2' }}>
-            <ShoppingBag className="w-5 h-5" />
+          <Link href="/preferiti" className={`${searchOpen ? 'hidden sm:flex' : 'flex'} relative items-center gap-2 px-2 sm:px-3 py-2 rounded-xl transition-all hover:bg-cyan-50 btn-press group`}>
+            <Heart className="w-5 h-5 text-cyan-700 group-hover:scale-110 transition-transform" />
+            {mounted && wishlistCount > 0 && (
+              <span className="absolute -top-1 -right-1 w-5 h-5 text-white text-xs rounded-full flex items-center justify-center font-bold"
+                style={{ background: '#ef4444' }}>
+                {wishlistCount > 9 ? '9+' : wishlistCount}
+              </span>
+            )}
+          </Link>
+          <Link href="/carrello" className="relative flex items-center gap-2 px-3 py-2 rounded-xl transition-all hover:bg-cyan-50 btn-press group">
+            <ShoppingBag className={`w-5 h-5 text-cyan-700 group-hover:scale-110 transition-transform ${cartBump ? 'animate-cart-bounce' : ''}`} />
             {itemCount > 0 && (
-              <span className="absolute top-0 right-0 w-4 h-4 text-white text-[10px] rounded-full flex items-center justify-center font-bold"
-                style={{ background: 'linear-gradient(135deg,#0891b2,#06b6d4)' }}>
+              <span className={`absolute -top-1 -right-1 w-5 h-5 text-white text-xs rounded-full flex items-center justify-center font-bold ${cartBump ? 'animate-badge-pop' : ''}`}
+                style={{ background: 'linear-gradient(135deg, #0891b2, #06b6d4)' }}>
                 {itemCount > 9 ? '9+' : itemCount}
               </span>
             )}
