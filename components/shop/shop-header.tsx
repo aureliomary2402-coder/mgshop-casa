@@ -1,6 +1,6 @@
 "use client"
 import Link from 'next/link'
-import { ShoppingBag, Search, X, Home, ChevronDown, Tag, Sparkles, Newspaper, ImageIcon, Heart } from 'lucide-react'
+import { ShoppingBag, Search, X, ChevronDown, Tag, Sparkles, Newspaper, ImageIcon, Heart } from 'lucide-react'
 import { useCartStore } from '@/lib/cart-store'
 import { useWishlistStore } from '@/lib/wishlist-store'
 import { useState, useEffect, useRef } from 'react'
@@ -140,10 +140,8 @@ export function ShopHeader({ categories }: { categories: Category[] }) {
       style={{ background: scrolled ? 'rgba(240,251,253,0.97)' : 'rgba(240,251,253,0.98)', backdropFilter: 'blur(16px)', borderBottom: '1px solid rgba(8,145,178,0.1)' }}>
       <div className="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between gap-3">
         <Link href="/" className="flex items-center gap-2 shrink-0 group">
-          <div className="w-8 h-8 rounded-lg flex items-center justify-center transition-transform group-hover:scale-110"
-            style={{ background: 'linear-gradient(135deg, #0891b2, #06b6d4)' }}>
-            <Home className="w-4 h-4 text-white" />
-          </div>
+          <img src="/logo/mgshop-logo-neon.png" alt="MGShop Casa"
+            className="w-9 h-9 rounded-full object-cover transition-transform group-hover:scale-110" />
           <span className="text-lg font-bold tracking-tight hidden sm:block" style={{ color: '#0c2b36' }}>
             MG<span style={{ color: '#0891b2' }}>Shop</span>
           </span>

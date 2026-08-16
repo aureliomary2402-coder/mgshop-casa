@@ -5,7 +5,7 @@ import Link from 'next/link'
 import { toast } from 'sonner'
 import {
   ShoppingBag, Tag, Package, Ticket, Star, Newspaper, MapPin, Phone, User,
-  Truck, Banknote, ShieldCheck, Headphones, Sparkle,
+  Truck, Banknote, ShieldCheck, Headphones, Sparkle, Sparkles,
 } from 'lucide-react'
 import { HomeHeader } from '@/components/shop/home-header'
 import { AmbientBubbles } from '@/components/shop/ambient-bubbles'
@@ -51,6 +51,7 @@ export default function WelcomePage() {
   const [promoActive, setPromoActive] = useState(false)
   const [volantinoActive, setVolantinoActive] = useState(false)
   const [lotteryActive, setLotteryActive] = useState(false)
+  const [mousePos, setMousePos] = useState({ x: 0, y: 0 })
   const openPoints = useUIPanelsStore(s => s.openPoints)
   const openChat = useUIPanelsStore(s => s.openChat)
 
@@ -59,6 +60,15 @@ export default function WelcomePage() {
     fetch('/api/promo').then(r => r.json()).then(d => setPromoActive(d.is_active === true)).catch(() => {})
     fetch('/api/volantino').then(r => r.json()).then(d => setVolantinoActive(d.is_active === true)).catch(() => {})
     fetch('/api/lottery').then(r => r.json()).then(d => setLotteryActive(d.is_active === true)).catch(() => {})
+  }, [])
+
+  // Parallax leggero dei glow nella hero, solo desktop (mousemove non esiste su touch)
+  useEffect(() => {
+    const handleMouse = (e: MouseEvent) => {
+      setMousePos({ x: e.clientX / window.innerWidth - 0.5, y: e.clientY / window.innerHeight - 0.5 })
+    }
+    window.addEventListener('mousemove', handleMouse, { passive: true })
+    return () => window.removeEventListener('mousemove', handleMouse)
   }, [])
 
   const BUBBLES: BubbleDef[] = [
@@ -132,54 +142,89 @@ export default function WelcomePage() {
   }
 
   return (
-    <div className="min-h-screen" style={{ background: 'linear-gradient(180deg,#eafbff 0%,#f5fdff 45%,#ffffff 100%)' }}>
+    <div className="min-h-screen" style={{ background: '#ffffff' }}>
       <HomeHeader />
 
-      {/* ===== HERO + BOLLE (colonna doppia da lg in su) ===== */}
+      {/* ===== HERO IMMERSIVA (scura, solo sulla home: distingue la home dal resto del sito) ===== */}
       <section className="relative overflow-hidden"
-        style={{ background: 'linear-gradient(160deg,#dff7fc 0%,#eafbff 55%,#ffffff 100%)' }}>
-        <AmbientBubbles count={16} theme="light" />
+        style={{ background: 'linear-gradient(135deg, #04202b 0%, #06303d 30%, #0c2b36 60%, #03131a 100%)' }}>
+
+        {/* Orb animati con leggero parallax al movimento del mouse */}
+        <div className="absolute inset-0 pointer-events-none">
+          <div className="absolute top-1/4 left-1/4 w-[500px] h-[500px] rounded-full blur-[100px] opacity-20"
+            style={{ background: 'radial-gradient(circle, #0891b2, #155e75)', transform: `translate(${mousePos.x * -30}px, ${mousePos.y * -20}px)`, transition: 'transform 0.8s ease' }} />
+          <div className="absolute bottom-0 right-1/4 w-[400px] h-[400px] rounded-full blur-[80px] opacity-15"
+            style={{ background: 'radial-gradient(circle, #06b6d4, #0e7490)', transform: `translate(${mousePos.x * 20}px, ${mousePos.y * 15}px)`, transition: 'transform 1s ease' }} />
+          <div className="absolute top-1/2 right-1/3 w-[300px] h-[300px] rounded-full blur-[60px] opacity-10"
+            style={{ background: 'radial-gradient(circle, #22d3ee, #0891b2)', transform: `translate(${mousePos.x * -15}px, ${mousePos.y * 25}px)`, transition: 'transform 1.2s ease' }} />
+        </div>
+
+        {/* Griglia decorativa */}
+        <div className="absolute inset-0 opacity-[0.05] pointer-events-none" style={{
+          backgroundImage: 'linear-gradient(rgba(34,211,238,0.8) 1px, transparent 1px), linear-gradient(90deg, rgba(34,211,238,0.8) 1px, transparent 1px)',
+          backgroundSize: '80px 80px',
+        }} />
+
+        {/* Anelli decorativi, solo desktop */}
+        <div className="absolute top-20 left-10 hidden xl:block opacity-20 animate-spin-slow pointer-events-none">
+          <div className="w-28 h-28 rounded-full border-2 border-dashed border-cyan-400" />
+        </div>
+        <div className="absolute bottom-16 right-14 hidden xl:block opacity-10 animate-spin-slow pointer-events-none" style={{ animationDirection: 'reverse', animationDuration: '20s' }}>
+          <div className="w-40 h-40 rounded-full border border-cyan-300" />
+        </div>
+
+        <AmbientBubbles count={16} theme="dark" />
 
         <div className={`relative z-10 max-w-7xl mx-auto px-6 pt-10 pb-10 lg:py-16 lg:grid lg:grid-cols-2 lg:gap-12 lg:items-center ${mounted ? 'animate-fade-in-up' : 'opacity-0'}`}>
           {/* Colonna testo */}
           <div className="text-center lg:text-left">
+            <div className="flex justify-center lg:justify-start mb-5">
+              <img src="/logo/mgshop-logo-neon.png" alt="MGShop Casa"
+                className="w-20 h-20 sm:w-24 sm:h-24 rounded-full neon-glow-logo" />
+            </div>
+
+            <div className="inline-flex items-center gap-2 border border-cyan-500/30 rounded-full px-4 py-1.5 text-cyan-300 text-xs sm:text-sm font-medium mb-5"
+              style={{ background: 'rgba(8,145,178,0.1)', backdropFilter: 'blur(10px)' }}>
+              <Sparkles className="w-3.5 h-3.5" /> Il tuo negozio di fiducia, sotto casa
+            </div>
+
             <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight leading-[1.08]">
-              <span style={{ color: '#0c2b36' }}>TUTTO PER<br />LA TUA CASA.</span><br />
-              <span style={{ color: '#db2777' }}>CONSEGNATO<br />A CASA TUA.</span>
+              <span className="text-white">TUTTO PER<br />LA TUA CASA.</span><br />
+              <span className="text-shimmer">CONSEGNATO<br />A CASA TUA.</span>
             </h1>
-            <p className="mt-5 text-sm sm:text-base leading-relaxed max-w-xl mx-auto lg:mx-0" style={{ color: '#0c2b36cc' }}>
+            <p className="mt-5 text-sm sm:text-base leading-relaxed max-w-xl mx-auto lg:mx-0 text-cyan-100/60">
               Detersivi, prodotti per la pulizia, cura della persona e articoli per la casa.
               Ordina online e paga comodamente alla consegna.
             </p>
 
-            {/* Vantaggi: card 2x2 su mobile, lista verticale su desktop (come nella foto) */}
+            {/* Vantaggi: card 2x2 su mobile, lista verticale su desktop */}
             <div className="mt-6 grid grid-cols-2 gap-3 rounded-2xl p-4 text-left lg:hidden"
-              style={{ background: 'rgba(255,255,255,0.7)', backdropFilter: 'blur(10px)', border: '1px solid rgba(8,145,178,0.12)', boxShadow: '0 8px 24px rgba(8,145,178,0.08)' }}>
+              style={{ background: 'rgba(255,255,255,0.06)', backdropFilter: 'blur(10px)', border: '1px solid rgba(255,255,255,0.1)' }}>
               {HERO_ADVANTAGES.map((a, i) => (
                 <div key={i} className="flex items-center gap-2.5">
-                  <span className="w-8 h-8 rounded-full flex items-center justify-center shrink-0"
-                    style={{ background: 'rgba(8,145,178,0.1)', color: '#0891b2' }}>
+                  <span className="w-8 h-8 rounded-full flex items-center justify-center shrink-0 text-cyan-300"
+                    style={{ background: 'rgba(255,255,255,0.08)' }}>
                     <a.icon className="w-4 h-4" />
                   </span>
-                  <span className="text-xs font-medium leading-snug" style={{ color: '#0c2b36' }}>{a.label}</span>
+                  <span className="text-xs font-medium leading-snug text-cyan-50/90">{a.label}</span>
                 </div>
               ))}
             </div>
             <div className="hidden lg:flex lg:flex-col gap-3.5 mt-7">
               {HERO_ADVANTAGES.map((a, i) => (
                 <div key={i} className="flex items-center gap-3">
-                  <span className="w-9 h-9 rounded-full flex items-center justify-center shrink-0"
-                    style={{ background: 'rgba(8,145,178,0.1)', color: '#0891b2' }}>
+                  <span className="w-9 h-9 rounded-full flex items-center justify-center shrink-0 text-cyan-300"
+                    style={{ background: 'rgba(255,255,255,0.08)' }}>
                     <a.icon className="w-[18px] h-[18px]" />
                   </span>
-                  <span className="text-sm font-medium" style={{ color: '#0c2b36' }}>{a.label}</span>
+                  <span className="text-sm font-medium text-cyan-50/90">{a.label}</span>
                 </div>
               ))}
             </div>
 
             <Link href="/promo"
               className="inline-flex items-center gap-2 mt-6 lg:mt-8 px-6 py-3 rounded-full font-bold text-sm text-white transition-transform hover:scale-105 btn-press"
-              style={{ background: 'linear-gradient(135deg,#db2777,#ec4899)', boxShadow: '0 8px 24px rgba(219,39,119,0.3)' }}>
+              style={{ background: 'linear-gradient(135deg,#db2777,#ec4899)', boxShadow: '0 8px 24px rgba(219,39,119,0.4)' }}>
               <Tag className="w-4 h-4" /> Scopri le offerte della settimana
             </Link>
           </div>

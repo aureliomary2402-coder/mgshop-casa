@@ -53,17 +53,15 @@ export function HomeHeader() {
   }
 
   return (
-    <header className="sticky top-0 z-50"
-      style={{ background: 'rgba(240,251,253,0.92)', backdropFilter: 'blur(16px)', WebkitBackdropFilter: 'blur(16px)', borderBottom: '1px solid rgba(8,145,178,0.1)' }}>
+    <header className="sticky top-0 z-50 border-b border-cyan-900/20"
+      style={{ background: 'rgba(3,19,26,0.75)', backdropFilter: 'blur(16px)', WebkitBackdropFilter: 'blur(16px)' }}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between gap-4">
         {/* Logo */}
-        <Link href="/" className="flex items-center shrink-0 select-none">
-          <span className="hidden md:inline text-xl font-extrabold tracking-tight" style={{ color: '#0c2b36' }}>
-            MG <span style={{ color: '#0891b2' }}>SHOP</span>
-          </span>
-          <span className="md:hidden flex flex-col items-center leading-none">
-            <span className="text-xl font-extrabold tracking-tight" style={{ color: '#0c2b36' }}>MG</span>
-            <span className="text-[10px] font-bold tracking-[0.35em]" style={{ color: '#0891b2' }}>SHOP</span>
+        <Link href="/" className="flex items-center gap-2.5 shrink-0 select-none group">
+          <img src="/logo/mgshop-logo-neon.png" alt="MGShop Casa"
+            className="w-10 h-10 sm:w-11 sm:h-11 rounded-full object-cover neon-glow-logo transition-transform group-hover:scale-105" />
+          <span className="hidden sm:block text-lg font-bold tracking-tight text-white">
+            MG<span className="text-shimmer">Shop</span> Casa
           </span>
         </Link>
 
@@ -72,14 +70,12 @@ export function HomeHeader() {
           {NAV_ITEMS.map(item => (
             'href' in item ? (
               <Link key={item.label} href={item.href}
-                className="text-sm font-medium whitespace-nowrap transition-colors hover:text-cyan-700"
-                style={{ color: '#3b5560' }}>
+                className="text-sm font-medium whitespace-nowrap transition-colors text-cyan-100/70 hover:text-cyan-300">
                 {item.label}
               </Link>
             ) : (
               <button key={item.label} onClick={() => runAction(item)}
-                className="text-sm font-medium whitespace-nowrap transition-colors hover:text-cyan-700"
-                style={{ color: '#3b5560' }}>
+                className="text-sm font-medium whitespace-nowrap transition-colors text-cyan-100/70 hover:text-cyan-300">
                 {item.label}
               </button>
             )
@@ -89,7 +85,7 @@ export function HomeHeader() {
         {/* Hamburger, solo mobile/tablet */}
         <div className="relative lg:hidden" ref={menuRef}>
           <button onClick={() => setMenuOpen(v => !v)} aria-label="Apri menu"
-            className="w-9 h-9 flex items-center justify-center rounded-lg hover:bg-cyan-50 text-cyan-800 btn-press">
+            className="w-9 h-9 flex items-center justify-center rounded-lg hover:bg-white/10 text-cyan-300 btn-press">
             {menuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
           </button>
           {menuOpen && (
@@ -117,11 +113,11 @@ export function HomeHeader() {
         {/* Account + carrello */}
         <div className="flex items-center gap-1 shrink-0">
           <button onClick={openPoints} aria-label="Il mio account"
-            className="w-9 h-9 flex items-center justify-center rounded-lg hover:bg-cyan-50 text-cyan-800 btn-press">
+            className="w-9 h-9 flex items-center justify-center rounded-lg hover:bg-white/10 text-cyan-300 btn-press">
             <User className="w-5 h-5" />
           </button>
           <Link href="/carrello" aria-label="Vai al carrello"
-            className="relative w-9 h-9 flex items-center justify-center rounded-lg hover:bg-cyan-50 text-cyan-800 btn-press">
+            className="relative w-9 h-9 flex items-center justify-center rounded-lg hover:bg-white/10 text-cyan-300 btn-press">
             <ShoppingBag className="w-5 h-5" />
             {itemCount > 0 && (
               <span className="absolute top-0 right-0 w-4 h-4 text-white text-[10px] rounded-full flex items-center justify-center font-bold"
