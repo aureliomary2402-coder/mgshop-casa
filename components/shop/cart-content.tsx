@@ -236,31 +236,31 @@ export function CartContent({ scope = 'shop' }: { scope?: string }) {
   )
 
   return (
-    <div className="max-w-5xl mx-auto px-4 py-8">
-      <Link href="/shop" className="inline-flex items-center gap-2 text-sm font-medium mb-6 group transition-all hover:gap-3" style={{color:'#155e75'}}>
+    <div className="w-full overflow-x-hidden max-w-5xl mx-auto px-4 py-6 sm:py-8">
+      <Link href="/shop" className="inline-flex items-center gap-2 text-sm font-medium mb-4 sm:mb-6 group transition-all hover:gap-3" style={{color:'#155e75'}}>
         <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform"/> Continua lo shopping
       </Link>
-      <h1 className="text-2xl font-bold mb-8" style={{color:'#0c2b36'}}>
-        Il tuo carrello <span className="text-base font-normal text-slate-400">({items.length} {items.length===1?'articolo':'articoli'})</span>
+      <h1 className="text-xl sm:text-2xl font-bold mb-5 sm:mb-8" style={{color:'#0c2b36'}}>
+        Il tuo carrello <span className="text-sm sm:text-base font-normal text-slate-400">({items.length} {items.length===1?'articolo':'articoli'})</span>
       </h1>
-      <div className="grid md:grid-cols-3 gap-6">
-        <div className="md:col-span-2 space-y-3">
+      <div className="grid md:grid-cols-3 gap-5 md:gap-6">
+        <div className="md:col-span-2 space-y-3 min-w-0">
           {items.map(({product,quantity,lineId},i) => {
             const rowId = lineId || product.id
             return (
-            <div key={rowId} className="flex gap-4 rounded-2xl p-4 animate-fade-in-up"
+            <div key={rowId} className="flex gap-3 sm:gap-4 rounded-2xl p-3 sm:p-4 animate-fade-in-up"
               style={{animationDelay:`${i*50}ms`,animationFillMode:'both',background:'white',border:'1px solid rgba(8,145,178,0.08)',boxShadow:'0 2px 8px rgba(0,0,0,0.04)'}}>
-              <div className="w-20 h-20 rounded-xl overflow-hidden shrink-0" style={{background:'linear-gradient(135deg,#f0fbfd,#cffafe)'}}>
+              <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-xl overflow-hidden shrink-0" style={{background:'linear-gradient(135deg,#f0fbfd,#cffafe)'}}>
                 {product.cover_image ? <img src={product.cover_image} alt={product.name} className="w-full h-full object-cover"/> : <div className="w-full h-full flex items-center justify-center"><ImageIcon className="w-8 h-8" style={{color:'rgba(8,145,178,0.3)'}}/></div>}
               </div>
               <div className="flex-1 min-w-0">
-                <p className="font-semibold truncate mb-1" style={{color:'#0c2b36'}}>{product.name}</p>
+                <p className="text-sm sm:text-base font-semibold truncate mb-1" style={{color:'#0c2b36'}}>{product.name}</p>
                 <p className="font-bold" style={{color:'#0891b2'}}>€{product.price.toFixed(2)}</p>
                 <div className="flex items-center gap-2 mt-2">
-                  <button onClick={() => updateQuantity(rowId,quantity-1)} className="w-7 h-7 rounded-full flex items-center justify-center transition-all hover:scale-110 btn-press" style={{border:'1px solid rgba(8,145,178,0.2)',background:'rgba(8,145,178,0.04)'}}><Minus className="w-3 h-3" style={{color:'#155e75'}}/></button>
-                  <span className="w-6 text-center text-sm font-bold" style={{color:'#0c2b36'}}>{quantity}</span>
-                  <button onClick={() => updateQuantity(rowId,quantity+1)} className="w-7 h-7 rounded-full flex items-center justify-center transition-all hover:scale-110 btn-press" style={{border:'1px solid rgba(8,145,178,0.2)',background:'rgba(8,145,178,0.04)'}}><Plus className="w-3 h-3" style={{color:'#155e75'}}/></button>
-                  <button onClick={() => removeItem(rowId)} className="ml-auto w-8 h-8 rounded-lg flex items-center justify-center transition-all hover:scale-110 btn-press" style={{background:'rgba(239,68,68,0.06)',border:'1px solid rgba(239,68,68,0.1)'}}><Trash2 className="w-4 h-4 text-red-400"/></button>
+                  <button onClick={() => updateQuantity(rowId,quantity-1)} className="w-7 h-7 rounded-full flex items-center justify-center transition-all hover:scale-110 btn-press shrink-0" style={{border:'1px solid rgba(8,145,178,0.2)',background:'rgba(8,145,178,0.04)'}}><Minus className="w-3 h-3" style={{color:'#155e75'}}/></button>
+                  <span className="w-6 text-center text-sm font-bold shrink-0" style={{color:'#0c2b36'}}>{quantity}</span>
+                  <button onClick={() => updateQuantity(rowId,quantity+1)} className="w-7 h-7 rounded-full flex items-center justify-center transition-all hover:scale-110 btn-press shrink-0" style={{border:'1px solid rgba(8,145,178,0.2)',background:'rgba(8,145,178,0.04)'}}><Plus className="w-3 h-3" style={{color:'#155e75'}}/></button>
+                  <button onClick={() => removeItem(rowId)} className="ml-auto w-8 h-8 rounded-lg flex items-center justify-center transition-all hover:scale-110 btn-press shrink-0" style={{background:'rgba(239,68,68,0.06)',border:'1px solid rgba(239,68,68,0.1)'}}><Trash2 className="w-4 h-4 text-red-400"/></button>
                 </div>
               </div>
             </div>
@@ -270,7 +270,7 @@ export function CartContent({ scope = 'shop' }: { scope?: string }) {
           <LoyaltyBanner compact={true} />
         </div>
 
-        <div className="rounded-2xl p-5 h-fit sticky top-20 animate-slide-in-right space-y-4" style={{background:'white',border:'1px solid rgba(8,145,178,0.1)',boxShadow:'0 8px 24px rgba(8,145,178,0.08)'}}>
+        <div className="rounded-2xl p-4 sm:p-5 h-fit md:sticky md:top-20 animate-slide-in-right space-y-4 min-w-0" style={{background:'white',border:'1px solid rgba(8,145,178,0.1)',boxShadow:'0 8px 24px rgba(8,145,178,0.08)'}}>
           <h2 className="font-bold" style={{color:'#0c2b36'}}>Riepilogo ordine</h2>
           <div className="space-y-2">
             {items.map(({product,quantity,lineId}) => (
@@ -283,13 +283,13 @@ export function CartContent({ scope = 'shop' }: { scope?: string }) {
           <div className="space-y-2">
             {!couponData ? (
               <>
-                <div className="flex gap-2">
-                  <div className="relative flex-1">
+                <div className="flex flex-wrap gap-2">
+                  <div className="relative flex-1 min-w-[140px]">
                     <Tag className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-cyan-400"/>
                     <input value={couponInput} onChange={e => setCouponInput(e.target.value.toUpperCase())} onKeyDown={e => e.key==='Enter'&&handleApplyCoupon()} placeholder="Codice coupon"
                       className="w-full h-10 pl-9 pr-3 rounded-xl text-base font-mono outline-none" style={{background:'rgba(8,145,178,0.05)',border:'1px solid rgba(8,145,178,0.15)',color:'#0c2b36'}}/>
                   </div>
-                  <button onClick={handleApplyCoupon} disabled={couponLoading||!couponInput.trim()} className="px-3 py-2 rounded-xl text-sm font-medium text-white disabled:opacity-50 transition-all hover:scale-105 btn-press" style={{background:'linear-gradient(135deg,#0891b2,#06b6d4)'}}>
+                  <button onClick={handleApplyCoupon} disabled={couponLoading||!couponInput.trim()} className="shrink-0 px-3 py-2 rounded-xl text-sm font-medium text-white disabled:opacity-50 transition-all hover:scale-105 btn-press" style={{background:'linear-gradient(135deg,#0891b2,#06b6d4)'}}>
                     {couponLoading?'...':'Applica'}
                   </button>
                 </div>
@@ -332,7 +332,7 @@ export function CartContent({ scope = 'shop' }: { scope?: string }) {
                       <p className="text-xs text-slate-500 mb-2">
                         Scegli fino a {ticketQtyInCart} numer{ticketQtyInCart > 1 ? 'i' : 'o'} ({chosenNumbers.length}/{ticketQtyInCart} scelt{chosenNumbers.length === 1 ? 'o' : 'i'}). I biglietti senza numero scelto vengono assegnati automaticamente.
                       </p>
-                      <div className="grid grid-cols-8 gap-1 max-h-40 overflow-y-auto">
+                      <div className="grid grid-cols-6 sm:grid-cols-8 gap-1 max-h-40 overflow-y-auto">
                         {Array.from({ length: participantsCount }, (_, i) => i + 1).map(n => {
                           const isTaken = takenNumbers.includes(n)
                           const isChosen = chosenNumbers.includes(n)
