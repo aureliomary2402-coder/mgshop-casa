@@ -1,9 +1,10 @@
 "use client"
 
+import { useState } from 'react'
 import { useRouter, useSearchParams, usePathname } from 'next/navigation'
 import {
   Store, Droplets, SprayCan, Sparkles, WashingMachine, Flower2,
-  UtensilsCrossed, Home, MoreHorizontal, Tag,
+  UtensilsCrossed, Home, MoreHorizontal, Tag, SlidersHorizontal, ChevronDown,
 } from 'lucide-react'
 import type { ComponentType } from 'react'
 import type { Category } from '@/lib/types'
@@ -21,6 +22,7 @@ function categoryIcon(name: string): ComponentType<{ className?: string }> {
 }
 
 export function CategorySidebar({ categories }: { categories: Category[] }) {
+  const [open, setOpen] = useState(false)
   const router = useRouter()
   const pathname = usePathname()
   const searchParams = useSearchParams()
@@ -31,9 +33,11 @@ export function CategorySidebar({ categories }: { categories: Category[] }) {
     if (slug) { params.set('categoria', slug) } else { params.delete('categoria') }
     router.push(`${pathname}?${params.toString()}#prodotti-grid`, { scroll: false })
     requestAnimationFrame(() => document.getElementById('prodotti-grid')?.scrollIntoView({ behavior: 'smooth', block: 'start' }))
+    setOpen(false)
   }
 
   const items = [{ slug: null as string | null, name: 'Tutti i prodotti', icon: Store }, ...categories.map(c => ({ slug: c.slug, name: c.name, icon: categoryIcon(c.name) }))]
+  const activeLabel = items.find(it => it.slug === active)?.name || 'Categorie'
 
   return (
     <>
@@ -67,30 +71,43 @@ export function CategorySidebar({ categories }: { categories: Category[] }) {
         </a>
       </aside>
 
-      {/* Mobile/tablet: chip che vanno a capo, mai in scroll orizzontale */}
+      {/* Mobile/tablet: tab chiusa di default, l'utente la apre quando le serve */}
       <div className="lg:hidden">
-        <p className="text-xs font-bold tracking-wider mb-2 px-1" style={{ color: '#0c2b36' }}>CATEGORIE</p>
-        <div className="flex flex-wrap gap-2">
-          {items.map(it => {
-            const Icon = it.icon
-            const isActive = it.slug === active
-            return (
-              <button key={it.slug ?? 'all'} onClick={() => go(it.slug)}
-                className="flex items-center gap-1.5 pl-2.5 pr-3.5 py-2 rounded-full text-xs font-semibold transition-all btn-press"
-                style={{
-                  background: isActive ? '#0891b2' : 'white',
-                  color: isActive ? 'white' : '#334155',
-                  border: `1px solid ${isActive ? '#0891b2' : 'rgba(8,145,178,0.15)'}`,
-                }}>
-                <span className="w-5 h-5 rounded-full flex items-center justify-center shrink-0"
-                  style={{ background: isActive ? 'rgba(255,255,255,0.2)' : 'rgba(8,145,178,0.08)', color: isActive ? 'white' : '#0891b2' }}>
-                  <Icon className="w-3 h-3" />
-                </span>
-                {it.name}
-              </button>
-            )
-          })}
-        </div>
+        <button onClick={() => setOpen(v => !v)}
+          className="w-full flex items-center justify-between gap-2 px-4 py-3 rounded-2xl text-sm font-semibold transition-all btn-press"
+          style={{ background: 'white', border: '1px solid rgba(8,145,178,0.15)', color: active ? '#0891b2' : '#334155', boxShadow: '0 4px 14px rgba(8,145,178,0.07)' }}>
+          <span className="flex items-center gap-2">
+            <SlidersHorizontal className="w-4 h-4" style={{ color: '#0891b2' }} />
+            {activeLabel}
+          </span>
+          <ChevronDown className={`w-4 h-4 transition-transform duration-200 ${open ? 'rotate-180' : ''}`} style={{ color: '#0891b2' }} />
+        </button>
+
+        {open && (
+          <div className="mt-2.5 rounded-2xl p-3 animate-scale-in" style={{ background: 'white', border: '1px solid rgba(8,145,178,0.12)', boxShadow: '0 12px 30px rgba(8,45,60,0.1)' }}>
+            <div className="flex flex-wrap gap-2">
+              {items.map(it => {
+                const Icon = it.icon
+                const isActive = it.slug === active
+                return (
+                  <button key={it.slug ?? 'all'} onClick={() => go(it.slug)}
+                    className="flex items-center gap-1.5 pl-2.5 pr-3.5 py-2 rounded-full text-xs font-semibold transition-all btn-press"
+                    style={{
+                      background: isActive ? '#0891b2' : 'rgba(8,145,178,0.05)',
+                      color: isActive ? 'white' : '#334155',
+                      border: `1px solid ${isActive ? '#0891b2' : 'rgba(8,145,178,0.12)'}`,
+                    }}>
+                    <span className="w-5 h-5 rounded-full flex items-center justify-center shrink-0"
+                      style={{ background: isActive ? 'rgba(255,255,255,0.2)' : 'rgba(8,145,178,0.08)', color: isActive ? 'white' : '#0891b2' }}>
+                      <Icon className="w-3 h-3" />
+                    </span>
+                    {it.name}
+                  </button>
+                )
+              })}
+            </div>
+          </div>
+        )}
       </div>
     </>
   )
