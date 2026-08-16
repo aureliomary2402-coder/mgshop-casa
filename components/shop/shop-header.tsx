@@ -1,6 +1,6 @@
 "use client"
 import Link from 'next/link'
-import { ShoppingBag, Search, X, ChevronDown, Tag, Sparkles, Newspaper, ImageIcon, Heart, Ticket, User } from 'lucide-react'
+import { ShoppingBag, Search, X, ChevronDown, Tag, Sparkles, Newspaper, ImageIcon, Heart, Ticket, User, MapPin, MessageCircle } from 'lucide-react'
 import { useCartStore } from '@/lib/cart-store'
 import { useWishlistStore } from '@/lib/wishlist-store'
 import { useUIPanelsStore } from '@/lib/ui-panels-store'
@@ -40,6 +40,7 @@ export function ShopHeader({ categories }: { categories: Category[] }) {
   const lastAdded = useCartStore(s => s.lastAdded)
   const wishlistCount = useWishlistStore(s => s.ids.length)
   const openPoints = useUIPanelsStore(s => s.openPoints)
+  const openChat = useUIPanelsStore(s => s.openChat)
   const router = useRouter()
   const searchParams = useSearchParams()
   const pathname = usePathname()
@@ -195,6 +196,12 @@ export function ShopHeader({ categories }: { categories: Category[] }) {
           <Link href="/lotteria" className="hidden lg:flex items-center gap-1.5 px-3 py-2 rounded-xl text-sm font-medium transition-all hover:bg-cyan-50 btn-press" style={{ color: '#44403c' }}>
             <Ticket className="w-4 h-4" /> Lotteria
           </Link>
+          <Link href="/consegne" className="hidden lg:flex items-center gap-1.5 px-3 py-2 rounded-xl text-sm font-medium transition-all hover:bg-cyan-50 btn-press" style={{ color: '#44403c' }}>
+            <MapPin className="w-4 h-4" /> Consegne
+          </Link>
+          <button onClick={openChat} className="hidden lg:flex items-center gap-1.5 px-3 py-2 rounded-xl text-sm font-medium transition-all hover:bg-cyan-50 btn-press" style={{ color: '#44403c' }}>
+            <MessageCircle className="w-4 h-4" /> Contatti
+          </button>
           <button onClick={openPoints} className="hidden lg:flex items-center gap-1.5 px-3 py-2 rounded-xl text-sm font-medium transition-all hover:bg-cyan-50 btn-press" style={{ color: '#44403c' }}>
             <User className="w-4 h-4" /> Account
           </button>

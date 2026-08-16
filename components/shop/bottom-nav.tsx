@@ -55,7 +55,7 @@ export function BottomNav() {
 
   return (
     <nav
-      className={`fixed inset-x-0 z-40 ${showOnDesktop ? '' : 'lg:hidden'}`}
+      className={`fixed inset-x-0 z-[45] ${showOnDesktop ? '' : 'lg:hidden'}`}
       style={{ bottom: 'calc(36px + env(safe-area-inset-bottom, 0px))' }}
       aria-label="Navigazione principale"
     >

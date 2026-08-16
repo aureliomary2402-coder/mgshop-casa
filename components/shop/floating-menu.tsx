@@ -217,7 +217,7 @@ export function FloatingMenu() {
       {/* Bolla principale */}
       <button
         onClick={() => (isOpen ? closeAll() : setMenuOpen(true))}
-        className="fixed bottom-[5.5rem] right-5 z-40 w-14 h-14 rounded-full shadow-lg flex items-center justify-center text-white transition-transform hover:scale-105"
+        className="fixed bottom-[5.5rem] right-5 z-[45] w-14 h-14 rounded-full shadow-lg flex items-center justify-center text-white transition-transform hover:scale-105"
         style={{ background: 'linear-gradient(135deg,#0891b2,#06b6d4)' }}
         aria-label="Apri menu"
       >
@@ -231,7 +231,7 @@ export function FloatingMenu() {
       {showStickyCart && cartCount > 0 && !isOpen && (
         <Link
           href={cartHref}
-          className="fixed bottom-[9.5rem] right-5 z-40 w-14 h-14 rounded-full shadow-lg flex items-center justify-center text-white transition-transform hover:scale-105 animate-scale-in"
+          className="fixed bottom-[9.5rem] right-5 z-[45] w-14 h-14 rounded-full shadow-lg flex items-center justify-center text-white transition-transform hover:scale-105 animate-scale-in"
           style={{ background: '#0c2b36' }}
           aria-label="Vai al carrello"
         >
@@ -244,7 +244,7 @@ export function FloatingMenu() {
 
       {/* Mini-menu a scomparsa: social + chat */}
       {menuOpen && !chatOpen && !pointsOpen && (
-        <div className={`fixed ${menuOffsetClass} right-5 z-40 flex flex-col items-end gap-3`}>
+        <div className={`fixed ${menuOffsetClass} right-5 z-[45] flex flex-col items-end gap-3`}>
           <a href={SOCIAL_LINKS.instagram} target="_blank" rel="noopener noreferrer"
             className="flex items-center gap-2.5 pl-4 pr-2 py-2 rounded-full shadow-lg bg-white text-sm font-medium text-slate-700 transition-transform hover:scale-105">
             Instagram
@@ -293,7 +293,7 @@ export function FloatingMenu() {
 
       {/* Pannello chat */}
       {chatOpen && (
-        <div className={`fixed ${menuOffsetClass} right-5 z-40 w-[90vw] max-w-sm h-[480px] max-h-[70vh] liquid-glass-card rounded-2xl flex flex-col overflow-hidden`}>
+        <div className={`fixed ${menuOffsetClass} right-5 z-[45] w-[90vw] max-w-sm h-[480px] max-h-[70vh] liquid-glass-card rounded-2xl flex flex-col overflow-hidden`}>
           <div className="px-4 py-3 text-white font-semibold flex items-center gap-2" style={{ background: 'linear-gradient(135deg,#0891b2,#06b6d4)' }}>
             <MessageCircle className="w-4 h-4" /> Scrivici
           </div>
@@ -364,7 +364,7 @@ export function FloatingMenu() {
 
       {/* Pannello punti fedeltà */}
       {pointsOpen && (
-        <div className={`fixed ${menuOffsetClass} right-5 z-40 w-[90vw] max-w-sm liquid-glass-card rounded-2xl flex flex-col overflow-hidden`}>
+        <div className={`fixed ${menuOffsetClass} right-5 z-[45] w-[90vw] max-w-sm liquid-glass-card rounded-2xl flex flex-col overflow-hidden`}>
           <div className="px-4 py-3 text-white font-semibold flex items-center gap-2"
             style={{ background: 'linear-gradient(135deg,#0891b2,#06b6d4)' }}>
             <img src="/images/mgshop-stamp.png" alt="" className="w-4 h-4 object-contain" /> Il mio account
