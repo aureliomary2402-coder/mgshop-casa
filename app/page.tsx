@@ -5,7 +5,7 @@ import Link from 'next/link'
 import { toast } from 'sonner'
 import {
   ShoppingBag, Tag, Package, Ticket, Star, Newspaper, MapPin, Phone, User,
-  Truck, Banknote, ShieldCheck, Headphones,
+  Truck, Banknote, ShieldCheck, Headphones, Sparkle,
 } from 'lucide-react'
 import { HomeHeader } from '@/components/shop/home-header'
 import { AmbientBubbles } from '@/components/shop/ambient-bubbles'
@@ -83,29 +83,36 @@ export default function WelcomePage() {
       : 'w-full aspect-square'
     const iconSize = b.big ? 'w-8 h-8' : 'w-5 h-5 sm:w-6 sm:h-6'
     const labelSize = b.big ? 'text-sm sm:text-base font-bold' : 'text-[11px] sm:text-xs font-semibold'
-    const wrapperClass = `relative ${size} ${b.big ? 'z-10' : ''} rounded-full flex flex-col items-center justify-center text-center px-2 transition-transform hover:scale-105 active:scale-95 btn-press animate-bubble-bob`
-    const wrapperStyle: CSSProperties = {
+    const wrapperClass = `glass-bubble relative ${size} ${b.big ? 'z-10' : ''} rounded-full flex flex-col items-center justify-center text-center px-2 transition-transform hover:scale-105 active:scale-95 btn-press animate-bubble-bob overflow-hidden`
+    const rgb = hexToRgb(b.color)
+    const wrapperStyle = {
       gridArea: area,
       justifySelf: 'center',
-      background: 'radial-gradient(circle at 30% 25%, rgba(255,255,255,0.95), rgba(255,255,255,0.55) 60%, rgba(255,255,255,0.35) 100%)',
-      backdropFilter: 'blur(6px)',
-      border: '1px solid rgba(255,255,255,0.8)',
-      boxShadow: `0 10px 24px rgba(8,45,60,0.12), inset 0 0 0 1px rgba(${hexToRgb(b.color)},0.08)`,
+      '--tint': `rgba(${rgb},0.30)`,
+      '--tint-strong': `rgba(${rgb},0.38)`,
+      '--sheen-delay': `${(b.key.length % 5) * 1.1}s`,
       animationDelay: `${Math.abs(b.key.length % 5) * 0.3}s`,
-    }
+    } as CSSProperties
 
     const content = (
       <>
+        <span className="glass-bubble-sheen" style={{ '--sheen-delay': `${(b.key.length % 5) * 1.1}s` } as CSSProperties} />
+        <Sparkle className="glass-bubble-sparkle w-2.5 h-2.5" style={{ top: '14%', right: '20%', animationDelay: '0.3s' }} />
+        <Sparkle className="glass-bubble-sparkle w-1.5 h-1.5" style={{ bottom: '22%', left: '18%', animationDelay: '1.4s' }} />
         {b.badge && (
-          <span className="absolute top-2 right-3 w-2.5 h-2.5 rounded-full animate-pulse-warm"
+          <span className="absolute top-2 right-3 w-2.5 h-2.5 rounded-full animate-pulse-warm z-10"
             style={{ background: '#ef4444', boxShadow: '0 0 0 2px white' }} />
         )}
-        <span className="w-8 h-8 sm:w-9 sm:h-9 rounded-full flex items-center justify-center mb-1"
-          style={{ background: `${b.color}1a`, color: b.color }}>
+        <span className="relative z-10 w-8 h-8 sm:w-9 sm:h-9 rounded-full flex items-center justify-center mb-1"
+          style={{
+            background: `radial-gradient(circle at 32% 28%, ${b.color}40, ${b.color}1f 70%)`,
+            color: b.color,
+            boxShadow: `inset 0 1px 2px rgba(255,255,255,0.6), inset 0 -2px 4px rgba(${rgb},0.25)`,
+          }}>
           <Icon className={iconSize} />
         </span>
-        <span className={labelSize} style={{ color: '#0c2b36' }}>{b.label}</span>
-        {b.big && <span className="hidden sm:block text-[10px] text-slate-500 mt-0.5 leading-tight px-2">{b.sub}</span>}
+        <span className={`relative z-10 ${labelSize}`} style={{ color: '#0c2b36' }}>{b.label}</span>
+        {b.big && <span className="relative z-10 hidden sm:block text-[10px] text-slate-500 mt-0.5 leading-tight px-2">{b.sub}</span>}
       </>
     )
 
