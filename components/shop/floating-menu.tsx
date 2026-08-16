@@ -28,6 +28,36 @@ interface PointsData {
   progress: number
 }
 
+interface LotteryData {
+  title: string
+  ends_at: string | null
+  numbers: number[]
+}
+
+interface OrderItemSummary {
+  product_name: string
+  quantity: number
+  product_price: number
+}
+
+interface OrderSummary {
+  id: string
+  status: string
+  total: number
+  created_at: string
+  items: OrderItemSummary[]
+}
+
+const ORDER_STATUS_LABELS: Record<string, string> = {
+  pending: 'In attesa', confirmed: 'Confermato', shipped: 'Spedito',
+  delivered: 'Consegnato', cancelled: 'Annullato',
+}
+const ORDER_STATUS_COLORS: Record<string, string> = {
+  pending: 'bg-teal-100 text-teal-700', confirmed: 'bg-blue-100 text-blue-700',
+  shipped: 'bg-purple-100 text-purple-700', delivered: 'bg-green-100 text-green-700',
+  cancelled: 'bg-red-100 text-red-700',
+}
+
 const STORAGE_KEY = 'mgshop_chat_identity'
 const SEEN_KEY = 'mgshop_chat_last_seen'
 const POLL_MS = 4000
@@ -42,6 +72,8 @@ export function FloatingMenu() {
   const [pointsChecking, setPointsChecking] = useState(false)
   const [pointsError, setPointsError] = useState('')
   const [pointsData, setPointsData] = useState<PointsData | null>(null)
+  const [lotteryData, setLotteryData] = useState<LotteryData | null>(null)
+  const [ordersData, setOrdersData] = useState<OrderSummary[]>([])
 
   const [identity, setIdentity] = useState<Identity | null>(null)
   const [nameInput, setNameInput] = useState('')
@@ -152,22 +184,28 @@ export function FloatingMenu() {
     setPointsChecking(true)
     setPointsError('')
     try {
-      const res = await fetch(`/api/loyalty-check?phone=${encodeURIComponent(pointsPhone.trim())}`)
+      const res = await fetch(`/api/account-lookup?phone=${encodeURIComponent(pointsPhone.trim())}`)
       const data = await res.json()
       if (!res.ok) {
         setPointsError(data.error || 'Numero non valido')
         setPointsData(null)
+        setLotteryData(null)
+        setOrdersData([])
       } else {
-        setPointsData(data)
+        setPointsData(data.points)
+        setLotteryData(data.lottery)
+        setOrdersData(data.orders || [])
       }
     } catch {
       setPointsError('Errore di connessione, riprova')
       setPointsData(null)
+      setLotteryData(null)
+      setOrdersData([])
     }
     setPointsChecking(false)
   }
 
-  const resetPoints = () => { setPointsData(null); setPointsError('') }
+  const resetPoints = () => { setPointsData(null); setLotteryData(null); setOrdersData([]); setPointsError('') }
 
   // Nascosto nel pannello admin
   if (pathname?.startsWith('/mgadmin-panel')) return null
@@ -244,7 +282,7 @@ export function FloatingMenu() {
           </button>
           <button onClick={openPoints}
             className="flex items-center gap-2.5 pl-4 pr-2 py-2 rounded-full shadow-lg bg-white text-sm font-medium text-slate-700 transition-transform hover:scale-105">
-            I tuoi punti
+            Il mio account
             <span className="w-9 h-9 rounded-full flex items-center justify-center shrink-0 bg-white border-2"
               style={{ borderColor: '#dc2626', color: '#dc2626' }}>
               <img src="/images/mgshop-stamp.png" alt="" className="w-7 h-7 object-contain" />
@@ -329,12 +367,12 @@ export function FloatingMenu() {
         <div className={`fixed ${menuOffsetClass} right-5 z-40 w-[90vw] max-w-sm bg-white rounded-2xl shadow-2xl flex flex-col overflow-hidden border border-slate-100`}>
           <div className="px-4 py-3 text-white font-semibold flex items-center gap-2"
             style={{ background: 'linear-gradient(135deg,#0891b2,#06b6d4)' }}>
-            <img src="/images/mgshop-stamp.png" alt="" className="w-4 h-4 object-contain" /> I tuoi punti
+            <img src="/images/mgshop-stamp.png" alt="" className="w-4 h-4 object-contain" /> Il mio account
           </div>
 
           {!pointsData ? (
             <div className="p-5 space-y-3">
-              <p className="text-sm text-slate-500 text-center mb-1">Inserisci il numero usato nei tuoi ordini per vedere quanti punti hai raccolto</p>
+              <p className="text-sm text-slate-500 text-center mb-1">Inserisci il numero usato nei tuoi ordini per vedere punti, lotteria e ultimi ordini</p>
               <input
                 value={pointsPhone}
                 onChange={e => setPointsPhone(e.target.value)}
@@ -354,7 +392,7 @@ export function FloatingMenu() {
               </button>
             </div>
           ) : (
-            <div className="p-5 space-y-4">
+            <div className="p-5 space-y-4 overflow-y-auto" style={{ maxHeight: '70vh' }}>
               {pointsData.cards_completed > 0 && (
                 <p className="text-xs font-semibold text-center text-cyan-700 bg-cyan-50 rounded-lg py-1.5">
                   🎉 Hai completato la scheda {pointsData.cards_completed} {pointsData.cards_completed === 1 ? 'volta' : 'volte'}!
@@ -401,6 +439,47 @@ export function FloatingMenu() {
                   Premio: {pointsData.reward_description}
                 </p>
               </div>
+
+              {/* Numero/i lotteria del turno in corso, se il cliente ha già partecipato */}
+              {lotteryData && lotteryData.numbers.length > 0 && (
+                <div className="rounded-xl p-3 border" style={{ background: 'rgba(225,29,72,0.05)', borderColor: 'rgba(225,29,72,0.15)' }}>
+                  <p className="text-xs font-bold mb-1.5" style={{ color: '#be123c' }}>🎟️ Lotteria in corso: {lotteryData.title}</p>
+                  <div className="flex flex-wrap gap-1.5">
+                    {lotteryData.numbers.map(n => (
+                      <span key={n} className="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold text-white shrink-0"
+                        style={{ background: '#e11d48' }}>
+                        {n}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Ultimi ordini */}
+              {ordersData.length > 0 && (
+                <div className="space-y-2">
+                  <p className="text-xs font-bold text-slate-700">I tuoi ultimi ordini</p>
+                  <div className="space-y-2 max-h-48 overflow-y-auto pr-1">
+                    {ordersData.map(o => (
+                      <div key={o.id} className="rounded-lg border border-slate-100 p-2.5 text-left">
+                        <div className="flex items-center justify-between gap-2">
+                          <span className="text-[11px] text-slate-500">
+                            {new Date(o.created_at).toLocaleDateString('it-IT', { day: '2-digit', month: '2-digit', year: '2-digit' })}
+                          </span>
+                          <span className={`text-[10px] px-2 py-0.5 rounded-full font-medium shrink-0 ${ORDER_STATUS_COLORS[o.status] || 'bg-slate-100 text-slate-600'}`}>
+                            {ORDER_STATUS_LABELS[o.status] || o.status}
+                          </span>
+                        </div>
+                        <p className="text-xs text-slate-600 mt-1 leading-snug">
+                          {o.items.slice(0, 3).map(it => `${it.quantity}× ${it.product_name}`).join(', ')}
+                          {o.items.length > 3 && ` +${o.items.length - 3} altro/i`}
+                        </p>
+                        <p className="text-xs font-bold text-slate-900 mt-1">€{Number(o.total).toFixed(2)}</p>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
 
               <button
                 onClick={resetPoints}
