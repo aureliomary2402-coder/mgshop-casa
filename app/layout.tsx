@@ -47,19 +47,17 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="it">
       <body className={inter.className}>
         <GlobalHeader />
-        <main className="min-h-screen">
-          {children}
-        </main>
-        <SiteFooter />
-        <SiteTicker />
-        <BottomNav />
-        <BackToTop />
-        <FloatingMenu />
-        <ProductDetailModal />
-        <Toaster position="top-center" richColors />
-        <AnalyticsTracker />
+        <Suspense><AnalyticsTracker /></Suspense>
         <CartAbandonTracker />
         <ServiceWorkerRegister />
+        {children}
+        <SiteFooter />
+        <BottomNav />
+        <FloatingMenu />
+        <Suspense><BackToTop /></Suspense>
+        <ProductDetailModal />
+        <SiteTicker />
+        <Toaster position="bottom-center" richColors />
       </body>
     </html>
   )
