@@ -79,8 +79,8 @@ export default function WelcomePage() {
     const Icon = b.icon
     const area = variant === 'mobile' ? b.mobileArea : b.desktopArea
     const size = b.big
-      ? (variant === 'mobile' ? 'w-full aspect-square' : 'w-44 h-44 xl:w-48 xl:h-48 scale-110')
-      : 'w-full aspect-square'
+      ? (variant === 'mobile' ? 'w-[46vw] max-w-[190px] aspect-square' : 'w-44 h-44 xl:w-48 xl:h-48 scale-110')
+      : (variant === 'mobile' ? 'w-[40vw] max-w-[168px] aspect-square' : 'w-full aspect-square')
     const iconSize = b.big ? 'w-8 h-8' : 'w-5 h-5 sm:w-6 sm:h-6'
     const labelSize = b.big ? 'text-sm sm:text-base font-bold' : 'text-[11px] sm:text-xs font-semibold'
     const wrapperClass = `glass-bubble relative ${size} ${b.big ? 'z-10' : ''} rounded-full flex flex-col items-center justify-center text-center px-2 transition-transform hover:scale-105 active:scale-95 btn-press animate-bubble-bob overflow-hidden`
