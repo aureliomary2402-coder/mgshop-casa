@@ -244,7 +244,7 @@ export default function PromoPage() {
           </div>
           <PageHeroIcon icon={Tag} color="#f59e0b" />
           {promo.badge_text&&<div className="inline-flex items-center gap-2 rounded-full px-4 py-1.5 text-sm font-medium mb-4" style={{background:'rgba(8,145,178,0.1)', color: '#0891b2', border:'1px solid rgba(8,145,178,0.2)'}}><Tag className="w-4 h-4"/> {promo.badge_text}</div>}
-          <h1 className="text-4xl md:text-5xl font-extrabold mb-3" style={{ color: '#0c2b36' }}>{promo.title}</h1>
+          <h1 className="text-4xl md:text-5xl font-extrabold mb-3 text-shimmer">{promo.title}</h1>
           {promo.subtitle&&<p className="text-lg mb-6" style={{ color: '#0c2b36cc' }}>{promo.subtitle}</p>}
           {promo.expires_at&&<div className="mb-4"><div className="flex items-center justify-center gap-2 text-sm mb-3" style={{ color: '#0891b2' }}><Clock className="w-4 h-4"/> Offerta valida ancora per:</div><Countdown expiresAt={promo.expires_at}/></div>}
         </div>

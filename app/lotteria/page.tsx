@@ -118,7 +118,7 @@ export default function LotteryPage() {
           <Link href="/shop" className="inline-flex items-center gap-2 text-sm transition-colors mb-6" style={{ color: '#0891b2' }}><ArrowLeft className="w-4 h-4" /> Negozio</Link>
           <PageHeroIcon icon={Ticket} color="#e11d48" />
           <div className="inline-flex items-center gap-2 rounded-full px-4 py-1.5 text-sm font-medium mb-4" style={{ background: 'rgba(8,145,178,0.1)', color: '#0891b2', border: '1px solid rgba(8,145,178,0.2)' }}><Gift className="w-4 h-4" /> Lotteria a premi</div>
-          <h1 className="text-4xl md:text-5xl font-extrabold mb-3" style={{ color: '#0c2b36' }}>{data.title}</h1>
+          <h1 className="text-4xl md:text-5xl font-extrabold mb-3 text-shimmer">{data.title}</h1>
           {data.description && <p className="text-lg mb-6 whitespace-pre-line" style={{ color: '#0c2b36cc' }}>{data.description}</p>}
           {data.ends_at && !revealPhase && (
             <div className="mb-2">

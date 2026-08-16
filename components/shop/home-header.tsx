@@ -53,7 +53,7 @@ export function HomeHeader() {
   }
 
   return (
-    <header className="sticky top-0 z-50 border-b border-cyan-900/20"
+    <header className="sticky top-0 z-50 border-b border-cyan-900/20 liquid-glass-header"
       style={{ background: 'rgba(3,19,26,0.75)', backdropFilter: 'blur(16px)', WebkitBackdropFilter: 'blur(16px)' }}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between gap-4">
         {/* Logo */}

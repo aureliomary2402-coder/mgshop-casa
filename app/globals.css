@@ -100,6 +100,47 @@
   z-index: 0;
 }
 
+/* ===== Liquid glass — varianti riusabili in altri punti del sito =====
+   Stessa "ricetta" della bottom nav (blur+saturate, rim-light, riflesso
+   speculare in alto), adattata a due usi diversi: un header sticky, dove
+   lo sfondo/colore restano quelli già impostati inline e qui si aggiunge
+   solo il rilievo vetroso; e un pannello/card flottante (FloatingMenu,
+   modali), dove la ricetta è completa come nella bottom nav. */
+.liquid-glass-header {
+  position: relative;
+  isolation: isolate;
+  box-shadow:
+    0 8px 28px rgba(8,45,60,0.10),
+    inset 0 1px 0 rgba(255,255,255,0.6);
+}
+.liquid-glass-header::before {
+  content: '';
+  position: absolute; inset: 0; pointer-events: none;
+  background: radial-gradient(ellipse 55% 60% at 25% -30%, rgba(255,255,255,0.5), rgba(255,255,255,0) 60%);
+  mix-blend-mode: screen;
+}
+.liquid-glass-card {
+  position: relative;
+  isolation: isolate;
+  background:
+    linear-gradient(180deg, rgba(255,255,255,0.7) 0%, rgba(255,255,255,0.4) 100%),
+    rgba(240,251,253,0.6);
+  -webkit-backdrop-filter: blur(22px) saturate(1.8);
+  backdrop-filter: blur(22px) saturate(1.8);
+  border: 1px solid rgba(255,255,255,0.5);
+  box-shadow:
+    0 16px 40px rgba(8,45,60,0.22),
+    0 4px 12px rgba(8,45,60,0.10),
+    inset 0 1px 0 rgba(255,255,255,0.85),
+    inset 0 0 0 1px rgba(8,145,178,0.06);
+}
+.liquid-glass-card::before {
+  content: '';
+  position: absolute; inset: 0; border-radius: inherit; pointer-events: none;
+  background: radial-gradient(ellipse 60% 50% at 30% -10%, rgba(255,255,255,0.7), rgba(255,255,255,0) 60%);
+  mix-blend-mode: screen;
+}
+
 /* ===== SCROLLBAR ===== */
 .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
 .scrollbar-hide::-webkit-scrollbar { display: none; }

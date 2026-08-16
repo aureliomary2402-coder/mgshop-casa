@@ -142,7 +142,7 @@ export default function VolantinoPage() {
           <div className="inline-flex items-center gap-2 rounded-full px-4 py-1.5 text-sm font-bold mb-4" style={{ background: 'rgba(8,145,178,0.1)', color: '#0891b2', border: '1px solid rgba(8,145,178,0.2)' }}>
             <Newspaper className="w-4 h-4" /> Volantino digitale
           </div>
-          <h1 className="text-4xl md:text-5xl font-extrabold mb-3" style={{ color: '#0c2b36' }}>{data.title || 'Offerte della settimana'}</h1>
+          <h1 className="text-4xl md:text-5xl font-extrabold mb-3 text-shimmer">{data.title || 'Offerte della settimana'}</h1>
           {data.subtitle && <p className="text-lg" style={{ color: '#0c2b36cc' }}>{data.subtitle}</p>}
         </div>
       </div>

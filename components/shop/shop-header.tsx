@@ -1,8 +1,9 @@
 "use client"
 import Link from 'next/link'
-import { ShoppingBag, Search, X, ChevronDown, Tag, Sparkles, Newspaper, ImageIcon, Heart } from 'lucide-react'
+import { ShoppingBag, Search, X, ChevronDown, Tag, Sparkles, Newspaper, ImageIcon, Heart, Ticket, User } from 'lucide-react'
 import { useCartStore } from '@/lib/cart-store'
 import { useWishlistStore } from '@/lib/wishlist-store'
+import { useUIPanelsStore } from '@/lib/ui-panels-store'
 import { useState, useEffect, useRef } from 'react'
 import { useRouter, useSearchParams, usePathname } from 'next/navigation'
 import type { Category, Product } from '@/lib/types'
@@ -38,6 +39,7 @@ export function ShopHeader({ categories }: { categories: Category[] }) {
   const getTotalItems = useCartStore(s => s.getTotalItems)
   const lastAdded = useCartStore(s => s.lastAdded)
   const wishlistCount = useWishlistStore(s => s.ids.length)
+  const openPoints = useUIPanelsStore(s => s.openPoints)
   const router = useRouter()
   const searchParams = useSearchParams()
   const pathname = usePathname()
@@ -136,7 +138,7 @@ export function ShopHeader({ categories }: { categories: Category[] }) {
   }
 
   return (
-    <header className={`sticky top-0 z-50 transition-all duration-300 ${scrolled ? 'shadow-lg' : ''}`}
+    <header className={`sticky top-0 z-50 transition-all duration-300 liquid-glass-header ${scrolled ? 'shadow-lg' : ''}`}
       style={{ background: scrolled ? 'rgba(240,251,253,0.97)' : 'rgba(240,251,253,0.98)', backdropFilter: 'blur(16px)', borderBottom: '1px solid rgba(8,145,178,0.1)' }}>
       <div className="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between gap-3">
         <Link href="/" className="flex items-center gap-2 shrink-0 group">
@@ -187,6 +189,15 @@ export function ShopHeader({ categories }: { categories: Category[] }) {
               <span className="text-xs bg-cyan-500 text-white px-1.5 py-0.5 rounded-full font-bold">!</span>
             </Link>
           )}
+
+          {/* Solo desktop: su mobile questi collegamenti restano nella tab bar
+              in basso, qui servirebbero solo a duplicarla. */}
+          <Link href="/lotteria" className="hidden lg:flex items-center gap-1.5 px-3 py-2 rounded-xl text-sm font-medium transition-all hover:bg-cyan-50 btn-press" style={{ color: '#44403c' }}>
+            <Ticket className="w-4 h-4" /> Lotteria
+          </Link>
+          <button onClick={openPoints} className="hidden lg:flex items-center gap-1.5 px-3 py-2 rounded-xl text-sm font-medium transition-all hover:bg-cyan-50 btn-press" style={{ color: '#44403c' }}>
+            <User className="w-4 h-4" /> Account
+          </button>
         </div>
 
         <div className="flex items-center gap-2">

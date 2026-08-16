@@ -35,7 +35,7 @@ export default function ConsegnePage() {
             style={{ background: 'rgba(8,145,178,0.1)', color: '#0891b2', border: '1px solid rgba(8,145,178,0.2)' }}>
             <Truck className="w-4 h-4" /> Zone di consegna
           </div>
-          <h1 className="text-4xl md:text-5xl font-extrabold mb-3" style={{ color: '#0c2b36' }}>Dove consegniamo</h1>
+          <h1 className="text-4xl md:text-5xl font-extrabold mb-3 text-shimmer">Dove consegniamo</h1>
           <p className="text-lg max-w-xl mx-auto" style={{ color: '#0c2b36cc' }}>
             Siamo un negozio online: Consegniamo direttamente a casa tua nelle zone qui sotto.
           </p>
