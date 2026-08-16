@@ -22,10 +22,6 @@ const CSS = `
 }
 .site-ticker-foam { bottom: 22px; }
 .site-ticker-bar { bottom: 0; }
-@media (max-width: 767px) {
-  .site-ticker-foam { bottom: calc(98px + env(safe-area-inset-bottom, 0px)); }
-  .site-ticker-bar { bottom: calc(76px + env(safe-area-inset-bottom, 0px)); }
-}
 `
 
 interface BubbleData {

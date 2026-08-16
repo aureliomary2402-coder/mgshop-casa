@@ -2,15 +2,13 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { Home, Store, Tag, Package, Ticket, UserRound } from 'lucide-react'
-import { toast } from 'sonner'
+import { Home, Store, Tag, Ticket, UserRound } from 'lucide-react'
 import { useUIPanelsStore } from '@/lib/ui-panels-store'
 
 // Barra di navigazione inferiore, solo mobile (nascosta da md in su, dove
 // c'è già l'header con menu/ricerca/carrello). Usa solo route già esistenti:
-// "Promo Box" non ha ancora una pagina propria (funzionalità futura), quindi
-// mostra un avviso invece di navigare; "Account" apre lo stesso pannello
-// punti già presente nel FloatingMenu, senza creare una pagina nuova.
+// "Account" apre lo stesso pannello punti già presente nel FloatingMenu,
+// senza creare una pagina nuova.
 const ITEMS = [
   { href: '/', label: 'Home', icon: Home, match: (p: string) => p === '/' },
   { href: '/shop', label: 'Negozio', icon: Store, match: (p: string) => p.startsWith('/shop') || p.startsWith('/prodotto') },
@@ -26,8 +24,8 @@ export function BottomNav() {
 
   return (
     <nav
-      className="fixed bottom-0 inset-x-0 z-40 md:hidden"
-      style={{ paddingBottom: 'env(safe-area-inset-bottom, 0px)' }}
+      className="fixed inset-x-0 z-40 md:hidden"
+      style={{ bottom: 'calc(36px + env(safe-area-inset-bottom, 0px))' }}
       aria-label="Navigazione principale"
     >
       <div className="mx-3 mb-2 rounded-2xl overflow-hidden"
@@ -38,7 +36,7 @@ export function BottomNav() {
           border: '1px solid rgba(8,145,178,0.12)',
           boxShadow: '0 8px 30px rgba(8,45,60,0.18)',
         }}>
-        <div className="grid grid-cols-6 items-stretch">
+        <div className="grid grid-cols-5 items-stretch">
           {ITEMS.map(item => {
             const active = item.match(pathname || '')
             const Icon = item.icon
@@ -51,14 +49,6 @@ export function BottomNav() {
               </Link>
             )
           })}
-
-          <button
-            onClick={() => toast('Promo Box in arrivo presto! 📦', { duration: 2000 })}
-            className="flex flex-col items-center justify-center gap-0.5 py-2.5 btn-press transition-colors"
-            style={{ color: '#8b5cf6' }}>
-            <Package className="w-5 h-5" />
-            <span className="text-[10px] font-medium leading-none">Promo Box</span>
-          </button>
 
           <button
             onClick={openPoints}
