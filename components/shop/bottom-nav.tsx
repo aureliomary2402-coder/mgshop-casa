@@ -6,8 +6,11 @@ import { useEffect, useRef, useState } from 'react'
 import { Home, Store, Tag, Newspaper, Ticket, UserRound } from 'lucide-react'
 import { useUIPanelsStore } from '@/lib/ui-panels-store'
 
-// Barra di navigazione inferiore, solo mobile (nascosta da md in su, dove
-// c'è già l'header con menu/ricerca/carrello). Usa solo route già esistenti:
+// Barra di navigazione inferiore, visibile su mobile E da browser (prima
+// era solo mobile: le bolle della home coprivano questi collegamenti su
+// desktop, ora che sono state rimosse la tab è l'unica navigazione per
+// Negozio/Promo/Volantino/Lotteria/Account su tutte le pagine tranne la
+// home, dove restano header e CTA dedicate). Usa solo route già esistenti:
 // "Account" apre lo stesso pannello punti già presente nel FloatingMenu,
 // senza creare una pagina nuova. "Volantino" compare solo quando il
 // volantino è attivo (stessa logica dell'header desktop).
@@ -48,11 +51,11 @@ export function BottomNav() {
 
   return (
     <nav
-      className="fixed inset-x-0 z-40 md:hidden"
+      className="fixed inset-x-0 z-40"
       style={{ bottom: 'calc(36px + env(safe-area-inset-bottom, 0px))' }}
       aria-label="Navigazione principale"
     >
-      <div className="mx-3 mb-2 rounded-2xl overflow-hidden liquid-glass-nav">
+      <div className="mx-3 mb-2 md:max-w-md md:mx-auto rounded-2xl overflow-hidden liquid-glass-nav">
         <div ref={trackRef} className="relative grid items-stretch" style={{ gridTemplateColumns: `repeat(${totalCols}, minmax(0, 1fr))` }}>
           <div className="liquid-glass-pill" style={pillStyle} />
 

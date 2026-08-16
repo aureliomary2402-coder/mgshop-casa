@@ -4,7 +4,7 @@ import type { ComponentType, CSSProperties } from 'react'
 import Link from 'next/link'
 import { toast } from 'sonner'
 import {
-  ShoppingBag, Tag, Package, Ticket, Star, Newspaper, MapPin, Phone, User,
+  Tag, Package, Star, MapPin, Phone, User,
   Truck, Banknote, ShieldCheck, Headphones, Sparkle, Sparkles,
 } from 'lucide-react'
 import { HomeHeader } from '@/components/shop/home-header'
@@ -38,28 +38,21 @@ const BOTTOM_ADVANTAGES = [
   { icon: Headphones, title: 'ASSISTENZA DEDICATA', sub: 'Siamo sempre disponibili per aiutarti' },
 ]
 
-// Griglie a "grid-template-areas": la disposizione desktop (3 colonne, con
-// Negozio al centro) e quella mobile (2 colonne a zig-zag, con le bolle
-// singole centrate a tutta larghezza) riproducono le due immagini di
-// riferimento senza bisogno di posizionamento assoluto/px, quindi restano
-// sicure su qualunque larghezza di schermo.
-const DESKTOP_TEMPLATE = `"promo promobox lotteria" "punti negozio volantino" "zona contatti account"`
-const MOBILE_TEMPLATE = `"negozio promo" "lotteria lotteria" "promobox volantino" "zona zona" "punti contatti" "account account"`
+// Griglia a "grid-template-areas" 2x2: Negozio, Promo, Volantino, Lotteria
+// e Punti sono passati alla tab di navigazione (in basso, ora visibile
+// anche da browser), quindi qui restano solo i collegamenti che la tab
+// non copre. Stesso schema per mobile e desktop: si adatta da solo a
+// qualunque larghezza di schermo.
+const BUBBLE_TEMPLATE = `"promobox zona" "contatti account"`
 
 export default function WelcomePage() {
   const [mounted, setMounted] = useState(false)
-  const [promoActive, setPromoActive] = useState(false)
-  const [volantinoActive, setVolantinoActive] = useState(false)
-  const [lotteryActive, setLotteryActive] = useState(false)
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 })
   const openPoints = useUIPanelsStore(s => s.openPoints)
   const openChat = useUIPanelsStore(s => s.openChat)
 
   useEffect(() => {
     setMounted(true)
-    fetch('/api/promo').then(r => r.json()).then(d => setPromoActive(d.is_active === true)).catch(() => {})
-    fetch('/api/volantino').then(r => r.json()).then(d => setVolantinoActive(d.is_active === true)).catch(() => {})
-    fetch('/api/lottery').then(r => r.json()).then(d => setLotteryActive(d.is_active === true)).catch(() => {})
   }, [])
 
   // Parallax leggero dei glow nella hero, solo desktop (mousemove non esiste su touch)
@@ -72,12 +65,7 @@ export default function WelcomePage() {
   }, [])
 
   const BUBBLES: BubbleDef[] = [
-    { key: 'promo', label: 'Promozioni', sub: 'Scopri le offerte della settimana', icon: Tag, color: '#f59e0b', badge: promoActive, mobileArea: 'promo', desktopArea: 'promo', action: { type: 'link', href: '/promo' } },
     { key: 'promobox', label: 'Promo Box', sub: 'Più prodotti, più convenienza', icon: Package, color: '#9333ea', mobileArea: 'promobox', desktopArea: 'promobox', action: { type: 'soon' } },
-    { key: 'lotteria', label: 'Lotteria', sub: 'Scegli il numero e prova a vincere', icon: Ticket, color: '#e11d48', badge: lotteryActive, mobileArea: 'lotteria', desktopArea: 'lotteria', action: { type: 'link', href: '/lotteria' } },
-    { key: 'punti', label: 'Punti', sub: 'Accumula punti e ottieni premi', icon: Star, color: '#eab308', mobileArea: 'punti', desktopArea: 'punti', action: { type: 'points' } },
-    { key: 'negozio', label: 'Negozio', sub: 'Scopri tutti i prodotti', icon: ShoppingBag, color: '#db2777', big: true, mobileArea: 'negozio', desktopArea: 'negozio', action: { type: 'link', href: '/shop' } },
-    { key: 'volantino', label: 'Volantino', sub: 'Sfoglia le nostre offerte', icon: Newspaper, color: '#2563eb', badge: volantinoActive, mobileArea: 'volantino', desktopArea: 'volantino', action: { type: 'link', href: '/volantino' } },
     { key: 'zona', label: 'Zone di Consegna', sub: 'Scopri se consegniamo da te', icon: MapPin, color: '#0891b2', mobileArea: 'zona', desktopArea: 'zona', action: { type: 'link', href: '/consegne' } },
     { key: 'contatti', label: 'Contatti', sub: 'Siamo qui per te', icon: Phone, color: '#16a34a', mobileArea: 'contatti', desktopArea: 'contatti', action: { type: 'chat' } },
     { key: 'account', label: 'Il Mio Account', sub: 'Ordini, punti e premi', icon: User, color: '#2563eb', mobileArea: 'account', desktopArea: 'account', action: { type: 'soon' } },
@@ -229,16 +217,18 @@ export default function WelcomePage() {
             </Link>
           </div>
 
-          {/* Colonna bolle, solo desktop (cluster 3x3 con Negozio al centro) */}
-          <div className="hidden lg:grid gap-5 py-4"
-            style={{ gridTemplateAreas: DESKTOP_TEMPLATE, gridTemplateColumns: 'repeat(3, 1fr)', gridTemplateRows: 'repeat(3, 1fr)' }}>
+          {/* Colonna bolle, solo desktop (griglia 2x2 con i collegamenti
+              non coperti dalla tab di navigazione: Promo Box, Zone di
+              Consegna, Contatti, Account) */}
+          <div className="hidden lg:grid gap-5 py-4 max-w-sm mx-auto"
+            style={{ gridTemplateAreas: BUBBLE_TEMPLATE, gridTemplateColumns: 'repeat(2, 1fr)', gridTemplateRows: 'repeat(2, 1fr)' }}>
             {BUBBLES.map(b => renderBubble(b, 'desktop'))}
           </div>
         </div>
 
-        {/* Bolle, solo mobile/tablet (zig-zag 2 colonne come nella foto) */}
+        {/* Bolle, solo mobile/tablet (stessa griglia 2x2) */}
         <div className="relative z-10 lg:hidden max-w-md mx-auto px-6 pb-10 grid gap-3.5"
-          style={{ gridTemplateAreas: MOBILE_TEMPLATE, gridTemplateColumns: 'repeat(2, 1fr)' }}>
+          style={{ gridTemplateAreas: BUBBLE_TEMPLATE, gridTemplateColumns: 'repeat(2, 1fr)' }}>
           {BUBBLES.map(b => renderBubble(b, 'mobile'))}
         </div>
       </section>

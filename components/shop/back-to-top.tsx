@@ -24,7 +24,7 @@ export function BackToTop() {
     <button
       onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
       aria-label="Torna su"
-      className="fixed bottom-[5.5rem] md:bottom-12 left-5 z-40 w-11 h-11 rounded-full flex items-center justify-center btn-press transition-all duration-300"
+      className="fixed bottom-[5.5rem] left-5 z-40 w-11 h-11 rounded-full flex items-center justify-center btn-press transition-all duration-300"
       style={{
         background: 'white',
         border: '1px solid rgba(8,145,178,0.15)',

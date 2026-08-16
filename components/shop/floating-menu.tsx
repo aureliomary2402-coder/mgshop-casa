@@ -60,9 +60,9 @@ export function FloatingMenu() {
   // sempre a portata di mano, sopra il pulsante social/chat.
   const showStickyCart = pathname === '/volantino' || pathname === '/promo'
   const cartHref = pathname === '/promo' ? '/carrello?promo=1' : '/carrello'
-  // Su mobile c'è anche la bottom nav fissa: alziamo tutto di uno "scalino"
-  // in più (bottom-[...]) solo sotto md, dove la barra è visibile.
-  const menuOffsetClass = showStickyCart ? 'bottom-[13.5rem] md:bottom-48' : 'bottom-[9.5rem] md:bottom-32'
+  // La bottom nav è fissa su tutte le larghezze: alziamo tutto di uno
+  // "scalino" in più per non finirci sopra, su mobile e da browser.
+  const menuOffsetClass = showStickyCart ? 'bottom-[13.5rem]' : 'bottom-[9.5rem]'
 
   useEffect(() => {
     const raw = localStorage.getItem(STORAGE_KEY)
@@ -179,7 +179,7 @@ export function FloatingMenu() {
       {/* Bolla principale */}
       <button
         onClick={() => (isOpen ? closeAll() : setMenuOpen(true))}
-        className="fixed bottom-[5.5rem] md:bottom-12 right-5 z-40 w-14 h-14 rounded-full shadow-lg flex items-center justify-center text-white transition-transform hover:scale-105"
+        className="fixed bottom-[5.5rem] right-5 z-40 w-14 h-14 rounded-full shadow-lg flex items-center justify-center text-white transition-transform hover:scale-105"
         style={{ background: 'linear-gradient(135deg,#0891b2,#06b6d4)' }}
         aria-label="Apri menu"
       >
@@ -193,7 +193,7 @@ export function FloatingMenu() {
       {showStickyCart && cartCount > 0 && !isOpen && (
         <Link
           href={cartHref}
-          className="fixed bottom-[9.5rem] md:bottom-32 right-5 z-40 w-14 h-14 rounded-full shadow-lg flex items-center justify-center text-white transition-transform hover:scale-105 animate-scale-in"
+          className="fixed bottom-[9.5rem] right-5 z-40 w-14 h-14 rounded-full shadow-lg flex items-center justify-center text-white transition-transform hover:scale-105 animate-scale-in"
           style={{ background: '#0c2b36' }}
           aria-label="Vai al carrello"
         >

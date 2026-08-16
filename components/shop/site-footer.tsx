@@ -20,7 +20,7 @@ export function SiteFooter() {
   if (pathname?.startsWith('/mgadmin-panel')) return null
 
   return (
-    <footer className="relative overflow-hidden mt-10 pb-24 md:pb-10"
+    <footer className="relative overflow-hidden mt-10 pb-24"
       style={{ background: 'linear-gradient(135deg,#0c2b36 0%,#0e3644 55%,#0c2b36 100%)' }}>
       {/* Bolle decorative leggere, coerenti col resto del sito */}
       <div className="absolute inset-0 pointer-events-none opacity-60">
