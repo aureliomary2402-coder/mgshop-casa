@@ -2,6 +2,7 @@
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { ArrowLeft, Clock, Tag, ShoppingBag, ShoppingCart, ImageIcon, X, Info } from 'lucide-react'
+import { PageHeroIcon } from '@/components/shop/page-hero-icon'
 import { useCartStore } from '@/lib/cart-store'
 import { useProductDetailStore } from '@/lib/product-detail-store'
 import { toast } from 'sonner'
@@ -241,6 +242,7 @@ export default function PromoPage() {
               {cartCount > 0 && <span className="absolute -top-1 -right-1 w-5 h-5 text-white text-xs rounded-full flex items-center justify-center font-bold" style={{background:'linear-gradient(135deg,#0891b2,#06b6d4)'}}>{cartCount}</span>}
             </Link>
           </div>
+          <PageHeroIcon icon={Tag} color="#f59e0b" />
           {promo.badge_text&&<div className="inline-flex items-center gap-2 rounded-full px-4 py-1.5 text-sm font-medium mb-4" style={{background:'rgba(8,145,178,0.1)', color: '#0891b2', border:'1px solid rgba(8,145,178,0.2)'}}><Tag className="w-4 h-4"/> {promo.badge_text}</div>}
           <h1 className="text-4xl md:text-5xl font-extrabold mb-3" style={{ color: '#0c2b36' }}>{promo.title}</h1>
           {promo.subtitle&&<p className="text-lg mb-6" style={{ color: '#0c2b36cc' }}>{promo.subtitle}</p>}

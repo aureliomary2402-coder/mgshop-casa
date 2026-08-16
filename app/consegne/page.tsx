@@ -3,6 +3,7 @@ import Link from 'next/link'
 import { ArrowLeft, MapPin, Truck, ShoppingBag, Banknote } from 'lucide-react'
 import { AmbientBubbles } from '@/components/shop/ambient-bubbles'
 import { Reveal } from '@/components/shop/reveal'
+import { PageHeroIcon } from '@/components/shop/page-hero-icon'
 
 const ZONES = [
   {
@@ -29,6 +30,7 @@ export default function ConsegnePage() {
           <Link href="/shop" className="inline-flex items-center gap-2 text-sm transition-colors mb-6" style={{ color: '#0891b2' }}>
             <ArrowLeft className="w-4 h-4" /> Negozio
           </Link>
+          <PageHeroIcon icon={MapPin} color="#0891b2" />
           <div className="inline-flex items-center gap-2 rounded-full px-4 py-1.5 text-sm font-medium mb-4"
             style={{ background: 'rgba(8,145,178,0.1)', color: '#0891b2', border: '1px solid rgba(8,145,178,0.2)' }}>
             <Truck className="w-4 h-4" /> Zone di consegna

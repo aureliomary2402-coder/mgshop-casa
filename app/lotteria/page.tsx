@@ -1,9 +1,10 @@
 "use client"
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
-import { ArrowLeft, Clock, Gift, History, PartyPopper, ImageIcon, ShoppingCart, Hash, Sparkles } from 'lucide-react'
+import { ArrowLeft, Clock, Gift, History, PartyPopper, ImageIcon, ShoppingCart, Hash, Sparkles, Ticket } from 'lucide-react'
 import { Reveal } from '@/components/shop/reveal'
 import { AmbientBubbles } from '@/components/shop/ambient-bubbles'
+import { PageHeroIcon } from '@/components/shop/page-hero-icon'
 
 interface Winner {
   id: string; lottery_title: string; prize_label: string; prize_image_url: string | null
@@ -115,6 +116,7 @@ export default function LotteryPage() {
         <AmbientBubbles count={9} theme="light" />
         <div className="relative z-10 max-w-4xl mx-auto px-4 py-12 text-center">
           <Link href="/shop" className="inline-flex items-center gap-2 text-sm transition-colors mb-6" style={{ color: '#0891b2' }}><ArrowLeft className="w-4 h-4" /> Negozio</Link>
+          <PageHeroIcon icon={Ticket} color="#e11d48" />
           <div className="inline-flex items-center gap-2 rounded-full px-4 py-1.5 text-sm font-medium mb-4" style={{ background: 'rgba(8,145,178,0.1)', color: '#0891b2', border: '1px solid rgba(8,145,178,0.2)' }}><Gift className="w-4 h-4" /> Lotteria a premi</div>
           <h1 className="text-4xl md:text-5xl font-extrabold mb-3" style={{ color: '#0c2b36' }}>{data.title}</h1>
           {data.description && <p className="text-lg mb-6 whitespace-pre-line" style={{ color: '#0c2b36cc' }}>{data.description}</p>}
