@@ -1,5 +1,5 @@
 "use client"
-import { useEffect, useState } from 'react'
+import { useEffect, useState, Suspense } from 'react'
 import Link from 'next/link'
 import {
   Tag, Package, Star,
@@ -43,7 +43,7 @@ export default function WelcomePage() {
 
   return (
     <div className="min-h-screen" style={{ background: '#ffffff' }}>
-      <GlobalHeader />
+      <Suspense><GlobalHeader /></Suspense>
 
       {/* ===== HERO IMMERSIVA (scura, solo sulla home: distingue la home dal resto del sito) ===== */}
       <section className="relative overflow-hidden"
