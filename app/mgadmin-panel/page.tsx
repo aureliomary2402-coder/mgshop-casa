@@ -99,7 +99,7 @@ export default function AdminPage() {
   if (checking) return <div className="min-h-screen flex items-center justify-center text-slate-400">Caricamento...</div>
 
   if (!authenticated) return (
-    <div className="min-h-screen flex items-center justify-center px-4" style={{ background: '#f0fbfd' }}>
+    <div className="min-h-screen flex items-center justify-center px-4" style={{ background: 'linear-gradient(180deg,#eafbff 0%,#f5fdff 45%,#ffffff 100%)' }}>
       <div className="bg-white rounded-2xl shadow-md p-8 w-full max-w-sm" style={{ border: '1px solid rgba(8,145,178,0.1)' }}>
         <div className="flex justify-center mb-6">
           <div className="w-14 h-14 rounded-full flex items-center justify-center" style={{ background: 'linear-gradient(135deg, #0891b2, #06b6d4)' }}>
@@ -117,7 +117,7 @@ export default function AdminPage() {
   )
 
   return (
-    <div className="min-h-screen" style={{ background: '#f0fbfd' }}>
+    <div className="min-h-screen" style={{ background: 'linear-gradient(180deg,#eafbff 0%,#f5fdff 45%,#ffffff 100%)' }}>
       <div className="bg-white border-b px-4 h-14 flex items-center justify-between sticky top-0 z-40" style={{ borderColor: 'rgba(8,145,178,0.1)' }}>
         <div className="flex items-center gap-3">
           <button onClick={() => setMenuOpen(v => !v)} className="w-9 h-9 flex items-center justify-center rounded-xl hover:bg-cyan-50 transition-colors" style={{ color: '#0891b2' }}>

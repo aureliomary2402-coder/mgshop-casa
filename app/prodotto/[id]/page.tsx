@@ -41,7 +41,7 @@ export default function ProductPage() {
   }, [id, addRecentlyViewed])
 
   if (loading) return (
-    <div className="min-h-screen" style={{ background: '#f0fbfd' }}>
+    <div className="min-h-screen" style={{ background: 'linear-gradient(180deg,#eafbff 0%,#f5fdff 45%,#ffffff 100%)' }}>
       <div className="max-w-5xl mx-auto px-4 py-8">
         <div className="skeleton h-4 w-24 rounded-full mb-8" />
         <div className="grid md:grid-cols-2 gap-10">
@@ -70,7 +70,7 @@ export default function ProductPage() {
     </div>
   )
   if (!product) return (
-    <div className="min-h-screen flex items-center justify-center" style={{ background: '#f0fbfd' }}>
+    <div className="min-h-screen flex items-center justify-center" style={{ background: 'linear-gradient(180deg,#eafbff 0%,#f5fdff 45%,#ffffff 100%)' }}>
       <p className="text-slate-400">Prodotto non trovato</p>
     </div>
   )
@@ -101,7 +101,7 @@ export default function ProductPage() {
   }
 
   return (
-    <div className="min-h-screen" style={{ background: '#f0fbfd' }}>
+    <div className="min-h-screen" style={{ background: 'linear-gradient(180deg,#eafbff 0%,#f5fdff 45%,#ffffff 100%)' }}>
       <div className="max-w-5xl mx-auto px-4 py-8">
         <button onClick={() => router.back()}
           className="inline-flex items-center gap-2 mb-8 text-sm font-medium group transition-all hover:gap-3"

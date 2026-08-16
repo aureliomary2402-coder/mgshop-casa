@@ -8,7 +8,7 @@ export default async function CarrelloLayout({ children }: { children: React.Rea
   const { data: categories } = await supabase.from('categories').select('*').order('name')
 
   return (
-    <div className="min-h-screen" style={{ background: '#f0fbfd' }}>
+    <div className="min-h-screen" style={{ background: 'linear-gradient(180deg,#eafbff 0%,#f5fdff 45%,#ffffff 100%)' }}>
       <Suspense><ShopHeader categories={(categories || []) as Category[]} /></Suspense>
       {children}
     </div>

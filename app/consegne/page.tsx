@@ -21,7 +21,7 @@ const ZONES = [
 
 export default function ConsegnePage() {
   return (
-    <div className="min-h-screen" style={{ background: '#f0fbfd' }}>
+    <div className="min-h-screen" style={{ background: 'linear-gradient(180deg,#eafbff 0%,#f5fdff 45%,#ffffff 100%)' }}>
       {/* Hero */}
       <div className="relative overflow-hidden" style={{ background: 'linear-gradient(135deg,#0c2b36,#06303d)' }}>
         <div className="absolute top-0 left-1/4 w-96 h-96 rounded-full blur-[100px] opacity-20" style={{ background: 'radial-gradient(circle,#0891b2,transparent)' }} />

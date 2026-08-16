@@ -97,7 +97,7 @@ export default function VolantinoPage() {
   }, [])
 
   if (loading) return (
-    <div className="min-h-screen" style={{ background: '#f0fbfd' }}>
+    <div className="min-h-screen" style={{ background: 'linear-gradient(180deg,#eafbff 0%,#f5fdff 45%,#ffffff 100%)' }}>
       <div className="max-w-5xl mx-auto px-4 py-12 space-y-6">
         <div className="skeleton h-24 rounded-3xl" />
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
@@ -108,7 +108,7 @@ export default function VolantinoPage() {
   )
 
   if (!data || !data.is_active) return (
-    <div className="min-h-screen flex items-center justify-center px-4" style={{ background: '#f0fbfd' }}>
+    <div className="min-h-screen flex items-center justify-center px-4" style={{ background: 'linear-gradient(180deg,#eafbff 0%,#f5fdff 45%,#ffffff 100%)' }}>
       <div className="text-center max-w-md">
         <div className="w-24 h-24 rounded-full flex items-center justify-center mx-auto mb-6" style={{ background: 'rgba(8,145,178,0.08)', border: '2px dashed rgba(8,145,178,0.2)' }}>
           <Newspaper className="w-12 h-12" style={{ color: 'rgba(8,145,178,0.4)' }} />
@@ -123,7 +123,7 @@ export default function VolantinoPage() {
   )
 
   return (
-    <div className="min-h-screen" style={{ background: '#f0fbfd' }}>
+    <div className="min-h-screen" style={{ background: 'linear-gradient(180deg,#eafbff 0%,#f5fdff 45%,#ffffff 100%)' }}>
       {/* Header stile volantino */}
       <div className="relative overflow-hidden" style={{ background: '#0c2b36' }}>
         <div className="absolute inset-0 opacity-[0.04]" style={{ backgroundImage: 'linear-gradient(rgba(34,211,238,0.9) 1px,transparent 1px),linear-gradient(90deg,rgba(34,211,238,0.9) 1px,transparent 1px)', backgroundSize: '40px 40px' }} />

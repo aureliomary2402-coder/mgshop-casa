@@ -26,7 +26,7 @@ export function BottomNav() {
 
   return (
     <nav
-      className="fixed bottom-0 inset-x-0 z-40 md:hidden"
+      className="fixed bottom-0 inset-x-0 z-50 md:hidden"
       style={{ paddingBottom: 'env(safe-area-inset-bottom, 0px)' }}
       aria-label="Navigazione principale"
     >
