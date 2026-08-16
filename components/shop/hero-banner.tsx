@@ -1,14 +1,24 @@
 "use client"
 
 import { useState, useEffect } from 'react'
-import Link from 'next/link'
-import { ChevronLeft, ChevronRight, ShoppingBag, ArrowRight, ChevronUp } from 'lucide-react'
+import type { CSSProperties } from 'react'
+import { ChevronLeft, ChevronRight, ShoppingBag, Truck, Banknote, Star, Package } from 'lucide-react'
 import type { Banner, Category } from '@/lib/types'
 import { AmbientBubbles } from './ambient-bubbles'
 
-export function HeroBanner({ banners, categories }: { banners: Banner[]; categories: Category[] }) {
+const ADVANTAGES = [
+  { icon: Truck, label: 'Consegna a mano nella tua zona' },
+  { icon: Banknote, label: 'Paghi alla consegna' },
+  { icon: Star, label: 'Raccogli punti ad ogni acquisto' },
+  { icon: Package, label: 'Lotteria ogni settimana' },
+]
+
+// La funzione "categories" resta nella firma per compatibilita con chi
+// chiama questo componente, ma la selezione categoria ora vive nella
+// CategorySidebar: qui l'hero si limita a mostrare titolo/sottotitolo del
+// banner attivo (gestibile da admin) piu la bolla vetro e i vantaggi.
+export function HeroBanner({ banners }: { banners: Banner[]; categories?: Category[] }) {
   const [currentIndex, setCurrentIndex] = useState(0)
-  const [showCategories, setShowCategories] = useState(false)
 
   useEffect(() => {
     if (banners.length <= 1) return
@@ -16,85 +26,65 @@ export function HeroBanner({ banners, categories }: { banners: Banner[]; categor
     return () => clearInterval(interval)
   }, [banners.length])
 
-  // Banner sempre "disegnato" a codice: niente foto caricate, sempre nitido a qualsiasi risoluzione.
   const current: Partial<Banner> | undefined = banners[currentIndex]
-  const title = current?.title || 'MGShop Casa'
-  const subtitle = current?.subtitle || 'Detersivi, articoli per la casa e per il corpo. Qualità e convenienza in ogni ordine.'
+  const title = current?.title || 'NEGOZIO'
+  const subtitle = current?.subtitle || 'Scopri tutti i prodotti per la tua casa. Qualita e convenienza, sempre.'
 
-  const bubbleStyle = (i: number) => ({
-    background: 'radial-gradient(circle at 30% 25%, #a5f3fc, #0891b2 55%, #155e75 100%)',
-    boxShadow: 'inset -3px -4px 8px rgba(0,0,0,0.25), inset 3px 4px 7px rgba(255,255,255,0.5), 0 8px 18px rgba(0,0,0,0.2)',
-    animationDelay: `${i * 70}ms`,
-  })
+  const rgb = '219,39,119'
 
   return (
-    <section className="relative overflow-hidden" style={{ background: 'linear-gradient(120deg, #0c2b36 0%, #0891b2 55%, #06b6d4 100%)' }}>
-      <AmbientBubbles count={9} theme="dark" />
-      <div className="absolute inset-0 opacity-[0.06]" style={{ backgroundImage: 'linear-gradient(rgba(255,255,255,0.8) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,0.8) 1px,transparent 1px)', backgroundSize: '48px 48px' }} />
-      <div className="absolute -right-16 -top-16 w-64 h-64 rounded-full blur-[70px] opacity-30" style={{ background: 'radial-gradient(circle,#a5f3fc,transparent)' }} />
+    <section className="relative overflow-hidden" style={{ background: 'linear-gradient(160deg,#dff7fc 0%,#eafbff 55%,#ffffff 100%)' }}>
+      <AmbientBubbles count={10} theme="light" />
 
-      <div className="relative z-10 max-w-7xl mx-auto px-6 py-14 md:py-20 flex flex-col items-start">
-        <div className="inline-flex items-center justify-center w-12 h-12 rounded-xl mb-5 animate-float"
-          style={{ background: 'rgba(255,255,255,0.15)', border: '1px solid rgba(255,255,255,0.25)' }}>
-          <ShoppingBag className="w-6 h-6 text-white" />
+      <div className="relative z-10 max-w-7xl mx-auto px-6 pt-8 pb-8 md:py-14 flex flex-col md:flex-row md:items-center md:justify-between gap-6">
+        <div className="max-w-xl">
+          <h1 className="text-3xl md:text-5xl font-extrabold tracking-tight leading-tight mb-3" style={{ color: '#0c2b36' }}>
+            {title}
+          </h1>
+          <p className="text-sm md:text-lg leading-relaxed" style={{ color: '#0c2b36cc' }}>
+            {subtitle}
+          </p>
         </div>
-        <h1 className="text-3xl md:text-5xl font-extrabold tracking-tight text-white leading-tight mb-3 max-w-2xl">
-          {title}
-        </h1>
-        <p className="text-cyan-50/85 text-sm md:text-lg max-w-xl mb-7 leading-relaxed">
-          {subtitle}
-        </p>
 
-        {!showCategories ? (
-          <button onClick={() => setShowCategories(true)}
-            className="group inline-flex items-center gap-2 font-bold text-sm md:text-base px-6 py-3 rounded-xl text-cyan-800 bg-white transition-all hover:scale-105 btn-press neon-glow">
-            Scopri i prodotti
-            <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-          </button>
-        ) : (
-          <div className="w-full">
-            <div className="flex items-center gap-2 mb-3">
-              <p className="text-white/70 text-xs font-medium uppercase tracking-wider">Scegli una categoria</p>
-              <button onClick={() => setShowCategories(false)} aria-label="Richiudi categorie"
-                className="w-6 h-6 rounded-full flex items-center justify-center transition-all hover:scale-110 btn-press"
-                style={{ background: 'rgba(255,255,255,0.15)', border: '1px solid rgba(255,255,255,0.25)' }}>
-                <ChevronUp className="w-3.5 h-3.5 text-white" />
-              </button>
+        <div
+          className="glass-bubble shrink-0 w-28 h-28 md:w-40 md:h-40 mx-auto md:mx-0 rounded-full flex items-center justify-center overflow-hidden animate-bubble-bob"
+          style={{ '--tint': `rgba(${rgb},0.30)`, '--tint-strong': `rgba(${rgb},0.38)` } as CSSProperties}
+        >
+          <span className="glass-bubble-sheen" />
+          <ShoppingBag className="relative z-10 w-11 h-11 md:w-16 md:h-16" style={{ color: '#db2777' }} />
+        </div>
+      </div>
+
+      <div className="relative z-10 max-w-7xl mx-auto px-6 pb-8">
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-px rounded-2xl overflow-hidden"
+          style={{ background: 'rgba(8,145,178,0.1)' }}>
+          {ADVANTAGES.map((a, i) => (
+            <div key={i} className="flex items-center gap-2.5 p-3.5 sm:p-4" style={{ background: 'rgba(255,255,255,0.85)' }}>
+              <span className="w-8 h-8 sm:w-9 sm:h-9 rounded-full flex items-center justify-center shrink-0"
+                style={{ background: 'rgba(8,145,178,0.1)', color: '#0891b2' }}>
+                <a.icon className="w-4 h-4" />
+              </span>
+              <span className="text-[11px] sm:text-xs font-semibold leading-snug" style={{ color: '#0c2b36' }}>{a.label}</span>
             </div>
-            <div className="flex flex-wrap gap-3">
-              {categories.map((cat, i) => (
-                <Link key={cat.id} href={`/shop?categoria=${cat.slug}#prodotti-grid`} scroll={false}
-                  onClick={() => requestAnimationFrame(() => document.getElementById('prodotti-grid')?.scrollIntoView({ behavior: 'smooth', block: 'start' }))}
-                  className="animate-bubble-pop-in animate-bubble-bob inline-flex items-center justify-center text-center rounded-full px-5 py-4 min-w-[92px] font-semibold text-xs text-white transition-transform hover:scale-110 btn-press"
-                  style={bubbleStyle(i)}>
-                  {cat.name}
-                </Link>
-              ))}
-              <Link href="/shop#prodotti-grid" scroll={false}
-                onClick={() => requestAnimationFrame(() => document.getElementById('prodotti-grid')?.scrollIntoView({ behavior: 'smooth', block: 'start' }))}
-                className="animate-bubble-pop-in animate-bubble-bob inline-flex items-center justify-center text-center rounded-full px-5 py-4 min-w-[92px] font-semibold text-xs text-cyan-800 bg-white transition-transform hover:scale-110 btn-press"
-                style={{ animationDelay: `${categories.length * 70}ms` }}>
-                Tutti
-              </Link>
-            </div>
-          </div>
-        )}
+          ))}
+        </div>
       </div>
 
       {banners.length > 1 && (
         <>
           <button onClick={() => setCurrentIndex((prev) => (prev - 1 + banners.length) % banners.length)}
-            className="absolute left-3 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white rounded-full p-2 shadow transition z-20">
-            <ChevronLeft className="w-5 h-5" />
+            className="absolute left-3 top-1/3 -translate-y-1/2 bg-white/80 hover:bg-white rounded-full p-2 shadow transition z-20">
+            <ChevronLeft className="w-5 h-5" style={{ color: '#0891b2' }} />
           </button>
           <button onClick={() => setCurrentIndex((prev) => (prev + 1) % banners.length)}
-            className="absolute right-3 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white rounded-full p-2 shadow transition z-20">
-            <ChevronRight className="w-5 h-5" />
+            className="absolute right-3 top-1/3 -translate-y-1/2 bg-white/80 hover:bg-white rounded-full p-2 shadow transition z-20">
+            <ChevronRight className="w-5 h-5" style={{ color: '#0891b2' }} />
           </button>
-          <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2 z-20">
+          <div className="absolute top-3 left-1/2 -translate-x-1/2 flex gap-2 z-20">
             {banners.map((_, i) => (
               <button key={i} onClick={() => setCurrentIndex(i)}
-                className={`w-2 h-2 rounded-full transition-all ${i === currentIndex ? 'bg-white w-4' : 'bg-white/50'}`} />
+                className="h-1.5 rounded-full transition-all"
+                style={{ width: i === currentIndex ? 16 : 6, background: i === currentIndex ? '#db2777' : 'rgba(8,145,178,0.25)' }} />
             ))}
           </div>
         </>

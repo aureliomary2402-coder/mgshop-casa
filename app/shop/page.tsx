@@ -1,5 +1,6 @@
 import { createAdminClient } from '@/lib/supabase/admin'
 import { HeroBanner } from '@/components/shop/hero-banner'
+import { CategorySidebar } from '@/components/shop/category-sidebar'
 import { ProductGrid } from '@/components/shop/product-grid'
 import { LoyaltyBanner } from '@/components/shop/loyalty-banner'
 import { LotteryTicketCard } from '@/components/shop/lottery-ticket-card'
@@ -41,33 +42,39 @@ export default async function ShopPage({ searchParams }: { searchParams: Promise
 
   return (
     <main>
-      <HeroBanner banners={banners as Banner[]} categories={categories as Category[]} />
-      <div className="max-w-7xl mx-auto px-4 py-6 space-y-5">
-        <LotteryTicketCard />
-        <LoyaltyBanner />
-        <Suspense><RecentlyViewed /></Suspense>
-        {products.length === 0 ? (
-          <div className="text-center py-20 animate-fade-in">
-            <div className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4" style={{ background: 'rgba(8,145,178,0.08)' }}>
-              <span className="text-2xl">🔍</span>
-            </div>
-            <p className="text-lg font-medium text-slate-600">Nessun prodotto trovato</p>
+      <HeroBanner banners={banners as Banner[]} />
+      <div className="max-w-7xl mx-auto px-4 py-6">
+        <div className="lg:grid lg:grid-cols-[240px_1fr] lg:gap-8 lg:items-start">
+          <CategorySidebar categories={categories as Category[]} />
+
+          <div className="space-y-5 mt-5 lg:mt-0">
+            <LotteryTicketCard />
+            <LoyaltyBanner />
+            <Suspense><RecentlyViewed /></Suspense>
+            {products.length === 0 ? (
+              <div className="text-center py-20 animate-fade-in">
+                <div className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4" style={{ background: 'rgba(8,145,178,0.08)' }}>
+                  <span className="text-2xl">🔍</span>
+                </div>
+                <p className="text-lg font-medium text-slate-600">Nessun prodotto trovato</p>
+              </div>
+            ) : (
+              <>
+                <div className="flex items-center justify-between">
+                  <p className="text-sm text-slate-500">{count} prodott{count === 1 ? 'o' : 'i'}</p>
+                  <Suspense><SortDropdown /></Suspense>
+                </div>
+                <ProductGrid
+                  initialProducts={products as Product[]}
+                  count={count}
+                  q={params.q}
+                  categoria={params.categoria}
+                  ordina={params.ordina}
+                />
+              </>
+            )}
           </div>
-        ) : (
-          <>
-            <div className="flex items-center justify-between">
-              <p className="text-sm text-slate-500">{count} prodott{count === 1 ? 'o' : 'i'}</p>
-              <Suspense><SortDropdown /></Suspense>
-            </div>
-            <ProductGrid
-              initialProducts={products as Product[]}
-              count={count}
-              q={params.q}
-              categoria={params.categoria}
-              ordina={params.ordina}
-            />
-          </>
-        )}
+        </div>
       </div>
     </main>
   )
