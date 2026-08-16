@@ -23,19 +23,18 @@ export default function ConsegnePage() {
   return (
     <div className="min-h-screen" style={{ background: 'linear-gradient(180deg,#eafbff 0%,#f5fdff 45%,#ffffff 100%)' }}>
       {/* Hero */}
-      <div className="relative overflow-hidden" style={{ background: 'linear-gradient(135deg,#0c2b36,#06303d)' }}>
-        <div className="absolute top-0 left-1/4 w-96 h-96 rounded-full blur-[100px] opacity-20" style={{ background: 'radial-gradient(circle,#0891b2,transparent)' }} />
-        <AmbientBubbles count={9} theme="dark" />
+      <div className="relative overflow-hidden theme-hero">
+        <AmbientBubbles count={9} theme="light" />
         <div className="relative z-10 max-w-4xl mx-auto px-4 py-12 text-center">
-          <Link href="/shop" className="inline-flex items-center gap-2 text-cyan-400/60 hover:text-cyan-300 text-sm transition-colors mb-6">
+          <Link href="/shop" className="inline-flex items-center gap-2 text-sm transition-colors mb-6" style={{ color: '#0891b2' }}>
             <ArrowLeft className="w-4 h-4" /> Negozio
           </Link>
-          <div className="inline-flex items-center gap-2 rounded-full px-4 py-1.5 text-cyan-300 text-sm font-medium mb-4"
-            style={{ background: 'rgba(8,145,178,0.15)', border: '1px solid rgba(8,145,178,0.3)' }}>
+          <div className="inline-flex items-center gap-2 rounded-full px-4 py-1.5 text-sm font-medium mb-4"
+            style={{ background: 'rgba(8,145,178,0.1)', color: '#0891b2', border: '1px solid rgba(8,145,178,0.2)' }}>
             <Truck className="w-4 h-4" /> Zone di consegna
           </div>
-          <h1 className="text-4xl md:text-5xl font-extrabold text-white mb-3">Dove consegniamo</h1>
-          <p className="text-lg text-cyan-200/60 max-w-xl mx-auto">
+          <h1 className="text-4xl md:text-5xl font-extrabold mb-3" style={{ color: '#0c2b36' }}>Dove consegniamo</h1>
+          <p className="text-lg max-w-xl mx-auto" style={{ color: '#0c2b36cc' }}>
             Siamo un negozio online: Consegniamo direttamente a casa tua nelle zone qui sotto.
           </p>
         </div>
@@ -48,10 +47,9 @@ export default function ConsegnePage() {
           <Reveal>
             <div className="grid sm:grid-cols-2 gap-5">
               {ZONES.map(z => (
-                <div key={z.title} className="bg-white rounded-2xl p-6"
+                <div key={z.title} className="glass-card rounded-2xl p-6"
                   style={{
-                    border: z.highlight ? '1px solid rgba(22,163,74,0.25)' : '1px solid rgba(8,145,178,0.12)',
-                    boxShadow: '0 4px 20px rgba(8,145,178,0.08)',
+                    border: z.highlight ? '1px solid rgba(22,163,74,0.25)' : undefined,
                   }}>
                   <div className="w-11 h-11 rounded-xl flex items-center justify-center mb-4"
                     style={{ background: z.highlight ? 'rgba(22,163,74,0.1)' : 'rgba(8,145,178,0.1)' }}>

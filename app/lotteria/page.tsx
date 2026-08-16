@@ -23,7 +23,7 @@ function bubbleSize(count: number) {
 }
 
 function Countdown({ remaining }: { remaining: number }) {
-  if (remaining <= 0) return <div className="text-center text-cyan-200/50 text-sm">Estrazione in corso...</div>
+  if (remaining <= 0) return <div className="text-center text-slate-400 text-sm">Estrazione in corso...</div>
   const d = Math.floor(remaining / 86400000)
   const h = Math.floor((remaining % 86400000) / 3600000)
   const m = Math.floor((remaining % 3600000) / 60000)
@@ -34,7 +34,7 @@ function Countdown({ remaining }: { remaining: number }) {
         <div key={l} className="flex items-center gap-3">
           <div className="text-center">
             <div className="w-14 h-14 rounded-xl flex items-center justify-center font-bold text-2xl text-white" style={{ background: 'linear-gradient(135deg,#0891b2,#06b6d4)', boxShadow: '0 4px 16px rgba(8,145,178,0.3)' }}>{String(v).padStart(2, '0')}</div>
-            <p className="text-xs text-cyan-200/50 mt-1">{l}</p>
+            <p className="text-xs mt-1" style={{ color: '#0c2b3699' }}>{l}</p>
           </div>
           {i < 3 && <span className="text-cyan-500 font-bold text-xl mb-4">:</span>}
         </div>
@@ -111,17 +111,16 @@ export default function LotteryPage() {
   return (
     <div className="min-h-screen" style={{ background: 'linear-gradient(180deg,#eafbff 0%,#f5fdff 45%,#ffffff 100%)' }}>
       {/* Hero */}
-      <div className="relative overflow-hidden" style={{ background: 'linear-gradient(135deg,#0c2b36,#06303d)' }}>
-        <div className="absolute top-0 left-1/4 w-96 h-96 rounded-full blur-[100px] opacity-20" style={{ background: 'radial-gradient(circle,#0891b2,transparent)' }} />
-        <AmbientBubbles count={9} theme="dark" />
+      <div className="relative overflow-hidden theme-hero">
+        <AmbientBubbles count={9} theme="light" />
         <div className="relative z-10 max-w-4xl mx-auto px-4 py-12 text-center">
-          <Link href="/shop" className="inline-flex items-center gap-2 text-cyan-400/60 hover:text-cyan-300 text-sm transition-colors mb-6"><ArrowLeft className="w-4 h-4" /> Negozio</Link>
-          <div className="inline-flex items-center gap-2 rounded-full px-4 py-1.5 text-cyan-300 text-sm font-medium mb-4" style={{ background: 'rgba(8,145,178,0.15)', border: '1px solid rgba(8,145,178,0.3)' }}><Gift className="w-4 h-4" /> Lotteria a premi</div>
-          <h1 className="text-4xl md:text-5xl font-extrabold text-white mb-3">{data.title}</h1>
-          {data.description && <p className="text-lg text-cyan-200/60 mb-6 whitespace-pre-line">{data.description}</p>}
+          <Link href="/shop" className="inline-flex items-center gap-2 text-sm transition-colors mb-6" style={{ color: '#0891b2' }}><ArrowLeft className="w-4 h-4" /> Negozio</Link>
+          <div className="inline-flex items-center gap-2 rounded-full px-4 py-1.5 text-sm font-medium mb-4" style={{ background: 'rgba(8,145,178,0.1)', color: '#0891b2', border: '1px solid rgba(8,145,178,0.2)' }}><Gift className="w-4 h-4" /> Lotteria a premi</div>
+          <h1 className="text-4xl md:text-5xl font-extrabold mb-3" style={{ color: '#0c2b36' }}>{data.title}</h1>
+          {data.description && <p className="text-lg mb-6 whitespace-pre-line" style={{ color: '#0c2b36cc' }}>{data.description}</p>}
           {data.ends_at && !revealPhase && (
             <div className="mb-2">
-              <div className="flex items-center justify-center gap-2 text-cyan-400/60 text-sm mb-3"><Clock className="w-4 h-4" /> Estrazione tra:</div>
+              <div className="flex items-center justify-center gap-2 text-sm mb-3" style={{ color: '#0891b2' }}><Clock className="w-4 h-4" /> Estrazione tra:</div>
               <Countdown remaining={remaining} />
             </div>
           )}

@@ -270,7 +270,7 @@ export function CartContent({ scope = 'shop' }: { scope?: string }) {
           <LoyaltyBanner compact={true} />
         </div>
 
-        <div className="rounded-2xl p-4 sm:p-5 h-fit md:sticky md:top-20 animate-slide-in-right space-y-4 min-w-0" style={{background:'white',border:'1px solid rgba(8,145,178,0.1)',boxShadow:'0 8px 24px rgba(8,145,178,0.08)'}}>
+        <div className="rounded-2xl p-4 sm:p-5 h-fit md:sticky md:top-20 animate-slide-in-right space-y-4 min-w-0 glass-card">
           <h2 className="font-bold" style={{color:'#0c2b36'}}>Riepilogo ordine</h2>
           <div className="space-y-2">
             {items.map(({product,quantity,lineId}) => (

@@ -45,6 +45,17 @@
   }
 }
 
+/* ===== TEMA HOME/NEGOZIO (riusato su tutte le pagine) ===== */
+.theme-page-bg { background: linear-gradient(180deg,#eafbff 0%,#f5fdff 45%,#ffffff 100%); }
+.theme-hero { background: linear-gradient(160deg,#dff7fc 0%,#eafbff 55%,#ffffff 100%); }
+.glass-card {
+  background: rgba(255,255,255,0.75);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(8,145,178,0.12);
+  box-shadow: 0 10px 30px rgba(8,145,178,0.08);
+}
+
 /* ===== SCROLLBAR ===== */
 .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
 .scrollbar-hide::-webkit-scrollbar { display: none; }

@@ -125,24 +125,23 @@ export default function VolantinoPage() {
   return (
     <div className="min-h-screen" style={{ background: 'linear-gradient(180deg,#eafbff 0%,#f5fdff 45%,#ffffff 100%)' }}>
       {/* Header stile volantino */}
-      <div className="relative overflow-hidden" style={{ background: '#0c2b36' }}>
-        <div className="absolute inset-0 opacity-[0.04]" style={{ backgroundImage: 'linear-gradient(rgba(34,211,238,0.9) 1px,transparent 1px),linear-gradient(90deg,rgba(34,211,238,0.9) 1px,transparent 1px)', backgroundSize: '40px 40px' }} />
-        <AmbientBubbles count={9} theme="dark" />
+      <div className="relative overflow-hidden theme-hero">
+        <AmbientBubbles count={9} theme="light" />
         <div className="relative z-10 max-w-5xl mx-auto px-4 py-10 text-center">
           <div className="flex items-center justify-between mb-6">
-            <Link href="/shop" className="inline-flex items-center gap-2 text-cyan-400/60 hover:text-cyan-300 text-sm transition-colors"><ArrowLeft className="w-4 h-4" /> Negozio</Link>
-            <Link href="/carrello" className="relative flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium text-white transition-all hover:bg-white/10"
-              style={{ border: '1px solid rgba(255,255,255,0.1)' }}>
+            <Link href="/shop" className="inline-flex items-center gap-2 text-sm transition-colors" style={{ color: '#0891b2' }}><ArrowLeft className="w-4 h-4" /> Negozio</Link>
+            <Link href="/carrello" className="relative flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium transition-all hover:bg-white"
+              style={{ color: '#0c2b36', border: '1px solid rgba(8,145,178,0.2)', background: 'rgba(255,255,255,0.6)' }}>
               <ShoppingBag className="w-4 h-4" />
               Carrello
               {cartCount > 0 && <span className="absolute -top-1 -right-1 w-5 h-5 text-white text-xs rounded-full flex items-center justify-center font-bold" style={{ background: 'linear-gradient(135deg,#0891b2,#06b6d4)' }}>{cartCount}</span>}
             </Link>
           </div>
-          <div className="inline-flex items-center gap-2 rounded-full px-4 py-1.5 text-cyan-300 text-sm font-bold mb-4" style={{ background: 'rgba(8,145,178,0.15)', border: '1px solid rgba(8,145,178,0.3)' }}>
+          <div className="inline-flex items-center gap-2 rounded-full px-4 py-1.5 text-sm font-bold mb-4" style={{ background: 'rgba(8,145,178,0.1)', color: '#0891b2', border: '1px solid rgba(8,145,178,0.2)' }}>
             <Newspaper className="w-4 h-4" /> Volantino digitale
           </div>
-          <h1 className="text-4xl md:text-5xl font-extrabold text-white mb-3">{data.title || 'Offerte della settimana'}</h1>
-          {data.subtitle && <p className="text-lg text-cyan-200/60">{data.subtitle}</p>}
+          <h1 className="text-4xl md:text-5xl font-extrabold mb-3" style={{ color: '#0c2b36' }}>{data.title || 'Offerte della settimana'}</h1>
+          {data.subtitle && <p className="text-lg" style={{ color: '#0c2b36cc' }}>{data.subtitle}</p>}
         </div>
       </div>
 

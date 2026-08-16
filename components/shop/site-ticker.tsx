@@ -20,6 +20,12 @@ const CSS = `
   35% { left: 120%; }
   100% { left: 120%; }
 }
+.site-ticker-foam { bottom: 22px; }
+.site-ticker-bar { bottom: 0; }
+@media (max-width: 767px) {
+  .site-ticker-foam { bottom: calc(98px + env(safe-area-inset-bottom, 0px)); }
+  .site-ticker-bar { bottom: calc(76px + env(safe-area-inset-bottom, 0px)); }
+}
 `
 
 interface BubbleData {
@@ -174,8 +180,8 @@ export function SiteTicker() {
       {/* SCHIUMA — dietro la striscia, z-index inferiore */}
       <div
         ref={containerRef}
-        className="fixed left-0 right-0 pointer-events-none"
-        style={{ bottom: 22, height: 60, zIndex: 39 }}
+        className="fixed left-0 right-0 pointer-events-none site-ticker-foam"
+        style={{ height: 60, zIndex: 39 }}
       >
         {/* Cresta compatta sul bordo superiore della striscia */}
         <div
@@ -213,7 +219,7 @@ export function SiteTicker() {
 
       {/* TICKER — in primo piano, copre la base delle bolle */}
       <div
-        className="fixed bottom-0 left-0 right-0 flex items-center h-9 overflow-hidden"
+        className="fixed left-0 right-0 flex items-center h-9 overflow-hidden site-ticker-bar"
         style={{
           zIndex: 40,
           background: 'linear-gradient(90deg, #0c4a6e, #075985, #0891b2, #06b6d4, #0891b2, #075985, #0c4a6e)',
