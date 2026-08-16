@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import { useState, useEffect, useRef } from 'react'
-import { useRouter, useSearchParams, usePathname } from 'next/navigation'
+import { useRouter } from 'next/navigation'
 import {
   Menu, X, ShoppingBag, User, Search, Heart, ChevronDown,
   Tag, Sparkles, Newspaper, Ticket, ImageIcon,
@@ -74,11 +74,7 @@ export function GlobalHeader() {
   const openChat = useUIPanelsStore(s => s.openChat)
 
   const router = useRouter()
-  const searchParams = useSearchParams()
-  const pathname = usePathname()
   const itemCount = mounted ? getTotalItems() : 0
-  const activeCategory = searchParams.get('categoria')
-  const activeCategoryName = categories.find(c => c.slug === activeCategory)?.name
 
   useEffect(() => { setMounted(true) }, [])
 
@@ -143,28 +139,19 @@ export function GlobalHeader() {
   const handleSearch = (value: string) => {
     setSearchValue(value)
     setDropdownOpen(value.trim().length > 0)
-    if (pathname?.startsWith('/shop')) {
-      const params = new URLSearchParams(searchParams.toString())
-      if (value.trim()) { params.set('q', value.trim()) } else { params.delete('q') }
-      router.replace(`${pathname}?${params.toString()}`)
-    }
   }
 
   const handleClearSearch = () => {
     setSearchValue('')
     setSearchResults([])
     setDropdownOpen(false)
-    if (pathname?.startsWith('/shop')) {
-      const params = new URLSearchParams(searchParams.toString())
-      params.delete('q')
-      router.replace(`${pathname}?${params.toString()}`)
-    }
     setSearchOpen(false)
   }
 
   const handleSelectProduct = (product: Product) => {
     setDropdownOpen(false)
     setSearchOpen(false)
+    setSearchValue('')
     router.push(`/prodotto/${product.id}`)
   }
 
@@ -172,10 +159,8 @@ export function GlobalHeader() {
     setDropdownOpen(false)
     setSearchOpen(false)
     const term = searchValue.trim()
+    setSearchValue('')
     router.push(`/shop?q=${encodeURIComponent(term)}#prodotti-grid`)
-    requestAnimationFrame(() => {
-      document.getElementById('prodotti-grid')?.scrollIntoView({ behavior: 'smooth', block: 'start' })
-    })
   }
 
   const handleCategorySelect = (slug: string | null) => {
@@ -218,7 +203,7 @@ export function GlobalHeader() {
             <button onClick={() => setCatOpen(v => !v)}
               className="flex items-center gap-1 text-sm font-medium whitespace-nowrap text-slate-600 hover:text-cyan-700 transition-colors relative group">
               <Tag className="w-3.5 h-3.5" />
-              {activeCategoryName || 'Categorie'}
+              Categorie
               <ChevronDown className={`w-3 h-3 transition-transform duration-200 ${catOpen ? 'rotate-180' : ''}`} />
               <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-cyan-500 transition-all group-hover:w-full rounded-full" />
             </button>
@@ -227,12 +212,12 @@ export function GlobalHeader() {
                 style={{ background: 'white', border: '1px solid rgba(8,145,178,0.1)', boxShadow: '0 20px 60px rgba(0,0,0,0.12)' }}>
                 <div className="p-2 max-h-80 overflow-y-auto">
                   <button onClick={() => handleCategorySelect(null)}
-                    className={`w-full text-left px-3 py-2 rounded-xl text-sm font-medium transition-all hover:bg-cyan-50 ${!activeCategory ? 'bg-cyan-50 text-cyan-700' : 'text-slate-700'}`}>
+                    className="w-full text-left px-3 py-2 rounded-xl text-sm font-medium text-slate-700 hover:bg-cyan-50 hover:text-cyan-700 transition-colors">
                     Tutti i prodotti
                   </button>
                   {categories.map(cat => (
                     <button key={cat.id} onClick={() => handleCategorySelect(cat.slug)}
-                      className={`w-full text-left px-3 py-2 rounded-xl text-sm font-medium transition-all hover:bg-cyan-50 ${activeCategory === cat.slug ? 'bg-cyan-50 text-cyan-700' : 'text-slate-700'}`}>
+                      className="w-full text-left px-3 py-2 rounded-xl text-sm font-medium text-slate-700 hover:bg-cyan-50 hover:text-cyan-700 transition-colors">
                       {cat.name}
                     </button>
                   ))}

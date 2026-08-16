@@ -46,7 +46,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="it">
       <body className={inter.className}>
-        <GlobalHeader />
+        <Suspense>
+          <GlobalHeader />
+        </Suspense>
         <Suspense><AnalyticsTracker /></Suspense>
         <CartAbandonTracker />
         <ServiceWorkerRegister />
