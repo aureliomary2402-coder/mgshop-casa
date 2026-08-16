@@ -79,8 +79,8 @@ export default function WelcomePage() {
     const Icon = b.icon
     const area = variant === 'mobile' ? b.mobileArea : b.desktopArea
     const size = b.big
-      ? (variant === 'mobile' ? 'w-[46vw] max-w-[190px] aspect-square' : 'w-44 h-44 xl:w-48 xl:h-48 scale-110')
-      : (variant === 'mobile' ? 'w-[40vw] max-w-[168px] aspect-square' : 'w-full aspect-square')
+      ? (variant === 'mobile' ? 'w-[38vw] max-w-[155px] aspect-square' : 'w-44 h-44 xl:w-48 xl:h-48 scale-110')
+      : (variant === 'mobile' ? 'w-[32vw] max-w-[132px] aspect-square' : 'w-full aspect-square')
     const iconSize = b.big ? 'w-8 h-8' : 'w-5 h-5 sm:w-6 sm:h-6'
     const labelSize = b.big ? 'text-sm sm:text-base font-bold' : 'text-[11px] sm:text-xs font-semibold'
     const wrapperClass = `glass-bubble relative ${size} ${b.big ? 'z-10' : ''} rounded-full flex flex-col items-center justify-center text-center px-2 transition-transform hover:scale-105 active:scale-95 btn-press animate-bubble-bob overflow-hidden`
@@ -202,18 +202,18 @@ export default function WelcomePage() {
       <section className="max-w-5xl mx-auto px-4 sm:px-6 py-10 sm:py-14">
         <div className="rounded-2xl overflow-hidden"
           style={{ background: 'rgba(255,255,255,0.75)', backdropFilter: 'blur(10px)', border: '1px solid rgba(8,145,178,0.1)', boxShadow: '0 10px 30px rgba(8,145,178,0.08)' }}>
-          <div className="flex sm:grid sm:grid-cols-4 overflow-x-auto scrollbar-hide snap-x snap-mandatory">
+          <div className="grid grid-cols-2 sm:grid-cols-4">
             {BOTTOM_ADVANTAGES.map((a, i) => (
               <div key={i}
-                className="shrink-0 w-[78%] sm:w-auto snap-start flex items-center gap-3 p-5 sm:border-r last:border-r-0"
+                className="flex items-center gap-3 p-4 sm:p-5 sm:border-r last:border-r-0 [&:nth-child(-n+2)]:border-b [&:nth-child(-n+2)]:sm:border-b-0"
                 style={{ borderColor: 'rgba(8,145,178,0.08)' }}>
-                <span className="w-10 h-10 rounded-full flex items-center justify-center shrink-0"
+                <span className="w-9 h-9 sm:w-10 sm:h-10 rounded-full flex items-center justify-center shrink-0"
                   style={{ background: 'rgba(8,145,178,0.08)', color: '#0891b2' }}>
-                  <a.icon className="w-5 h-5" />
+                  <a.icon className="w-4 h-4 sm:w-5 sm:h-5" />
                 </span>
                 <div>
-                  <p className="text-xs font-bold tracking-wide" style={{ color: '#0c2b36' }}>{a.title}</p>
-                  <p className="text-[11px] text-slate-500 mt-0.5 leading-snug">{a.sub}</p>
+                  <p className="text-[11px] sm:text-xs font-bold tracking-wide" style={{ color: '#0c2b36' }}>{a.title}</p>
+                  <p className="text-[10px] sm:text-[11px] text-slate-500 mt-0.5 leading-snug">{a.sub}</p>
                 </div>
               </div>
             ))}
