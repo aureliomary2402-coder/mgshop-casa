@@ -111,7 +111,13 @@
    solo il rilievo vetroso; e un pannello/card flottante (FloatingMenu,
    modali), dove la ricetta è completa come nella bottom nav. */
 .liquid-glass-header {
-  position: relative;
+  /* NIENTE "position" qui: questa classe si usa sempre insieme
+     all'utility Tailwind "sticky" sullo stesso elemento (l'header in
+     alto). Impostare "position: relative" qui vincerebbe sulla cascata
+     (stessa specificita', dichiarata dopo le utility di Tailwind) e
+     rompe silenziosamente lo sticky, facendo sparire il menu scorrendo.
+     "sticky" crea comunque un contesto di posizionamento valido per lo
+     pseudo-elemento ::before qui sotto, quindi non serve altro. */
   isolation: isolate;
   box-shadow:
     0 8px 28px rgba(8,45,60,0.10),
@@ -124,7 +130,15 @@
   mix-blend-mode: screen;
 }
 .liquid-glass-card {
-  position: relative;
+  /* NIENTE "position" qui: questa classe si usa sempre insieme
+     all'utility Tailwind "fixed" sullo stesso elemento (i pannelli
+     Chat e Account/Punti). Impostare "position: relative" qui
+     vincerebbe sulla cascata (stessa specificita', dichiarata dopo le
+     utility di Tailwind) e rompe silenziosamente il "fixed": il
+     pannello smette di restare ancorato allo schermo e scivola giu'
+     nel normale flusso della pagina, in basso a sinistra. "fixed" crea
+     comunque un contesto di posizionamento valido per lo
+     pseudo-elemento ::before qui sotto, quindi non serve altro. */
   isolation: isolate;
   background:
     linear-gradient(180deg, rgba(255,255,255,0.7) 0%, rgba(255,255,255,0.4) 100%),
