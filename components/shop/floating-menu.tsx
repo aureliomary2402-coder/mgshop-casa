@@ -86,10 +86,11 @@ export function FloatingMenu() {
   const requestPoints = useUIPanelsStore(s => s.requestPoints)
   const requestChat = useUIPanelsStore(s => s.requestChat)
 
-  // Nelle pagine Volantino e Promo lo scroll è lungo e il carrello
-  // rischia di restare "fuori vista": qui aggiungiamo una scorciatoia
-  // sempre a portata di mano, sopra il pulsante social/chat.
-  const showStickyCart = pathname === '/volantino' || pathname === '/promo'
+  // Nelle pagine Volantino, Promo, Negozio e Prodotto lo scroll è lungo e
+  // il carrello rischia di restare "fuori vista" dopo un acquisto: qui
+  // aggiungiamo una scorciatoia sempre a portata di mano, sopra il
+  // pulsante social/chat, così non serve risalire per il checkout.
+  const showStickyCart = pathname === '/volantino' || pathname === '/promo' || pathname === '/shop' || pathname?.startsWith('/prodotto')
   const cartHref = pathname === '/promo' ? '/carrello?promo=1' : '/carrello'
   // La bottom nav è fissa su tutte le larghezze: alziamo tutto di uno
   // "scalino" in più per non finirci sopra, su mobile e da browser.
@@ -268,14 +269,6 @@ export function FloatingMenu() {
             Scrivici in chat
             <span className="w-9 h-9 rounded-full flex items-center justify-center text-white shrink-0" style={{ background: 'linear-gradient(135deg,#0891b2,#06b6d4)' }}>
               <MessageCircle size={17} />
-            </span>
-          </button>
-          <button onClick={openPoints}
-            className="flex items-center gap-2.5 pl-4 pr-2 py-2 rounded-full shadow-lg bg-white text-sm font-medium text-slate-700 transition-transform hover:scale-105">
-            Il mio account
-            <span className="w-9 h-9 rounded-full flex items-center justify-center shrink-0 bg-white border-2"
-              style={{ borderColor: '#dc2626', color: '#dc2626' }}>
-              <img src="/images/mgshop-stamp.png" alt="" className="w-7 h-7 object-contain" />
             </span>
           </button>
         </div>
