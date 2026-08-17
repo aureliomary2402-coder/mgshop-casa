@@ -1,6 +1,6 @@
 "use client"
 import { useState, useEffect } from 'react'
-import { Send, Megaphone, Check, Users, Clock } from 'lucide-react'
+import { Send, Megaphone, Check, Users, Clock, Trash2 } from 'lucide-react'
 
 type HistoryItem = {
   id: string
@@ -28,6 +28,8 @@ export function CustomerPushNotify() {
   const [history, setHistory] = useState<HistoryItem[]>([])
   const [subscribers, setSubscribers] = useState<Subscriber[]>([])
   const [showList, setShowList] = useState(false)
+  const [deletingId, setDeletingId] = useState<string | null>(null)
+  const [confirmingId, setConfirmingId] = useState<string | null>(null)
 
   const loadStats = () => {
     fetch('/api/admin/push-notify')
@@ -63,6 +65,26 @@ export function CustomerPushNotify() {
       setError('Errore di rete, riprova')
     }
     setSending(false)
+  }
+
+  const handleDelete = async (id: string) => {
+    if (confirmingId !== id) {
+      setConfirmingId(id)
+      return
+    }
+    setDeletingId(id)
+    try {
+      await fetch('/api/admin/push-notify', {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id }),
+      })
+      setHistory(h => h.filter(item => item.id !== id))
+    } catch {
+      setError('Errore durante eliminazione, riprova')
+    }
+    setDeletingId(null)
+    setConfirmingId(null)
   }
 
   const formatDate = (iso: string) => {
@@ -160,8 +182,22 @@ export function CustomerPushNotify() {
               <div key={item.id} className="p-3 rounded-xl border border-slate-100">
                 <div className="flex items-start justify-between gap-2">
                   <p className="text-sm font-bold text-slate-800">{item.title}</p>
-                  <span className="text-xs text-slate-400 shrink-0">{formatDate(item.created_at)}</span>
+                  <div className="flex items-center gap-2 shrink-0">
+                    <span className="text-xs text-slate-400">{formatDate(item.created_at)}</span>
+                    <button
+                      onClick={() => handleDelete(item.id)}
+                      disabled={deletingId === item.id}
+                      title={confirmingId === item.id ? 'Conferma eliminazione' : 'Elimina'}
+                      className="p-1 rounded-lg transition-colors disabled:opacity-50"
+                      style={confirmingId === item.id ? { background: 'rgba(220,38,38,0.1)' } : undefined}
+                    >
+                      <Trash2 className={`w-3.5 h-3.5 ${confirmingId === item.id ? 'text-red-600' : 'text-slate-300'}`} />
+                    </button>
+                  </div>
                 </div>
+                {confirmingId === item.id && (
+                  <p className="text-xs text-red-500 mt-1">Tocca di nuovo il cestino per confermare l'eliminazione</p>
+                )}
                 <p className="text-sm text-slate-500 mt-0.5">{item.body}</p>
                 <p className="text-xs text-slate-400 mt-1.5">
                   Raggiunte {item.sent_count} persone · {item.clicked_count || 0} click

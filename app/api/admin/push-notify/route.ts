@@ -92,3 +92,26 @@ export async function GET() {
     history: history || [],
   })
 }
+
+export async function DELETE(request: NextRequest) {
+  if (!(await isAuthenticated())) {
+    return NextResponse.json({ error: 'Non autorizzato' }, { status: 401 })
+  }
+
+  const { id } = await request.json()
+  if (!id) {
+    return NextResponse.json({ error: 'ID mancante' }, { status: 400 })
+  }
+
+  const supabase = createAdminClient()
+  const { error } = await supabase
+    .from('push_notifications_log')
+    .delete()
+    .eq('id', id)
+
+  if (error) {
+    return NextResponse.json({ error: error.message }, { status: 500 })
+  }
+
+  return NextResponse.json({ ok: true })
+}
