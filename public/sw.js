@@ -24,7 +24,7 @@ self.addEventListener('push', function(event) {
     icon: '/icon-192.png',
     badge: '/icon-192.png',
     vibrate: [200, 100, 200],
-    data: { url: data.url || '/mgadmin-panel' },
+    data: { url: data.url || '/mgadmin-panel', notificationId: data.notificationId || null },
     actions: [
       { action: 'open', title: 'Vedi ordine' },
       { action: 'close', title: 'Chiudi' }
@@ -35,7 +35,21 @@ self.addEventListener('push', function(event) {
 
 self.addEventListener('notificationclick', function(event) {
   event.notification.close()
-  if (event.action === 'open' || !event.action) {
-    event.waitUntil(clients.openWindow(event.notification.data.url || '/mgadmin-panel'))
+  var notificationId = event.notification.data && event.notification.data.notificationId
+  var targetUrl = (event.notification.data && event.notification.data.url) || '/mgadmin-panel'
+
+  var tasks = []
+  if (notificationId) {
+    tasks.push(
+      fetch('/api/push/click', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ notificationId: notificationId }),
+      }).catch(function () {})
+    )
   }
+  if (event.action === 'open' || !event.action) {
+    tasks.push(clients.openWindow(targetUrl))
+  }
+  event.waitUntil(Promise.all(tasks))
 })

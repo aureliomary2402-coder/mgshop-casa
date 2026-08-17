@@ -34,7 +34,15 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ ok: true, sent: 0, message: 'Nessun cliente iscritto alle notifiche' })
   }
 
-  const payload = JSON.stringify({ title, body, url: url || '/' })
+  const { data: logRow } = await supabase
+    .from('push_notifications_log')
+    .insert({ title, body, sent_count: 0, failed_count: 0 })
+    .select('id')
+    .single()
+
+  const notificationId = logRow?.id || null
+  const payload = JSON.stringify({ title, body, url: url || '/', notificationId })
+
   let sent = 0
   let failed = 0
 
@@ -50,9 +58,12 @@ export async function POST(request: NextRequest) {
     }
   }
 
-  await supabase.from('push_notifications_log').insert({
-    title, body, sent_count: sent, failed_count: failed,
-  })
+  if (notificationId) {
+    await supabase
+      .from('push_notifications_log')
+      .update({ sent_count: sent, failed_count: failed })
+      .eq('id', notificationId)
+  }
 
   return NextResponse.json({ ok: true, sent, failed })
 }

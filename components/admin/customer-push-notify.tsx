@@ -8,6 +8,7 @@ type HistoryItem = {
   body: string
   sent_count: number
   failed_count: number
+  clicked_count: number
   created_at: string
 }
 
@@ -163,7 +164,7 @@ export function CustomerPushNotify() {
                 </div>
                 <p className="text-sm text-slate-500 mt-0.5">{item.body}</p>
                 <p className="text-xs text-slate-400 mt-1.5">
-                  Raggiunte {item.sent_count} persone
+                  Raggiunte {item.sent_count} persone · {item.clicked_count || 0} click
                   {item.failed_count > 0 && ` · ${item.failed_count} non raggiungibili`}
                 </p>
               </div>
