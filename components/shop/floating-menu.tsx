@@ -3,8 +3,7 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
 import { usePathname } from 'next/navigation'
 import Link from 'next/link'
-import { MessageCircle, X, Send, Menu as MenuIcon, ShoppingBag, Gift } from 'lucide-react'
-import { SOCIAL_LINKS, InstagramIcon, TikTokIcon, WhatsAppIcon, FacebookIcon } from './social-icons'
+import { MessageCircle, X, Send, Menu as MenuIcon, ShoppingBag, Gift, Share2 } from 'lucide-react'
 import { useCartStore } from '@/lib/cart-store'
 import { useUIPanelsStore } from '@/lib/ui-panels-store'
 
@@ -257,34 +256,13 @@ export function FloatingMenu() {
       {/* Mini-menu a scomparsa: social + chat */}
       {menuOpen && !chatOpen && !pointsOpen && (
         <div className={`fixed ${menuOffsetClass} right-5 z-[45] flex flex-col items-end gap-3`}>
-          <a href={SOCIAL_LINKS.instagram} target="_blank" rel="noopener noreferrer"
+          <Link href="/social" onClick={() => setMenuOpen(false)}
             className="flex items-center gap-2.5 pl-4 pr-2 py-2 rounded-full shadow-lg bg-white text-sm font-medium text-slate-700 transition-transform hover:scale-105">
-            Instagram
-            <span className="w-9 h-9 rounded-full flex items-center justify-center text-white shrink-0" style={{ background: 'linear-gradient(135deg,#06b6d4,#d946ef,#db2777)' }}>
-              <InstagramIcon size={17} />
+            Social
+            <span className="w-9 h-9 rounded-full flex items-center justify-center text-white shrink-0" style={{ background: 'linear-gradient(135deg,#0891b2,#06b6d4)' }}>
+              <Share2 size={17} />
             </span>
-          </a>
-          <a href={SOCIAL_LINKS.tiktok} target="_blank" rel="noopener noreferrer"
-            className="flex items-center gap-2.5 pl-4 pr-2 py-2 rounded-full shadow-lg bg-white text-sm font-medium text-slate-700 transition-transform hover:scale-105">
-            TikTok
-            <span className="w-9 h-9 rounded-full flex items-center justify-center text-white bg-slate-900 shrink-0">
-              <TikTokIcon size={16} />
-            </span>
-          </a>
-          <a href={SOCIAL_LINKS.whatsapp} target="_blank" rel="noopener noreferrer"
-            className="flex items-center gap-2.5 pl-4 pr-2 py-2 rounded-full shadow-lg bg-white text-sm font-medium text-slate-700 transition-transform hover:scale-105">
-            WhatsApp
-            <span className="w-9 h-9 rounded-full flex items-center justify-center text-white bg-green-500 shrink-0">
-              <WhatsAppIcon size={17} />
-            </span>
-          </a>
-          <a href={SOCIAL_LINKS.facebook} target="_blank" rel="noopener noreferrer"
-            className="flex items-center gap-2.5 pl-4 pr-2 py-2 rounded-full shadow-lg bg-white text-sm font-medium text-slate-700 transition-transform hover:scale-105">
-            Facebook
-            <span className="w-9 h-9 rounded-full flex items-center justify-center text-white bg-[#1877F2] shrink-0">
-              <FacebookIcon size={17} />
-            </span>
-          </a>
+          </Link>
           <button onClick={openChat}
             className="flex items-center gap-2.5 pl-4 pr-2 py-2 rounded-full shadow-lg bg-white text-sm font-medium text-slate-700 transition-transform hover:scale-105">
             Scrivici in chat
