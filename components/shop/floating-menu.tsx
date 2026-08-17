@@ -157,10 +157,13 @@ export function FloatingMenu() {
     setSending(false)
   }
 
-  const openChat = () => { setMenuOpen(false); setChatOpen(true) }
+  const openChat = () => {
+    setMenuOpen(false)
+    setChatOpen(prev => !prev)
+  }
   const openPoints = () => {
     setMenuOpen(false)
-    setPointsOpen(true)
+    setPointsOpen(prev => !prev)
     if (!pointsPhone && identity?.phone) setPointsPhone(identity.phone)
   }
   const closeAll = () => { setMenuOpen(false); setChatOpen(false); setPointsOpen(false) }
@@ -178,6 +181,15 @@ export function FloatingMenu() {
     openChat()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [requestChat])
+
+  // Cambio pagina: chiudi automaticamente tutti i pannelli (account, chat,
+  // mini-menu) invece di lasciarli aperti "fantasma" sulla nuova pagina.
+  useEffect(() => {
+    setMenuOpen(false)
+    setChatOpen(false)
+    setPointsOpen(false)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [pathname])
 
   const checkPoints = async () => {
     if (!pointsPhone.trim()) return
