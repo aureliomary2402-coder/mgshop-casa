@@ -25,14 +25,14 @@ function HighlightedText({ text, query }: { text: string; query: string }) {
 // Header unico usato in TUTTE le pagine del sito (Home, Negozio, Prodotto,
 // Preferiti, Carrello, Lotteria, Volantino, Promo, Consegne), cosi' il menu
 // resta sempre identico e sempre visibile, senza barre doppie o mancanti.
-// "categories" è opzionale: le pagine senza filtro categorie (es. Lotteria)
-// possono ometterlo, il pulsante "Categorie" allora resta con un solo item.
+// "categories" non è più usato dall'header (il filtro categorie ora vive
+// solo nella pagina Negozio), ma resta come prop opzionale per non dover
+// toccare i layout che la passano già.
 export function GlobalHeader({ categories = [] }: { categories?: Category[] }) {
   const [mounted, setMounted] = useState(false)
   const [searchOpen, setSearchOpen] = useState(false)
   const [searchValue, setSearchValue] = useState('')
   const [scrolled, setScrolled] = useState(false)
-  const [catOpen, setCatOpen] = useState(false)
   const [promoActive, setPromoActive] = useState(false)
   const [volantinoActive, setVolantinoActive] = useState(false)
   const [cartBump, setCartBump] = useState(false)
@@ -50,7 +50,6 @@ export function GlobalHeader({ categories = [] }: { categories?: Category[] }) {
   const searchParams = useSearchParams()
   const pathname = usePathname()
   const inputRef = useRef<HTMLInputElement>(null)
-  const catRef = useRef<HTMLDivElement>(null)
   const searchBoxRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
@@ -62,7 +61,6 @@ export function GlobalHeader({ categories = [] }: { categories?: Category[] }) {
     fetch('/api/promo').then(r => r.json()).then(d => setPromoActive(d.is_active === true)).catch(() => {})
     fetch('/api/volantino').then(r => r.json()).then(d => setVolantinoActive(d.is_active === true)).catch(() => {})
     const hc = (e: MouseEvent) => {
-      if (catRef.current && !catRef.current.contains(e.target as Node)) setCatOpen(false)
       if (searchBoxRef.current && !searchBoxRef.current.contains(e.target as Node)) setDropdownOpen(false)
     }
     document.addEventListener('mousedown', hc)
@@ -98,8 +96,6 @@ export function GlobalHeader({ categories = [] }: { categories?: Category[] }) {
   }, [lastAdded])
 
   const itemCount = mounted ? getTotalItems() : 0
-  const activeCategory = searchParams.get('categoria')
-  const activeCategoryName = categories.find(c => c.slug === activeCategory)?.name
 
   const handleSearch = (value: string) => {
     setSearchValue(value)
@@ -136,13 +132,6 @@ export function GlobalHeader({ categories = [] }: { categories?: Category[] }) {
     })
   }
 
-  const handleCategorySelect = (slug: string | null) => {
-    const params = new URLSearchParams(searchParams.toString())
-    if (slug) { params.set('categoria', slug) } else { params.delete('categoria') }
-    router.replace(`/shop?${params.toString()}`)
-    setCatOpen(false)
-  }
-
   return (
     <header className={`sticky top-0 z-50 transition-all duration-300 liquid-glass-header ${scrolled ? 'shadow-lg' : ''}`}
       style={{ background: scrolled ? 'rgba(240,251,253,0.97)' : 'rgba(240,251,253,0.98)', backdropFilter: 'blur(16px)', borderBottom: '1px solid rgba(8,145,178,0.1)' }}>
@@ -159,32 +148,9 @@ export function GlobalHeader({ categories = [] }: { categories?: Category[] }) {
           <Link href="/" className="hidden lg:flex items-center gap-1.5 px-3 py-2 rounded-xl text-sm font-medium transition-all hover:bg-cyan-50 btn-press" style={{ color: pathname === '/' ? '#0891b2' : '#44403c' }}>
             <HomeIcon className="w-4 h-4" /> Home
           </Link>
-          <div className="relative" ref={catRef}>
-            <button onClick={() => setCatOpen(v => !v)}
-              className="flex items-center gap-1.5 px-3 py-2 rounded-xl text-sm font-medium transition-all hover:bg-cyan-50 btn-press"
-              style={{ color: catOpen || activeCategory ? '#0891b2' : '#44403c' }}>
-              <Tag className="w-4 h-4" />
-              <span className="hidden sm:inline">{activeCategoryName || 'Categorie'}</span>
-              <ChevronDown className={`w-3.5 h-3.5 transition-transform duration-200 ${catOpen ? 'rotate-180' : ''}`} />
-            </button>
-            {catOpen && (
-              <div className="absolute top-full left-0 mt-2 w-56 rounded-2xl overflow-hidden shadow-xl animate-scale-in z-50"
-                style={{ background: 'white', border: '1px solid rgba(8,145,178,0.1)', boxShadow: '0 20px 60px rgba(0,0,0,0.12)' }}>
-                <div className="p-2">
-                  <button onClick={() => handleCategorySelect(null)}
-                    className={`w-full text-left px-3 py-2.5 rounded-xl text-sm font-medium transition-all hover:bg-cyan-50 ${!activeCategory ? 'bg-cyan-50 text-cyan-700' : 'text-slate-700'}`}>
-                    Tutti i prodotti
-                  </button>
-                  {categories.map(cat => (
-                    <button key={cat.id} onClick={() => handleCategorySelect(cat.slug)}
-                      className={`w-full text-left px-3 py-2.5 rounded-xl text-sm font-medium transition-all hover:bg-cyan-50 ${activeCategory === cat.slug ? 'bg-cyan-50 text-cyan-700' : 'text-slate-700'}`}>
-                      {cat.name}
-                    </button>
-                  ))}
-                </div>
-              </div>
-            )}
-          </div>
+          <Link href="/shop" className="hidden lg:flex items-center gap-1.5 px-3 py-2 rounded-xl text-sm font-medium transition-all hover:bg-cyan-50 btn-press" style={{ color: pathname?.startsWith('/shop') ? '#0891b2' : '#44403c' }}>
+            <Tag className="w-4 h-4" /> Negozio
+          </Link>
 
           {promoActive && (
             <Link href="/promo" className={`${searchOpen ? 'hidden' : 'flex'} items-center gap-1.5 px-2 sm:px-3 py-2 rounded-xl text-sm font-medium transition-all hover:bg-cyan-50 btn-press`} style={{ color: '#0891b2' }}>

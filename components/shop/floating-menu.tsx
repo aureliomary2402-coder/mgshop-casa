@@ -291,9 +291,10 @@ export function FloatingMenu() {
         </div>
       )}
 
-      {/* Pannello chat */}
+      {/* Pannello chat: su desktop ancorato vicino all'header (dove sta il
+          pulsante "Contatti"), su mobile resta sopra la bolla flottante. */}
       {chatOpen && (
-        <div className={`fixed ${menuOffsetClass} right-5 z-[45] w-[90vw] max-w-sm h-[480px] max-h-[70vh] liquid-glass-card rounded-2xl flex flex-col overflow-hidden`}>
+        <div className={`fixed ${menuOffsetClass} lg:top-20 lg:bottom-auto right-5 z-[45] w-[90vw] max-w-sm h-[480px] max-h-[70vh] liquid-glass-card rounded-2xl flex flex-col overflow-hidden`}>
           <div className="px-4 py-3 text-white font-semibold flex items-center gap-2" style={{ background: 'linear-gradient(135deg,#0891b2,#06b6d4)' }}>
             <MessageCircle className="w-4 h-4" /> Scrivici
           </div>
@@ -362,9 +363,10 @@ export function FloatingMenu() {
         </div>
       )}
 
-      {/* Pannello punti fedeltà */}
+      {/* Pannello punti fedeltà: stesso comportamento, ancorato vicino
+          all'header su desktop, sopra la bolla flottante su mobile. */}
       {pointsOpen && (
-        <div className={`fixed ${menuOffsetClass} right-5 z-[45] w-[90vw] max-w-sm liquid-glass-card rounded-2xl flex flex-col overflow-hidden`}>
+        <div className={`fixed ${menuOffsetClass} lg:top-20 lg:bottom-auto right-5 z-[45] w-[90vw] max-w-sm lg:max-h-[75vh] liquid-glass-card rounded-2xl flex flex-col overflow-hidden`}>
           <div className="px-4 py-3 text-white font-semibold flex items-center gap-2"
             style={{ background: 'linear-gradient(135deg,#0891b2,#06b6d4)' }}>
             <img src="/images/mgshop-stamp.png" alt="" className="w-4 h-4 object-contain" /> Il mio account
