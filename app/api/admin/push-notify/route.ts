@@ -31,7 +31,6 @@ export async function POST(request: NextRequest) {
   const { data: subs } = await supabase
     .from('push_subscriptions')
     .select('id, subscription')
-    .not('phone_number', 'is', null)
 
   if (!subs || subs.length === 0) {
     return NextResponse.json({ ok: true, sent: 0, message: 'Nessun cliente iscritto alle notifiche' })

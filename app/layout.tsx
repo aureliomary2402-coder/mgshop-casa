@@ -11,6 +11,7 @@ import { SiteTicker } from '@/components/shop/site-ticker'
 import { SiteFooter } from '@/components/shop/site-footer'
 import { BottomNav } from '@/components/shop/bottom-nav'
 import { FloatingCart } from '@/components/shop/floating-cart'
+import { NotifyBanner } from '@/components/shop/notify-banner'
 import { Suspense } from 'react'
 import './globals.css'
 
@@ -53,6 +54,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <SiteFooter />
         <BottomNav />
         <FloatingCart />
+        <NotifyBanner />
         <FloatingMenu />
         <Suspense><BackToTop /></Suspense>
         <ProductDetailModal />

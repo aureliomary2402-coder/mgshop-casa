@@ -11,7 +11,7 @@ function urlBase64ToUint8Array(base64String: string) {
 
 type SubscribeResult = { ok: true } | { ok: false; reason: string }
 
-export async function subscribeToPush(phoneNumber: string): Promise<SubscribeResult> {
+export async function subscribeToPush(phoneNumber?: string): Promise<SubscribeResult> {
   if (typeof window === 'undefined') return { ok: false, reason: 'no-window' }
 
   if (!('serviceWorker' in navigator) || !('PushManager' in window)) {
@@ -24,7 +24,7 @@ export async function subscribeToPush(phoneNumber: string): Promise<SubscribeRes
   }
 
   try {
-    const registration = await navigator.serviceWorker.register('/sw-push.js')
+    const registration = await navigator.serviceWorker.register('/sw.js')
     await navigator.serviceWorker.ready
 
     let subscription = await registration.pushManager.getSubscription()
