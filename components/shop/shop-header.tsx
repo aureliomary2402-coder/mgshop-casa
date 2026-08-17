@@ -181,13 +181,11 @@ export function ShopHeader({ categories }: { categories: Category[] }) {
           {promoActive && (
             <Link href="/promo" className={`${searchOpen ? 'hidden' : 'flex'} items-center gap-1.5 px-2 sm:px-3 py-2 rounded-xl text-sm font-medium transition-all hover:bg-cyan-50 btn-press`} style={{ color: '#0891b2' }}>
               <Sparkles className="w-4 h-4" /> <span className="hidden sm:inline">Promo</span>
-              <span className="text-xs bg-cyan-500 text-white px-1.5 py-0.5 rounded-full font-bold">!</span>
             </Link>
           )}
           {volantinoActive && (
             <Link href="/volantino" className={`${searchOpen ? 'hidden' : 'flex'} items-center gap-1.5 px-2 sm:px-3 py-2 rounded-xl text-sm font-medium transition-all hover:bg-cyan-50 btn-press`} style={{ color: '#0891b2' }}>
               <Newspaper className="w-4 h-4" /> <span className="hidden sm:inline">Volantino</span>
-              <span className="text-xs bg-cyan-500 text-white px-1.5 py-0.5 rounded-full font-bold">!</span>
             </Link>
           )}
 
