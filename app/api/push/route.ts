@@ -10,23 +10,39 @@ webpush.setVapidDetails(
 
 export async function POST(request: NextRequest) {
   try {
-    const { title, body, url } = await request.json()
+    const providedSecret = request.headers.get('x-admin-secret')
+    if (providedSecret !== process.env.PUSH_ADMIN_SECRET) {
+      return NextResponse.json({ ok: false, error: 'Non autorizzato' }, { status: 401 })
+    }
+
+    const { title, body, url, onlyOrdered = true, phoneNumbers } = await request.json()
     const supabase = createAdminClient()
-    const { data: subs } = await supabase.from('push_subscriptions').select('subscription')
+
+    let query = supabase.from('push_subscriptions').select('id, subscription, phone_number')
+
+    if (Array.isArray(phoneNumbers) && phoneNumbers.length > 0) {
+      query = query.in('phone_number', phoneNumbers)
+    } else if (onlyOrdered) {
+      query = query.not('phone_number', 'is', null)
+    }
+
+    const { data: subs } = await query
     if (!subs || subs.length === 0) return NextResponse.json({ ok: true, sent: 0 })
 
     const payload = JSON.stringify({ title, body, url })
     let sent = 0
-    for (const { subscription } of subs) {
+
+    for (const { subscription, id } of subs) {
       try {
         await webpush.sendNotification(subscription as webpush.PushSubscription, payload)
         sent++
       } catch (err: unknown) {
         if (err && typeof err === 'object' && 'statusCode' in err && (err as { statusCode: number }).statusCode === 410) {
-          await supabase.from('push_subscriptions').delete().contains('subscription', { endpoint: (subscription as { endpoint: string }).endpoint })
+          await supabase.from('push_subscriptions').delete().eq('id', id)
         }
       }
     }
+
     return NextResponse.json({ ok: true, sent })
   } catch (err) {
     console.error('Push error:', err)

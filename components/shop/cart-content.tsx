@@ -9,6 +9,7 @@ import { LoyaltyBanner } from './loyalty-banner'
 import { CodBanner } from './cod-banner'
 import { RecentlyViewed } from './recently-viewed'
 import { PageHero } from './page-hero'
+import { subscribeToPush } from '@/lib/push-subscribe'
 
 export function CartContent({ scope = 'shop' }: { scope?: string }) {
   const [mounted, setMounted] = useState(false)
@@ -164,6 +165,7 @@ export function CartContent({ scope = 'shop' }: { scope?: string }) {
         if (sessionId) fetch('/api/analytics/cart-abandon', { method: 'DELETE', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ sessionId }) }).catch(() => {})
       } catch {}
       clearCart(); setSubmitted(true)
+      subscribeToPush(phone).catch(() => {})
     } catch { setError('Si è verificato un errore. Riprova.') }
     finally { setSubmitting(false) }
   }
