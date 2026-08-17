@@ -26,8 +26,6 @@ export async function POST(request: NextRequest) {
 
   const supabase = createAdminClient()
 
-  // Solo i clienti che hanno un numero collegato (cioè hanno già ordinato
-  // e attivato le notifiche dopo l'ordine) — non il tuo dispositivo admin.
   const { data: subs } = await supabase
     .from('push_subscriptions')
     .select('id, subscription')
@@ -52,5 +50,32 @@ export async function POST(request: NextRequest) {
     }
   }
 
+  await supabase.from('push_notifications_log').insert({
+    title, body, sent_count: sent, failed_count: failed,
+  })
+
   return NextResponse.json({ ok: true, sent, failed })
+}
+
+export async function GET() {
+  if (!(await isAuthenticated())) {
+    return NextResponse.json({ error: 'Non autorizzato' }, { status: 401 })
+  }
+
+  const supabase = createAdminClient()
+
+  const { count: activeCount } = await supabase
+    .from('push_subscriptions')
+    .select('*', { count: 'exact', head: true })
+
+  const { data: history } = await supabase
+    .from('push_notifications_log')
+    .select('*')
+    .order('created_at', { ascending: false })
+    .limit(20)
+
+  return NextResponse.json({
+    activeSubscriptions: activeCount || 0,
+    history: history || [],
+  })
 }
