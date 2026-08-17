@@ -2,7 +2,7 @@
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { ArrowLeft, Clock, Tag, ShoppingBag, ShoppingCart, ImageIcon, X, Info } from 'lucide-react'
-import { PageHeroIcon } from '@/components/shop/page-hero-icon'
+import { PageHero } from '@/components/shop/page-hero'
 import { useCartStore } from '@/lib/cart-store'
 import { useProductDetailStore } from '@/lib/product-detail-store'
 import { toast } from 'sonner'
@@ -230,25 +230,21 @@ export default function PromoPage() {
   return (
     <div className="min-h-screen" style={{ background: 'linear-gradient(180deg,#eafbff 0%,#f5fdff 45%,#ffffff 100%)' }}>
       {/* Hero */}
-      <div className="relative overflow-hidden theme-hero-dark">
-        <AmbientBubbles count={9} theme="dark" />
-        <div className="relative z-10 max-w-4xl mx-auto px-4 py-12 text-center">
-          <div className="flex items-center justify-between mb-6">
-            <Link href="/shop" className="inline-flex items-center gap-2 text-sm transition-colors" style={{ color: '#67e8f9' }}><ArrowLeft className="w-4 h-4"/> Negozio</Link>
-            <Link href="/carrello?promo=1" className="relative flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium transition-all hover:bg-white/10"
-              style={{ color: '#e0f7fa', border: '1px solid rgba(255,255,255,0.15)', background: 'rgba(255,255,255,0.08)' }}>
-              <ShoppingBag className="w-4 h-4"/>
-              Carrello
-              {cartCount > 0 && <span className="absolute -top-1 -right-1 w-5 h-5 text-white text-xs rounded-full flex items-center justify-center font-bold" style={{background:'linear-gradient(135deg,#0891b2,#06b6d4)'}}>{cartCount}</span>}
-            </Link>
+      <PageHero
+        icon={Tag}
+        iconColor="#f59e0b"
+        badge={promo.badge_text ? { icon: Tag, text: promo.badge_text } : undefined}
+        title={promo.title}
+        subtitle={promo.subtitle}
+        cart={{ count: cartCount, href: '/carrello?promo=1' }}
+      >
+        {promo.expires_at && (
+          <div className="mb-4">
+            <div className="flex items-center justify-center gap-2 text-sm mb-3" style={{ color: '#67e8f9' }}><Clock className="w-4 h-4"/> Offerta valida ancora per:</div>
+            <Countdown expiresAt={promo.expires_at}/>
           </div>
-          <PageHeroIcon icon={Tag} color="#f59e0b" />
-          {promo.badge_text&&<div className="inline-flex items-center gap-2 rounded-full px-4 py-1.5 text-sm font-medium mb-4" style={{background:'rgba(8,145,178,0.15)', color: '#67e8f9', border:'1px solid rgba(103,232,249,0.3)'}}><Tag className="w-4 h-4"/> {promo.badge_text}</div>}
-          <h1 className="text-4xl md:text-5xl font-extrabold mb-3 text-shimmer">{promo.title}</h1>
-          {promo.subtitle&&<p className="text-lg mb-6" style={{ color: 'rgba(224,247,250,0.75)' }}>{promo.subtitle}</p>}
-          {promo.expires_at&&<div className="mb-4"><div className="flex items-center justify-center gap-2 text-sm mb-3" style={{ color: '#67e8f9' }}><Clock className="w-4 h-4"/> Offerta valida ancora per:</div><Countdown expiresAt={promo.expires_at}/></div>}
-        </div>
-      </div>
+        )}
+      </PageHero>
 
       {/* Content */}
       <div className="relative overflow-hidden">

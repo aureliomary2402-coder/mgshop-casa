@@ -4,7 +4,7 @@ import Link from 'next/link'
 import { ArrowLeft, Clock, Gift, History, PartyPopper, ImageIcon, ShoppingCart, Hash, Sparkles, Ticket } from 'lucide-react'
 import { Reveal } from '@/components/shop/reveal'
 import { AmbientBubbles } from '@/components/shop/ambient-bubbles'
-import { PageHeroIcon } from '@/components/shop/page-hero-icon'
+import { PageHero } from '@/components/shop/page-hero'
 
 interface Winner {
   id: string; lottery_title: string; prize_label: string; prize_image_url: string | null
@@ -112,29 +112,27 @@ export default function LotteryPage() {
   return (
     <div className="min-h-screen" style={{ background: 'linear-gradient(180deg,#eafbff 0%,#f5fdff 45%,#ffffff 100%)' }}>
       {/* Hero */}
-      <div className="relative overflow-hidden theme-hero-dark">
-        <AmbientBubbles count={9} theme="dark" />
-        <div className="relative z-10 max-w-4xl mx-auto px-4 py-12 text-center">
-          <Link href="/shop" className="inline-flex items-center gap-2 text-sm transition-colors mb-6" style={{ color: '#67e8f9' }}><ArrowLeft className="w-4 h-4" /> Negozio</Link>
-          <PageHeroIcon icon={Ticket} color="#e11d48" />
-          <div className="inline-flex items-center gap-2 rounded-full px-4 py-1.5 text-sm font-medium mb-4" style={{ background: 'rgba(8,145,178,0.15)', color: '#67e8f9', border: '1px solid rgba(103,232,249,0.3)' }}><Gift className="w-4 h-4" /> Lotteria a premi</div>
-          <h1 className="text-4xl md:text-5xl font-extrabold mb-3 text-shimmer">{data.title}</h1>
-          {data.description && <p className="text-lg mb-6 whitespace-pre-line" style={{ color: 'rgba(224,247,250,0.75)' }}>{data.description}</p>}
-          {data.ends_at && !revealPhase && (
-            <div className="mb-2">
-              <div className="flex items-center justify-center gap-2 text-sm mb-3" style={{ color: '#67e8f9' }}><Clock className="w-4 h-4" /> Estrazione tra:</div>
-              <Countdown remaining={remaining} />
+      <PageHero
+        icon={Ticket}
+        iconColor="#e11d48"
+        badge={{ icon: Gift, text: 'Lotteria a premi' }}
+        title={data.title}
+        subtitle={data.description && <span className="whitespace-pre-line">{data.description}</span>}
+      >
+        {data.ends_at && !revealPhase && (
+          <div className="mb-2">
+            <div className="flex items-center justify-center gap-2 text-sm mb-3" style={{ color: '#67e8f9' }}><Clock className="w-4 h-4" /> Estrazione tra:</div>
+            <Countdown remaining={remaining} />
+          </div>
+        )}
+        {revealPhase && (
+          <div className="mt-2 animate-scale-in">
+            <div className="inline-flex items-center gap-2 text-white font-bold text-xl px-6 py-3 rounded-2xl" style={{ background: 'linear-gradient(135deg,#f59e0b,#f97316)', boxShadow: '0 8px 24px rgba(249,115,22,0.4)' }}>
+              <PartyPopper className="w-6 h-6" /> Numero vincente: #{winnerNumber}
             </div>
-          )}
-          {revealPhase && (
-            <div className="mt-2 animate-scale-in">
-              <div className="inline-flex items-center gap-2 text-white font-bold text-xl px-6 py-3 rounded-2xl" style={{ background: 'linear-gradient(135deg,#f59e0b,#f97316)', boxShadow: '0 8px 24px rgba(249,115,22,0.4)' }}>
-                <PartyPopper className="w-6 h-6" /> Numero vincente: #{winnerNumber}
-              </div>
-            </div>
-          )}
-        </div>
-      </div>
+          </div>
+        )}
+      </PageHero>
 
       <div className="relative overflow-hidden">
         <AmbientBubbles count={16} theme="light" />
