@@ -45,11 +45,11 @@ export async function POST(request: NextRequest) {
         // Se fallisce (chiave già presente) vuol dire che questa sessione
         // ha già generato una notifica: non inviarne un'altra.
         if (!dedupError) {
-          sendPushToAdmin(
+          await sendPushToAdmin(
             'Nuova visita sul sito',
             `Un visitatore è entrato su ${page}`,
             '/mgadmin-panel'
-          ).catch(() => {})
+          ).catch((e) => console.error('Notifica nuova visita fallita:', e))
         }
       }
     }

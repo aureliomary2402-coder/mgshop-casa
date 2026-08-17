@@ -3,6 +3,7 @@ import { createAdminClient } from '@/lib/supabase/admin'
 import { autoArchiveIfExpired, getTakenLotteryNumbers } from '@/lib/lottery'
 import { LOTTERY_TICKET_PRODUCT_ID } from '@/lib/lottery-ticket-product'
 import { isCustomPromoProductId } from '@/lib/promo-custom-product'
+import { sendPushToAdmin } from '@/lib/push'
 
 export async function POST(request: NextRequest) {
   try {
@@ -165,23 +166,20 @@ export async function POST(request: NextRequest) {
       if (coupon) await supabase.from('coupons').update({ uses_count: coupon.uses_count + 1 }).eq('id', coupon.id)
     }
 
-    // Notifica push
+    // Notifica push: chiamata diretta (non un self-fetch) e sempre "await"-ata
+    // prima di rispondere, altrimenti su Vercel la funzione può essere
+    // congelata subito dopo il return e la notifica non parte mai.
     const itemsCount = realItems.reduce((s: number, i: { quantity: number }) => s + i.quantity, 0)
     const hasCustomized = realItems.some((i: { customization?: unknown[] }) => i.customization && i.customization.length > 0)
     const customizedSuffix = hasCustomized ? ' 🎨 con personalizzazioni: contatta il cliente per confermare il prezzo' : ''
     const notifBody = ticketQty > 0
       ? `${phone_number} — ${itemsCount} articoli + ${ticketQty} bigliett${ticketQty > 1 ? 'i' : 'o'} lotteria — €${total.toFixed(2)}${customizedSuffix}`
       : `${phone_number} — ${itemsCount} articoli — €${total.toFixed(2)}${customizedSuffix}`
-    const baseUrl = request.headers.get('origin') || 'https://mgshop-2.vercel.app'
-    fetch(`${baseUrl}/api/push`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        title: 'Nuovo ordine ricevuto!',
-        body: notifBody,
-        url: '/mgadmin-panel'
-      })
-    }).catch(() => {})
+    try {
+      await sendPushToAdmin('Nuovo ordine ricevuto!', notifBody, '/mgadmin-panel')
+    } catch (e) {
+      console.error('Notifica nuovo ordine fallita:', e)
+    }
 
     return NextResponse.json({ success: true, order, ticket_numbers: ticketNumbers })
   } catch {

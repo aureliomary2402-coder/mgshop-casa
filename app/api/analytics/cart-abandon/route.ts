@@ -36,11 +36,11 @@ export async function POST(request: NextRequest) {
 
     if (!existing) {
       const phonePart = cleanPhone ? ` — numero lasciato: ${cleanPhone}` : ''
-      sendPushToAdmin(
+      await sendPushToAdmin(
         'Carrello abbandonato',
         `${itemsCount} articol${itemsCount === 1 ? 'o' : 'i'} lasciati nel carrello — €${(total || 0).toFixed(2)}${phonePart}`,
         '/mgadmin-panel'
-      ).catch(() => {})
+      ).catch((e) => console.error('Notifica carrello abbandonato fallita:', e))
     }
 
     // Pulizia di sicurezza: rimuove ogni tanto i carrelli abbandonati più
