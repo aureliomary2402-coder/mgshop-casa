@@ -64,9 +64,10 @@ export async function GET() {
 
   const supabase = createAdminClient()
 
-  const { count: activeCount } = await supabase
+  const { data: subscribers } = await supabase
     .from('push_subscriptions')
-    .select('*', { count: 'exact', head: true })
+    .select('id, phone_number, created_at')
+    .order('created_at', { ascending: false })
 
   const { data: history } = await supabase
     .from('push_notifications_log')
@@ -75,7 +76,8 @@ export async function GET() {
     .limit(20)
 
   return NextResponse.json({
-    activeSubscriptions: activeCount || 0,
+    activeSubscriptions: subscribers?.length || 0,
+    subscribers: subscribers || [],
     history: history || [],
   })
 }

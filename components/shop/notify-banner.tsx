@@ -9,8 +9,10 @@ export function NotifyBanner() {
 
   useEffect(() => {
     if (!('serviceWorker' in navigator) || !('PushManager' in window) || !('Notification' in window)) return
-    if (Notification.permission !== 'default') return
-    if (localStorage.getItem('mgshop-notify-dismissed')) return
+    // Se il permesso è già stato negato dal browser, non ha senso
+    // ripresentare il banner: il popup nativo non si aprirebbe comunque.
+    if (Notification.permission === 'denied') return
+    if (Notification.permission === 'granted') return
 
     navigator.serviceWorker.ready.then(async reg => {
       const sub = await reg.pushManager.getSubscription()
@@ -18,10 +20,9 @@ export function NotifyBanner() {
     }).catch(() => {})
   }, [])
 
-  const dismiss = () => {
-    localStorage.setItem('mgshop-notify-dismissed', '1')
-    setVisible(false)
-  }
+  // Chiudere con la X nasconde il banner solo per questa visita:
+  // al prossimo ingresso sul sito ricomparirà, finché non viene attivato.
+  const dismiss = () => setVisible(false)
 
   const activate = async () => {
     setLoading(true)
@@ -29,9 +30,11 @@ export function NotifyBanner() {
     setLoading(false)
     if (result.ok) {
       setVisible(false)
+    } else if (result.reason === 'permission-denied') {
+      // Solo se il browser blocca definitivamente il permesso, smettiamo
+      // di proporlo (ripresentarlo non servirebbe a nulla).
+      setVisible(false)
     } else {
-      // Permesso negato o non disponibile: non insistiamo più
-      localStorage.setItem('mgshop-notify-dismissed', '1')
       setVisible(false)
     }
   }

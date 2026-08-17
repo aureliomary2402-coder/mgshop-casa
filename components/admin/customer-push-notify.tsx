@@ -11,6 +11,12 @@ type HistoryItem = {
   created_at: string
 }
 
+type Subscriber = {
+  id: string
+  phone_number: string | null
+  created_at: string
+}
+
 export function CustomerPushNotify() {
   const [title, setTitle] = useState('')
   const [body, setBody] = useState('')
@@ -19,6 +25,8 @@ export function CustomerPushNotify() {
   const [error, setError] = useState('')
   const [activeSubscriptions, setActiveSubscriptions] = useState<number | null>(null)
   const [history, setHistory] = useState<HistoryItem[]>([])
+  const [subscribers, setSubscribers] = useState<Subscriber[]>([])
+  const [showList, setShowList] = useState(false)
 
   const loadStats = () => {
     fetch('/api/admin/push-notify')
@@ -26,6 +34,7 @@ export function CustomerPushNotify() {
       .then(d => {
         setActiveSubscriptions(d.activeSubscriptions ?? 0)
         setHistory(d.history || [])
+        setSubscribers(d.subscribers || [])
       })
       .catch(() => {})
   }
@@ -71,12 +80,26 @@ export function CustomerPushNotify() {
           Il messaggio arriva sul telefono di chi ha attivato le notifiche.
         </p>
 
-        <div className="flex items-center gap-2 p-3 rounded-xl mb-4" style={{ background: 'rgba(8,145,178,0.06)', border: '1px solid rgba(8,145,178,0.15)' }}>
+        <button onClick={() => setShowList(v => !v)} className="w-full flex items-center gap-2 p-3 rounded-xl mb-2 text-left" style={{ background: 'rgba(8,145,178,0.06)', border: '1px solid rgba(8,145,178,0.15)' }}>
           <Users className="w-4 h-4 text-cyan-700 shrink-0" />
-          <span className="text-sm text-cyan-800">
+          <span className="text-sm text-cyan-800 flex-1">
             <strong>{activeSubscriptions ?? '...'}</strong> {activeSubscriptions === 1 ? 'persona ha' : 'persone hanno'} attivato le notifiche
           </span>
-        </div>
+          <span className="text-xs text-cyan-600 underline">{showList ? 'Nascondi' : 'Vedi elenco'}</span>
+        </button>
+
+        {showList && (
+          <div className="mb-4 rounded-xl border border-slate-100 divide-y divide-slate-100 max-h-56 overflow-y-auto">
+            {subscribers.length === 0 ? (
+              <p className="text-sm text-slate-400 p-3">Nessun iscritto ancora.</p>
+            ) : subscribers.map(s => (
+              <div key={s.id} className="flex items-center justify-between px-3 py-2">
+                <span className="text-sm text-slate-700">{s.phone_number || 'Anonimo (nessun numero)'}</span>
+                <span className="text-xs text-slate-400">{new Date(s.created_at).toLocaleDateString('it-IT', { day: '2-digit', month: '2-digit', year: 'numeric' })}</span>
+              </div>
+            ))}
+          </div>
+        )}
 
         <div className="space-y-3">
           <div>
