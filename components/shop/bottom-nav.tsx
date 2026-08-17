@@ -7,16 +7,13 @@ import { Home, Store, Tag, Newspaper, Ticket, UserRound } from 'lucide-react'
 import { useUIPanelsStore } from '@/lib/ui-panels-store'
 
 // Barra di navigazione inferiore, sempre visibile su mobile. Da desktop
-// invece resta visibile solo sulle pagine senza una nav propria in alto
-// (Lotteria/Promo/Volantino/Zone di consegna): su Home/Negozio/Prodotto/
-// Preferiti/Carrello l'header ha già Negozio/Promo/Volantino/Lotteria/
-// Account, quindi la tab in basso sparirebbe duplicando la stessa nav.
+// il GlobalHeader ha già tutti i link (Home/Negozio/Promo/Volantino/
+// Lotteria/Consegne/Contatti/Account), quindi qui resta sempre nascosta
+// su desktop, su tutte le pagine.
 // Usa solo route già esistenti: "Account" apre lo stesso pannello punti
 // già presente nel FloatingMenu, senza creare una pagina nuova.
 // "Volantino" compare solo quando il volantino è attivo (stessa logica
 // dell'header desktop).
-const HEADERLESS_DESKTOP_PATHS = ['/lotteria', '/promo', '/volantino', '/consegne']
-
 const BASE_ITEMS = [
   { key: 'home', href: '/', label: 'Home', icon: Home, match: (p: string) => p === '/' },
   { key: 'shop', href: '/shop', label: 'Negozio', icon: Store, match: (p: string) => p.startsWith('/shop') || p.startsWith('/prodotto') },
@@ -41,7 +38,6 @@ export function BottomNav() {
 
   if (pathname?.startsWith('/mgadmin-panel')) return null
 
-  const showOnDesktop = HEADERLESS_DESKTOP_PATHS.some(p => pathname?.startsWith(p))
   const linkItems = [...BASE_ITEMS, ...(volantinoActive ? [VOLANTINO_ITEM] : []), ...TAIL_ITEMS]
   const totalCols = linkItems.length + 1 // + Account
   const activeIndex = (() => {
@@ -55,7 +51,7 @@ export function BottomNav() {
 
   return (
     <nav
-      className={`fixed inset-x-0 z-[45] ${showOnDesktop ? '' : 'lg:hidden'}`}
+      className="fixed inset-x-0 z-[45] lg:hidden"
       style={{ bottom: 'calc(36px + env(safe-area-inset-bottom, 0px))' }}
       aria-label="Navigazione principale"
     >
