@@ -8,6 +8,7 @@ import { LOTTERY_TICKET_PRODUCT_ID, createLotteryTicketProduct } from '@/lib/lot
 import { LoyaltyBanner } from './loyalty-banner'
 import { CodBanner } from './cod-banner'
 import { RecentlyViewed } from './recently-viewed'
+import { PageHero } from './page-hero'
 
 export function CartContent({ scope = 'shop' }: { scope?: string }) {
   const [mounted, setMounted] = useState(false)
@@ -168,20 +169,23 @@ export function CartContent({ scope = 'shop' }: { scope?: string }) {
   }
 
   if (!mounted) return (
-    <div className="max-w-4xl mx-auto px-4 py-12 grid md:grid-cols-3 gap-6">
-      <div className="md:col-span-2 space-y-3">
-        {Array.from({ length: 3 }).map((_, i) => (
-          <div key={i} className="flex gap-3 p-3 rounded-2xl bg-white border border-slate-100">
-            <div className="skeleton w-20 h-20 rounded-xl shrink-0" />
-            <div className="flex-1 space-y-2 py-1">
-              <div className="skeleton h-4 w-3/4 rounded-full" />
-              <div className="skeleton h-4 w-1/3 rounded-full" />
+    <>
+      <PageHero icon={ShoppingBag} iconColor="#22d3ee" title="Carrello" subtitle="Rivedi i prodotti scelti e completa l'ordine." />
+      <div className="max-w-4xl mx-auto px-4 py-12 grid md:grid-cols-3 gap-6">
+        <div className="md:col-span-2 space-y-3">
+          {Array.from({ length: 3 }).map((_, i) => (
+            <div key={i} className="flex gap-3 p-3 rounded-2xl bg-white border border-slate-100">
+              <div className="skeleton w-20 h-20 rounded-xl shrink-0" />
+              <div className="flex-1 space-y-2 py-1">
+                <div className="skeleton h-4 w-3/4 rounded-full" />
+                <div className="skeleton h-4 w-1/3 rounded-full" />
+              </div>
             </div>
-          </div>
-        ))}
+          ))}
+        </div>
+        <div className="skeleton rounded-2xl h-64" />
       </div>
-      <div className="skeleton rounded-2xl h-64" />
-    </div>
+    </>
   )
 
   if (submitted) return (
@@ -222,27 +226,29 @@ export function CartContent({ scope = 'shop' }: { scope?: string }) {
   )
 
   if (items.length === 0) return (
-    <div className="max-w-md mx-auto px-4 py-20 text-center animate-scale-in">
-      <div className="w-24 h-24 rounded-full flex items-center justify-center mx-auto mb-6" style={{background:'rgba(8,145,178,0.08)',border:'2px dashed rgba(8,145,178,0.2)'}}>
-        <ShoppingCart className="w-12 h-12" style={{color:'rgba(8,145,178,0.4)'}}/>
+    <>
+      <PageHero icon={ShoppingBag} iconColor="#22d3ee" title="Carrello" subtitle="Rivedi i prodotti scelti e completa l'ordine." />
+      <div className="max-w-md mx-auto px-4 py-20 text-center animate-scale-in">
+        <div className="w-24 h-24 rounded-full flex items-center justify-center mx-auto mb-6" style={{background:'rgba(8,145,178,0.08)',border:'2px dashed rgba(8,145,178,0.2)'}}>
+          <ShoppingCart className="w-12 h-12" style={{color:'rgba(8,145,178,0.4)'}}/>
+        </div>
+        <h2 className="text-2xl font-bold mb-2" style={{color:'#0c2b36'}}>Il carrello è vuoto</h2>
+        <p className="text-slate-400 mb-8">Aggiungi qualche prodotto per iniziare.</p>
+        <Link href="/shop" className="inline-flex items-center gap-2 font-bold px-8 py-4 rounded-2xl text-white btn-press" style={{background:'linear-gradient(135deg,#0891b2,#06b6d4)'}}>Vai ai prodotti</Link>
+        <div className="mt-10 text-left">
+          <RecentlyViewed />
+        </div>
       </div>
-      <h2 className="text-2xl font-bold mb-2" style={{color:'#0c2b36'}}>Il carrello è vuoto</h2>
-      <p className="text-slate-400 mb-8">Aggiungi qualche prodotto per iniziare.</p>
-      <Link href="/shop" className="inline-flex items-center gap-2 font-bold px-8 py-4 rounded-2xl text-white btn-press" style={{background:'linear-gradient(135deg,#0891b2,#06b6d4)'}}>Vai ai prodotti</Link>
-      <div className="mt-10 text-left">
-        <RecentlyViewed />
-      </div>
-    </div>
+    </>
   )
 
   return (
-    <div className="w-full overflow-x-hidden max-w-5xl mx-auto px-4 py-6 sm:py-8">
+    <>
+      <PageHero icon={ShoppingBag} iconColor="#22d3ee" title="Carrello" subtitle={`${items.length} ${items.length===1?'articolo':'articoli'} pronti per il checkout.`} />
+      <div className="w-full overflow-x-hidden max-w-5xl mx-auto px-4 py-6 sm:py-8">
       <Link href="/shop" className="inline-flex items-center gap-2 text-sm font-medium mb-4 sm:mb-6 group transition-all hover:gap-3" style={{color:'#155e75'}}>
         <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform"/> Continua lo shopping
       </Link>
-      <h1 className="text-xl sm:text-2xl font-bold mb-5 sm:mb-8" style={{color:'#0c2b36'}}>
-        Il tuo carrello <span className="text-sm sm:text-base font-normal text-slate-400">({items.length} {items.length===1?'articolo':'articoli'})</span>
-      </h1>
       <div className="grid md:grid-cols-3 gap-5 md:gap-6">
         <div className="md:col-span-2 space-y-3 min-w-0">
           {items.map(({product,quantity,lineId},i) => {
@@ -417,6 +423,7 @@ export function CartContent({ scope = 'shop' }: { scope?: string }) {
           <p className="text-xs text-center text-slate-400">Ti contatteremo su WhatsApp per confermare</p>
         </div>
       </div>
-    </div>
+      </div>
+    </>
   )
 }

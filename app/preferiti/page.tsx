@@ -9,6 +9,7 @@ import { useProductDetailStore } from '@/lib/product-detail-store'
 import { optimizeImage } from '@/lib/image'
 import { toast } from 'sonner'
 import type { Product } from '@/lib/types'
+import { PageHero } from '@/components/shop/page-hero'
 
 export default function PreferitiPage() {
   const ids = useWishlistStore(s => s.ids)
@@ -43,24 +44,21 @@ export default function PreferitiPage() {
 
   if (!mounted || loading) {
     return (
-      <div className="max-w-5xl mx-auto px-4 py-8">
-        <div className="skeleton h-7 w-40 rounded-lg mb-6" />
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
-          {Array.from({ length: 4 }).map((_, i) => <div key={i} className="skeleton aspect-[3/4] rounded-2xl" />)}
+      <>
+        <PageHero icon={Heart} iconColor="#f472b6" title="Preferiti" subtitle="I prodotti che hai salvato, pronti quando vuoi tu." />
+        <div className="max-w-5xl mx-auto px-4 py-8">
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+            {Array.from({ length: 4 }).map((_, i) => <div key={i} className="skeleton aspect-[3/4] rounded-2xl" />)}
+          </div>
         </div>
-      </div>
+      </>
     )
   }
 
   return (
-    <div className="max-w-5xl mx-auto px-4 py-8">
-      <h1 className="text-2xl font-bold mb-1 flex items-center gap-2" style={{ color: '#0c2b36' }}>
-        <Heart className="w-6 h-6" style={{ color: '#ef4444' }} fill="#ef4444" /> I tuoi preferiti
-      </h1>
-      <p className="text-sm text-slate-500 mb-6">
-        Salvati su questo dispositivo — restano qui anche se chiudi il sito.
-      </p>
-
+    <>
+      <PageHero icon={Heart} iconColor="#f472b6" title="Preferiti" subtitle="I prodotti che hai salvato, pronti quando vuoi tu." />
+      <div className="max-w-5xl mx-auto px-4 py-8">
       {products.length === 0 ? (
         <div className="text-center py-20 animate-fade-in">
           <div className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4" style={{ background: 'rgba(239,68,68,0.08)' }}>
@@ -117,6 +115,7 @@ export default function PreferitiPage() {
           })}
         </div>
       )}
-    </div>
+      </div>
+    </>
   )
 }

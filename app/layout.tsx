@@ -10,6 +10,7 @@ import { ServiceWorkerRegister } from '@/components/sw-register'
 import { SiteTicker } from '@/components/shop/site-ticker'
 import { SiteFooter } from '@/components/shop/site-footer'
 import { BottomNav } from '@/components/shop/bottom-nav'
+import { FloatingCart } from '@/components/shop/floating-cart'
 import { Suspense } from 'react'
 import './globals.css'
 
@@ -51,6 +52,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         {children}
         <SiteFooter />
         <BottomNav />
+        <FloatingCart />
         <FloatingMenu />
         <Suspense><BackToTop /></Suspense>
         <ProductDetailModal />
