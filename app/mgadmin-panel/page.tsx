@@ -23,8 +23,9 @@ import { ProductStatsManager } from '@/components/admin/product-stats-manager'
 import { VisitLogManager } from '@/components/admin/visit-log-manager'
 import { AbandonedCartsManager } from '@/components/admin/abandoned-carts-manager'
 import { TickerManager } from '@/components/admin/ticker-manager'
+import { CustomerPushNotify } from '@/components/admin/customer-push-notify'
 
-type Tab = 'dashboard' | 'products' | 'categories' | 'banners' | 'orders' | 'promo' | 'volantino' | 'coupons' | 'clienti' | 'fedelta' | 'chat' | 'lottery' | 'biglietti' | 'statistiche' | 'visite' | 'carrelli' | 'ticker'
+type Tab = 'dashboard' | 'products' | 'categories' | 'banners' | 'orders' | 'promo' | 'volantino' | 'coupons' | 'clienti' | 'fedelta' | 'chat' | 'lottery' | 'biglietti' | 'statistiche' | 'visite' | 'carrelli' | 'ticker' | 'notifiche'
 type Group = 'generale' | 'ordini' | 'catalogo'
 
 const GROUP_LABELS: Record<Group, string> = {
@@ -37,6 +38,7 @@ const TABS: { id: Tab; label: string; icon: typeof Package; color: string; group
   { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard, color: 'text-blue-600 bg-blue-50', group: 'generale' },
   { id: 'visite', label: 'Visite', icon: Eye, color: 'text-cyan-600 bg-cyan-50', group: 'generale' },
   { id: 'ticker', label: 'Striscia messaggi', icon: Rss, color: 'text-cyan-600 bg-cyan-50', group: 'generale' },
+  { id: 'notifiche', label: 'Notifiche clienti', icon: Megaphone, color: 'text-cyan-600 bg-cyan-50', group: 'generale' },
   { id: 'orders', label: 'Ordini', icon: ShoppingBag, color: 'text-sky-600 bg-sky-50', group: 'ordini' },
   { id: 'carrelli', label: 'Carrelli abbandonati', icon: AlertTriangle, color: 'text-orange-600 bg-orange-50', group: 'ordini' },
   { id: 'biglietti', label: 'Biglietti', icon: Hash, color: 'text-amber-600 bg-amber-50', group: 'ordini' },
@@ -192,6 +194,7 @@ export default function AdminPage() {
         {activeTab === 'dashboard' && <DashboardStats />}
         {activeTab === 'visite' && <VisitLogManager />}
         {activeTab === 'ticker' && <TickerManager />}
+        {activeTab === 'notifiche' && <CustomerPushNotify />}
         {activeTab === 'products' && <ProductsManager />}
         {activeTab === 'categories' && <CategoriesManager />}
         {activeTab === 'banners' && <BannersManager />}
