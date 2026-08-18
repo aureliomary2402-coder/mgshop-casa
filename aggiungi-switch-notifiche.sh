@@ -1,3 +1,255 @@
+#!/bin/bash
+set -e
+cd "$(dirname "$0")" 2>/dev/null || true
+cd ~/mgshop-casa
+
+echo "1/4 - Aggiorno app/api/push/subscribe/route.ts (aggiungo DELETE)..."
+cat > app/api/push/subscribe/route.ts << 'EOF'
+import { NextResponse } from 'next/server'
+import { createAdminClient } from '@/lib/supabase/admin'
+export async function POST(req: Request) {
+  const { subscription, phoneNumber } = await req.json()
+  if (!subscription?.endpoint) {
+    return NextResponse.json({ error: 'subscription non valida' }, { status: 400 })
+  }
+  const supabase = createAdminClient()
+  const { error } = await supabase
+    .from('push_subscriptions')
+    .upsert(
+      {
+        subscription,
+        phone_number: phoneNumber ?? null,
+        updated_at: new Date().toISOString(),
+      },
+      { onConflict: 'endpoint' }
+    )
+  if (error) {
+    console.error('Errore salvataggio push subscription:', error)
+    return NextResponse.json({ error: error.message }, { status: 500 })
+  }
+  return NextResponse.json({ ok: true })
+}
+
+// DELETE - rimuove la subscription quando l'utente disattiva le notifiche
+// dallo switch nel popup "Il mio account" (o da qualunque altro punto).
+export async function DELETE(req: Request) {
+  const { endpoint } = await req.json()
+  if (!endpoint) {
+    return NextResponse.json({ error: 'endpoint mancante' }, { status: 400 })
+  }
+  const supabase = createAdminClient()
+  const { error } = await supabase
+    .from('push_subscriptions')
+    .delete()
+    .contains('subscription', { endpoint })
+  if (error) {
+    console.error('Errore rimozione push subscription:', error)
+    return NextResponse.json({ error: error.message }, { status: 500 })
+  }
+  return NextResponse.json({ ok: true })
+}
+EOF
+
+echo "2/4 - Aggiorno lib/push-subscribe.ts (aggiungo unsubscribeFromPush)..."
+cat > lib/push-subscribe.ts << 'EOF'
+const VAPID_PUBLIC_KEY = process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY!
+
+function urlBase64ToUint8Array(base64String: string) {
+  const padding = '='.repeat((4 - (base64String.length % 4)) % 4)
+  const base64 = (base64String + padding).replace(/-/g, '+').replace(/_/g, '/')
+  const rawData = atob(base64)
+  const output = new Uint8Array(rawData.length)
+  for (let i = 0; i < rawData.length; i++) output[i] = rawData.charCodeAt(i)
+  return output
+}
+
+type SubscribeResult = { ok: true } | { ok: false; reason: string }
+
+export async function subscribeToPush(phoneNumber?: string): Promise<SubscribeResult> {
+  if (typeof window === 'undefined') return { ok: false, reason: 'no-window' }
+
+  if (!('serviceWorker' in navigator) || !('PushManager' in window)) {
+    return { ok: false, reason: 'not-supported' }
+  }
+
+  const permission = await Notification.requestPermission()
+  if (permission !== 'granted') {
+    return { ok: false, reason: 'permission-denied' }
+  }
+
+  try {
+    const registration = await navigator.serviceWorker.register('/sw.js')
+    await navigator.serviceWorker.ready
+
+    let subscription = await registration.pushManager.getSubscription()
+    if (!subscription) {
+      subscription = await registration.pushManager.subscribe({
+        userVisibleOnly: true,
+        applicationServerKey: urlBase64ToUint8Array(VAPID_PUBLIC_KEY),
+      })
+    }
+
+    const res = await fetch('/api/push/subscribe', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ subscription, phoneNumber }),
+    })
+
+    if (!res.ok) return { ok: false, reason: 'save-failed' }
+    return { ok: true }
+  } catch (err) {
+    console.error('Errore subscribe push:', err)
+    return { ok: false, reason: 'exception' }
+  }
+}
+
+// Disattiva le notifiche: annulla la subscription lato browser e rimuove
+// la riga corrispondente da push_subscriptions lato server. Usata dallo
+// switch OFF nel popup "Il mio account" e riusabile ovunque serva.
+export async function unsubscribeFromPush(): Promise<SubscribeResult> {
+  if (typeof window === 'undefined') return { ok: false, reason: 'no-window' }
+
+  if (!('serviceWorker' in navigator) || !('PushManager' in window)) {
+    return { ok: false, reason: 'not-supported' }
+  }
+
+  try {
+    const registration = await navigator.serviceWorker.ready
+    const subscription = await registration.pushManager.getSubscription()
+    if (!subscription) return { ok: true }
+
+    const endpoint = subscription.endpoint
+    await subscription.unsubscribe()
+
+    const res = await fetch('/api/push/subscribe', {
+      method: 'DELETE',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ endpoint }),
+    })
+
+    if (!res.ok) return { ok: false, reason: 'delete-failed' }
+    return { ok: true }
+  } catch (err) {
+    console.error('Errore unsubscribe push:', err)
+    return { ok: false, reason: 'exception' }
+  }
+}
+EOF
+
+echo "3/4 - Aggiorno app/api/account-lookup/route.ts (aggiungo notificationsEnabled)..."
+cat > app/api/account-lookup/route.ts << 'EOF'
+import { NextRequest, NextResponse } from 'next/server'
+import { createAdminClient } from '@/lib/supabase/admin'
+
+export const dynamic = 'force-dynamic'
+
+function normalizePhone(phone: string): string {
+  let n = phone.replace(/\D/g, '')
+  const prefixes = ['0039', '0044', '0033', '0049', '0034', '001']
+  for (const p of prefixes) { if (n.startsWith(p)) { n = n.slice(p.length); break } }
+  if (n.startsWith('39') && n.length === 12) n = n.slice(2)
+  if (n.startsWith('44') && n.length === 12) n = n.slice(2)
+  if (n.startsWith('33') && n.length === 11) n = n.slice(2)
+  if (n.startsWith('49') && n.length === 12) n = n.slice(2)
+  if (n.startsWith('34') && n.length === 11) n = n.slice(2)
+  if (n.startsWith('1') && n.length === 11) n = n.slice(1)
+  if (n.length > 10) n = n.slice(-10)
+  return n
+}
+
+// GET - dati pubblici dell'account (punti fedeltà, lotteria in corso, ultimi
+// ordini, stato notifiche) per un numero di telefono. Nessuna autenticazione
+// richiesta, stesso principio già usato da /api/loyalty-check: non espone
+// dati di altri clienti, solo quanto risulta dal numero digitato dall'utente.
+//
+// Prima di questa route il pannello "Il mio account" (FloatingMenu) chiamava
+// già /api/account-lookup ma l'endpoint non esisteva: da qui l'errore mostrato
+// a ogni inserimento del numero.
+export async function GET(request: NextRequest) {
+  const { searchParams } = new URL(request.url)
+  const phone = searchParams.get('phone') || ''
+  const digits = phone.replace(/\D/g, '')
+
+  if (digits.length < 6) {
+    return NextResponse.json({ error: 'Numero di telefono non valido' }, { status: 400 })
+  }
+
+  const normalized = normalizePhone(phone)
+  const last8 = normalized.slice(-8)
+  const supabase = createAdminClient()
+
+  const [{ data: pointsRows, error: pointsError }, { data: settings }, { data: lottery }, { data: pushSubs }] = await Promise.all([
+    supabase.from('loyalty_points').select('points, type').eq('phone_normalized', normalized),
+    supabase.from('loyalty_settings').select('*').eq('is_active', true).order('updated_at', { ascending: false }).limit(1).single(),
+    supabase.from('lottery').select('*').limit(1).single(),
+    supabase.from('push_subscriptions').select('phone_number').not('phone_number', 'is', null).ilike('phone_number', `%${last8}%`),
+  ])
+
+  if (pointsError) {
+    return NextResponse.json({ error: pointsError.message }, { status: 500 })
+  }
+
+  const total = Math.max(0, (pointsRows || []).reduce((s, r) => s + r.points, 0))
+  const threshold = settings?.points_threshold || 10
+  const rewardDescription = settings?.reward_description || 'un premio esclusivo'
+  const resetCount = (pointsRows || []).filter(r => r.type === 'reset').length
+  const cardsCompleted = resetCount + Math.floor(total / threshold)
+  const progress = total % threshold
+
+  // Notifiche già attive per questo numero: usato per mostrare lo switch
+  // già "acceso" quando il cliente riapre il popup da un dispositivo dove
+  // aveva già attivato le notifiche con lo stesso numero.
+  const notificationsEnabled = (pushSubs || []).some(
+    r => r.phone_number && normalizePhone(r.phone_number) === normalized
+  )
+
+  // Numeri lotteria del turno in corso per questo cliente: sia quelli
+  // aggiunti durante un ordine normale (colonna lottery_number su orders)
+  // sia quelli comprati a parte come biglietti (tabella lottery_tickets).
+  let lotteryPayload: { title: string; ends_at: string | null; numbers: number[] } | null = null
+  if (lottery?.is_active && lottery.round_id) {
+    const [{ data: orderTickets }, { data: standaloneTickets }] = await Promise.all([
+      supabase.from('orders').select('phone_number, lottery_number')
+        .eq('lottery_round', lottery.round_id).not('lottery_number', 'is', null)
+        .ilike('phone_number', `%${last8}%`),
+      supabase.from('lottery_tickets').select('phone_number, lottery_number')
+        .eq('round_id', lottery.round_id).eq('is_reserved', false)
+        .ilike('phone_number', `%${last8}%`),
+    ])
+    const numbers = new Set<number>()
+    for (const row of [...(orderTickets || []), ...(standaloneTickets || [])]) {
+      if (row.phone_number && row.lottery_number != null && normalizePhone(row.phone_number) === normalized) {
+        numbers.add(row.lottery_number)
+      }
+    }
+    lotteryPayload = { title: lottery.title, ends_at: lottery.ends_at, numbers: Array.from(numbers).sort((a, b) => a - b) }
+  }
+
+  // Ultimi ordini (solo prodotti veri, non i biglietti lotteria acquistati a parte)
+  const { data: candidateOrders } = await supabase
+    .from('orders')
+    .select('id, status, total, created_at, phone_number, order_items(product_name, quantity, product_price)')
+    .eq('is_ticket_only', false)
+    .ilike('phone_number', `%${last8}%`)
+    .order('created_at', { ascending: false })
+    .limit(30)
+
+  const orders = (candidateOrders || [])
+    .filter(o => normalizePhone(o.phone_number) === normalized)
+    .slice(0, 5)
+    .map(o => ({ id: o.id, status: o.status, total: o.total, created_at: o.created_at, items: o.order_items || [] }))
+
+  return NextResponse.json({
+    points: { total, threshold, reward_description: rewardDescription, cards_completed: cardsCompleted, progress },
+    lottery: lotteryPayload,
+    orders,
+    notificationsEnabled,
+  })
+}
+EOF
+
+echo "4/4 - Aggiorno components/shop/floating-menu.tsx (aggiungo switch)..."
+cat > components/shop/floating-menu.tsx << 'EOF'
 "use client"
 
 import { useState, useEffect, useRef, useCallback } from 'react'
@@ -543,3 +795,17 @@ export function FloatingMenu() {
     </>
   )
 }
+EOF
+
+echo ""
+echo "✅ Fatto! File modificati:"
+echo "   - app/api/push/subscribe/route.ts"
+echo "   - lib/push-subscribe.ts"
+echo "   - app/api/account-lookup/route.ts"
+echo "   - components/shop/floating-menu.tsx"
+echo ""
+echo "Ora testa in locale con: npm run dev"
+echo "Se va tutto bene:"
+echo "   git add -A"
+echo "   git commit -m 'Aggiunto switch notifiche nel popup account'"
+echo "   git push"

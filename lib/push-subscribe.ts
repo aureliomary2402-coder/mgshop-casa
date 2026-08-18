@@ -48,3 +48,35 @@ export async function subscribeToPush(phoneNumber?: string): Promise<SubscribeRe
     return { ok: false, reason: 'exception' }
   }
 }
+
+// Disattiva le notifiche: annulla la subscription lato browser e rimuove
+// la riga corrispondente da push_subscriptions lato server. Usata dallo
+// switch OFF nel popup "Il mio account" e riusabile ovunque serva.
+export async function unsubscribeFromPush(): Promise<SubscribeResult> {
+  if (typeof window === 'undefined') return { ok: false, reason: 'no-window' }
+
+  if (!('serviceWorker' in navigator) || !('PushManager' in window)) {
+    return { ok: false, reason: 'not-supported' }
+  }
+
+  try {
+    const registration = await navigator.serviceWorker.ready
+    const subscription = await registration.pushManager.getSubscription()
+    if (!subscription) return { ok: true }
+
+    const endpoint = subscription.endpoint
+    await subscription.unsubscribe()
+
+    const res = await fetch('/api/push/subscribe', {
+      method: 'DELETE',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ endpoint }),
+    })
+
+    if (!res.ok) return { ok: false, reason: 'delete-failed' }
+    return { ok: true }
+  } catch (err) {
+    console.error('Errore unsubscribe push:', err)
+    return { ok: false, reason: 'exception' }
+  }
+}

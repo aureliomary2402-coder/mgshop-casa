@@ -18,9 +18,9 @@ function normalizePhone(phone: string): string {
 }
 
 // GET - dati pubblici dell'account (punti fedeltà, lotteria in corso, ultimi
-// ordini) per un numero di telefono. Nessuna autenticazione richiesta, stesso
-// principio già usato da /api/loyalty-check: non espone dati di altri clienti,
-// solo quanto risulta dal numero digitato dall'utente stesso.
+// ordini, stato notifiche) per un numero di telefono. Nessuna autenticazione
+// richiesta, stesso principio già usato da /api/loyalty-check: non espone
+// dati di altri clienti, solo quanto risulta dal numero digitato dall'utente.
 //
 // Prima di questa route il pannello "Il mio account" (FloatingMenu) chiamava
 // già /api/account-lookup ma l'endpoint non esisteva: da qui l'errore mostrato
@@ -38,10 +38,11 @@ export async function GET(request: NextRequest) {
   const last8 = normalized.slice(-8)
   const supabase = createAdminClient()
 
-  const [{ data: pointsRows, error: pointsError }, { data: settings }, { data: lottery }] = await Promise.all([
+  const [{ data: pointsRows, error: pointsError }, { data: settings }, { data: lottery }, { data: pushSubs }] = await Promise.all([
     supabase.from('loyalty_points').select('points, type').eq('phone_normalized', normalized),
     supabase.from('loyalty_settings').select('*').eq('is_active', true).order('updated_at', { ascending: false }).limit(1).single(),
     supabase.from('lottery').select('*').limit(1).single(),
+    supabase.from('push_subscriptions').select('phone_number').not('phone_number', 'is', null).ilike('phone_number', `%${last8}%`),
   ])
 
   if (pointsError) {
@@ -54,6 +55,13 @@ export async function GET(request: NextRequest) {
   const resetCount = (pointsRows || []).filter(r => r.type === 'reset').length
   const cardsCompleted = resetCount + Math.floor(total / threshold)
   const progress = total % threshold
+
+  // Notifiche già attive per questo numero: usato per mostrare lo switch
+  // già "acceso" quando il cliente riapre il popup da un dispositivo dove
+  // aveva già attivato le notifiche con lo stesso numero.
+  const notificationsEnabled = (pushSubs || []).some(
+    r => r.phone_number && normalizePhone(r.phone_number) === normalized
+  )
 
   // Numeri lotteria del turno in corso per questo cliente: sia quelli
   // aggiunti durante un ordine normale (colonna lottery_number su orders)
@@ -95,5 +103,6 @@ export async function GET(request: NextRequest) {
     points: { total, threshold, reward_description: rewardDescription, cards_completed: cardsCompleted, progress },
     lottery: lotteryPayload,
     orders,
+    notificationsEnabled,
   })
 }
