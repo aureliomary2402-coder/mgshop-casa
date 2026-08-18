@@ -248,7 +248,7 @@ export async function GET(request: NextRequest) {
 }
 EOF
 
-echo "4/4 - Aggiorno components/shop/floating-menu.tsx (aggiungo switch)..."
+echo "4/4 - Aggiorno components/shop/floating-menu.tsx (switch anche prima del numero)..."
 cat > components/shop/floating-menu.tsx << 'EOF'
 "use client"
 
@@ -481,12 +481,30 @@ export function FloatingMenu() {
 
   const resetPoints = () => {
     setPointsData(null); setLotteryData(null); setOrdersData([]); setPointsError('')
-    setNotifOn(false); setNotifError('')
+    // Non azzeriamo notifOn qui: lo switch nella schermata "inserisci
+    // numero" deve continuare a riflettere lo stato reale del dispositivo.
   }
 
+  // All'apertura del popup, prima ancora di inserire il numero, mostriamo
+  // lo stato reale delle notifiche su questo dispositivo/browser (stesso
+  // controllo già fatto da NotifyBanner). Se poi il cliente inserisce un
+  // numero, checkPoints() lo sovrascrive con lo stato collegato a quel
+  // numero specifico (più preciso, letto dal server).
+  useEffect(() => {
+    if (!pointsOpen) return
+    if (!('serviceWorker' in navigator) || !('PushManager' in window) || !('Notification' in window)) return
+    if (Notification.permission !== 'granted') { setNotifOn(false); return }
+    navigator.serviceWorker.ready.then(async reg => {
+      const sub = await reg.pushManager.getSubscription()
+      setNotifOn(!!sub)
+    }).catch(() => {})
+  }, [pointsOpen])
+
   // Switch ON/OFF nel popup: riusa esattamente lo stesso flusso di
-  // subscribe/unsubscribe usato dal banner, passando il numero digitato
-  // dal cliente così la subscription resta collegata al suo account.
+  // subscribe/unsubscribe usato dal banner. Se il numero è già stato
+  // digitato lo colleghiamo alla subscription, altrimenti si attiva comunque
+  // (come il banner) e resterà collegato solo al dispositivo finché non
+  // viene inserito un numero in un secondo momento.
   const toggleNotifications = async () => {
     if (notifLoading) return
     setNotifLoading(true)
@@ -496,7 +514,7 @@ export function FloatingMenu() {
       if (result.ok) setNotifOn(false)
       else setNotifError('Errore nella disattivazione, riprova')
     } else {
-      const result = await subscribeToPush(pointsPhone.trim())
+      const result = await subscribeToPush(pointsPhone.trim() || undefined)
       if (result.ok) {
         setNotifOn(true)
       } else if (result.reason === 'permission-denied') {
@@ -509,6 +527,34 @@ export function FloatingMenu() {
     }
     setNotifLoading(false)
   }
+
+  const NotifSwitch = () => (
+    <div className="space-y-1.5">
+      <div className="flex items-center justify-between gap-3 rounded-xl border border-slate-100 p-3">
+        <div className="flex items-center gap-2 min-w-0">
+          <Bell className="w-4 h-4 text-cyan-600 shrink-0" />
+          <div className="min-w-0">
+            <p className="text-xs font-bold text-slate-700">Notifiche</p>
+            <p className="text-[11px] text-slate-400 leading-snug">Ricevi avvisi su offerte e ordini</p>
+          </div>
+        </div>
+        <button
+          onClick={toggleNotifications}
+          disabled={notifLoading}
+          aria-pressed={notifOn}
+          aria-label="Attiva notifiche"
+          className="relative w-11 h-6 rounded-full shrink-0 transition-colors disabled:opacity-60"
+          style={{ background: notifOn ? 'linear-gradient(135deg,#0891b2,#06b6d4)' : '#e2e8f0' }}
+        >
+          <span
+            className="absolute top-0.5 left-0.5 w-5 h-5 rounded-full bg-white shadow transition-transform"
+            style={{ transform: notifOn ? 'translateX(20px)' : 'translateX(0)' }}
+          />
+        </button>
+      </div>
+      {notifError && <p className="text-[11px] text-red-500 text-center">{notifError}</p>}
+    </div>
+  )
 
   // Nascosto nel pannello admin
   if (pathname?.startsWith('/mgadmin-panel')) return null
@@ -666,33 +712,11 @@ export function FloatingMenu() {
               >
                 {pointsChecking ? 'Verifica in corso...' : 'Controlla i miei punti'}
               </button>
+              <NotifSwitch />
             </div>
           ) : (
             <div className="p-5 space-y-4 overflow-y-auto" style={{ maxHeight: '70vh' }}>
-              {/* Switch notifiche */}
-              <div className="flex items-center justify-between gap-3 rounded-xl border border-slate-100 p-3">
-                <div className="flex items-center gap-2 min-w-0">
-                  <Bell className="w-4 h-4 text-cyan-600 shrink-0" />
-                  <div className="min-w-0">
-                    <p className="text-xs font-bold text-slate-700">Notifiche</p>
-                    <p className="text-[11px] text-slate-400 leading-snug">Ricevi avvisi su offerte e ordini</p>
-                  </div>
-                </div>
-                <button
-                  onClick={toggleNotifications}
-                  disabled={notifLoading}
-                  aria-pressed={notifOn}
-                  aria-label="Attiva notifiche"
-                  className="relative w-11 h-6 rounded-full shrink-0 transition-colors disabled:opacity-60"
-                  style={{ background: notifOn ? 'linear-gradient(135deg,#0891b2,#06b6d4)' : '#e2e8f0' }}
-                >
-                  <span
-                    className="absolute top-0.5 left-0.5 w-5 h-5 rounded-full bg-white shadow transition-transform"
-                    style={{ transform: notifOn ? 'translateX(20px)' : 'translateX(0)' }}
-                  />
-                </button>
-              </div>
-              {notifError && <p className="text-[11px] text-red-500 text-center -mt-2">{notifError}</p>}
+              <NotifSwitch />
 
               {pointsData.cards_completed > 0 && (
                 <p className="text-xs font-semibold text-center text-cyan-700 bg-cyan-50 rounded-lg py-1.5">
