@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect } from 'react'
-import { Package, Tag, Image, ShoppingBag, LogOut, Lock, LayoutDashboard, Megaphone, Ticket, Menu, X, ExternalLink, Users, Gift, MessageCircle, Newspaper, PartyPopper, Hash, TrendingUp, Eye, AlertTriangle, Rss } from 'lucide-react'
+import { Package, Tag, Image, ShoppingBag, LogOut, Lock, LayoutDashboard, Megaphone, Ticket, Menu, X, ExternalLink, Users, Gift, MessageCircle, Newspaper, PartyPopper, Hash, TrendingUp, Eye, AlertTriangle, Rss, Star } from 'lucide-react'
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -24,8 +24,9 @@ import { VisitLogManager } from '@/components/admin/visit-log-manager'
 import { AbandonedCartsManager } from '@/components/admin/abandoned-carts-manager'
 import { TickerManager } from '@/components/admin/ticker-manager'
 import { CustomerPushNotify } from '@/components/admin/customer-push-notify'
+import { ReviewsManager } from '@/components/admin/reviews-manager'
 
-type Tab = 'dashboard' | 'products' | 'categories' | 'banners' | 'orders' | 'promo' | 'volantino' | 'coupons' | 'clienti' | 'fedelta' | 'chat' | 'lottery' | 'biglietti' | 'statistiche' | 'visite' | 'carrelli' | 'ticker' | 'notifiche'
+type Tab = 'dashboard' | 'products' | 'categories' | 'banners' | 'orders' | 'promo' | 'volantino' | 'coupons' | 'clienti' | 'fedelta' | 'chat' | 'lottery' | 'biglietti' | 'statistiche' | 'visite' | 'carrelli' | 'ticker' | 'notifiche' | 'recensioni'
 type Group = 'generale' | 'ordini' | 'catalogo'
 
 const GROUP_LABELS: Record<Group, string> = {
@@ -46,6 +47,7 @@ const TABS: { id: Tab; label: string; icon: typeof Package; color: string; group
   { id: 'fedelta', label: 'Fedeltà', icon: Gift, color: 'text-teal-600 bg-teal-50', group: 'ordini' },
   { id: 'coupons', label: 'Coupon', icon: Ticket, color: 'text-indigo-600 bg-indigo-50', group: 'ordini' },
   { id: 'chat', label: 'Chat', icon: MessageCircle, color: 'text-teal-600 bg-teal-50', group: 'ordini' },
+  { id: 'recensioni', label: 'Recensioni', icon: Star, color: 'text-amber-600 bg-amber-50', group: 'ordini' },
   { id: 'products', label: 'Prodotti', icon: Package, color: 'text-cyan-600 bg-cyan-50', group: 'catalogo' },
   { id: 'categories', label: 'Categorie', icon: Tag, color: 'text-green-600 bg-green-50', group: 'catalogo' },
   { id: 'banners', label: 'Banner', icon: Image, color: 'text-purple-600 bg-purple-50', group: 'catalogo' },
@@ -208,6 +210,7 @@ export default function AdminPage() {
         {activeTab === 'clienti' && <ClientiManager />}
         {activeTab === 'fedelta' && <LoyaltySettingsManager />}
         {activeTab === 'chat' && <ChatManager />}
+        {activeTab === 'recensioni' && <ReviewsManager />}
         {activeTab === 'statistiche' && <ProductStatsManager />}
       </div>
     </div>

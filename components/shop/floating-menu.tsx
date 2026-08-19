@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
 import { usePathname } from 'next/navigation'
 import Link from 'next/link'
-import { MessageCircle, X, Send, Menu as MenuIcon, ShoppingBag, Gift, Share2, Bell } from 'lucide-react'
+import { MessageCircle, X, Send, Menu as MenuIcon, ShoppingBag, Gift, Share2, Bell, Star } from 'lucide-react'
 import { useCartStore } from '@/lib/cart-store'
 import { useUIPanelsStore } from '@/lib/ui-panels-store'
 import { subscribeToPush, unsubscribeFromPush } from '@/lib/push-subscribe'
@@ -342,6 +342,13 @@ export function FloatingMenu() {
       {/* Mini-menu a scomparsa: social + chat */}
       {menuOpen && !chatOpen && !pointsOpen && (
         <div className={`fixed ${menuOffsetClass} right-5 z-[45] flex flex-col items-end gap-3`}>
+          <Link href="/recensioni" onClick={() => setMenuOpen(false)}
+            className="flex items-center gap-2.5 pl-4 pr-2 py-2 rounded-full shadow-lg bg-white text-sm font-medium text-slate-700 transition-transform hover:scale-105">
+            Recensioni
+            <span className="w-9 h-9 rounded-full flex items-center justify-center text-white shrink-0" style={{ background: 'linear-gradient(135deg,#0891b2,#06b6d4)' }}>
+              <Star size={17} />
+            </span>
+          </Link>
           <Link href="/social" onClick={() => setMenuOpen(false)}
             className="flex items-center gap-2.5 pl-4 pr-2 py-2 rounded-full shadow-lg bg-white text-sm font-medium text-slate-700 transition-transform hover:scale-105">
             Social
