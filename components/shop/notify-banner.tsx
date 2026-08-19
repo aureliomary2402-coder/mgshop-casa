@@ -41,8 +41,14 @@ export function NotifyBanner() {
 
   if (!visible) return null
 
+  // Posizionato sopra la bottom nav, la bollicina del menu flottante e la
+  // scorciatoia carrello (che su alcune pagine si impilano fino a ~13.5rem
+  // da fondo pagina): senza questo margine il banner veniva parzialmente
+  // coperto su mobile. z-index più alto di tutti gli altri elementi fissi
+  // così resta sempre leggibile, ed essendo "fixed" resta visibile anche
+  // scorrendo la pagina finché non viene chiuso o attivato.
   return (
-    <div className="fixed left-4 right-4 z-40 animate-slide-in-up" style={{ bottom: 'calc(76px + env(safe-area-inset-bottom, 0px))' }}>
+    <div className="fixed left-4 right-4 z-[60] animate-slide-in-up" style={{ bottom: 'calc(230px + env(safe-area-inset-bottom, 0px))' }}>
       <div className="max-w-sm mx-auto flex items-center gap-3 p-3.5 rounded-2xl shadow-lg" style={{ background: 'white', border: '1px solid rgba(8,145,178,0.15)' }}>
         <div className="w-10 h-10 rounded-full flex items-center justify-center shrink-0" style={{ background: 'rgba(8,145,178,0.1)' }}>
           <Bell className="w-5 h-5" style={{ color: '#0891b2' }} />
