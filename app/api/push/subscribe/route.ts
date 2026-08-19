@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server'
 import { createAdminClient } from '@/lib/supabase/admin'
 export async function POST(req: Request) {
-  const { subscription, phoneNumber } = await req.json()
+  const { subscription, phoneNumber, isAdmin } = await req.json()
   if (!subscription?.endpoint) {
     return NextResponse.json({ error: 'subscription non valida' }, { status: 400 })
   }
@@ -12,6 +12,11 @@ export async function POST(req: Request) {
       {
         subscription,
         phone_number: phoneNumber ?? null,
+        // Le subscription "admin" (quella attivata da te nel pannello) sono
+        // marcate qui: sendPushToAdmin() usa questo flag per mandare solo a
+        // te le notifiche di servizio (nuovo ordine, chat, visite...) invece
+        // che a tutti i clienti iscritti.
+        is_admin: isAdmin === true,
         updated_at: new Date().toISOString(),
       },
       { onConflict: 'endpoint' }

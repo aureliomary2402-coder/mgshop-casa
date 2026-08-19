@@ -16,7 +16,11 @@ function ensureVapid() {
 export async function sendPushToAdmin(title: string, body: string, url?: string) {
   ensureVapid()
   const supabase = createAdminClient()
-  const { data: subs } = await supabase.from('push_subscriptions').select('subscription')
+  // Solo le subscription marcate is_admin=true (attivate da te nel pannello
+  // /mgadmin-panel): prima qui si prendevano TUTTE le subscription, quindi
+  // ordini/chat/visite arrivavano anche ai clienti che avevano attivato le
+  // notifiche dallo switch nel popup account.
+  const { data: subs } = await supabase.from('push_subscriptions').select('subscription').eq('is_admin', true)
   if (!subs || subs.length === 0) return { sent: 0 }
 
   const payload = JSON.stringify({ title, body, url })

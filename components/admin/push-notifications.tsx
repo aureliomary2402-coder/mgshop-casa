@@ -1,12 +1,9 @@
 "use client"
-
 import { useState, useEffect } from 'react'
 import { Bell, BellOff, Check } from 'lucide-react'
-
 export function PushNotifications() {
   const [status, setStatus] = useState<'loading' | 'unsupported' | 'denied' | 'subscribed' | 'unsubscribed'>('loading')
   const [loading, setLoading] = useState(false)
-
   useEffect(() => {
     if (!('serviceWorker' in navigator) || !('PushManager' in window)) {
       setStatus('unsupported')
@@ -19,13 +16,11 @@ export function PushNotifications() {
       else setStatus('unsubscribed')
     })
   }, [])
-
   useEffect(() => {
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker.register('/sw.js').catch(console.error)
     }
   }, [])
-
   const subscribe = async () => {
     setLoading(true)
     try {
@@ -34,10 +29,14 @@ export function PushNotifications() {
         userVisibleOnly: true,
         applicationServerKey: process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY
       })
+      // Corretto: prima veniva mandato il solo oggetto "sub" come body,
+      // ma /api/push/subscribe si aspetta { subscription, isAdmin }.
+      // Con la forma sbagliata la tua subscription non veniva mai salvata
+      // come admin (e probabilmente falliva proprio il salvataggio).
       await fetch('/api/push/subscribe', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(sub)
+        body: JSON.stringify({ subscription: sub, isAdmin: true })
       })
       setStatus('subscribed')
     } catch (err) {
@@ -46,7 +45,6 @@ export function PushNotifications() {
     }
     setLoading(false)
   }
-
   const unsubscribe = async () => {
     setLoading(true)
     try {
@@ -66,14 +64,12 @@ export function PushNotifications() {
     }
     setLoading(false)
   }
-
   if (status === 'loading') return null
   if (status === 'unsupported') return (
     <div className="flex items-center gap-2 text-xs text-slate-400 px-2">
       <BellOff className="w-3.5 h-3.5" /> Notifiche non supportate
     </div>
   )
-
   return (
     <div>
       {status === 'subscribed' ? (
