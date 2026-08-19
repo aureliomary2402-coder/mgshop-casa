@@ -1,11 +1,53 @@
 "use client"
 import { useState, useEffect } from 'react'
-import { Star, MessageSquare, Send, CheckCircle2 } from 'lucide-react'
+import { Star, MessageSquare, Send, CheckCircle2, Camera, X, PlayCircle, Loader2 } from 'lucide-react'
 import { AmbientBubbles } from '@/components/shop/ambient-bubbles'
 import { Reveal } from '@/components/shop/reveal'
 import { PageHero } from '@/components/shop/page-hero'
 import { StarRatingDisplay, StarRatingInput } from '@/components/shop/star-rating'
-import type { Review } from '@/lib/types'
+import type { Review, ReviewMedia } from '@/lib/types'
+
+type Attachment = {
+  localId: string
+  previewUrl: string
+  type: 'image' | 'video'
+  uploading: boolean
+  error?: string
+  uploadedUrl?: string
+}
+
+// Il metodo "fetch" della libreria Supabase per l'upload diretto ha un bug
+// noto su Safari/iOS (corpo della richiesta vuoto o troncato): usiamo
+// XMLHttpRequest, più affidabile per l'invio di file binari, per caricare
+// i video pesanti direttamente su Supabase Storage.
+function uploadFileViaXHR(signedUrl: string, file: File): Promise<void> {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader()
+    reader.onerror = () => reject(new Error('Impossibile leggere il file dal telefono'))
+    reader.onload = () => {
+      const buffer = reader.result as ArrayBuffer
+      if (!buffer || buffer.byteLength === 0) {
+        reject(new Error('Il file letto risulta vuoto (0 byte)'))
+        return
+      }
+      const xhr = new XMLHttpRequest()
+      xhr.open('PUT', signedUrl, true)
+      const anonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || ''
+      xhr.setRequestHeader('apikey', anonKey)
+      xhr.setRequestHeader('Authorization', `Bearer ${anonKey}`)
+      xhr.setRequestHeader('Content-Type', file.type || 'application/octet-stream')
+      xhr.onload = () => {
+        if (xhr.status >= 200 && xhr.status < 300) resolve()
+        else reject(new Error(`Caricamento fallito (${xhr.status})`))
+      }
+      xhr.onerror = () => reject(new Error('Errore di rete durante il caricamento'))
+      xhr.send(buffer)
+    }
+    reader.readAsArrayBuffer(file)
+  })
+}
+
+const MAX_ATTACHMENTS = 6
 
 // Stessa chiave usata dal FloatingMenu per la chat: se il cliente ha già
 // lasciato nome/numero lì, li ritroviamo qui pronti per essere riusati,
@@ -25,6 +67,7 @@ export default function RecensioniPage() {
   const [sending, setSending] = useState(false)
   const [error, setError] = useState('')
   const [sent, setSent] = useState(false)
+  const [attachments, setAttachments] = useState<Attachment[]>([])
 
   const fetchReviews = () => {
     fetch('/api/reviews')
@@ -46,17 +89,80 @@ export default function RecensioniPage() {
     }
   }, [])
 
+  // Carica un file (foto o video) allegato alla recensione: le foto passano
+  // dal server (/api/upload), i video invece vanno caricati direttamente su
+  // Supabase Storage con un URL firmato, perché possono superare il limite
+  // di ~4.5MB accettato dalle funzioni serverless di Vercel.
+  const uploadAttachment = async (localId: string, file: File) => {
+    const isVideo = file.type.startsWith('video/')
+    try {
+      let url: string
+      if (isVideo) {
+        const signRes = await fetch('/api/reviews/upload-url', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ fileName: file.name }),
+        })
+        const signData = await signRes.json()
+        if (!signRes.ok) throw new Error(signData.error || 'Errore preparazione upload')
+        await uploadFileViaXHR(signData.signedUrl, file)
+        url = signData.publicUrl
+      } else {
+        const formData = new FormData()
+        formData.append('file', file)
+        const res = await fetch('/api/upload', { method: 'POST', body: formData })
+        const data = await res.json()
+        if (!res.ok || !data.url) throw new Error(data.error || 'Errore durante il caricamento')
+        url = data.url
+      }
+      setAttachments(prev => prev.map(a => a.localId === localId ? { ...a, uploading: false, uploadedUrl: url } : a))
+    } catch (e: any) {
+      setAttachments(prev => prev.map(a => a.localId === localId ? { ...a, uploading: false, error: e?.message || 'Errore di caricamento' } : a))
+    }
+  }
+
+  const handleFilesSelected = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files
+    if (!files || files.length === 0) return
+    const remaining = MAX_ATTACHMENTS - attachments.length
+    const toAdd = Array.from(files).slice(0, Math.max(0, remaining))
+    for (const file of toAdd) {
+      const localId = `${Date.now()}-${Math.random().toString(36).slice(2)}`
+      const isVideo = file.type.startsWith('video/')
+      setAttachments(prev => [...prev, {
+        localId,
+        previewUrl: URL.createObjectURL(file),
+        type: isVideo ? 'video' : 'image',
+        uploading: true,
+      }])
+      uploadAttachment(localId, file)
+    }
+    e.target.value = ''
+  }
+
+  const handleRemoveAttachment = (localId: string) => {
+    setAttachments(prev => {
+      const found = prev.find(a => a.localId === localId)
+      if (found) URL.revokeObjectURL(found.previewUrl)
+      return prev.filter(a => a.localId !== localId)
+    })
+  }
+
   const handleSubmit = async () => {
     setError('')
     if (!name.trim()) { setError('Inserisci il tuo nome'); return }
     if (!rating) { setError('Seleziona una valutazione da 1 a 5 stelle'); return }
     if (!comment.trim()) { setError('Scrivi un breve commento'); return }
+    if (attachments.some(a => a.uploading)) { setError('Attendi il completamento del caricamento di foto/video'); return }
     setSending(true)
     try {
+      const media = attachments
+        .filter(a => a.uploadedUrl)
+        .map(a => ({ media_url: a.uploadedUrl, media_type: a.type }))
       const res = await fetch('/api/reviews', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ customer_name: name.trim(), phone_number: phone.trim() || null, rating, comment: comment.trim() }),
+        body: JSON.stringify({ customer_name: name.trim(), phone_number: phone.trim() || null, rating, comment: comment.trim(), media }),
       })
       if (!res.ok) {
         const err = await res.json().catch(() => ({}))
@@ -68,6 +174,8 @@ export default function RecensioniPage() {
       setSent(true)
       setComment('')
       setRating(0)
+      attachments.forEach(a => URL.revokeObjectURL(a.previewUrl))
+      setAttachments([])
       fetchReviews()
     } catch {
       setError('Errore di connessione, riprova')
@@ -132,6 +240,49 @@ export default function RecensioniPage() {
                     rows={4}
                     className="w-full border border-slate-200 rounded-lg px-3 py-2.5 text-base focus:outline-none focus:ring-2 focus:ring-cyan-500 resize-none"
                   />
+                  <div className="space-y-2">
+                    {attachments.length > 0 && (
+                      <div className="grid grid-cols-4 gap-2">
+                        {attachments.map(a => (
+                          <div key={a.localId} className="relative aspect-square rounded-lg overflow-hidden bg-slate-100">
+                            {a.type === 'video' ? (
+                              <video src={a.previewUrl} className="w-full h-full object-cover" muted playsInline preload="metadata" />
+                            ) : (
+                              <img src={a.previewUrl} alt="" className="w-full h-full object-cover" />
+                            )}
+                            {a.type === 'video' && !a.uploading && !a.error && (
+                              <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                                <PlayCircle className="w-6 h-6 text-white drop-shadow" />
+                              </div>
+                            )}
+                            {a.uploading && (
+                              <div className="absolute inset-0 flex items-center justify-center bg-black/30">
+                                <Loader2 className="w-5 h-5 text-white animate-spin" />
+                              </div>
+                            )}
+                            {a.error && (
+                              <div className="absolute inset-0 flex items-center justify-center bg-red-500/70 p-1">
+                                <p className="text-[9px] text-white text-center leading-tight">{a.error}</p>
+                              </div>
+                            )}
+                            <button
+                              type="button"
+                              onClick={() => handleRemoveAttachment(a.localId)}
+                              className="absolute top-1 right-1 w-5 h-5 rounded-full bg-black/60 flex items-center justify-center"
+                            >
+                              <X className="w-3 h-3 text-white" />
+                            </button>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                    {attachments.length < MAX_ATTACHMENTS && (
+                      <label className="flex items-center justify-center gap-2 py-2.5 rounded-xl border border-dashed border-slate-300 text-sm font-medium text-slate-500 cursor-pointer hover:border-cyan-400 hover:text-cyan-600 transition-colors">
+                        <Camera className="w-4 h-4" /> Aggiungi foto o video
+                        <input type="file" accept="image/*,video/*" multiple className="hidden" onChange={handleFilesSelected} />
+                      </label>
+                    )}
+                  </div>
                   {error && <p className="text-sm text-red-500 text-center">{error}</p>}
                   <button
                     onClick={handleSubmit}
@@ -165,6 +316,25 @@ export default function RecensioniPage() {
                     <StarRatingDisplay rating={r.rating} />
                   </div>
                   <p className="text-sm text-slate-600 leading-relaxed">{r.comment}</p>
+
+                  {r.media && r.media.length > 0 && (
+                    <div className="grid grid-cols-4 gap-2 mt-3">
+                      {r.media.map(m => (
+                        <a key={m.id} href={m.media_url} target="_blank" rel="noopener noreferrer" className="relative aspect-square rounded-lg overflow-hidden bg-slate-100 block">
+                          {m.media_type === 'video' ? (
+                            <>
+                              <video src={m.media_url} className="w-full h-full object-cover" muted playsInline preload="metadata" />
+                              <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                                <PlayCircle className="w-6 h-6 text-white drop-shadow" />
+                              </div>
+                            </>
+                          ) : (
+                            <img src={m.media_url} alt="" className="w-full h-full object-cover" />
+                          )}
+                        </a>
+                      ))}
+                    </div>
+                  )}
 
                   {r.admin_reply && (
                     <div className="mt-3 rounded-xl p-3" style={{ background: 'rgba(8,145,178,0.06)', border: '1px solid rgba(8,145,178,0.15)' }}>

@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect, useCallback } from 'react'
-import { Star, Trash2, Send, Phone, MessageSquareReply } from 'lucide-react'
+import { Star, Trash2, Send, Phone, MessageSquareReply, PlayCircle } from 'lucide-react'
 import type { Review } from '@/lib/types'
 
 function Stars({ rating }: { rating: number }) {
@@ -133,6 +133,25 @@ export function ReviewsManager() {
               </div>
 
               <p className="text-sm text-slate-600 leading-relaxed">{r.comment}</p>
+
+              {r.media && r.media.length > 0 && (
+                <div className="grid grid-cols-4 sm:grid-cols-6 gap-2">
+                  {r.media.map(m => (
+                    <a key={m.id} href={m.media_url} target="_blank" rel="noopener noreferrer" className="relative aspect-square rounded-lg overflow-hidden bg-slate-100 block">
+                      {m.media_type === 'video' ? (
+                        <>
+                          <video src={m.media_url} className="w-full h-full object-cover" muted playsInline preload="metadata" />
+                          <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                            <PlayCircle className="w-5 h-5 text-white drop-shadow" />
+                          </div>
+                        </>
+                      ) : (
+                        <img src={m.media_url} alt="" className="w-full h-full object-cover" />
+                      )}
+                    </a>
+                  ))}
+                </div>
+              )}
 
               <div className="pt-2 border-t border-slate-100 space-y-2">
                 <p className="text-xs font-semibold text-slate-500 flex items-center gap-1">

@@ -12,10 +12,16 @@ export async function GET() {
   const supabase = createAdminClient()
   const { data, error } = await supabase
     .from('reviews')
-    .select('*')
+    .select('*, review_media(id, review_id, media_url, media_type, display_order, created_at)')
     .order('created_at', { ascending: false })
   if (error) return NextResponse.json({ error: error.message }, { status: 500 })
-  return NextResponse.json(data)
+
+  const reviews = (data || []).map((r: any) => {
+    const { review_media, ...rest } = r
+    return { ...rest, media: (review_media || []).sort((a: any, b: any) => a.display_order - b.display_order) }
+  })
+
+  return NextResponse.json(reviews)
 }
 
 export async function PUT(request: NextRequest) {

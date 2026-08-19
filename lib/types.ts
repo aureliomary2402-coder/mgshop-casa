@@ -105,6 +105,15 @@ export interface CartItem {
   lineId?: string
 }
 
+export interface ReviewMedia {
+  id: string
+  review_id: string
+  media_url: string
+  media_type: 'image' | 'video'
+  display_order: number
+  created_at: string
+}
+
 export interface Review {
   id: string
   customer_name: string
@@ -114,4 +123,5 @@ export interface Review {
   admin_reply?: string | null
   admin_reply_at?: string | null
   created_at: string
+  media?: ReviewMedia[]
 }
