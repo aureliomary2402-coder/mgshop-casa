@@ -104,3 +104,14 @@ export interface CartItem {
   // righe separate invece di sommarsi.
   lineId?: string
 }
+
+export interface Review {
+  id: string
+  customer_name: string
+  phone_number?: string | null
+  rating: number
+  comment: string
+  admin_reply?: string | null
+  admin_reply_at?: string | null
+  created_at: string
+}
