@@ -21,12 +21,17 @@ self.addEventListener('push', function(event) {
   const title = data.title || 'MGShop Casa'
   const options = {
     body: data.body || 'Nuovo ordine ricevuto!',
-    icon: '/icon-192.png',
+    // Se chi invia la notifica ha caricato un'immagine, sostituisce il logo
+    // di default (icon-192.png) come icona della notifica.
+    icon: data.imageUrl || '/icon-192.png',
     badge: '/icon-192.png',
     vibrate: [200, 100, 200],
-    data: { url: data.url || '/mgadmin-panel', notificationId: data.notificationId || null },
+    // Le notifiche admin (nuovo ordine, chat...) passano sempre una url
+    // esplicita. Per le notifiche ai clienti, se chi invia non ha scelto
+    // un link, il default e' la home invece del pannello admin.
+    data: { url: data.url || '/', notificationId: data.notificationId || null },
     actions: [
-      { action: 'open', title: 'Vedi ordine' },
+      { action: 'open', title: 'Apri' },
       { action: 'close', title: 'Chiudi' }
     ]
   }

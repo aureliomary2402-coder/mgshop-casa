@@ -1,3 +1,121 @@
+#!/bin/bash
+set -e
+cd "$(dirname "$0")" 2>/dev/null || true
+cd ~/mgshop-casa
+
+echo "1/3 - Aggiorno public/sw.js (default home + immagine personalizzata)..."
+python3 << 'PYEOF'
+path = "public/sw.js"
+with open(path, "r") as f:
+    content = f.read()
+
+old = """self.addEventListener('push', function(event) {
+  const data = event.data ? event.data.json() : {}
+  const title = data.title || 'MGShop Casa'
+  const options = {
+    body: data.body || 'Nuovo ordine ricevuto!',
+    icon: '/icon-192.png',
+    badge: '/icon-192.png',
+    vibrate: [200, 100, 200],
+    data: { url: data.url || '/mgadmin-panel', notificationId: data.notificationId || null },
+    actions: [
+      { action: 'open', title: 'Vedi ordine' },
+      { action: 'close', title: 'Chiudi' }
+    ]
+  }
+  event.waitUntil(self.registration.showNotification(title, options))
+})"""
+
+new = """self.addEventListener('push', function(event) {
+  const data = event.data ? event.data.json() : {}
+  const title = data.title || 'MGShop Casa'
+  const options = {
+    body: data.body || 'Nuovo ordine ricevuto!',
+    // Se chi invia la notifica ha caricato un'immagine, sostituisce il logo
+    // di default (icon-192.png) come icona della notifica.
+    icon: data.imageUrl || '/icon-192.png',
+    badge: '/icon-192.png',
+    vibrate: [200, 100, 200],
+    // Le notifiche admin (nuovo ordine, chat...) passano sempre una url
+    // esplicita. Per le notifiche ai clienti, se chi invia non ha scelto
+    // un link, il default e' la home invece del pannello admin.
+    data: { url: data.url || '/', notificationId: data.notificationId || null },
+    actions: [
+      { action: 'open', title: 'Apri' },
+      { action: 'close', title: 'Chiudi' }
+    ]
+  }
+  event.waitUntil(self.registration.showNotification(title, options))
+})"""
+
+if old not in content:
+    raise SystemExit("ANCHOR non trovato in public/sw.js: controllo manuale necessario")
+content = content.replace(old, new, 1)
+
+with open(path, "w") as f:
+    f.write(content)
+print("public/sw.js aggiornato")
+PYEOF
+
+echo "2/3 - Aggiorno app/api/admin/push-notify/route.ts (accetta url e imageUrl)..."
+python3 << 'PYEOF'
+path = "app/api/admin/push-notify/route.ts"
+with open(path, "r") as f:
+    content = f.read()
+
+old = """  const { title, body, url } = await request.json()
+  if (!title?.trim() || !body?.trim()) {
+    return NextResponse.json({ error: 'Titolo e messaggio sono obbligatori' }, { status: 400 })
+  }
+  const supabase = createAdminClient()
+  const { data: subs } = await supabase
+    .from('push_subscriptions')
+    .select('id, subscription')
+  if (!subs || subs.length === 0) {
+    return NextResponse.json({ ok: true, sent: 0, message: 'Nessun cliente iscritto alle notifiche' })
+  }
+  const { data: logRow } = await supabase
+    .from('push_notifications_log')
+    .insert({ title, body, sent_count: 0, failed_count: 0 })
+    .select('id')
+    .single()
+  const notificationId = logRow?.id || null
+  const payload = JSON.stringify({ title, body, url: url || '/', notificationId })"""
+
+new = """  const { title, body, url, imageUrl } = await request.json()
+  if (!title?.trim() || !body?.trim()) {
+    return NextResponse.json({ error: 'Titolo e messaggio sono obbligatori' }, { status: 400 })
+  }
+  // Se non viene scelto un link, il click sulla notifica porta alla home
+  // (non piu' al pannello admin, che per un cliente non ha senso).
+  const finalUrl = (typeof url === 'string' && url.trim()) ? url.trim() : '/'
+  const finalImageUrl = (typeof imageUrl === 'string' && imageUrl.trim()) ? imageUrl.trim() : null
+  const supabase = createAdminClient()
+  const { data: subs } = await supabase
+    .from('push_subscriptions')
+    .select('id, subscription')
+  if (!subs || subs.length === 0) {
+    return NextResponse.json({ ok: true, sent: 0, message: 'Nessun cliente iscritto alle notifiche' })
+  }
+  const { data: logRow } = await supabase
+    .from('push_notifications_log')
+    .insert({ title, body, sent_count: 0, failed_count: 0, link_url: finalUrl, image_url: finalImageUrl })
+    .select('id')
+    .single()
+  const notificationId = logRow?.id || null
+  const payload = JSON.stringify({ title, body, url: finalUrl, imageUrl: finalImageUrl, notificationId })"""
+
+if old not in content:
+    raise SystemExit("ANCHOR non trovato in app/api/admin/push-notify/route.ts: controllo manuale necessario")
+content = content.replace(old, new, 1)
+
+with open(path, "w") as f:
+    f.write(content)
+print("app/api/admin/push-notify/route.ts aggiornato")
+PYEOF
+
+echo "3/3 - Aggiorno components/admin/customer-push-notify.tsx (link prodotto/categoria/personalizzato + immagine)..."
+cat > components/admin/customer-push-notify.tsx << 'EOF'
 "use client"
 import { useState, useEffect, useRef } from 'react'
 import { Send, Megaphone, Check, Users, Clock, Trash2, Pencil, X as XIcon, Link2, Package, Tag, ImagePlus, Loader2, Search } from 'lucide-react'
@@ -489,3 +607,18 @@ export function CustomerPushNotify() {
     </div>
   )
 }
+EOF
+
+echo ""
+echo "✅ Fatto! File modificati:"
+echo "   - public/sw.js"
+echo "   - app/api/admin/push-notify/route.ts"
+echo "   - components/admin/customer-push-notify.tsx"
+echo ""
+echo "Colonne link_url e image_url gia' aggiunte a push_notifications_log su Supabase."
+echo ""
+echo "Ora testa in locale con: npm run dev"
+echo "Se va tutto bene:"
+echo "   git add -A"
+echo "   git commit -m 'Link personalizzato e immagine nelle notifiche ai clienti'"
+echo "   git push"

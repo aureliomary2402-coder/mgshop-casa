@@ -15,10 +15,14 @@ export async function POST(request: NextRequest) {
   if (!(await isAuthenticated())) {
     return NextResponse.json({ error: 'Non autorizzato' }, { status: 401 })
   }
-  const { title, body, url } = await request.json()
+  const { title, body, url, imageUrl } = await request.json()
   if (!title?.trim() || !body?.trim()) {
     return NextResponse.json({ error: 'Titolo e messaggio sono obbligatori' }, { status: 400 })
   }
+  // Se non viene scelto un link, il click sulla notifica porta alla home
+  // (non piu' al pannello admin, che per un cliente non ha senso).
+  const finalUrl = (typeof url === 'string' && url.trim()) ? url.trim() : '/'
+  const finalImageUrl = (typeof imageUrl === 'string' && imageUrl.trim()) ? imageUrl.trim() : null
   const supabase = createAdminClient()
   const { data: subs } = await supabase
     .from('push_subscriptions')
@@ -28,11 +32,11 @@ export async function POST(request: NextRequest) {
   }
   const { data: logRow } = await supabase
     .from('push_notifications_log')
-    .insert({ title, body, sent_count: 0, failed_count: 0 })
+    .insert({ title, body, sent_count: 0, failed_count: 0, link_url: finalUrl, image_url: finalImageUrl })
     .select('id')
     .single()
   const notificationId = logRow?.id || null
-  const payload = JSON.stringify({ title, body, url: url || '/', notificationId })
+  const payload = JSON.stringify({ title, body, url: finalUrl, imageUrl: finalImageUrl, notificationId })
   let sent = 0
   let failed = 0
   for (const { subscription, id } of subs) {
