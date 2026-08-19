@@ -24,9 +24,14 @@ export async function POST(request: NextRequest) {
   const finalUrl = (typeof url === 'string' && url.trim()) ? url.trim() : '/'
   const finalImageUrl = (typeof imageUrl === 'string' && imageUrl.trim()) ? imageUrl.trim() : null
   const supabase = createAdminClient()
+  // Esclude esplicitamente le subscription admin (is_admin=true): questo
+  // canale è per le notifiche marketing/informative ai clienti, il
+  // dispositivo admin non deve mai riceverle qui (riceve solo gli avvisi
+  // di servizio tramite sendPushToAdmin).
   const { data: subs } = await supabase
     .from('push_subscriptions')
     .select('id, subscription')
+    .or('is_admin.is.null,is_admin.eq.false')
   if (!subs || subs.length === 0) {
     return NextResponse.json({ ok: true, sent: 0, message: 'Nessun cliente iscritto alle notifiche' })
   }
@@ -63,9 +68,12 @@ export async function GET() {
     return NextResponse.json({ error: 'Non autorizzato' }, { status: 401 })
   }
   const supabase = createAdminClient()
+  // Stessa esclusione del POST: l'elenco/conteggio "clienti iscritti" non
+  // deve includere il dispositivo admin.
   const { data: subscribers } = await supabase
     .from('push_subscriptions')
     .select('id, phone_number, label, created_at')
+    .or('is_admin.is.null,is_admin.eq.false')
     .order('created_at', { ascending: false })
   const { data: history } = await supabase
     .from('push_notifications_log')

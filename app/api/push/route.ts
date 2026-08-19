@@ -18,7 +18,12 @@ export async function POST(request: NextRequest) {
     const { title, body, url, onlyOrdered = true, phoneNumbers } = await request.json()
     const supabase = createAdminClient()
 
-    let query = supabase.from('push_subscriptions').select('id, subscription, phone_number')
+    // Esclude sempre le subscription admin (is_admin=true): questo canale
+    // manda notifiche ai clienti, il dispositivo admin non deve riceverle.
+    let query = supabase
+      .from('push_subscriptions')
+      .select('id, subscription, phone_number')
+      .or('is_admin.is.null,is_admin.eq.false')
 
     if (Array.isArray(phoneNumbers) && phoneNumbers.length > 0) {
       query = query.in('phone_number', phoneNumbers)
