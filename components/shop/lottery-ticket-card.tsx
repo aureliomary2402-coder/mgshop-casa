@@ -15,7 +15,7 @@ interface LotteryData {
   ticket_price?: number
 }
 
-export function LotteryTicketCard() {
+export function LotteryTicketCard({ hideDetailsLink = false }: { hideDetailsLink?: boolean } = {}) {
   const [data, setData] = useState<LotteryData | null>(null)
   const [qty, setQty] = useState(1)
   const [added, setAdded] = useState(false)
@@ -109,9 +109,11 @@ export function LotteryTicketCard() {
             )}
           </div>
 
-          <Link href="/lotteria" className="block mt-2.5 text-xs text-orange-500 hover:text-orange-600 underline underline-offset-2">
-            Vedi tutti i dettagli della lotteria
-          </Link>
+          {!hideDetailsLink && (
+            <Link href="/lotteria" className="block mt-2.5 text-xs text-orange-500 hover:text-orange-600 underline underline-offset-2">
+              Vedi tutti i dettagli della lotteria
+            </Link>
+          )}
         </div>
       </div>
     </div>
