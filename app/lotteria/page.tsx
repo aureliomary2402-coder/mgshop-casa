@@ -151,7 +151,7 @@ export default function LotteryPage() {
               {[
                 { icon: Ticket, title: 'Scegli come partecipare', text: 'Compra un biglietto qui sopra senza fare un ordine, oppure spunta "Partecipa alla lotteria" mentre ordini i tuoi prodotti.' },
                 { icon: ShoppingCart, title: 'Paga il biglietto', text: 'Ogni biglietto costa pochi euro. Puoi prenderne quanti vuoi, da solo o insieme a un ordine.' },
-                { icon: Hash, title: 'Ricevi il numero', text: 'Ti viene assegnato automaticamente il prossimo numero libero: quello è il tuo biglietto.' },
+                { icon: Hash, title: 'Scegli il numero (o no)', text: 'Al checkout puoi scegliere tu il numero, se è ancora libero. Se non lo spunti, te ne viene assegnato uno in automatico tra quelli liberi.' },
                 { icon: Sparkles, title: 'Scopri se hai vinto', text: 'Allo scadere del countdown le bolle scoppiano tutte tranne quella vincente.' },
               ].map((step, i) => (
                 <div key={step.title} className="text-center">
