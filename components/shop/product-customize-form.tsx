@@ -1,5 +1,6 @@
 "use client"
 
+import { useState } from 'react'
 import { Check } from 'lucide-react'
 import type { CustomizationOption } from '@/lib/types'
 import { normalizeChoices } from '@/lib/customization'
@@ -14,11 +15,15 @@ interface Props {
 // Form mostrato sui prodotti personalizzabili (dettaglio prodotto): il
 // cliente sceglie colore/dimensione/altro prima di poter aggiungere al
 // carrello. Usato sia nel modale sia nella pagina prodotto a tutto schermo.
-// Per le opzioni "a scelta" (select) si possono selezionare più pulsanti
-// insieme (es. sia "12 pz" che "24 pz"): al momento di aggiungere al
-// carrello, ogni scelta selezionata diventa una riga separata con il suo
-// prezzo, così il cliente può comprare più varianti in un colpo solo.
+// Per le opzioni "a scelta" (select), di default si può selezionare un solo
+// tipo (click su un'altra scelta sostituisce quella precedente, come un
+// gruppo di radio button). Se il cliente vuole comprare più tipi in un
+// colpo solo, barra la casella "Più di una": a quel punto i pulsanti si
+// comportano come toggle indipendenti e ogni scelta selezionata diventerà
+// una riga separata nel carrello, con il suo prezzo.
 export function ProductCustomizeForm({ options, values, onChange, note }: Props) {
+  const [multiMode, setMultiMode] = useState<Record<string, boolean>>({})
+
   if (!options || options.length === 0) return null
 
   return (
@@ -28,23 +33,61 @@ export function ProductCustomizeForm({ options, values, onChange, note }: Props)
       )}
       {options.map(opt => {
         const selectedValues = Array.isArray(values[opt.id]) ? (values[opt.id] as string[]) : []
+        const choices = normalizeChoices(opt.choices)
+        const isMulti = !!multiMode[opt.id]
+
+        const toggleMulti = () => {
+          const next = !isMulti
+          setMultiMode(prev => ({ ...prev, [opt.id]: next }))
+          // Disattivando la selezione multipla, teniamo solo la prima scelta
+          // già selezionata: evita di lasciare più tipi "appesi" senza che
+          // il cliente se ne accorga.
+          if (!next && selectedValues.length > 1) {
+            onChange(opt.id, [selectedValues[0]])
+          }
+        }
+
+        const handleChoiceClick = (value: string) => {
+          const selected = selectedValues.includes(value)
+          if (isMulti) {
+            onChange(opt.id, selected
+              ? selectedValues.filter(v => v !== value)
+              : [...selectedValues, value])
+          } else {
+            // Selezione singola: cliccare un tipo lo seleziona da solo
+            // (sostituendo quello scelto prima); ricliccarlo lo deseleziona.
+            onChange(opt.id, selected ? [] : [value])
+          }
+        }
+
         return (
         <div key={opt.id}>
-          <label className="text-sm font-semibold block mb-2" style={{ color: '#0c2b36' }}>
-            {opt.label}{opt.required && <span className="text-fuchsia-500 ml-0.5">*</span>}
-          </label>
+          <div className="flex items-center justify-between gap-2 mb-2">
+            <label className="text-sm font-semibold" style={{ color: '#0c2b36' }}>
+              {opt.label}{opt.required && <span className="text-fuchsia-500 ml-0.5">*</span>}
+            </label>
+            {opt.type === 'select' && choices.length > 1 && (
+              <label className="flex items-center gap-1.5 text-[11px] font-medium cursor-pointer select-none shrink-0" style={{ color: '#a21caf' }}>
+                <input
+                  type="checkbox"
+                  checked={isMulti}
+                  onChange={toggleMulti}
+                  className="w-3.5 h-3.5 accent-fuchsia-600"
+                />
+                Più di una
+              </label>
+            )}
+          </div>
           {opt.type === 'select' ? (
             <>
               <div className="flex flex-wrap gap-2">
-                {normalizeChoices(opt.choices).map(choice => {
+                {choices.map(choice => {
                   const selected = selectedValues.includes(choice.value)
                   return (
                     <button
                       key={choice.value}
                       type="button"
-                      onClick={() => onChange(opt.id, selected
-                        ? selectedValues.filter(v => v !== choice.value)
-                        : [...selectedValues, choice.value])}
+                      onClick={() => handleChoiceClick(choice.value)}
                       className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-full text-sm font-medium transition-all btn-press"
                       style={selected
                         ? { background: 'linear-gradient(135deg,#d946ef,#c026d3)', color: 'white' }
@@ -55,8 +98,8 @@ export function ProductCustomizeForm({ options, values, onChange, note }: Props)
                   )
                 })}
               </div>
-              {normalizeChoices(opt.choices).length > 1 && (
-                <p className="text-[11px] mt-1.5" style={{ color: '#a21caf' }}>Puoi selezionarne più di una: verranno aggiunte al carrello separatamente</p>
+              {isMulti && (
+                <p className="text-[11px] mt-1.5" style={{ color: '#a21caf' }}>Ogni scelta selezionata verrà aggiunta al carrello separatamente</p>
               )}
             </>
           ) : (
