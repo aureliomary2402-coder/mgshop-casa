@@ -193,7 +193,7 @@ export default function RecensioniPage() {
         subtitle={
           <span className="block max-w-xl mx-auto">
             {count > 0
-              ? `${average.toFixed(1)} su 5 — ${count} recensione${count === 1 ? '' : 'i'} dei nostri clienti`
+              ? `${average.toFixed(1)} su 5 — ${count} ${count === 1 ? 'recensione' : 'recensioni'} dei nostri clienti`
               : 'Sii il primo a lasciare una recensione'}
           </span>
         }

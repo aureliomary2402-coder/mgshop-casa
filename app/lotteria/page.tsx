@@ -5,6 +5,7 @@ import { ArrowLeft, Clock, Gift, History, PartyPopper, ImageIcon, ShoppingCart, 
 import { Reveal } from '@/components/shop/reveal'
 import { AmbientBubbles } from '@/components/shop/ambient-bubbles'
 import { PageHero } from '@/components/shop/page-hero'
+import { LotteryTicketCard } from '@/components/shop/lottery-ticket-card'
 
 interface Winner {
   id: string; lottery_title: string; prize_label: string; prize_image_url: string | null
@@ -137,15 +138,20 @@ export default function LotteryPage() {
       <div className="relative overflow-hidden">
         <AmbientBubbles count={16} theme="light" />
         <div className="relative z-10 max-w-5xl mx-auto px-4 py-10 space-y-10">
+        {/* Acquista il biglietto */}
+        <Reveal>
+          <LotteryTicketCard hideDetailsLink />
+        </Reveal>
+
         {/* Come funziona */}
         <Reveal>
           <div className="bg-white rounded-2xl p-6 sm:p-7" style={{ border: '1px solid rgba(8,145,178,0.1)' }}>
             <h2 className="text-xl font-bold mb-5 text-center" style={{ color: '#0c2b36' }}>Come funziona</h2>
             <div className="grid sm:grid-cols-4 gap-5">
               {[
-                { icon: ShoppingCart, title: 'Fai un ordine', text: 'Aggiungi i prodotti che vuoi al carrello, come al solito.' },
-                { icon: Gift, title: 'Partecipa (+1€)', text: 'Al checkout spunta "Partecipa alla lotteria" aggiungendo 1€ al totale.' },
-                { icon: Hash, title: 'Ricevi il numero', text: 'Ti viene assegnato automaticamente il prossimo numero libero: quello è il tuo biglietto.' },
+                { icon: Ticket, title: 'Scegli come partecipare', text: 'Compra un biglietto qui sopra senza fare un ordine, oppure spunta "Partecipa alla lotteria" mentre ordini i tuoi prodotti.' },
+                { icon: ShoppingCart, title: 'Paga il biglietto', text: 'Ogni biglietto costa pochi euro. Puoi prenderne quanti vuoi, da solo o insieme a un ordine.' },
+                { icon: Hash, title: 'Scegli il numero (o no)', text: 'Al checkout puoi scegliere tu il numero, se è ancora libero. Se non lo spunti, te ne viene assegnato uno in automatico tra quelli liberi.' },
                 { icon: Sparkles, title: 'Scopri se hai vinto', text: 'Allo scadere del countdown le bolle scoppiano tutte tranne quella vincente.' },
               ].map((step, i) => (
                 <div key={step.title} className="text-center">
