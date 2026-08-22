@@ -82,26 +82,72 @@ export function buildCartLineId(productId: string, selections?: CustomizationSel
   return `${productId}::${sorted.map(s => `${s.option_id}=${s.value}`).join('|')}`
 }
 
-// Controlla che tutte le opzioni obbligatorie del prodotto abbiano una scelta valida
-export function missingRequiredOptions(options: CustomizationOption[], values: Record<string, string>): CustomizationOption[] {
-  return options.filter(opt => opt.required && !values[opt.id]?.trim())
+// Controlla che tutte le opzioni obbligatorie del prodotto abbiano una scelta valida.
+// Per le opzioni "a scelta" (select) il valore può essere una sola stringa
+// (vecchio formato) o un array di stringhe (nuovo formato, selezione multipla):
+// in entrambi i casi basta che ci sia almeno una scelta per non essere "mancante".
+export function missingRequiredOptions(options: CustomizationOption[], values: Record<string, string | string[]>): CustomizationOption[] {
+  return options.filter(opt => {
+    if (!opt.required) return false
+    const v = values[opt.id]
+    if (Array.isArray(v)) return v.length === 0
+    return !v?.trim()
+  })
 }
 
 // Trova la foto da mostrare in base alla scelta fatta dal cliente (se una
 // delle opzioni a scelta multipla ha una foto impostata sulla scelta
 // selezionata). Se più opzioni hanno una foto, vince l'ultima selezionata
-// nell'ordine in cui sono definite le opzioni sul prodotto.
-export function getSelectedChoiceImage(options: CustomizationOption[], values: Record<string, string>): string | null {
+// nell'ordine in cui sono definite le opzioni sul prodotto. Se un'opzione ha
+// più scelte selezionate insieme, vince l'ultima scelta nell'ordine in cui è stata toccata.
+export function getSelectedChoiceImage(options: CustomizationOption[], values: Record<string, string | string[]>): string | null {
   let found: string | null = null
   for (const opt of options) {
     if (opt.type !== 'select') continue
-    const selectedValue = values[opt.id]
-    if (!selectedValue) continue
-    const choice = normalizeChoices(opt.choices).find(c => c.value === selectedValue)
+    const v = values[opt.id]
+    const selectedValues = Array.isArray(v) ? v : (v ? [v] : [])
+    if (selectedValues.length === 0) continue
+    const lastValue = selectedValues[selectedValues.length - 1]
+    const choice = normalizeChoices(opt.choices).find(c => c.value === lastValue)
     if (choice?.image_url) found = choice.image_url
   }
   return found
 }
+// Genera una "combinazione" per ogni riga di carrello da creare: se il
+// cliente ha selezionato più scelte nella stessa opzione (es. sia 12pz che
+// 24pz), qui le separiamo in tante combinazioni quante sono le scelte fatte,
+// così ognuna diventa una riga distinta nel carrello con il suo prezzo.
+// Le opzioni di tipo testo restano invariate su tutte le combinazioni (non
+// ha senso duplicarle). Se un'opzione a scelta non ha nulla di selezionato
+// (facoltativa), semplicemente non compare in nessuna combinazione.
+export function buildCartCombinations(options: CustomizationOption[], values: Record<string, string | string[]>): Record<string, string>[] {
+  const selectDimensions = options
+    .filter(opt => opt.type === 'select')
+    .map(opt => {
+      const v = values[opt.id]
+      const selected = Array.isArray(v) ? v.filter(Boolean) : (v ? [v] : [])
+      return { id: opt.id, selected }
+    })
+    .filter(d => d.selected.length > 0)
+
+  let combos: Record<string, string>[] = [{}]
+  for (const dim of selectDimensions) {
+    const next: Record<string, string>[] = []
+    for (const combo of combos) {
+      for (const val of dim.selected) next.push({ ...combo, [dim.id]: val })
+    }
+    combos = next
+  }
+
+  const textValues: Record<string, string> = {}
+  for (const opt of options) {
+    if (opt.type !== 'text') continue
+    const v = values[opt.id]
+    if (typeof v === 'string' && v.trim()) textValues[opt.id] = v
+  }
+  return combos.map(c => ({ ...c, ...textValues }))
+}
+
 // Converte le scelte correnti (mappa option_id -> valore) nello snapshot da
 // salvare nel carrello/ordine, scartando le opzioni lasciate vuote e non obbligatorie.
 // Se la scelta ha un prezzo impostato, viene "fotografato" qui insieme al resto.

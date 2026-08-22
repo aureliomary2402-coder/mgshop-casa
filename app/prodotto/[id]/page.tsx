@@ -6,7 +6,7 @@ import { ArrowLeft, ShoppingCart, Heart } from 'lucide-react'
 import { useCartStore } from '@/lib/cart-store'
 import { useWishlistStore } from '@/lib/wishlist-store'
 import { useRecentlyViewedStore } from '@/lib/recently-viewed-store'
-import { missingRequiredOptions, buildCustomizationSelections, computeCustomizedPrice, getSelectedChoiceImage } from '@/lib/customization'
+import { missingRequiredOptions, buildCustomizationSelections, buildCartCombinations, computeCustomizedPrice, getSelectedChoiceImage } from '@/lib/customization'
 import { toast } from 'sonner'
 import type { Product, ProductImage } from '@/lib/types'
 import Link from 'next/link'
@@ -20,7 +20,7 @@ export default function ProductPage() {
   const [images, setImages] = useState<ProductImage[]>([])
   const [loading, setLoading] = useState(true)
   const [addedAnim, setAddedAnim] = useState(false)
-  const [customValues, setCustomValues] = useState<Record<string, string>>({})
+  const [customValues, setCustomValues] = useState<Record<string, string | string[]>>({})
   const addItem = useCartStore(s => s.addItem)
   const isWishlisted = useWishlistStore(s => product ? s.has(product.id) : false)
   const toggleWishlist = useWishlistStore(s => s.toggle)
@@ -87,10 +87,17 @@ export default function ProductPage() {
   const displayImages = selectedChoiceImage
     ? [{ id: 'choice-photo', image_url: selectedChoiceImage, product_id: product.id, display_order: -2, created_at: '' }, ...allImages.slice(1)]
     : allImages
-  // Prezzo attuale in base alle scelte di personalizzazione fatte finora
-  // (se il prodotto non è personalizzabile, o nessuna scelta ha un prezzo
-  // proprio, coincide semplicemente con product.price).
-  const displayPrice = product.is_customizable ? computeCustomizedPrice(product, options, customValues) : product.price
+  // Prezzo attuale in base alle scelte di personalizzazione fatte finora: se
+  // il cliente ha selezionato più varianti insieme (es. 12pz e 24pz), qui
+  // sommiamo tutte le righe che verranno create per mostrare il totale reale
+  // che sta per aggiungere al carrello.
+  const cartCombinations = product.is_customizable ? buildCartCombinations(options, customValues) : []
+  const displayPrice = product.is_customizable
+    ? (cartCombinations.length > 0
+      ? cartCombinations.reduce((sum, combo) => sum + computeCustomizedPrice(product, options, combo), 0)
+      : product.price)
+    : product.price
+  const multipleSelected = cartCombinations.length > 1
 
   const handleAddToCart = () => {
     if (product.torna_presto) return
@@ -100,13 +107,18 @@ export default function ProductPage() {
         toast.error(`Completa prima: ${missing.map(o => o.label).join(', ')}`)
         return
       }
+      const combos = cartCombinations.length > 0 ? cartCombinations : [{}]
+      combos.forEach(combo => {
+        const selections = buildCustomizationSelections(options, combo)
+        const unitPrice = computeCustomizedPrice(product, options, combo)
+        addItem(product, selections, unitPrice)
+      })
+    } else {
+      addItem(product)
     }
-    const selections = product.is_customizable ? buildCustomizationSelections(options, customValues) : undefined
-    const unitPrice = product.is_customizable ? computeCustomizedPrice(product, options, customValues) : undefined
-    addItem(product, selections, unitPrice)
     setAddedAnim(true)
     setTimeout(() => setAddedAnim(false), 600)
-    toast.success(`${product.name} aggiunto!`, {
+    toast.success(multipleSelected ? `${cartCombinations.length} varianti di ${product.name} aggiunte!` : `${product.name} aggiunto!`, {
       style: { background: '#cffafe', border: '1px solid #0891b2', color: '#155e75' }
     })
   }
@@ -135,6 +147,11 @@ export default function ProductPage() {
             )}
             <h1 className="text-2xl md:text-3xl font-bold leading-tight" style={{ color: '#0c2b36' }}>{product.name}</h1>
             <p className="text-4xl font-extrabold" style={{ color: '#0891b2' }}>€{displayPrice.toFixed(2)}</p>
+            {multipleSelected && (
+              <p className="text-sm -mt-3" style={{ color: '#0891b2' }}>
+                Totale per {cartCombinations.length} varianti selezionate
+              </p>
+            )}
             {product.description && (
               <p className="leading-relaxed text-slate-600 border-t border-cyan-100 pt-4">{product.description}</p>
             )}
@@ -159,7 +176,7 @@ export default function ProductPage() {
                     transition: 'all 0.2s ease'
                   }}>
                 <ShoppingCart className="w-5 h-5" />
-                {product.torna_presto ? 'Torna presto' : addedAnim ? 'Aggiunto!' : 'Aggiungi al carrello'}
+                {product.torna_presto ? 'Torna presto' : addedAnim ? 'Aggiunto!' : multipleSelected ? `Aggiungi ${cartCombinations.length} varianti` : 'Aggiungi al carrello'}
               </button>
               <button onClick={() => toggleWishlist(product.id)}
                 className="w-14 h-14 rounded-2xl flex items-center justify-center transition-all hover:scale-110 btn-press"
