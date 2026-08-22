@@ -3,6 +3,7 @@ import { cookies } from "next/headers";
 import { getLatestDeploys } from "@/lib/vercel";
 import { getRecentCommits, getOpenIssues } from "@/lib/github";
 import { getShopStats } from "@/lib/supabase-stats";
+import { getInstagramStats } from "@/lib/instagram-stats";
 import { createClient } from "@supabase/supabase-js";
 
 export async function GET() {
@@ -23,14 +24,16 @@ export async function GET() {
       );
       return getShopStats(supabaseAdmin);
     })(),
+    getInstagramStats(),
   ]);
 
-  const [deploys, commits, issues, shopStats] = results;
+  const [deploys, commits, issues, shopStats, instagram] = results;
 
   return NextResponse.json({
     deploys: deploys.status === "fulfilled" ? deploys.value : { error: deploys.reason?.message },
     commits: commits.status === "fulfilled" ? commits.value : { error: commits.reason?.message },
     issues: issues.status === "fulfilled" ? issues.value : { error: issues.reason?.message },
     shopStats: shopStats.status === "fulfilled" ? shopStats.value : { error: shopStats.reason?.message },
+    instagram: instagram.status === "fulfilled" ? instagram.value : { error: instagram.reason?.message },
   });
 }

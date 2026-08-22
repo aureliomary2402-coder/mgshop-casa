@@ -12,7 +12,6 @@ type StatusResponse = {
 };
 
 const SOCIAL_CHANNELS = [
-  { name: "Instagram", note: "Richiede Meta Graph API + app review" },
   { name: "Facebook", note: "Richiede Meta Graph API + app review" },
   { name: "TikTok", note: "Richiede TikTok Content Posting API" },
   { name: "WhatsApp", note: "Richiede WhatsApp Business Platform" },
@@ -128,7 +127,7 @@ export default function GestionaleMgshop() {
           </p>
         </header>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
           <Panel
             title="Deploy"
             eyebrow="Vercel"
@@ -180,6 +179,22 @@ export default function GestionaleMgshop() {
               </div>
             )}
           </Panel>
+          <Panel
+            title="Instagram"
+            eyebrow="@mgshopcasa"
+            status={!data ? "offline" : data?.instagram?.error ? "error" : "live"}
+          >
+            {!data && <p className="text-[#5B6270]">Caricamento…</p>}
+            {data?.instagram?.error && <p className="text-[#F0554D]">{data.instagram.error}</p>}
+            {data?.instagram && !data.instagram.error && (
+              <div className="grid grid-cols-2 gap-3">
+                <Stat label="Follower" value={data.instagram.followersCount} />
+                <Stat label="Post totali" value={data.instagram.mediaCount} />
+                <Stat label="Mi piace (ultimi 10)" value={data.instagram.recentLikes} />
+                <Stat label="Commenti (ultimi 10)" value={data.instagram.recentComments} />
+              </div>
+            )}
+          </Panel>
         </div>
 
         <section className="rounded-lg border border-[#232830] bg-[#14171C] p-5">
@@ -187,7 +202,7 @@ export default function GestionaleMgshop() {
             Social
           </p>
           <h2 className="text-[15px] font-semibold text-[#EDEFF2] mb-4">
-            Messaggi &amp; pubblicazioni
+            Altri canali
           </h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
             {SOCIAL_CHANNELS.map((ch) => (
