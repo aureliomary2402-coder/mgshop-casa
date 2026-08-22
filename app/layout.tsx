@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from 'next'
 import { Inter } from 'next/font/google'
 import { Toaster } from 'sonner'
+import { Analytics } from '@vercel/analytics/next'
 import { AnalyticsTracker } from '@/components/analytics-tracker'
 import { CartAbandonTracker } from '@/components/cart-abandon-tracker'
 import { FloatingMenu } from '@/components/shop/floating-menu'
@@ -60,6 +61,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <ProductDetailModal />
         <SiteTicker />
         <Toaster position="bottom-center" richColors />
+        <Analytics />
       </body>
     </html>
   )
