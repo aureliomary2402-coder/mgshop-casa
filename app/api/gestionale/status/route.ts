@@ -1,14 +1,17 @@
 import { NextResponse } from "next/server";
+import { cookies } from "next/headers";
 import { getLatestDeploys } from "@/lib/vercel";
 import { getRecentCommits, getOpenIssues } from "@/lib/github";
 import { getShopStats } from "@/lib/supabase-stats";
 import { createClient } from "@supabase/supabase-js";
 
-// Middleware/auth: proteggi questa route così solo tu (admin) puoi chiamarla.
-// Esempio rapido con un cookie di sessione admin già presente nel tuo sito:
-//   if (!isAdmin(request)) return NextResponse.json({ error: "unauthorized" }, { status: 401 });
-
 export async function GET() {
+  const cookieStore = await cookies();
+  const session = cookieStore.get("admin_session")?.value;
+  if (session !== "authenticated") {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
   const results = await Promise.allSettled([
     getLatestDeploys(5),
     getRecentCommits(5),

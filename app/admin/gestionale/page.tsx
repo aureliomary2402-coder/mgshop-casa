@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { Lock } from "lucide-react";
 import { Panel } from "./components/Panel";
 
 type StatusResponse = {
@@ -18,10 +19,39 @@ const SOCIAL_CHANNELS = [
 ];
 
 export default function GestionaleMgshop() {
+  const [authenticated, setAuthenticated] = useState(false);
+  const [checking, setChecking] = useState(true);
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
   const [data, setData] = useState<StatusResponse | null>(null);
   const [lastSync, setLastSync] = useState<Date | null>(null);
 
   useEffect(() => {
+    fetch("/api/admin/auth")
+      .then((r) => {
+        if (r.ok) setAuthenticated(true);
+        setChecking(false);
+      })
+      .catch(() => setChecking(false));
+  }, []);
+
+  const handleLogin = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+    setError("");
+    const res = await fetch("/api/admin/auth", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ password }),
+    });
+    if (res.ok) setAuthenticated(true);
+    else setError("Password errata");
+    setLoading(false);
+  };
+
+  useEffect(() => {
+    if (!authenticated) return;
     let active = true;
     async function load() {
       const res = await fetch("/api/gestionale/status", { cache: "no-store" });
@@ -37,7 +67,47 @@ export default function GestionaleMgshop() {
       active = false;
       clearInterval(interval);
     };
-  }, []);
+  }, [authenticated]);
+
+  if (checking) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-[#0B0D10] text-[#5B6270]">
+        Caricamento…
+      </div>
+    );
+  }
+
+  if (!authenticated) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-[#0B0D10] px-6">
+        <form
+          onSubmit={handleLogin}
+          className="w-full max-w-sm rounded-lg border border-[#232830] bg-[#14171C] p-6 flex flex-col gap-4"
+        >
+          <div className="flex items-center gap-2 text-[#EDEFF2]">
+            <Lock className="w-5 h-5" />
+            <h1 className="text-base font-semibold">Gestionale mgshop</h1>
+          </div>
+          <input
+            type="password"
+            placeholder="Password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            autoFocus
+            className="rounded-md border border-[#232830] bg-[#0B0D10] px-3 py-2 text-sm text-[#EDEFF2] outline-none focus:border-[#6E7BFF]"
+          />
+          {error && <p className="text-xs text-[#F0554D]">{error}</p>}
+          <button
+            type="submit"
+            disabled={loading}
+            className="rounded-md bg-[#6E7BFF] px-3 py-2 text-sm font-medium text-white disabled:opacity-50"
+          >
+            {loading ? "Accesso…" : "Accedi"}
+          </button>
+        </form>
+      </div>
+    );
+  }
 
   const lastDeploy = data?.deploys?.[0];
 
