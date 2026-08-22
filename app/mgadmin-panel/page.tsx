@@ -179,6 +179,10 @@ export default function AdminPage() {
               ))}
             </div>
             <div className="p-4 border-t border-slate-100 space-y-2">
+              <Link href="/admin/gestionale" target="_blank" onClick={() => setMenuOpen(false)} className="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-colors hover:bg-cyan-50" style={{ color: '#0891b2' }}>
+                <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ background: 'rgba(8,145,178,0.1)' }}><ExternalLink className="w-4 h-4" style={{ color: '#0891b2' }} /></div>
+                Gestionale
+              </Link>
               <Link href="/shop" target="_blank" onClick={() => setMenuOpen(false)} className="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-colors hover:bg-cyan-50" style={{ color: '#0891b2' }}>
                 <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ background: 'rgba(8,145,178,0.1)' }}><ExternalLink className="w-4 h-4" style={{ color: '#0891b2' }} /></div>
                 Vai al negozio
