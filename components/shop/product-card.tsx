@@ -9,7 +9,7 @@ import { useWishlistStore } from '@/lib/wishlist-store'
 import { useState, useRef } from 'react'
 import { optimizeImage } from '@/lib/image'
 import { TornaPrestoStamp } from './torna-presto-stamp'
-import { getMinCustomizedPrice, normalizeChoices } from '@/lib/customization'
+import { getMinCustomizedPrice, getMaxCustomizedPrice, normalizeChoices } from '@/lib/customization'
 
 export function ProductCard({ product, index = 0 }: { product: Product; index?: number }) {
   const addItem = useCartStore((state) => state.addItem)
@@ -62,6 +62,14 @@ export function ProductCard({ product, index = 0 }: { product: Product; index?: 
     opt => opt.type === 'select' && normalizeChoices(opt.choices).some(c => typeof c.price === 'number')
   )
   const minPrice = hasVariablePricing ? getMinCustomizedPrice(product) : product.price
+  const maxPrice = hasVariablePricing ? getMaxCustomizedPrice(product) : product.price
+  // Mostriamo un intervallo ("da €X a €Y") invece del solo prezzo minimo:
+  // sommare i prezzi minimi di più opzioni può dare un numero fuorviante,
+  // mentre l'intervallo comunica chiaramente che il prezzo dipende dalla
+  // scelta senza sembrare più alto/basso di quanto sia in realtà.
+  const priceLabel = hasVariablePricing
+    ? (maxPrice > minPrice ? `da €${minPrice.toFixed(2)} a €${maxPrice.toFixed(2)}` : `€${minPrice.toFixed(2)}`)
+    : `€${minPrice.toFixed(2)}`
 
   return (
     <div
@@ -130,7 +138,7 @@ export function ProductCard({ product, index = 0 }: { product: Product; index?: 
           {product.name}
         </h3>
         <div className="flex items-center justify-between">
-          <span className="font-bold text-base" style={{ color: '#0891b2' }}>{hasVariablePricing && 'da '}€{minPrice.toFixed(2)}</span>
+          <span className="font-bold text-base" style={{ color: '#0891b2' }}>{priceLabel}</span>
           <button
             onClick={handleAddToCart}
             disabled={product.torna_presto}

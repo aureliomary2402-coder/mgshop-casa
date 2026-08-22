@@ -53,6 +53,25 @@ export function getMinCustomizedPrice(product: Product): number {
   return hasPricedOption ? pricedTotal : product.price
 }
 
+// Prezzo massimo possibile per un prodotto personalizzabile, da mostrare
+// nella card insieme al minimo (es. "da €10 a €18") invece del solo prezzo
+// più basso: così il cliente capisce subito che il prezzo varia in base
+// alla scelta, invece di pensare che sia già il prezzo finale.
+export function getMaxCustomizedPrice(product: Product): number {
+  const options = product.customization_options || []
+  let pricedTotal = 0
+  let hasPricedOption = false
+  for (const opt of options) {
+    if (opt.type !== 'select') continue
+    const prices = normalizeChoices(opt.choices).map(c => c.price).filter((p): p is number => typeof p === 'number')
+    if (prices.length > 0) {
+      pricedTotal += Math.max(...prices)
+      hasPricedOption = true
+    }
+  }
+  return hasPricedOption ? pricedTotal : product.price
+}
+
 // Id della riga carrello: per un prodotto senza personalizzazione è
 // semplicemente il suo id; per un prodotto personalizzato include anche le
 // scelte fatte, così configurazioni diverse restano righe separate invece

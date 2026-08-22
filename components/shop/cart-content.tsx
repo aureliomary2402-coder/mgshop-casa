@@ -253,7 +253,7 @@ export function CartContent({ scope = 'shop' }: { scope?: string }) {
       </Link>
       <div className="grid md:grid-cols-3 gap-5 md:gap-6">
         <div className="md:col-span-2 space-y-3 min-w-0">
-          {items.map(({product,quantity,lineId,unitPrice},i) => {
+          {items.map(({product,quantity,lineId,unitPrice,customization},i) => {
             const rowId = lineId || product.id
             const price = unitPrice ?? product.price
             return (
@@ -264,6 +264,16 @@ export function CartContent({ scope = 'shop' }: { scope?: string }) {
               </div>
               <div className="flex-1 min-w-0">
                 <p className="text-sm sm:text-base font-semibold truncate mb-1" style={{color:'#0c2b36'}}>{product.name}</p>
+                {customization && customization.length > 0 && (
+                  <div className="flex flex-wrap gap-1 mb-1.5">
+                    {customization.map(c => (
+                      <span key={c.option_id} className="text-[11px] font-semibold px-2 py-0.5 rounded-full"
+                        style={{background:'rgba(217,70,239,0.1)',color:'#a21caf',border:'1px solid rgba(217,70,239,0.2)'}}>
+                        {c.label}: {c.value}
+                      </span>
+                    ))}
+                  </div>
+                )}
                 <p className="font-bold" style={{color:'#0891b2'}}>€{price.toFixed(2)}</p>
                 <div className="flex items-center gap-2 mt-2">
                   <button onClick={() => updateQuantity(rowId,quantity-1)} className="w-7 h-7 rounded-full flex items-center justify-center transition-all hover:scale-110 btn-press shrink-0" style={{border:'1px solid rgba(8,145,178,0.2)',background:'rgba(8,145,178,0.04)'}}><Minus className="w-3 h-3" style={{color:'#155e75'}}/></button>
@@ -282,9 +292,16 @@ export function CartContent({ scope = 'shop' }: { scope?: string }) {
         <div className="rounded-2xl p-4 sm:p-5 h-fit md:sticky md:top-20 animate-slide-in-right space-y-4 min-w-0 glass-card">
           <h2 className="font-bold" style={{color:'#0c2b36'}}>Riepilogo ordine</h2>
           <div className="space-y-2">
-            {items.map(({product,quantity,lineId,unitPrice}) => (
+            {items.map(({product,quantity,lineId,unitPrice,customization}) => (
               <div key={lineId || product.id} className="flex justify-between text-sm text-slate-500">
-                <span className="truncate mr-2">{product.name} ×{quantity}</span>
+                <span className="truncate mr-2">
+                  {product.name} ×{quantity}
+                  {customization && customization.length > 0 && (
+                    <span className="block text-[11px] text-fuchsia-600 font-medium truncate">
+                      {customization.map(c => `${c.label}: ${c.value}`).join(', ')}
+                    </span>
+                  )}
+                </span>
                 <span className="shrink-0">€{((unitPrice ?? product.price)*quantity).toFixed(2)}</span>
               </div>
             ))}
