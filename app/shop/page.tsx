@@ -47,7 +47,7 @@ export default async function ShopPage({ searchParams }: { searchParams: Promise
         <div className="lg:grid lg:grid-cols-[240px_1fr] lg:gap-8 lg:items-start">
           <CategorySidebar categories={categories as Category[]} />
 
-          <div className="space-y-5 mt-5 lg:mt-0">
+          <div className="space-y-5 mt-5 lg:mt-0 min-w-0">
             <LotteryTicketCard />
             <LoyaltyBanner />
             <Suspense><RecentlyViewed /></Suspense>
