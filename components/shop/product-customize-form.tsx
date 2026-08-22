@@ -34,7 +34,7 @@ export function ProductCustomizeForm({ options, values, onChange, note }: Props)
                   <button
                     key={choice.value}
                     type="button"
-                    onClick={() => onChange(opt.id, choice.value)}
+                    onClick={() => onChange(opt.id, selected ? '' : choice.value)}
                     className="px-3.5 py-2 rounded-full text-sm font-medium transition-all btn-press"
                     style={selected
                       ? { background: 'linear-gradient(135deg,#d946ef,#c026d3)', color: 'white' }
