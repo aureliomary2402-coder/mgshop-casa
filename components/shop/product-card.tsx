@@ -99,7 +99,7 @@ export function ProductCard({ product, index = 0 }: { product: Product; index?: 
       onMouseLeave={() => { setIsHovered(false); setTilt({ x: 0, y: 0 }) }}
     >
       {hasDiscount && discountPercent > 0 && !product.torna_presto && !hasVariablePricing && (
-        <div className="absolute top-0 right-0 z-10 flex items-center justify-center w-14 h-14 rounded-bl-2xl font-extrabold text-white text-sm"
+        <div className="absolute top-0 left-0 z-10 flex items-center justify-center w-14 h-14 rounded-bl-2xl font-extrabold text-white text-sm"
           style={{ background: '#dc2626' }}>
           -{discountPercent}%
         </div>
