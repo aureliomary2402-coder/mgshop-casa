@@ -46,8 +46,13 @@ export function VolantinoManager() {
 
   const loadList = () =>
     fetch('/api/admin/volantino')
-      .then(r => r.json())
-      .then((data: VolantinoRecord[]) => {
+      .then(async r => {
+        const data = await r.json().catch(() => null)
+        if (!r.ok) {
+          setError((data && data.error) || 'Errore nel caricamento dei volantini')
+          setList([])
+          return []
+        }
         const arr = Array.isArray(data) ? data : []
         setList(arr)
         return arr

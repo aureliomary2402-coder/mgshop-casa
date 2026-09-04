@@ -20,7 +20,7 @@ export async function GET() {
     .from('volantino_page')
     .select('*')
     .order('sort_order', { ascending: true })
-    .order('created_at', { ascending: true })
+    .order('updated_at', { ascending: false })
   if (error) return NextResponse.json({ error: error.message }, { status: 500 })
   return NextResponse.json(data)
 }
