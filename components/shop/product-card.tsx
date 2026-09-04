@@ -73,6 +73,7 @@ export function ProductCard({ product, index = 0 }: { product: Product; index?: 
   // Prodotto in offerta (es. tramite il volantino): mostriamo il prezzo
   // pieno sbarrato accanto a quello attuale, così è chiaro anche nel negozio.
   const hasDiscount = !hasVariablePricing && typeof product.old_price === 'number' && product.old_price > product.price
+  const discountPercent = hasDiscount ? Math.round((1 - product.price / product.old_price!) * 100) : 0
 
   return (
     <div
@@ -97,6 +98,12 @@ export function ProductCard({ product, index = 0 }: { product: Product; index?: 
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => { setIsHovered(false); setTilt({ x: 0, y: 0 }) }}
     >
+      {hasDiscount && discountPercent > 0 && !product.torna_presto && !hasVariablePricing && (
+        <div className="absolute top-0 right-0 z-10 flex items-center justify-center w-14 h-14 rounded-bl-2xl font-extrabold text-white text-sm"
+          style={{ background: '#dc2626' }}>
+          -{discountPercent}%
+        </div>
+      )}
       <div className="relative aspect-square overflow-hidden" style={{ background: 'linear-gradient(135deg, #f0fbfd, #cffafe)' }}>
         {imgUrl && !imgError ? (
           <img
