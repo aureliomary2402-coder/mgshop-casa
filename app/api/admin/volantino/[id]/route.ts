@@ -19,6 +19,43 @@ function slugify(text: string) {
     .replace(/^-+|-+$/g, '')
 }
 
+interface VolantinoItem {
+  product_id: string
+  sale_price: number
+}
+
+// Allinea il prezzo del prodotto nel negozio con quello impostato nel
+// volantino, così il cliente vede lo stesso prezzo sia che aggiunga il
+// prodotto al carrello dal volantino sia che lo aggiunga dal negozio.
+async function syncProductPrices(
+  supabase: ReturnType<typeof createAdminClient>,
+  oldItems: VolantinoItem[],
+  newItems: VolantinoItem[]
+) {
+  const oldMap = new Map(oldItems.map(i => [i.product_id, i.sale_price]))
+  const newMap = new Map(newItems.map(i => [i.product_id, i.sale_price]))
+
+  // Prodotti tolti dal volantino: ripristina il prezzo pieno nel negozio.
+  for (const productId of Array.from(oldMap.keys())) {
+    if (newMap.has(productId)) continue
+    const { data: product } = await supabase.from('products').select('old_price').eq('id', productId).single()
+    if (product?.old_price != null) {
+      await supabase.from('products').update({ price: product.old_price, old_price: null }).eq('id', productId)
+    }
+  }
+
+  // Prodotti aggiunti o con prezzo promo modificato: applica il nuovo
+  // prezzo anche nel negozio, tenendo da parte il prezzo pieno originale
+  // (senza sovrascriverlo se il prodotto era già in offerta).
+  for (const [productId, salePrice] of Array.from(newMap)) {
+    if (oldMap.get(productId) === salePrice) continue
+    const { data: product } = await supabase.from('products').select('price, old_price').eq('id', productId).single()
+    if (!product) continue
+    const fullPrice = product.old_price != null ? product.old_price : product.price
+    await supabase.from('products').update({ price: salePrice, old_price: fullPrice }).eq('id', productId)
+  }
+}
+
 export async function GET(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   if (!(await isAuthenticated())) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   const { id } = await params
@@ -38,7 +75,11 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
   if (typeof body.is_active === 'boolean') update.is_active = body.is_active
   if (typeof body.title === 'string') update.title = body.title
   if (typeof body.subtitle === 'string') update.subtitle = body.subtitle
-  if (Array.isArray(body.items)) update.items = body.items
+  if (Array.isArray(body.items)) {
+    const { data: existing } = await supabase.from('volantino_page').select('items').eq('id', id).single()
+    await syncProductPrices(supabase, existing?.items || [], body.items)
+    update.items = body.items
+  }
 
   if (typeof body.slug === 'string' && body.slug.trim()) {
     const cleaned = slugify(body.slug)
