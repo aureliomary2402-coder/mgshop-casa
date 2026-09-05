@@ -10,7 +10,7 @@ import { CodBanner } from './cod-banner'
 import { RecentlyViewed } from './recently-viewed'
 import { PageHero } from './page-hero'
 import { subscribeToPush } from '@/lib/push-subscribe'
-import { WHATSAPP_NUMBER, WHATSAPP_NUMBER_INTL, SOCIAL_LINKS } from './social-icons'
+import { WHATSAPP_NUMBER, SOCIAL_LINKS } from './social-icons'
 
 export function CartContent({ scope = 'shop' }: { scope?: string }) {
   const [mounted, setMounted] = useState(false)
