@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
-import { ArrowLeft, Minus, Plus, Trash2, ShoppingBag, ImageIcon, CheckCircle, ShoppingCart, Tag, X, Gift, MapPin, Truck, Store, MessageCircle } from 'lucide-react'
+import { ArrowLeft, Minus, Plus, Trash2, ShoppingBag, ImageIcon, CheckCircle, ShoppingCart, Tag, X, Gift, MapPin, Truck, Store, MessageCircle, Phone } from 'lucide-react'
 import { useCartStore } from '@/lib/cart-store'
 import { LOTTERY_TICKET_PRODUCT_ID, createLotteryTicketProduct } from '@/lib/lottery-ticket-product'
 import { LoyaltyBanner } from './loyalty-banner'
@@ -10,6 +10,7 @@ import { CodBanner } from './cod-banner'
 import { RecentlyViewed } from './recently-viewed'
 import { PageHero } from './page-hero'
 import { subscribeToPush } from '@/lib/push-subscribe'
+import { WHATSAPP_NUMBER, WHATSAPP_NUMBER_INTL, SOCIAL_LINKS } from './social-icons'
 
 export function CartContent({ scope = 'shop' }: { scope?: string }) {
   const [mounted, setMounted] = useState(false)
@@ -252,6 +253,25 @@ export function CartContent({ scope = 'shop' }: { scope?: string }) {
       <Link href="/shop" className="inline-flex items-center gap-2 text-sm font-medium mb-4 sm:mb-6 group transition-all hover:gap-3" style={{color:'#155e75'}}>
         <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform"/> Continua lo shopping
       </Link>
+      <div className="mb-4 sm:mb-6 p-4 rounded-2xl flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4" style={{ background: 'linear-gradient(135deg, rgba(8,145,178,0.1), rgba(37,211,102,0.1))', border: '1px solid rgba(8,145,178,0.25)' }}>
+        <div className="flex items-start gap-3 flex-1">
+          <div className="w-10 h-10 rounded-full flex items-center justify-center shrink-0" style={{ background: 'linear-gradient(135deg,#0891b2,#06b6d4)' }}>
+            <Phone className="w-5 h-5 text-white" />
+          </div>
+          <div>
+            <p className="font-bold text-sm" style={{ color: '#0c2b36' }}>Hai difficoltà con il tuo ordine?</p>
+            <p className="text-xs text-slate-500">Nessun problema, scrivici al {WHATSAPP_NUMBER} e ti aiuteremo a risolvere. Puoi anche ordinare direttamente tramite WhatsApp!</p>
+          </div>
+        </div>
+        <div className="flex gap-2 sm:shrink-0">
+          <a href={`tel:${WHATSAPP_NUMBER_INTL}`} className="flex-1 sm:flex-none inline-flex items-center justify-center gap-1.5 text-xs font-bold px-3 py-2.5 rounded-xl text-white transition-transform hover:scale-105 whitespace-nowrap" style={{ background: 'linear-gradient(135deg,#0891b2,#06b6d4)' }}>
+            <Phone className="w-3.5 h-3.5" /> Chiama
+          </a>
+          <a href={SOCIAL_LINKS.whatsappChat} target="_blank" rel="noopener noreferrer" className="flex-1 sm:flex-none inline-flex items-center justify-center gap-1.5 text-xs font-bold px-3 py-2.5 rounded-xl text-white transition-transform hover:scale-105 whitespace-nowrap" style={{ background: '#25D366' }}>
+            <MessageCircle className="w-3.5 h-3.5" /> WhatsApp
+          </a>
+        </div>
+      </div>
       <div className="grid md:grid-cols-3 gap-5 md:gap-6">
         <div className="md:col-span-2 space-y-3 min-w-0">
           {items.map(({product,quantity,lineId,unitPrice,customization},i) => {
