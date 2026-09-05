@@ -115,6 +115,20 @@ export function CartContent({ scope = 'shop' }: { scope?: string }) {
     : 0
   const total = Math.max(0, subtotal - discountAmount)
 
+  // Link WhatsApp per il banner di aiuto: se ci sono prodotti nel carrello,
+  // apre la chat con un messaggio già pronto che elenca cosa sta comprando il cliente.
+  const buildHelpWhatsappLink = () => {
+    if (items.length === 0) return SOCIAL_LINKS.whatsappChat
+    const itemsText = items.map(({ product, quantity, customization }) => {
+      const custom = customization && customization.length > 0
+        ? ` (${customization.map(c => `${c.label}: ${c.value}`).join(', ')})`
+        : ''
+      return `- ${product.name}${custom} x${quantity}`
+    }).join('\n')
+    const msg = `Ciao! Ho bisogno di aiuto con il mio ordine su MGShop Casa. Questi sono i prodotti nel mio carrello:\n${itemsText}\n\nTotale: €${total.toFixed(2)}`
+    return `${SOCIAL_LINKS.whatsappChat}?text=${encodeURIComponent(msg)}`
+  }
+
   const handleApplyCoupon = async () => {
     if (!couponInput.trim()) return
     setCouponLoading(true); setCouponError('')
@@ -260,11 +274,11 @@ export function CartContent({ scope = 'shop' }: { scope?: string }) {
           </div>
           <div>
             <p className="font-bold text-sm" style={{ color: '#0c2b36' }}>Hai difficoltà con il tuo ordine?</p>
-            <p className="text-xs text-slate-500">Nessun problema, scrivici al {WHATSAPP_NUMBER} e ti aiuteremo a risolvere. Puoi anche ordinare direttamente tramite WhatsApp!</p>
+            <p className="text-xs text-slate-500">Nessun problema, scrivici al {WHATSAPP_NUMBER} oppure clicca sul tasto WhatsApp qui sotto per essere reindirizzato.</p>
           </div>
         </div>
         <div className="flex gap-2 sm:shrink-0">
-          <a href={SOCIAL_LINKS.whatsappChat} target="_blank" rel="noopener noreferrer" className="flex-1 sm:flex-none inline-flex items-center justify-center gap-1.5 text-xs font-bold px-3 py-2.5 rounded-xl text-white transition-transform hover:scale-105 whitespace-nowrap" style={{ background: '#25D366' }}>
+          <a href={buildHelpWhatsappLink()} target="_blank" rel="noopener noreferrer" className="flex-1 sm:flex-none inline-flex items-center justify-center gap-1.5 text-xs font-bold px-3 py-2.5 rounded-xl text-white transition-transform hover:scale-105 whitespace-nowrap" style={{ background: '#25D366' }}>
             <MessageCircle className="w-3.5 h-3.5" /> WhatsApp
           </a>
         </div>
