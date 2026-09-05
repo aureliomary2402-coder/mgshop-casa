@@ -336,6 +336,11 @@ export function ProductsManager() {
     fetchAll()
   }
 
+  const handleToggleTornaPresto = async (p: Product) => {
+    await fetch('/api/admin/products', { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ ...p, torna_presto: !p.torna_presto }) })
+    fetchAll()
+  }
+
   if (managingImagesFor) return <ProductImagesManager productId={managingImagesFor} onBack={() => setManagingImagesFor(null)} />
   if (loading) return <div className="text-center py-12 text-slate-400">Caricamento...</div>
 
@@ -577,6 +582,9 @@ export function ProductsManager() {
               {p.category && <p className="text-xs text-slate-400">{p.category.name}</p>}
             </div>
             <div className="flex items-center gap-1 shrink-0">
+              <button onClick={() => handleToggleTornaPresto(p)} className="p-1.5 hover:bg-red-50 rounded-lg transition-colors" title="Torna presto">
+                <Clock className={`w-5 h-5 ${p.torna_presto ? 'text-red-500' : 'text-slate-300'}`} />
+              </button>
               <button onClick={() => handleToggleActive(p)}>
                 {p.is_active ? <ToggleRight className="w-6 h-6 text-cyan-600" /> : <ToggleLeft className="w-6 h-6 text-slate-300" />}
               </button>
