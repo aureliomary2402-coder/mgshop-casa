@@ -264,9 +264,6 @@ export function CartContent({ scope = 'shop' }: { scope?: string }) {
           </div>
         </div>
         <div className="flex gap-2 sm:shrink-0">
-          <a href={`tel:${WHATSAPP_NUMBER_INTL}`} className="flex-1 sm:flex-none inline-flex items-center justify-center gap-1.5 text-xs font-bold px-3 py-2.5 rounded-xl text-white transition-transform hover:scale-105 whitespace-nowrap" style={{ background: 'linear-gradient(135deg,#0891b2,#06b6d4)' }}>
-            <Phone className="w-3.5 h-3.5" /> Chiama
-          </a>
           <a href={SOCIAL_LINKS.whatsappChat} target="_blank" rel="noopener noreferrer" className="flex-1 sm:flex-none inline-flex items-center justify-center gap-1.5 text-xs font-bold px-3 py-2.5 rounded-xl text-white transition-transform hover:scale-105 whitespace-nowrap" style={{ background: '#25D366' }}>
             <MessageCircle className="w-3.5 h-3.5" /> WhatsApp
           </a>
