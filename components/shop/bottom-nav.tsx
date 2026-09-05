@@ -55,7 +55,7 @@ export function BottomNav() {
       style={{ bottom: 'calc(36px + env(safe-area-inset-bottom, 0px))' }}
       aria-label="Navigazione principale"
     >
-      <div className="mx-3 mb-2 md:max-w-md md:mx-auto rounded-2xl overflow-hidden liquid-glass-nav">
+      <div className="mx-3 mb-2 md:max-w-md md:mx-auto rounded-2xl overflow-hidden liquid-glass-nav neon-glow-navbar">
         <div ref={trackRef} className="relative grid items-stretch" style={{ gridTemplateColumns: `repeat(${totalCols}, minmax(0, 1fr))` }}>
           <div className="liquid-glass-pill" style={pillStyle} />
 

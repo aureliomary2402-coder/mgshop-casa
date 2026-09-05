@@ -133,7 +133,7 @@ export function GlobalHeader({ categories = [] }: { categories?: Category[] }) {
   }
 
   return (
-    <header className={`sticky top-0 z-50 transition-all duration-300 liquid-glass-header ${scrolled ? 'shadow-lg' : ''}`}
+    <header className={`sticky top-0 z-50 transition-all duration-300 liquid-glass-header neon-glow-header ${scrolled ? 'shadow-lg' : ''}`}
       style={{ background: scrolled ? 'rgba(240,251,253,0.97)' : 'rgba(240,251,253,0.98)', backdropFilter: 'blur(16px)', borderBottom: '1px solid rgba(8,145,178,0.1)' }}>
       <div className="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between gap-3">
         <Link href="/" className="flex items-center gap-2 shrink-0 group">
