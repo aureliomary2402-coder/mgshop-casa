@@ -155,20 +155,10 @@ export async function POST(request: NextRequest) {
       const { error: itemsError } = await supabase.from('order_items').insert(orderItems)
       if (itemsError) return NextResponse.json({ error: itemsError.message }, { status: 500 })
 
-      // Scala le quantità dal magazzino (solo per i prodotti veri, quelli
-      // personalizzati della promo non hanno un magazzino da scalare)
-      for (const item of realItems) {
-        if (isCustomPromoProductId(item.product.id)) continue
-        const { data: product } = await supabase
-          .from('products')
-          .select('stock')
-          .eq('id', item.product.id)
-          .single()
-        if (product && product.stock !== null) {
-          const newStock = Math.max(0, product.stock - item.quantity)
-          await supabase.from('products').update({ stock: newStock }).eq('id', item.product.id)
-        }
-      }
+      // Il magazzino NON viene scalato qui: l'ordine appena arrivato è solo
+      // "in attesa". Lo scalo avviene quando l'admin conferma l'ordine dal
+      // pannello (vedi PUT /api/admin/orders), così il cliente può sempre
+      // ordinare anche un prodotto esaurito: ci pensa l'admin ad acquistarlo.
     }
 
     if (coupon_code) {

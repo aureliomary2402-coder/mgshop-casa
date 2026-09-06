@@ -119,6 +119,10 @@ export interface OrderItem {
   // Foto del prodotto "fotografata" al momento dell'ordine: resta valida
   // anche se in seguito il prodotto cambia immagine o viene rimosso.
   product_image?: string | null
+  // Stock ATTUALE del prodotto (non quello al momento dell'ordine): arriva
+  // solo dalla GET di /api/admin/orders, per mostrare all'admin se questa
+  // riga è già disponibile in magazzino o va acquistata. null = non tracciato.
+  current_stock?: number | null
 }
 
 export interface CartItem {

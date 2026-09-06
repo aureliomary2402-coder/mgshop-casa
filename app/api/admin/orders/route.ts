@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { createAdminClient } from '@/lib/supabase/admin'
 import { cookies } from 'next/headers'
 import { sendPushToAdmin } from '@/lib/push'
+import { syncStockOnStatusChange } from '@/lib/stock'
 
 async function isAuthenticated() {
   const cookieStore = await cookies()
@@ -46,9 +47,26 @@ export async function GET() {
       ticketCounts[t.order_id] = (ticketCounts[t.order_id] || 0) + 1
     }
   }
-  const withTicketInfo = (data || []).map((o: { id: string }) => ({
+  // Stock attuale di tutti i prodotti presenti negli ordini: serve al
+  // pannello per segnalare riga per riga se il prodotto è già in magazzino
+  // o va acquistato, confrontando quantità ordinata e stock disponibile ora.
+  const productIds = Array.from(new Set(
+    (data || []).flatMap((o: { order_items?: { product_id: string | null }[] }) =>
+      (o.order_items || []).map(i => i.product_id).filter((id): id is string => !!id))
+  ))
+  const stockByProduct: Record<string, number | null> = {}
+  if (productIds.length > 0) {
+    const { data: productsData } = await supabase.from('products').select('id, stock').in('id', productIds)
+    for (const p of productsData || []) stockByProduct[p.id] = p.stock
+  }
+
+  const withTicketInfo = (data || []).map((o: { id: string; order_items?: { product_id: string | null }[] }) => ({
     ...o,
     ticket_count: ticketCounts[o.id] || 0,
+    order_items: (o.order_items || []).map(i => ({
+      ...i,
+      current_stock: i.product_id !== null ? (stockByProduct[i.product_id] ?? null) : null,
+    })),
   }))
   return NextResponse.json(withTicketInfo)
 }
@@ -59,14 +77,22 @@ export async function PUT(request: NextRequest) {
   const supabase = createAdminClient()
 
   // Leggo lo stato precedente prima di aggiornare, per sapere se sto per assegnare punti nuovi
+  // e per capire se il magazzino va scalato o ripristinato in base al cambio di stato.
   const { data: before } = await supabase.from('orders').select('status').eq('id', body.id).single()
   const wasAlreadyDelivered = before?.status === 'delivered'
+  const previousStatus = before?.status
 
   const updateData: Record<string, string> = {}
   if (body.status !== undefined) updateData.status = body.status
   if (body.customer_name !== undefined) updateData.customer_name = body.customer_name
   const { data, error } = await supabase.from('orders').update(updateData).eq('id', body.id).select().single()
   if (error) return NextResponse.json({ error: error.message }, { status: 500 })
+
+  // Scala il magazzino quando l'ordine viene confermato (o passa direttamente
+  // a spedito/consegnato), e lo ripristina se torna in attesa o viene annullato.
+  if (updateData.status !== undefined) {
+    await syncStockOnStatusChange(supabase, body.id, previousStatus, updateData.status)
+  }
 
   // Il trigger DB che assegna i punti gira DOPO questo update (in una scrittura separata sulla riga),
   // quindi "data.points_earned" qui sopra è ancora quello vecchio: rileggo l'ordine per prendere il valore aggiornato

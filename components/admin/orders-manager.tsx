@@ -19,6 +19,35 @@ const STATUS_COLORS: Record<string, string> = {
 
 interface OrderWithItems extends Order { order_items: OrderItem[]; customer_name?: string; ticket_count?: number }
 
+// Confronta la quantità ordinata con lo stock attuale del prodotto e mostra
+// all'admin, riga per riga, quanto è già disponibile in magazzino e quanto
+// invece va acquistato. Se lo stock non è tracciato (null) non mostra nulla.
+function StockLineBadge({ quantity, currentStock }: { quantity: number; currentStock: number | null | undefined }) {
+  if (currentStock === null || currentStock === undefined) return null
+  const available = Math.min(Math.max(currentStock, 0), quantity)
+  const toBuy = quantity - available
+  if (toBuy === 0) return (
+    <span className="text-[10px] font-semibold px-1.5 py-0.5 rounded-full bg-green-50 text-green-600">
+      ✅ {available} disponibili
+    </span>
+  )
+  if (available === 0) return (
+    <span className="text-[10px] font-semibold px-1.5 py-0.5 rounded-full bg-amber-50 text-amber-700">
+      🛒 {toBuy} da acquistare
+    </span>
+  )
+  return (
+    <>
+      <span className="text-[10px] font-semibold px-1.5 py-0.5 rounded-full bg-green-50 text-green-600">
+        ✅ {available} disponibili
+      </span>
+      <span className="text-[10px] font-semibold px-1.5 py-0.5 rounded-full bg-amber-50 text-amber-700">
+        🛒 {toBuy} da acquistare
+      </span>
+    </>
+  )
+}
+
 export function OrdersManager() {
   const [orders, setOrders] = useState<OrderWithItems[]>([])
   const [loading, setLoading] = useState(true)
@@ -225,6 +254,7 @@ export function OrdersManager() {
                               da {SOURCE_LABELS[item.source]}
                             </span>
                           )}
+                          <StockLineBadge quantity={item.quantity} currentStock={item.current_stock} />
                         </div>
                       </div>
                       {editingOrder === order.id ? (
