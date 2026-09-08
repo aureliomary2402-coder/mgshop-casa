@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect } from 'react'
-import { AlertTriangle, Trash2, Phone, ShoppingCart } from 'lucide-react'
+import { AlertTriangle, Trash2, Phone, ShoppingCart, Bell, Send, Check } from 'lucide-react'
 
 interface AbandonedCartItem { name: string; quantity: number; price: number }
 interface AbandonedCart {
@@ -11,6 +11,7 @@ interface AbandonedCart {
   items_count: number
   total: number
   phone_number: string | null
+  has_push: boolean
   updated_at: string
 }
 
@@ -28,6 +29,9 @@ function timeAgo(iso: string) {
 export function AbandonedCartsManager() {
   const [carts, setCarts] = useState<AbandonedCart[]>([])
   const [loading, setLoading] = useState(true)
+  const [notifyingId, setNotifyingId] = useState<string | null>(null)
+  const [notifiedId, setNotifiedId] = useState<string | null>(null)
+  const [notifyError, setNotifyError] = useState<{ id: string; message: string } | null>(null)
 
   const fetchCarts = () => {
     fetch('/api/admin/abandoned-carts')
@@ -41,6 +45,16 @@ export function AbandonedCartsManager() {
   const handleDelete = async (id: string) => {
     setCarts(prev => prev.filter(c => c.id !== id))
     await fetch('/api/admin/abandoned-carts', { method: 'DELETE', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id }) })
+  }
+
+  const handleNotify = async (id: string) => {
+    setNotifyingId(id); setNotifyError(null)
+    const res = await fetch('/api/admin/abandoned-carts/notify', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id }) })
+    const data = await res.json().catch(() => ({}))
+    setNotifyingId(null)
+    if (!res.ok) { setNotifyError({ id, message: data.error || 'Invio non riuscito' }); return }
+    setNotifiedId(id)
+    setTimeout(() => setNotifiedId(prev => prev === id ? null : prev), 3000)
   }
 
   if (loading) return <div className="text-center py-8 text-slate-400">Caricamento...</div>
@@ -76,6 +90,11 @@ export function AbandonedCartsManager() {
                       <Phone className="w-3 h-3" /> {cart.phone_number}
                     </span>
                   )}
+                  {cart.has_push && (
+                    <span className="text-xs px-2 py-0.5 rounded-full font-medium bg-cyan-100 text-cyan-700 flex items-center gap-1">
+                      <Bell className="w-3 h-3" /> Notifiche attive
+                    </span>
+                  )}
                 </div>
                 <div className="mt-2 space-y-0.5">
                   {cart.items.map((it, i) => (
@@ -83,6 +102,16 @@ export function AbandonedCartsManager() {
                   ))}
                 </div>
                 <p className="text-sm font-bold text-slate-800 mt-1.5">Totale: €{cart.total.toFixed(2)}</p>
+                {cart.has_push && (
+                  <div className="mt-2">
+                    <button onClick={() => handleNotify(cart.id)} disabled={notifyingId === cart.id}
+                      className="inline-flex items-center gap-1.5 text-xs font-bold px-3 py-1.5 rounded-lg text-white transition-transform hover:scale-105 disabled:opacity-60"
+                      style={{ background: 'linear-gradient(135deg,#0891b2,#06b6d4)' }}>
+                      {notifiedId === cart.id ? <><Check className="w-3.5 h-3.5" /> Inviato!</> : notifyingId === cart.id ? 'Invio...' : <><Send className="w-3.5 h-3.5" /> Invia promemoria</>}
+                    </button>
+                    {notifyError && notifyError.id === cart.id && <p className="text-xs text-red-500 mt-1">{notifyError.message}</p>}
+                  </div>
+                )}
               </div>
               <button onClick={() => handleDelete(cart.id)} className="p-1.5 hover:bg-red-50 rounded-lg transition-colors shrink-0">
                 <Trash2 className="w-4 h-4 text-red-400" />

@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
-import { ArrowLeft, Minus, Plus, Trash2, ShoppingBag, ImageIcon, CheckCircle, ShoppingCart, Tag, X, Gift, MapPin, Truck, Store, MessageCircle, Phone } from 'lucide-react'
+import { ArrowLeft, Minus, Plus, Trash2, ShoppingBag, ImageIcon, CheckCircle, ShoppingCart, Tag, X, Gift, MapPin, Truck, Store, MessageCircle, Phone, Bell } from 'lucide-react'
 import { useCartStore } from '@/lib/cart-store'
 import { LOTTERY_TICKET_PRODUCT_ID, createLotteryTicketProduct } from '@/lib/lottery-ticket-product'
 import { LoyaltyBanner } from './loyalty-banner'
@@ -37,6 +37,8 @@ export function CartContent({ scope = 'shop' }: { scope?: string }) {
   const [chosenNumbers, setChosenNumbers] = useState<number[]>([])
   const [showCoupon, setShowCoupon] = useState(false)
   const [showLottery, setShowLottery] = useState(false)
+  const [showNotifyReminder, setShowNotifyReminder] = useState(false)
+  const [notifyActivating, setNotifyActivating] = useState(false)
 
   const items = useCartStore(s => s.items)
   const addItem = useCartStore(s => s.addItem)
@@ -94,6 +96,15 @@ export function CartContent({ scope = 'shop' }: { scope?: string }) {
 
   useEffect(() => {
     setMounted(true)
+    // Se il cliente non ha ancora le notifiche attive, gli proponiamo di
+    // attivarle qui nel carrello: se poi lo abbandona, potremo ricontattarlo
+    // anche senza il suo numero di telefono.
+    if ('serviceWorker' in navigator && 'PushManager' in window && 'Notification' in window && Notification.permission === 'default') {
+      navigator.serviceWorker.ready.then(async reg => {
+        const sub = await reg.pushManager.getSubscription()
+        if (!sub) setShowNotifyReminder(true)
+      }).catch(() => {})
+    }
     // Carica quali prodotti fanno parte della promo attiva, per calcolare lo sconto solo su quelli quando serve
     fetch('/api/promo', { cache: 'no-store' })
       .then(r => r.json())
@@ -147,6 +158,14 @@ export function CartContent({ scope = 'shop' }: { scope?: string }) {
   }
 
   const removeCoupon = () => { setCouponData(null); setCouponCode(''); setCouponError('') }
+
+  const activateCartNotify = async () => {
+    setNotifyActivating(true)
+    const result = await subscribeToPush()
+    setNotifyActivating(false)
+    setShowNotifyReminder(false)
+    return result
+  }
 
   const handlePhoneChange = (value: string) => {
     setPhone(value)
@@ -333,6 +352,20 @@ export function CartContent({ scope = 'shop' }: { scope?: string }) {
 
         <div className="rounded-2xl p-4 sm:p-5 h-fit md:sticky md:top-20 animate-slide-in-right space-y-4 min-w-0 glass-card">
           <h2 className="font-bold" style={{color:'#0c2b36'}}>Riepilogo ordine</h2>
+          {showNotifyReminder && (
+            <div className="flex items-center gap-3 p-3 rounded-xl" style={{ background: 'rgba(8,145,178,0.06)', border: '1px solid rgba(8,145,178,0.2)' }}>
+              <Bell className="w-5 h-5 shrink-0" style={{ color: '#0891b2' }} />
+              <div className="flex-1 min-w-0">
+                <p className="text-xs font-bold" style={{ color: '#0c2b36' }}>Attiva le notifiche</p>
+                <p className="text-[11px] text-slate-500">Così, se lasci il carrello a metà, possiamo avvisarti per completare l&apos;ordine.</p>
+              </div>
+              <button type="button" onClick={activateCartNotify} disabled={notifyActivating}
+                className="shrink-0 text-xs font-bold text-white px-3 py-2 rounded-xl transition-transform hover:scale-105 disabled:opacity-60"
+                style={{ background: 'linear-gradient(135deg,#0891b2,#06b6d4)' }}>
+                {notifyActivating ? '...' : 'Attiva'}
+              </button>
+            </div>
+          )}
           <div className="space-y-2">
             {items.map(({product,quantity,lineId,unitPrice,customization}) => (
               <div key={lineId || product.id} className="flex justify-between text-sm text-slate-500">
