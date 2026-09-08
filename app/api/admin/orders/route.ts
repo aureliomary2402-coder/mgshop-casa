@@ -35,6 +35,36 @@ export async function GET() {
     .order('created_at', { ascending: false })
   if (error) return NextResponse.json({ error: error.message }, { status: 500 })
 
+  // Se un ordine non ha ancora un nome cliente, controlliamo se quel numero
+  // di telefono ha già ordinato in passato (con qualsiasi tipo di ordine,
+  // anche solo biglietti lotteria) e in tal caso riusiamo lo stesso nome:
+  // così l'admin non deve reinserirlo ogni volta per lo stesso cliente.
+  const missingNameIds = (data || []).filter((o: { customer_name?: string | null }) => !o.customer_name).map((o: { id: string }) => o.id)
+  if (missingNameIds.length > 0) {
+    const { data: namedOrders } = await supabase
+      .from('orders')
+      .select('phone_number, customer_name, created_at')
+      .not('customer_name', 'is', null)
+      .order('created_at', { ascending: false })
+    const nameByPhone: Record<string, string> = {}
+    for (const o of namedOrders || []) {
+      const key = normalizePhone(o.phone_number)
+      if (key && !nameByPhone[key] && o.customer_name) nameByPhone[key] = o.customer_name
+    }
+    const toPersist: { id: string; name: string }[] = []
+    for (const o of data || []) {
+      if (!o.customer_name) {
+        const matched = nameByPhone[normalizePhone(o.phone_number)]
+        if (matched) { o.customer_name = matched; toPersist.push({ id: o.id, name: matched }) }
+      }
+    }
+    if (toPersist.length > 0) {
+      await Promise.all(toPersist.map(({ id, name }) =>
+        supabase.from('orders').update({ customer_name: name }).eq('id', id)
+      )).catch(() => {})
+    }
+  }
+
   // Alcuni di questi ordini hanno anche biglietti lotteria acquistati insieme
   // ai prodotti: quei €1 a biglietto non vanno contati come incasso "prodotti",
   // altrimenti l'incasso ordini risulta gonfiato. Qui calcoliamo quanti
