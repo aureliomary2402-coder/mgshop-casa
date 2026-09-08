@@ -4,6 +4,7 @@ import { Toaster } from 'sonner'
 import { Analytics } from '@vercel/analytics/next'
 import { AnalyticsTracker } from '@/components/analytics-tracker'
 import { CartAbandonTracker } from '@/components/cart-abandon-tracker'
+import { WishlistTracker } from '@/components/wishlist-tracker'
 import { FloatingMenu } from '@/components/shop/floating-menu'
 import { ProductDetailModal } from '@/components/shop/product-detail-modal'
 import { BackToTop } from '@/components/shop/back-to-top'
@@ -50,6 +51,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body className={inter.className}>
         <Suspense><AnalyticsTracker /></Suspense>
         <CartAbandonTracker />
+        <WishlistTracker />
         <ServiceWorkerRegister />
         {children}
         <SiteFooter />

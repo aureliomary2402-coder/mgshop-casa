@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect } from 'react'
-import { Package, Tag, Image, ShoppingBag, LogOut, Lock, LayoutDashboard, Megaphone, Ticket, Menu, X, ExternalLink, Users, Gift, MessageCircle, Newspaper, PartyPopper, Hash, TrendingUp, Eye, AlertTriangle, Rss, Star, Terminal } from 'lucide-react'
+import { Package, Tag, Image, ShoppingBag, LogOut, Lock, LayoutDashboard, Megaphone, Ticket, Menu, X, ExternalLink, Users, Gift, MessageCircle, Newspaper, PartyPopper, Hash, TrendingUp, Eye, AlertTriangle, Rss, Star, Terminal, Heart } from 'lucide-react'
 import { GestionalePanel } from './gestionale/GestionalePanel'
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
@@ -23,11 +23,12 @@ import { LotteryPurchasesManager } from '@/components/admin/lottery-purchases-ma
 import { ProductStatsManager } from '@/components/admin/product-stats-manager'
 import { VisitLogManager } from '@/components/admin/visit-log-manager'
 import { AbandonedCartsManager } from '@/components/admin/abandoned-carts-manager'
+import { WishlistManager } from '@/components/admin/wishlist-manager'
 import { TickerManager } from '@/components/admin/ticker-manager'
 import { CustomerPushNotify } from '@/components/admin/customer-push-notify'
 import { ReviewsManager } from '@/components/admin/reviews-manager'
 
-type Tab = 'dashboard' | 'products' | 'categories' | 'banners' | 'orders' | 'promo' | 'volantino' | 'coupons' | 'clienti' | 'fedelta' | 'chat' | 'lottery' | 'biglietti' | 'statistiche' | 'visite' | 'carrelli' | 'ticker' | 'notifiche' | 'recensioni' | 'gestionale'
+type Tab = 'dashboard' | 'products' | 'categories' | 'banners' | 'orders' | 'promo' | 'volantino' | 'coupons' | 'clienti' | 'fedelta' | 'chat' | 'lottery' | 'biglietti' | 'statistiche' | 'visite' | 'carrelli' | 'preferiti' | 'ticker' | 'notifiche' | 'recensioni' | 'gestionale'
 type Group = 'generale' | 'ordini' | 'catalogo'
 
 const GROUP_LABELS: Record<Group, string> = {
@@ -44,6 +45,7 @@ const TABS: { id: Tab; label: string; icon: typeof Package; color: string; group
   { id: 'gestionale', label: 'Gestionale', icon: Terminal, color: 'text-slate-600 bg-slate-100', group: 'generale' },
   { id: 'orders', label: 'Ordini', icon: ShoppingBag, color: 'text-sky-600 bg-sky-50', group: 'ordini' },
   { id: 'carrelli', label: 'Carrelli abbandonati', icon: AlertTriangle, color: 'text-orange-600 bg-orange-50', group: 'ordini' },
+  { id: 'preferiti', label: 'Preferiti', icon: Heart, color: 'text-pink-600 bg-pink-50', group: 'ordini' },
   { id: 'biglietti', label: 'Biglietti', icon: Hash, color: 'text-amber-600 bg-amber-50', group: 'ordini' },
   { id: 'clienti', label: 'Clienti', icon: Users, color: 'text-pink-600 bg-pink-50', group: 'ordini' },
   { id: 'fedelta', label: 'Fedeltà', icon: Gift, color: 'text-teal-600 bg-teal-50', group: 'ordini' },
@@ -204,6 +206,7 @@ export default function AdminPage() {
         {activeTab === 'banners' && <BannersManager />}
         {activeTab === 'orders' && <OrdersManager />}
         {activeTab === 'carrelli' && <AbandonedCartsManager />}
+        {activeTab === 'preferiti' && <WishlistManager />}
         {activeTab === 'biglietti' && <LotteryPurchasesManager />}
         {activeTab === 'promo' && <PromoManager />}
         {activeTab === 'volantino' && <VolantinoManager />}
