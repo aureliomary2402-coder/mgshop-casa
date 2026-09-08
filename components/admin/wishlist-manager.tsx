@@ -6,7 +6,7 @@ import { Heart, Trash2, Bell, Send, Check, ImageIcon } from 'lucide-react'
 interface WishlistProduct { id: string; name: string; price: number; image: string | null }
 interface WishlistEntry {
   id: string
-  session_id: string
+  device_id: string
   updated_at: string
   has_push: boolean
   products: WishlistProduct[]

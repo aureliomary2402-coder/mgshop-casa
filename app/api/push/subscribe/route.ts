@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server'
 import { createAdminClient } from '@/lib/supabase/admin'
 export async function POST(req: Request) {
-  const { subscription, phoneNumber, isAdmin, sessionId } = await req.json()
+  const { subscription, phoneNumber, isAdmin, sessionId, deviceId } = await req.json()
   if (!subscription?.endpoint) {
     return NextResponse.json({ error: 'subscription non valida' }, { status: 400 })
   }
@@ -16,6 +16,11 @@ export async function POST(req: Request) {
     // ricontattare con una notifica mirata chi abbandona il carrello
     // anche se non ha mai lasciato un numero di telefono.
     session_id: typeof sessionId === 'string' && sessionId ? sessionId : null,
+    // Collega l'iscrizione anche all'id stabile del dispositivo: a
+    // differenza della sessione (che cambia a ogni visita), serve per
+    // ricontattare chi ha lasciato prodotti nei preferiti, che restano
+    // salvati anche a distanza di giorni.
+    device_id: typeof deviceId === 'string' && deviceId ? deviceId : null,
     // Le subscription "admin" (quella attivata da te nel pannello) sono
     // marcate qui: sendPushToAdmin() usa questo flag per mandare solo a
     // te le notifiche di servizio (nuovo ordine, chat, visite...) invece

@@ -1,11 +1,13 @@
 "use client"
 import { useEffect, useRef } from 'react'
 import { useWishlistStore } from '@/lib/wishlist-store'
-import { getSessionId } from '@/lib/session-id'
+import { getDeviceId } from '@/lib/device-id'
 
 // Segnala al server ogni volta che cambiano i preferiti del cliente, così
-// l'admin può vederli nel pannello (stesso meccanismo dei carrelli
-// abbandonati: un record per sessione del browser).
+// l'admin può vederli nel pannello. Usiamo l'id del DISPOSITIVO (non il
+// session id della singola visita) perché i preferiti restano salvati nel
+// tempo: se il cliente li modifica giorni dopo in una nuova visita, deve
+// comunque aggiornare la stessa riga, non crearne una nuova orfana.
 export function WishlistTracker() {
   const ids = useWishlistStore(s => s.ids)
   const lastSent = useRef<string>('')
@@ -21,7 +23,7 @@ export function WishlistTracker() {
       fetch('/api/analytics/wishlist', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ sessionId: getSessionId(), productIds: ids }),
+        body: JSON.stringify({ deviceId: getDeviceId(), productIds: ids }),
       }).catch(() => {})
     }, 1500)
     return () => clearTimeout(timeout)

@@ -29,22 +29,22 @@ export async function GET() {
     }
   }
 
-  const sessionIds = Array.from(new Set((data || []).map(w => w.session_id).filter(Boolean)))
+  const sessionIds = Array.from(new Set((data || []).map(w => w.device_id).filter(Boolean)))
   const pushBySession = new Set<string>()
   if (sessionIds.length > 0) {
     const { data: subs } = await supabase
       .from('push_subscriptions')
-      .select('session_id')
-      .in('session_id', sessionIds)
+      .select('device_id')
+      .in('device_id', sessionIds)
       .or('is_admin.is.null,is_admin.eq.false')
-    for (const s of subs || []) { if (s.session_id) pushBySession.add(s.session_id) }
+    for (const s of subs || []) { if (s.device_id) pushBySession.add(s.device_id) }
   }
 
   const result = (data || []).map(w => ({
     id: w.id,
-    session_id: w.session_id,
+    device_id: w.device_id,
     updated_at: w.updated_at,
-    has_push: pushBySession.has(w.session_id),
+    has_push: pushBySession.has(w.device_id),
     products: (w.product_ids as string[]).map(id => productById[id]).filter(Boolean),
   })).filter(w => w.products.length > 0)
 

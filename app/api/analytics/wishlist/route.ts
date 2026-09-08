@@ -10,27 +10,27 @@ export async function POST(request: NextRequest) {
   try {
     const body = await request.json().catch(() => null)
     if (!body) return NextResponse.json({ ok: false })
-    const { sessionId, productIds } = body
-    if (!sessionId || !Array.isArray(productIds)) return NextResponse.json({ ok: false })
+    const { deviceId, productIds } = body
+    if (!deviceId || !Array.isArray(productIds)) return NextResponse.json({ ok: false })
 
     const supabase = createAdminClient()
 
     if (productIds.length === 0) {
-      await supabase.from('wishlist_snapshots').delete().eq('session_id', sessionId)
+      await supabase.from('wishlist_snapshots').delete().eq('device_id', deviceId)
       return NextResponse.json({ ok: true })
     }
 
     const { data: existing } = await supabase
       .from('wishlist_snapshots')
       .select('id')
-      .eq('session_id', sessionId)
+      .eq('device_id', deviceId)
       .maybeSingle()
 
     await supabase.from('wishlist_snapshots').upsert({
-      session_id: sessionId,
+      device_id: deviceId,
       product_ids: productIds,
       updated_at: new Date().toISOString(),
-    }, { onConflict: 'session_id' })
+    }, { onConflict: 'device_id' })
 
     if (!existing) {
       await sendPushToAdmin(

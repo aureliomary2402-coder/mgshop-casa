@@ -25,7 +25,7 @@ export async function POST(request: NextRequest) {
 
   const { data: wishlist, error: wError } = await supabase
     .from('wishlist_snapshots')
-    .select('id, session_id, product_ids')
+    .select('id, device_id, product_ids')
     .eq('id', id)
     .single()
   if (wError || !wishlist) return NextResponse.json({ error: 'Preferiti non trovati' }, { status: 404 })
@@ -33,7 +33,7 @@ export async function POST(request: NextRequest) {
   const { data: subs } = await supabase
     .from('push_subscriptions')
     .select('id, subscription')
-    .eq('session_id', wishlist.session_id)
+    .eq('device_id', wishlist.device_id)
     .or('is_admin.is.null,is_admin.eq.false')
   if (!subs || subs.length === 0) {
     return NextResponse.json({ error: 'Nessuna notifica attiva per questi preferiti' }, { status: 400 })
