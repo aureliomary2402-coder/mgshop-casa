@@ -104,12 +104,17 @@ export async function POST(request: NextRequest) {
     if (orderError) return NextResponse.json({ error: orderError.message }, { status: 500 })
 
     if (ticketNumbers.length > 0) {
+      const ticketPriceToCharge = lottery?.ticket_price != null ? Number(lottery.ticket_price) : 1
       const { error: ticketsError } = await supabase.from('lottery_tickets').insert(
         ticketNumbers.map(n => ({
           round_id: lottery.round_id,
           lottery_number: n,
           order_id: order.id,
           phone_number,
+          // Salviamo il prezzo pagato in quel momento: se l'admin cambia
+          // il prezzo del biglietto più avanti, i conteggi di incasso
+          // restano corretti anche per i biglietti già venduti.
+          price: ticketPriceToCharge,
         }))
       )
       if (ticketsError) {

@@ -15,7 +15,9 @@ interface OrderStats {
 
 interface TicketStats {
   totalTickets: number
+  totalTicketRevenue: number
   todayTickets: number
+  todayTicketRevenue: number
 }
 
 interface Cliente {
@@ -63,22 +65,27 @@ export function DashboardStats() {
     ]).then(([ordersData, clientiData, ticketData]) => {
       const ticketGroups = ticketData.purchases || []
       const today = new Date().toDateString()
-      // Alcuni ordini includono anche biglietti lotteria: quei €1 a biglietto
-      // vanno tolti dall'incasso "ordini", perché contati a parte qui sotto.
-      const productRevenue = (o: { total: number; ticket_count?: number }) => o.total - (o.ticket_count || 0)
+      // Alcuni ordini includono anche biglietti lotteria: quell'incasso va
+      // tolto dall'incasso "ordini", perché contato a parte qui sotto — al
+      // prezzo pagato davvero (revenue), non contando 1 biglietto = €1 fisso.
+      const productRevenue = (o: { total: number; ticket_revenue?: number }) => o.total - (o.ticket_revenue || 0)
       setOrders({
         totalOrders: ordersData.length,
-        totalRevenue: ordersData.reduce((s: number, o: { total: number; ticket_count?: number }) => s + productRevenue(o), 0),
+        totalRevenue: ordersData.reduce((s: number, o: { total: number; ticket_revenue?: number }) => s + productRevenue(o), 0),
         pendingOrders: ordersData.filter((o: { status: string }) => o.status === 'pending').length,
         completedOrders: ordersData.filter((o: { status: string }) => o.status === 'delivered').length,
         todayOrders: ordersData.filter((o: { created_at: string }) => new Date(o.created_at).toDateString() === today).length,
-        todayRevenue: ordersData.filter((o: { created_at: string }) => new Date(o.created_at).toDateString() === today).reduce((s: number, o: { total: number; ticket_count?: number }) => s + productRevenue(o), 0),
+        todayRevenue: ordersData.filter((o: { created_at: string }) => new Date(o.created_at).toDateString() === today).reduce((s: number, o: { total: number; ticket_revenue?: number }) => s + productRevenue(o), 0),
       })
       setTickets({
         totalTickets: ticketGroups.reduce((s: number, g: { numbers: number[] }) => s + g.numbers.length, 0),
+        totalTicketRevenue: ticketGroups.reduce((s: number, g: { revenue?: number }) => s + (g.revenue || 0), 0),
         todayTickets: ticketGroups
           .filter((g: { created_at: string }) => new Date(g.created_at).toDateString() === today)
           .reduce((s: number, g: { numbers: number[] }) => s + g.numbers.length, 0),
+        todayTicketRevenue: ticketGroups
+          .filter((g: { created_at: string }) => new Date(g.created_at).toDateString() === today)
+          .reduce((s: number, g: { revenue?: number }) => s + (g.revenue || 0), 0),
       })
       setLoyaltyReadyCount((clientiData as Cliente[]).filter(c => c.loyaltyReady).length)
       setLoading(false)
@@ -155,9 +162,9 @@ export function DashboardStats() {
         <div className="grid grid-cols-2 gap-3">
           {tickets && [
             { label: 'Biglietti venduti', value: tickets.totalTickets, icon: Ticket, color: 'bg-amber-50 text-amber-600' },
-            { label: 'Incasso biglietti', value: `€${tickets.totalTickets.toFixed(2)}`, icon: Euro, color: 'bg-green-50 text-green-600' },
+            { label: 'Incasso biglietti', value: `€${tickets.totalTicketRevenue.toFixed(2)}`, icon: Euro, color: 'bg-green-50 text-green-600' },
             { label: 'Biglietti oggi', value: tickets.todayTickets, icon: TrendingUp, color: 'bg-orange-50 text-orange-600' },
-            { label: 'Incasso oggi', value: `€${tickets.todayTickets.toFixed(2)}`, icon: Package, color: 'bg-cyan-50 text-cyan-600' },
+            { label: 'Incasso oggi', value: `€${tickets.todayTicketRevenue.toFixed(2)}`, icon: Package, color: 'bg-cyan-50 text-cyan-600' },
           ].map(({ label, value, icon: Icon, color }) => (
             <div key={label} className="bg-white border border-slate-100 rounded-xl p-4 shadow-sm">
               <div className={`w-8 h-8 rounded-lg flex items-center justify-center mb-2 ${color}`}>

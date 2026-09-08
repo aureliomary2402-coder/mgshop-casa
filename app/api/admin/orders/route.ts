@@ -66,15 +66,18 @@ export async function GET() {
   }
 
   // Alcuni di questi ordini hanno anche biglietti lotteria acquistati insieme
-  // ai prodotti: quei €1 a biglietto non vanno contati come incasso "prodotti",
+  // ai prodotti: quell'incasso non va contato come incasso "prodotti",
   // altrimenti l'incasso ordini risulta gonfiato. Qui calcoliamo quanti
-  // biglietti (e quindi quanti € di biglietti) ha ciascun ordine.
+  // biglietti (e quanti € — al prezzo pagato davvero, non per forza €1) ha
+  // ciascun ordine.
   const orderIds = (data || []).map((o: { id: string }) => o.id)
   const ticketCounts: Record<string, number> = {}
+  const ticketRevenue: Record<string, number> = {}
   if (orderIds.length > 0) {
-    const { data: tickets } = await supabase.from('lottery_tickets').select('order_id').in('order_id', orderIds)
+    const { data: tickets } = await supabase.from('lottery_tickets').select('order_id, price').in('order_id', orderIds)
     for (const t of tickets || []) {
       ticketCounts[t.order_id] = (ticketCounts[t.order_id] || 0) + 1
+      ticketRevenue[t.order_id] = (ticketRevenue[t.order_id] || 0) + Number(t.price ?? 1)
     }
   }
   // Stock attuale di tutti i prodotti presenti negli ordini: serve al
@@ -93,6 +96,7 @@ export async function GET() {
   const withTicketInfo = (data || []).map((o: { id: string; order_items?: { product_id: string | null }[] }) => ({
     ...o,
     ticket_count: ticketCounts[o.id] || 0,
+    ticket_revenue: ticketRevenue[o.id] || 0,
     order_items: (o.order_items || []).map(i => ({
       ...i,
       current_stock: i.product_id !== null ? (stockByProduct[i.product_id] ?? null) : null,

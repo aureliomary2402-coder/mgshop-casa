@@ -34,7 +34,7 @@ export async function GET() {
 
   const { data: tickets, error } = await supabase
     .from('lottery_tickets')
-    .select('id, order_id, lottery_number, phone_number, customer_name, created_at, round_id')
+    .select('id, order_id, lottery_number, phone_number, customer_name, created_at, round_id, price')
     .eq('is_reserved', false)
     .order('created_at', { ascending: false })
   if (error) return NextResponse.json({ error: error.message }, { status: 500 })
@@ -86,7 +86,7 @@ export async function GET() {
   // Raggruppo per ordine (o per singolo biglietto, se per qualche motivo
   // non è collegato a un ordine) così un acquisto di più numeri insieme
   // compare come una riga sola con tutti i suoi numeri.
-  const groups: Record<string, { order_id: string | null; round_id: string | null; phone_number: string; customer_name: string | null; created_at: string; numbers: number[]; bundled_with_products: boolean; status: string }> = {}
+  const groups: Record<string, { order_id: string | null; round_id: string | null; phone_number: string; customer_name: string | null; created_at: string; numbers: number[]; bundled_with_products: boolean; status: string; revenue: number }> = {}
 
   for (const t of tickets) {
     const key = t.order_id || `standalone-${t.id}`
@@ -101,9 +101,11 @@ export async function GET() {
         numbers: [],
         bundled_with_products: order ? !order.is_ticket_only : false,
         status: order?.status || 'pending',
+        revenue: 0,
       }
     }
     groups[key].numbers.push(t.lottery_number)
+    groups[key].revenue += Number(t.price ?? 1)
   }
 
   const result = Object.entries(groups).map(([key, g]) => ({ id: key, ...g, numbers: g.numbers.sort((a, b) => a - b) }))
@@ -113,11 +115,12 @@ export async function GET() {
   // l'admin avvia una nuova estrazione viene generato un round_id diverso,
   // così i biglietti venduti nel turno appena chiuso non si mescolano con
   // quelli del turno nuovo.
-  const roundInfo: Record<string, { round_id: string; ticket_count: number; last_sale: string; first_sale: string }> = {}
+  const roundInfo: Record<string, { round_id: string; ticket_count: number; ticket_revenue: number; last_sale: string; first_sale: string }> = {}
   for (const t of tickets) {
     const rid = t.round_id || 'senza-turno'
-    if (!roundInfo[rid]) roundInfo[rid] = { round_id: rid, ticket_count: 0, last_sale: t.created_at, first_sale: t.created_at }
+    if (!roundInfo[rid]) roundInfo[rid] = { round_id: rid, ticket_count: 0, ticket_revenue: 0, last_sale: t.created_at, first_sale: t.created_at }
     roundInfo[rid].ticket_count += 1
+    roundInfo[rid].ticket_revenue += Number(t.price ?? 1)
     if (t.created_at > roundInfo[rid].last_sale) roundInfo[rid].last_sale = t.created_at
     if (t.created_at < roundInfo[rid].first_sale) roundInfo[rid].first_sale = t.created_at
   }
@@ -130,6 +133,7 @@ export async function GET() {
       return {
         round_id: r.round_id,
         ticket_count: r.ticket_count,
+        ticket_revenue: r.ticket_revenue,
         is_current: isCurrent,
         label: isCurrent ? 'Estrazione in corso' : `Estrazione del ${dateLabel}`,
       }
