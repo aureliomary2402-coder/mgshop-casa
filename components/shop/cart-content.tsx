@@ -123,9 +123,14 @@ export function CartContent({ scope = 'shop' }: { scope?: string }) {
   }, [])
 
   const subtotal = mounted ? getTotalPrice() : 0
+  // Il coupon non si applica MAI al prezzo dei biglietti della lotteria,
+  // sia che lo sconto sia "su tutto il carrello" sia che sia "solo promo":
+  // lo calcoliamo sempre escludendo il valore dei biglietti dalla base.
+  const ticketSubtotal = items.reduce((sum, i) => i.product.id === LOTTERY_TICKET_PRODUCT_ID ? sum + i.product.price * i.quantity : sum, 0)
+  const productsSubtotal = subtotal - ticketSubtotal
   // Se il coupon vale solo per la promo, lo sconto si calcola solo sui prodotti in promo presenti nel carrello
   const promoSubtotal = items.reduce((sum, i) => promoProductIds.includes(i.product.id) ? sum + i.product.price * i.quantity : sum, 0)
-  const discountBase = couponData?.scope === 'promo' ? promoSubtotal : subtotal
+  const discountBase = couponData?.scope === 'promo' ? promoSubtotal : productsSubtotal
   const discountAmount = couponData
     ? couponData.discount_percent > 0
       ? discountBase * couponData.discount_percent / 100
