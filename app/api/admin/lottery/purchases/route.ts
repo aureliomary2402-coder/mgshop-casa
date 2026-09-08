@@ -7,6 +7,22 @@ async function isAuthenticated() {
   return cookieStore.get('admin_session')?.value === 'authenticated'
 }
 
+function normalizePhone(phone: string): string {
+  let n = phone.replace(/\D/g, '')
+  const prefixes = ['0039', '0044', '0033', '0049', '0034', '001']
+  for (const p of prefixes) {
+    if (n.startsWith(p)) { n = n.slice(p.length); break }
+  }
+  if (n.startsWith('39') && n.length === 12) n = n.slice(2)
+  if (n.startsWith('44') && n.length === 12) n = n.slice(2)
+  if (n.startsWith('33') && n.length === 11) n = n.slice(2)
+  if (n.startsWith('49') && n.length === 12) n = n.slice(2)
+  if (n.startsWith('34') && n.length === 11) n = n.slice(2)
+  if (n.startsWith('1') && n.length === 11) n = n.slice(1)
+  if (n.length > 10) n = n.slice(-10)
+  return n
+}
+
 // Ogni biglietto lotteria venduto compare qui, sia che sia stato acquistato
 // da solo (nessun prodotto) sia che sia stato preso insieme ad altri
 // prodotti in un ordine normale. I biglietti presi insieme a un ordine
@@ -31,6 +47,41 @@ export async function GET() {
     ? await supabase.from('orders').select('id, status, is_ticket_only, customer_name').in('id', orderIds)
     : { data: [] as any[] }
   const orderById = Object.fromEntries((orders || []).map((o: any) => [o.id, o]))
+
+  // Se un biglietto (o l'ordine a cui è collegato) non ha ancora un nome
+  // cliente, controlliamo se quel numero di telefono ha già ordinato in
+  // passato (prodotti o altri biglietti) con un nome salvato, e lo riusiamo
+  // in automatico, esattamente come per la tab Ordini.
+  const needsNameFor = tickets.filter(t => !(t.order_id ? orderById[t.order_id]?.customer_name : t.customer_name))
+  const nameByPhone: Record<string, string> = {}
+  if (needsNameFor.length > 0) {
+    const { data: namedOrders } = await supabase
+      .from('orders')
+      .select('phone_number, customer_name, created_at')
+      .not('customer_name', 'is', null)
+      .order('created_at', { ascending: false })
+    for (const o of namedOrders || []) {
+      const key = normalizePhone(o.phone_number)
+      if (key && !nameByPhone[key] && o.customer_name) nameByPhone[key] = o.customer_name
+    }
+    const orderIdsToPersist: { id: string; name: string }[] = []
+    const ticketIdsToPersist: { id: string; name: string }[] = []
+    for (const t of needsNameFor) {
+      const matched = nameByPhone[normalizePhone(t.phone_number)]
+      if (!matched) continue
+      if (t.order_id) {
+        if (orderById[t.order_id]) orderById[t.order_id].customer_name = matched
+        if (!orderIdsToPersist.some(o => o.id === t.order_id)) orderIdsToPersist.push({ id: t.order_id, name: matched })
+      } else {
+        t.customer_name = matched
+        ticketIdsToPersist.push({ id: t.id, name: matched })
+      }
+    }
+    await Promise.all([
+      ...orderIdsToPersist.map(({ id, name }) => supabase.from('orders').update({ customer_name: name }).eq('id', id)),
+      ...ticketIdsToPersist.map(({ id, name }) => supabase.from('lottery_tickets').update({ customer_name: name }).eq('id', id)),
+    ]).catch(() => {})
+  }
 
   // Raggruppo per ordine (o per singolo biglietto, se per qualche motivo
   // non è collegato a un ordine) così un acquisto di più numeri insieme
