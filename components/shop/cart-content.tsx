@@ -35,6 +35,8 @@ export function CartContent({ scope = 'shop' }: { scope?: string }) {
   const [takenNumbers, setTakenNumbers] = useState<number[]>([])
   const [showNumberPicker, setShowNumberPicker] = useState(false)
   const [chosenNumbers, setChosenNumbers] = useState<number[]>([])
+  const [showCoupon, setShowCoupon] = useState(false)
+  const [showLottery, setShowLottery] = useState(false)
 
   const items = useCartStore(s => s.items)
   const addItem = useCartStore(s => s.addItem)
@@ -44,6 +46,11 @@ export function CartContent({ scope = 'shop' }: { scope?: string }) {
   const getTotalPrice = useCartStore(s => s.getTotalPrice)
 
   const ticketQtyInCart = items.find(i => i.product.id === LOTTERY_TICKET_PRODUCT_ID)?.quantity || 0
+  // Se nel carrello ci sono solo biglietti della lotteria (nessun prodotto fisico),
+  // la scelta consegna/ritiro non serve: non c'è nulla da consegnare o ritirare.
+  const onlyLotteryInCart = items.length > 0 && items.every(i => i.product.id === LOTTERY_TICKET_PRODUCT_ID)
+  const couponSectionOpen = showCoupon || !!couponData
+  const lotterySectionOpen = showLottery || ticketQtyInCart > 0
 
   // Se il cliente riduce la quantità di biglietti (o li rimuove), teniamo
   // al massimo tanti numeri scelti quanti sono i biglietti rimasti nel carrello.
@@ -149,11 +156,14 @@ export function CartContent({ scope = 'shop' }: { scope?: string }) {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault(); setError('')
     if (!phone.trim()) { setError('Inserisci il tuo numero di telefono'); return }
-    if (!deliveryMethod) { setError('Scegli se vuoi la consegna a domicilio o vieni a ritirare'); return }
-    if (deliveryMethod === 'consegna' && !address.trim()) { setError('Inserisci l\'indirizzo di consegna'); return }
+    if (!onlyLotteryInCart) {
+      if (!deliveryMethod) { setError('Scegli se vuoi la consegna a domicilio o vieni a ritirare'); return }
+      if (deliveryMethod === 'consegna' && !address.trim()) { setError('Inserisci l\'indirizzo di consegna'); return }
+    }
     setSubmitting(true)
     try {
-      const res = await fetch('/api/checkout', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ phone_number: phone, items, total, coupon_code: couponCode || null, ticket_number_choices: chosenNumbers, delivery_method: deliveryMethod, delivery_address: deliveryMethod === 'consegna' ? address : null }) })
+      const finalDeliveryMethod = onlyLotteryInCart ? null : deliveryMethod
+      const res = await fetch('/api/checkout', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ phone_number: phone, items, total, coupon_code: couponCode || null, ticket_number_choices: chosenNumbers, delivery_method: finalDeliveryMethod, delivery_address: finalDeliveryMethod === 'consegna' ? address : null }) })
       const data = await res.json().catch(() => null)
       if (!res.ok) {
         // Uno o più numeri scelti sono stati presi da un altro cliente nel
@@ -339,35 +349,54 @@ export function CartContent({ scope = 'shop' }: { scope?: string }) {
             ))}
           </div>
           <div className="space-y-2">
-            {!couponData ? (
-              <>
-                <div className="flex flex-wrap gap-2">
-                  <div className="relative flex-1 min-w-[140px]">
-                    <Tag className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-cyan-400"/>
-                    <input value={couponInput} onChange={e => setCouponInput(e.target.value.toUpperCase())} onKeyDown={e => e.key==='Enter'&&handleApplyCoupon()} placeholder="Codice coupon"
-                      className="w-full h-10 pl-9 pr-3 rounded-xl text-base font-mono outline-none" style={{background:'rgba(8,145,178,0.05)',border:'1px solid rgba(8,145,178,0.15)',color:'#0c2b36'}}/>
+            <label className="flex items-center gap-2 cursor-pointer select-none">
+              <input type="checkbox" checked={couponSectionOpen}
+                onChange={e => { if (!e.target.checked && couponData) removeCoupon(); setShowCoupon(e.target.checked) }}
+                className="rounded accent-cyan-600 shrink-0" style={{ width: 18, height: 18 }} />
+              <span className="flex items-center gap-1.5 text-sm font-medium" style={{ color: '#0c2b36' }}>
+                <Tag className="w-4 h-4 text-cyan-600" /> Ho un coupon sconto
+              </span>
+            </label>
+            {couponSectionOpen && (
+              !couponData ? (
+                <>
+                  <div className="flex flex-wrap gap-2">
+                    <div className="relative flex-1 min-w-[140px]">
+                      <Tag className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-cyan-400"/>
+                      <input value={couponInput} onChange={e => setCouponInput(e.target.value.toUpperCase())} onKeyDown={e => e.key==='Enter'&&handleApplyCoupon()} placeholder="Codice coupon"
+                        className="w-full h-10 pl-9 pr-3 rounded-xl text-base font-mono outline-none" style={{background:'rgba(8,145,178,0.05)',border:'1px solid rgba(8,145,178,0.15)',color:'#0c2b36'}}/>
+                    </div>
+                    <button onClick={handleApplyCoupon} disabled={couponLoading||!couponInput.trim()} className="shrink-0 px-3 py-2 rounded-xl text-sm font-medium text-white disabled:opacity-50 transition-all hover:scale-105 btn-press" style={{background:'linear-gradient(135deg,#0891b2,#06b6d4)'}}>
+                      {couponLoading?'...':'Applica'}
+                    </button>
                   </div>
-                  <button onClick={handleApplyCoupon} disabled={couponLoading||!couponInput.trim()} className="shrink-0 px-3 py-2 rounded-xl text-sm font-medium text-white disabled:opacity-50 transition-all hover:scale-105 btn-press" style={{background:'linear-gradient(135deg,#0891b2,#06b6d4)'}}>
-                    {couponLoading?'...':'Applica'}
-                  </button>
+                  {couponError && <p className="text-red-500 text-xs">{couponError}</p>}
+                </>
+              ) : (
+                <div className="flex items-center justify-between p-3 rounded-xl" style={{background:'rgba(8,145,178,0.06)',border:'1px solid rgba(8,145,178,0.2)'}}>
+                  <div>
+                    <p className="text-sm font-bold text-cyan-700">{couponData.code}</p>
+                    <p className="text-xs text-slate-500">{couponData.discount_percent>0?`-${couponData.discount_percent}%`:`-€${couponData.discount_fixed}`}{couponData.scope==='promo' ? ' (solo prodotti in promo)' : ' (tutto il carrello)'}</p>
+                    {couponData.scope==='promo' && promoSubtotal===0 && <p className="text-xs text-red-500 mt-1">Nessun prodotto in promo nel carrello: sconto non applicato</p>}
+                  </div>
+                  <button onClick={removeCoupon} className="p-1 hover:bg-cyan-100 rounded-lg"><X className="w-4 h-4 text-cyan-600"/></button>
                 </div>
-                {couponError && <p className="text-red-500 text-xs">{couponError}</p>}
-              </>
-            ) : (
-              <div className="flex items-center justify-between p-3 rounded-xl" style={{background:'rgba(8,145,178,0.06)',border:'1px solid rgba(8,145,178,0.2)'}}>
-                <div>
-                  <p className="text-sm font-bold text-cyan-700">{couponData.code}</p>
-                  <p className="text-xs text-slate-500">{couponData.discount_percent>0?`-${couponData.discount_percent}%`:`-€${couponData.discount_fixed}`}{couponData.scope==='promo' ? ' (solo prodotti in promo)' : ' (tutto il carrello)'}</p>
-                  {couponData.scope==='promo' && promoSubtotal===0 && <p className="text-xs text-red-500 mt-1">Nessun prodotto in promo nel carrello: sconto non applicato</p>}
-                </div>
-                <button onClick={removeCoupon} className="p-1 hover:bg-cyan-100 rounded-lg"><X className="w-4 h-4 text-cyan-600"/></button>
-              </div>
+              )
             )}
           </div>
           {lotteryActive && (
+            <div className="space-y-2">
+              <label className="flex items-center gap-2 cursor-pointer select-none">
+                <input type="checkbox" checked={lotterySectionOpen} disabled={ticketQtyInCart > 0}
+                  onChange={e => setShowLottery(e.target.checked)}
+                  className="rounded accent-cyan-600 shrink-0" style={{ width: 18, height: 18 }} />
+                <span className="flex items-center gap-1.5 text-sm font-medium" style={{ color: '#0c2b36' }}>
+                  <Gift className="w-4 h-4 text-cyan-600" /> Voglio partecipare alla lotteria
+                </span>
+              </label>
+              {lotterySectionOpen && (
             <div className="p-3 rounded-xl" style={{ background: ticketQtyInCart > 0 ? 'rgba(8,145,178,0.08)' : 'rgba(8,145,178,0.03)', border: '1px solid rgba(8,145,178,0.15)' }}>
-              <span className="text-sm font-bold flex items-center gap-1.5" style={{ color: '#0c2b36' }}><Gift className="w-4 h-4 text-cyan-600" /> Partecipa alla lotteria</span>
-              <span className="text-xs text-slate-400 block mt-0.5 mb-2.5">{lotteryPrizeLabel ? `In palio: ${lotteryPrizeLabel}` : 'Ricevi un numero per l\'estrazione'} — €{ticketPrice.toFixed(2)} a biglietto, puoi prenderne più di uno.</span>
+              <span className="text-xs text-slate-400 block mb-2.5">{lotteryPrizeLabel ? `In palio: ${lotteryPrizeLabel}` : 'Ricevi un numero per l\'estrazione'} — €{ticketPrice.toFixed(2)} a biglietto, puoi prenderne più di uno.</span>
 
               {ticketQtyInCart > 0 ? (
                 <div className="space-y-2.5">
@@ -426,53 +455,44 @@ export function CartContent({ scope = 'shop' }: { scope?: string }) {
                 </div>
               )}
             </div>
+              )}
+            </div>
           )}
           <div className="border-t border-cyan-100 pt-3 space-y-1.5">
             <div className="flex justify-between text-sm text-slate-500"><span>Subtotale</span><span>€{subtotal.toFixed(2)}</span></div>
             {couponData&&discountAmount>0&&<div className="flex justify-between text-sm text-green-600 font-medium"><span>Sconto coupon</span><span>-€{discountAmount.toFixed(2)}</span></div>}
             <div className="flex justify-between font-bold pt-1"><span style={{color:'#0c2b36'}}>Totale</span><span className="text-xl" style={{color:'#0891b2'}}>€{total.toFixed(2)}</span></div>
           </div>
-          <CodBanner />
-          <Link href="/consegne" className="flex items-center justify-center gap-1.5 text-xs text-cyan-700/70 hover:text-cyan-700 transition-colors underline underline-offset-2">
-            <MapPin className="w-3.5 h-3.5" /> Vedi le zone di consegna e come funziona il ritiro
-          </Link>
-          {/* Banner: spiega come funziona il contatto dopo l'ordine */}
-          <div className="flex items-start gap-3 p-3 rounded-xl" style={{ background: 'rgba(37,211,102,0.08)', border: '1px solid rgba(37,211,102,0.2)' }}>
-            <MessageCircle className="w-5 h-5 text-green-600 shrink-0 mt-0.5" />
-            <p className="text-xs text-slate-600 leading-relaxed">
-              <strong className="text-green-700">Come funziona:</strong> dopo aver inviato l&apos;ordine con il tuo numero, ti contatteremo su WhatsApp per organizzare {' '}
-              {deliveryMethod === 'consegna' ? 'la consegna a domicilio' : deliveryMethod === 'ritiro' ? 'il ritiro' : 'la consegna o il ritiro'} in base a quello che scegli qui sotto.
-            </p>
-          </div>
+          {!onlyLotteryInCart && (
+            <div className="space-y-2.5">
+              <div className="grid grid-cols-2 gap-2.5">
+                <label className="flex items-center gap-2 p-3 rounded-xl cursor-pointer select-none" style={{ background: deliveryMethod === 'consegna' ? 'rgba(8,145,178,0.06)' : 'rgba(8,145,178,0.02)', border: '1px solid rgba(8,145,178,0.15)' }}>
+                  <input type="checkbox" checked={deliveryMethod === 'consegna'} onChange={e => setDeliveryMethod(e.target.checked ? 'consegna' : null)}
+                    className="w-4.5 h-4.5 rounded accent-cyan-600 shrink-0" style={{ width: 18, height: 18 }} />
+                  <span className="flex items-center gap-1.5 text-sm font-medium" style={{ color: '#0c2b36' }}>
+                    <Truck className="w-4 h-4 text-cyan-600" /> Consegna a domicilio
+                  </span>
+                </label>
+                <label className="flex items-center gap-2 p-3 rounded-xl cursor-pointer select-none" style={{ background: deliveryMethod === 'ritiro' ? 'rgba(8,145,178,0.06)' : 'rgba(8,145,178,0.02)', border: '1px solid rgba(8,145,178,0.15)' }}>
+                  <input type="checkbox" checked={deliveryMethod === 'ritiro'} onChange={e => setDeliveryMethod(e.target.checked ? 'ritiro' : null)}
+                    className="w-4.5 h-4.5 rounded accent-cyan-600 shrink-0" style={{ width: 18, height: 18 }} />
+                  <span className="flex items-center gap-1.5 text-sm font-medium" style={{ color: '#0c2b36' }}>
+                    <Store className="w-4 h-4 text-cyan-600" /> Vieni a ritirare
+                  </span>
+                </label>
+              </div>
+              <p className="text-xs text-slate-400 -mt-1 ml-1">
+                {deliveryMethod === 'consegna' && 'Inserisci l\'indirizzo dove vuoi ricevere l\'ordine.'}
+                {deliveryMethod === 'ritiro' && 'Ti contatteremo al numero fornito per organizzare l\'orario del ritiro.'}
+                {!deliveryMethod && 'Scegli una delle due opzioni prima di inviare l\'ordine.'}
+              </p>
 
-          <div className="space-y-2.5">
-            <div className="grid grid-cols-2 gap-2.5">
-              <label className="flex items-center gap-2 p-3 rounded-xl cursor-pointer select-none" style={{ background: deliveryMethod === 'consegna' ? 'rgba(8,145,178,0.06)' : 'rgba(8,145,178,0.02)', border: '1px solid rgba(8,145,178,0.15)' }}>
-                <input type="checkbox" checked={deliveryMethod === 'consegna'} onChange={e => setDeliveryMethod(e.target.checked ? 'consegna' : null)}
-                  className="w-4.5 h-4.5 rounded accent-cyan-600 shrink-0" style={{ width: 18, height: 18 }} />
-                <span className="flex items-center gap-1.5 text-sm font-medium" style={{ color: '#0c2b36' }}>
-                  <Truck className="w-4 h-4 text-cyan-600" /> Consegna a domicilio
-                </span>
-              </label>
-              <label className="flex items-center gap-2 p-3 rounded-xl cursor-pointer select-none" style={{ background: deliveryMethod === 'ritiro' ? 'rgba(8,145,178,0.06)' : 'rgba(8,145,178,0.02)', border: '1px solid rgba(8,145,178,0.15)' }}>
-                <input type="checkbox" checked={deliveryMethod === 'ritiro'} onChange={e => setDeliveryMethod(e.target.checked ? 'ritiro' : null)}
-                  className="w-4.5 h-4.5 rounded accent-cyan-600 shrink-0" style={{ width: 18, height: 18 }} />
-                <span className="flex items-center gap-1.5 text-sm font-medium" style={{ color: '#0c2b36' }}>
-                  <Store className="w-4 h-4 text-cyan-600" /> Vieni a ritirare
-                </span>
-              </label>
+              {deliveryMethod === 'consegna' && (
+                <input type="text" placeholder="Indirizzo di consegna (via, civico, città)" value={address} onChange={e => setAddress(e.target.value)}
+                  className="w-full h-11 px-4 rounded-xl text-base outline-none" style={{ background: 'rgba(8,145,178,0.05)', border: '1px solid rgba(8,145,178,0.15)', color: '#0c2b36' }} />
+              )}
             </div>
-            <p className="text-xs text-slate-400 -mt-1 ml-1">
-              {deliveryMethod === 'consegna' && 'Inserisci l\'indirizzo dove vuoi ricevere l\'ordine.'}
-              {deliveryMethod === 'ritiro' && 'Ti contatteremo al numero fornito per organizzare l\'orario del ritiro.'}
-              {!deliveryMethod && 'Scegli una delle due opzioni prima di inviare l\'ordine.'}
-            </p>
-
-            {deliveryMethod === 'consegna' && (
-              <input type="text" placeholder="Indirizzo di consegna (via, civico, città)" value={address} onChange={e => setAddress(e.target.value)}
-                className="w-full h-11 px-4 rounded-xl text-base outline-none" style={{ background: 'rgba(8,145,178,0.05)', border: '1px solid rgba(8,145,178,0.15)', color: '#0c2b36' }} />
-            )}
-          </div>
+          )}
 
           <form onSubmit={handleSubmit} className="space-y-3">
             <input type="tel" placeholder="Numero di telefono" value={phone} onChange={e=>handlePhoneChange(e.target.value)}
@@ -483,6 +503,25 @@ export function CartContent({ scope = 'shop' }: { scope?: string }) {
             </button>
           </form>
           <p className="text-xs text-center text-slate-400">Ti contatteremo su WhatsApp per confermare</p>
+
+          <div className="border-t border-cyan-100 pt-4 space-y-3">
+            <CodBanner />
+            {!onlyLotteryInCart && (
+              <Link href="/consegne" className="flex items-center justify-center gap-1.5 text-xs text-cyan-700/70 hover:text-cyan-700 transition-colors underline underline-offset-2">
+                <MapPin className="w-3.5 h-3.5" /> Vedi le zone di consegna e come funziona il ritiro
+              </Link>
+            )}
+            {/* Banner: spiega come funziona il contatto dopo l'ordine */}
+            <div className="flex items-start gap-3 p-3 rounded-xl" style={{ background: 'rgba(37,211,102,0.08)', border: '1px solid rgba(37,211,102,0.2)' }}>
+              <MessageCircle className="w-5 h-5 text-green-600 shrink-0 mt-0.5" />
+              <p className="text-xs text-slate-600 leading-relaxed">
+                <strong className="text-green-700">Come funziona:</strong> dopo aver inviato l&apos;ordine con il tuo numero, ti contatteremo su WhatsApp {' '}
+                {onlyLotteryInCart
+                  ? 'per confermare la partecipazione alla lotteria.'
+                  : <>per organizzare {deliveryMethod === 'consegna' ? 'la consegna a domicilio' : deliveryMethod === 'ritiro' ? 'il ritiro' : 'la consegna o il ritiro'} in base a quello che scegli qui sopra.</>}
+              </p>
+            </div>
+          </div>
         </div>
       </div>
       </div>
