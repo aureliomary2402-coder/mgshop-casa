@@ -1,5 +1,7 @@
 const VAPID_PUBLIC_KEY = process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY!
 
+import { getSessionId } from './session-id'
+
 function urlBase64ToUint8Array(base64String: string) {
   const padding = '='.repeat((4 - (base64String.length % 4)) % 4)
   const base64 = (base64String + padding).replace(/-/g, '+').replace(/_/g, '/')
@@ -38,7 +40,10 @@ export async function subscribeToPush(phoneNumber?: string): Promise<SubscribeRe
     const res = await fetch('/api/push/subscribe', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ subscription, phoneNumber }),
+      // sessionId collega questa iscrizione alla sessione del browser: se il
+      // cliente abbandona un carrello con la stessa sessione, l'admin potrà
+      // ricontattarlo con una notifica mirata anche senza il suo numero.
+      body: JSON.stringify({ subscription, phoneNumber, sessionId: getSessionId() }),
     })
 
     if (!res.ok) return { ok: false, reason: 'save-failed' }
@@ -46,6 +51,35 @@ export async function subscribeToPush(phoneNumber?: string): Promise<SubscribeRe
   } catch (err) {
     console.error('Errore subscribe push:', err)
     return { ok: false, reason: 'exception' }
+  }
+}
+
+// Ricollega silenziosamente (senza chiedere alcun permesso, quindi senza
+// popup) l'iscrizione notifiche già esistente su questo dispositivo alla
+// sessione corrente. Serve per i clienti che avevano già attivato le
+// notifiche PRIMA di questa funzione: senza questo richiamo automatico,
+// la loro iscrizione resterebbe "orfana" (senza session_id) e non potrebbe
+// mai essere collegata a un carrello abbandonato. Va chiamata a ogni
+// apertura del sito, solo se il permesso risulta già concesso.
+export async function syncPushSession(): Promise<void> {
+  if (typeof window === 'undefined') return
+  if (!('serviceWorker' in navigator) || !('PushManager' in window) || !('Notification' in window)) return
+  if (Notification.permission !== 'granted') return
+
+  try {
+    const registration = await navigator.serviceWorker.ready
+    const subscription = await registration.pushManager.getSubscription()
+    if (!subscription) return
+
+    // Nota: niente phoneNumber qui, di proposito — così un numero già
+    // salvato in precedenza per questa iscrizione non viene cancellato.
+    await fetch('/api/push/subscribe', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ subscription, sessionId: getSessionId() }),
+    })
+  } catch (err) {
+    console.error('Errore sync sessione push:', err)
   }
 }
 

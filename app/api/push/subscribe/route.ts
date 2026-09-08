@@ -1,26 +1,32 @@
 import { NextResponse } from 'next/server'
 import { createAdminClient } from '@/lib/supabase/admin'
 export async function POST(req: Request) {
-  const { subscription, phoneNumber, isAdmin } = await req.json()
+  const { subscription, phoneNumber, isAdmin, sessionId } = await req.json()
   if (!subscription?.endpoint) {
     return NextResponse.json({ error: 'subscription non valida' }, { status: 400 })
   }
   const supabase = createAdminClient()
+  // phoneNumber viene incluso solo se il chiamante lo ha passato davvero:
+  // il ricollegamento silenzioso (syncPushSession) non lo invia mai, così
+  // non cancelliamo un numero già salvato in precedenza per la stessa
+  // iscrizione quando la stiamo solo ricollegando alla sessione corrente.
+  const updateData: Record<string, unknown> = {
+    subscription,
+    // Collega l'iscrizione alla sessione del browser: permette di
+    // ricontattare con una notifica mirata chi abbandona il carrello
+    // anche se non ha mai lasciato un numero di telefono.
+    session_id: typeof sessionId === 'string' && sessionId ? sessionId : null,
+    // Le subscription "admin" (quella attivata da te nel pannello) sono
+    // marcate qui: sendPushToAdmin() usa questo flag per mandare solo a
+    // te le notifiche di servizio (nuovo ordine, chat, visite...) invece
+    // che a tutti i clienti iscritti.
+    is_admin: isAdmin === true,
+    updated_at: new Date().toISOString(),
+  }
+  if (phoneNumber !== undefined) updateData.phone_number = phoneNumber ?? null
   const { error } = await supabase
     .from('push_subscriptions')
-    .upsert(
-      {
-        subscription,
-        phone_number: phoneNumber ?? null,
-        // Le subscription "admin" (quella attivata da te nel pannello) sono
-        // marcate qui: sendPushToAdmin() usa questo flag per mandare solo a
-        // te le notifiche di servizio (nuovo ordine, chat, visite...) invece
-        // che a tutti i clienti iscritti.
-        is_admin: isAdmin === true,
-        updated_at: new Date().toISOString(),
-      },
-      { onConflict: 'endpoint' }
-    )
+    .upsert(updateData, { onConflict: 'endpoint' })
   if (error) {
     console.error('Errore salvataggio push subscription:', error)
     return NextResponse.json({ error: error.message }, { status: 500 })

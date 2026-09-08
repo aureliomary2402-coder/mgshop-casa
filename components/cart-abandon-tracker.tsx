@@ -1,20 +1,8 @@
 "use client"
 import { useEffect, useRef } from 'react'
 import { useCartStore } from '@/lib/cart-store'
-
-function getSessionId() {
-  if (typeof window === 'undefined') return ''
-  try {
-    let id = sessionStorage.getItem('mgshop-session-id')
-    if (!id) {
-      id = crypto.randomUUID()
-      sessionStorage.setItem('mgshop-session-id', id)
-    }
-    return id
-  } catch {
-    return crypto.randomUUID()
-  }
-}
+import { getSessionId } from '@/lib/session-id'
+import { syncPushSession } from '@/lib/push-subscribe'
 
 // Tiene traccia del carrello e, quando l'utente chiude la scheda o cambia
 // pagina/app lasciando articoli dentro, invia una segnalazione al server
@@ -30,6 +18,11 @@ export function CartAbandonTracker() {
     itemsRef.current = items
     totalRef.current = getTotalPrice()
   }, [items, getTotalPrice])
+
+  // Se il cliente ha già le notifiche attive da prima (magari attivate su
+  // un'altra pagina o in una sessione precedente), ricolleghiamole subito
+  // e in silenzio alla sessione di questa visita, senza chiedere nulla.
+  useEffect(() => { syncPushSession() }, [])
 
   useEffect(() => {
     const sendSignal = () => {
