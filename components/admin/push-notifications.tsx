@@ -11,7 +11,26 @@ export function PushNotifications() {
     }
     navigator.serviceWorker.ready.then(async reg => {
       const sub = await reg.pushManager.getSubscription()
-      if (sub) setStatus('subscribed')
+      if (sub) {
+        setStatus('subscribed')
+        // Ricollegamento silenzioso: se il browser ha già una subscription
+        // attiva ma per qualche motivo il server non l'ha (più) salvata come
+        // is_admin=true (bug passati, riavvii, subscription cambiata...), la
+        // riscrive qui a ogni apertura del pannello. Senza questo, il tasto
+        // resta "Notifiche attive" per sempre senza mai correggere il
+        // database: è esattamente quello che causava la perdita silenziosa
+        // delle notifiche admin (nuovo ordine, visite...). Stesso pattern
+        // già usato lato cliente in lib/push-subscribe.ts (syncPushSession).
+        try {
+          await fetch('/api/push/subscribe', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ subscription: sub, isAdmin: true })
+          })
+        } catch (err) {
+          console.error('Errore ricollegamento silenzioso notifiche admin:', err)
+        }
+      }
       else if (Notification.permission === 'denied') setStatus('denied')
       else setStatus('unsubscribed')
     })
