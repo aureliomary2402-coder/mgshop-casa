@@ -41,17 +41,18 @@ export async function GET(request: NextRequest) {
   }
   // Ricerca "intelligente": spezza il termine in singole parole (es. "sapone
   // liquido" -> ["sapone", "liquido"]) e richiede che OGNI parola compaia da
-  // qualche parte tra nome prodotto, descrizione o nome categoria. Così un
-  // cliente che cerca "sapone liquido" trova anche un prodotto chiamato
-  // "Sapone Marsiglia Ginger Lily 1L" se ha quella categoria o se la
-  // descrizione lo menziona, anche se il nome esatto non coincide.
+  // qualche parte tra nome prodotto, descrizione, parole chiave o nome
+  // categoria. Così un cliente che cerca "sapone liquido" trova anche un
+  // prodotto chiamato "Sapone Marsiglia Ginger Lily 1L" se ha quella
+  // categoria, se la descrizione lo menziona, o se è stato aggiunto tra le
+  // parole chiave del prodotto, anche se il nome esatto non coincide.
   if (q) {
     const parole = q.trim().split(/\s+/).filter(Boolean).map(w => w.replace(/[%_]/g, ''))
     for (const parola of parole) {
       if (!parola) continue
       const { data: catMatch } = await supabase.from('categories').select('id').ilike('name', `%${parola}%`)
       const catIds = (catMatch || []).map(c => c.id)
-      const condizioni = [`name.ilike.%${parola}%`, `description.ilike.%${parola}%`]
+      const condizioni = [`name.ilike.%${parola}%`, `description.ilike.%${parola}%`, `keywords.ilike.%${parola}%`]
       if (catIds.length) condizioni.push(`category_id.in.(${catIds.join(',')})`)
       query = query.or(condizioni.join(','))
     }
