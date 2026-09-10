@@ -193,7 +193,7 @@ export function GlobalHeader({ categories = [] }: { categories?: Category[] }) {
         </div>
 
         <div className="flex items-center gap-2">
-          <div ref={searchBoxRef} className={`transition-all duration-300 min-w-0 ${searchOpen ? 'flex flex-1 sm:flex-none sm:w-64' : 'hidden md:flex md:w-40'} ${searchFocused ? 'sm:!w-72' : ''}`}>
+          <div ref={searchBoxRef} className={`transition-all duration-300 min-w-0 ${searchOpen ? 'flex flex-1 sm:flex-none sm:w-64' : 'hidden md:flex md:flex-1 md:max-w-[10rem]'} ${searchFocused ? 'sm:w-72' : ''}`}>
             <div className="relative w-full">
               <Search className={`absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 pointer-events-none transition-colors duration-300 ${searchFocused ? 'text-cyan-500' : 'text-cyan-400'}`} />
               <input ref={inputRef} type="search" placeholder="Cerca prodotti..." value={searchValue}
