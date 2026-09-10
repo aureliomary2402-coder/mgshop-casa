@@ -63,6 +63,10 @@ export interface Product {
   // personalizzazione (es. "Scrivi il nome da ricamare e scegli il colore
   // della base"). Facoltativo: se vuoto non compare nulla.
   customization_note?: string | null
+  // Parole chiave extra per la ricerca (es. "sapone liquido, sapone mani"),
+  // separate da virgola: aiutano a trovare il prodotto anche quando il
+  // cliente cerca termini diversi dal nome esatto.
+  keywords?: string | null
   created_at: string
   updated_at: string
   category?: Category
