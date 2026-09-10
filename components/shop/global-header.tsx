@@ -219,11 +219,11 @@ export function GlobalHeader({ categories = [] }: { categories?: Category[] }) {
                     <>
                       <div className="max-h-96 overflow-y-auto p-1.5">
                         {searchResults.map(product => {
-                          const imgUrl = optimizeImage(product.card_image || product.cover_image, 120)
+                          const imgUrl = optimizeImage(product.card_image || product.cover_image, 160)
                           return (
                             <button key={product.id} onClick={() => handleSelectProduct(product)}
                               className="w-full flex items-center gap-3 p-2 rounded-xl text-left hover:bg-cyan-50 transition-colors">
-                              <div className="w-11 h-11 rounded-lg flex items-center justify-center shrink-0 overflow-hidden p-1" style={{ background: '#ffffff', border: '1px solid rgba(8,145,178,0.1)' }}>
+                              <div className="w-16 h-16 rounded-lg flex items-center justify-center shrink-0 overflow-hidden p-0.5" style={{ background: '#ffffff', border: '1px solid rgba(8,145,178,0.1)' }}>
                                 {imgUrl ? <img src={imgUrl} alt={product.name} className="w-full h-full object-contain" /> : <ImageIcon className="w-4 h-4 text-cyan-300" />}
                               </div>
                               <span className="flex-1 min-w-0 text-sm font-medium truncate" style={{ color: '#0c2b36' }}>
