@@ -223,8 +223,8 @@ export function GlobalHeader({ categories = [] }: { categories?: Category[] }) {
                           return (
                             <button key={product.id} onClick={() => handleSelectProduct(product)}
                               className="w-full flex items-center gap-3 p-2 rounded-xl text-left hover:bg-cyan-50 transition-colors">
-                              <div className="w-16 h-16 rounded-lg flex items-center justify-center shrink-0 overflow-hidden p-0.5" style={{ background: '#ffffff', border: '1px solid rgba(8,145,178,0.1)' }}>
-                                {imgUrl ? <img src={imgUrl} alt={product.name} className="w-full h-full object-contain" /> : <ImageIcon className="w-4 h-4 text-cyan-300" />}
+                              <div className="w-14 h-14 rounded-lg shrink-0 overflow-hidden" style={{ background: 'linear-gradient(135deg, #f0fbfd, #cffafe)' }}>
+                                {imgUrl ? <img src={imgUrl} alt={product.name} className="w-full h-full object-cover" /> : <ImageIcon className="w-4 h-4 text-cyan-300" />}
                               </div>
                               <span className="flex-1 min-w-0 text-sm font-medium truncate" style={{ color: '#0c2b36' }}>
                                 <HighlightedText text={product.name} query={searchValue} />
