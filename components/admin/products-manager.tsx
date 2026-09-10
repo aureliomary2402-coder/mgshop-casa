@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect } from 'react'
-import { Plus, Pencil, Trash2, Images, ToggleLeft, ToggleRight, ImageIcon, Search, X, Package, AlertTriangle, Clock, Palette, GripVertical } from 'lucide-react'
+import { Plus, Pencil, Trash2, Images, ToggleLeft, ToggleRight, ImageIcon, Search, X, Package, AlertTriangle, Clock, Palette, GripVertical, Tag, Check } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { ProductImagesManager } from './product-images-manager'
@@ -203,6 +203,8 @@ export function ProductsManager() {
   const [search, setSearch] = useState('')
   const [filterCategory, setFilterCategory] = useState('')
   const [filterStock, setFilterStock] = useState<'all' | 'low' | 'out'>('all')
+  const [savingKeywordsId, setSavingKeywordsId] = useState<string | null>(null)
+  const [savedKeywordsId, setSavedKeywordsId] = useState<string | null>(null)
 
   useEffect(() => { fetchAll() }, [])
 
@@ -335,6 +337,28 @@ export function ProductsManager() {
   const handleToggleActive = async (p: Product) => {
     await fetch('/api/admin/products', { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ ...p, is_active: !p.is_active }) })
     fetchAll()
+  }
+
+  const handleToggleTornaPresto = async (p: Product) => {
+    await fetch('/api/admin/products', { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ ...p, torna_presto: !p.torna_presto }) })
+    fetchAll()
+  }
+
+  // Modifica rapida delle parole chiave direttamente dalla card, senza aprire
+  // la scheda di modifica: si digita nel campo e si salva quando si esce dal
+  // campo (blur), aggiornando subito lo stato locale per un feedback fluido.
+  const handleKeywordsChange = (id: string, value: string) => {
+    setProducts(prev => prev.map(p => (p.id === id ? { ...p, keywords: value } : p)))
+  }
+
+  const handleKeywordsSave = async (p: Product) => {
+    setSavingKeywordsId(p.id)
+    try {
+      await fetch('/api/admin/products', { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(p) })
+      setSavedKeywordsId(p.id)
+      setTimeout(() => setSavedKeywordsId(id => (id === p.id ? null : id)), 1500)
+    } catch { console.error('Salvataggio parole chiave fallito') }
+    setSavingKeywordsId(null)
   }
 
   if (managingImagesFor) return <ProductImagesManager productId={managingImagesFor} onBack={() => setManagingImagesFor(null)} />
@@ -559,48 +583,80 @@ export function ProductsManager() {
         </select>
       </div>
 
-      <div className="space-y-2">
+      <div className="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-4 gap-3">
         {filteredProducts.map(p => (
-          <div key={p.id} className={`flex items-center gap-3 bg-white border rounded-xl p-3 shadow-sm ${p.torna_presto ? 'border-red-300 bg-red-50/40' : p.stock === 0 ? 'border-red-200 bg-red-50/30' : p.stock !== null && p.stock !== undefined && p.stock <= 5 ? 'border-sky-200 bg-sky-50/30' : 'border-slate-100'}`}>
-            <div className="w-12 h-12 rounded-lg bg-slate-50 overflow-hidden shrink-0">
+          <div key={p.id} className={`flex flex-col bg-white border rounded-2xl overflow-hidden shadow-sm ${p.torna_presto ? 'border-red-300 bg-red-50/40' : p.stock === 0 ? 'border-red-200 bg-red-50/30' : p.stock !== null && p.stock !== undefined && p.stock <= 5 ? 'border-sky-200 bg-sky-50/30' : 'border-slate-100'}`}>
+            {/* Immagine, come nelle card dello shop */}
+            <div className="relative aspect-square bg-slate-50 shrink-0">
               {p.cover_image
                 ? <img src={p.cover_image} alt={p.name} className="w-full h-full object-cover" style={p.torna_presto ? { filter: 'grayscale(1)' } : undefined} />
-                : <div className="w-full h-full flex items-center justify-center"><ImageIcon className="w-5 h-5 text-slate-300" /></div>}
+                : <div className="w-full h-full flex items-center justify-center"><ImageIcon className="w-8 h-8 text-slate-300" /></div>}
+              {p.torna_presto && (
+                <span className="absolute top-1.5 left-1.5 text-[10px] font-semibold text-white bg-red-500/90 px-2 py-0.5 rounded-full flex items-center gap-0.5">
+                  <Clock className="w-3 h-3" /> Torna presto
+                </span>
+              )}
+              {p.is_customizable && (
+                <span className="absolute top-1.5 right-1.5 text-[10px] font-semibold text-white bg-fuchsia-500/90 px-2 py-0.5 rounded-full flex items-center gap-0.5">
+                  <Palette className="w-3 h-3" />
+                </span>
+              )}
             </div>
-            <div className="flex-1 min-w-0">
-              <p className="font-medium text-sm text-slate-800 truncate">{p.name}</p>
-              <div className="flex items-center gap-2 mt-0.5">
-                <p className="text-xs text-cyan-700 font-semibold">€{p.price.toFixed(2)}</p>
-                {p.is_customizable && (
-                  <span className="text-xs font-semibold text-fuchsia-600 flex items-center gap-0.5">
-                    <Palette className="w-3 h-3" /> Personalizzabile
-                  </span>
-                )}
-                <span className="text-slate-300">·</span>
-                {p.torna_presto
-                  ? <span className="text-xs font-semibold text-red-500 flex items-center gap-0.5"><Clock className="w-3 h-3" /> Torna presto</span>
-                  : <StockBadge stock={p.stock ?? null} />}
+
+            <div className="p-2.5 flex flex-col gap-1.5 flex-1">
+              <p className="font-medium text-sm text-slate-800 truncate" title={p.name}>{p.name}</p>
+              <div className="flex items-center justify-between gap-2">
+                <p className="text-xs text-cyan-700 font-semibold shrink-0">€{p.price.toFixed(2)}</p>
+                {!p.torna_presto && <StockBadge stock={p.stock ?? null} />}
               </div>
-              {p.category && <p className="text-xs text-slate-400">{p.category.name}</p>}
-            </div>
-            <div className="flex items-center gap-1 shrink-0">
-              <button onClick={() => handleToggleActive(p)}>
-                {p.is_active ? <ToggleRight className="w-6 h-6 text-cyan-600" /> : <ToggleLeft className="w-6 h-6 text-slate-300" />}
-              </button>
-              <button onClick={() => setManagingImagesFor(p.id)} className="p-1.5 hover:bg-slate-100 rounded-lg transition-colors">
-                <Images className="w-4 h-4 text-slate-500" />
-              </button>
-              <button onClick={() => openEdit(p)} className="p-1.5 hover:bg-slate-100 rounded-lg transition-colors">
-                <Pencil className="w-4 h-4 text-slate-500" />
-              </button>
-              <button onClick={() => handleDelete(p.id)} className="p-1.5 hover:bg-red-50 rounded-lg transition-colors">
-                <Trash2 className="w-4 h-4 text-red-400" />
-              </button>
+              {p.category && <p className="text-[11px] text-slate-400 truncate">{p.category.name}</p>}
+
+              {/* Pulsanti azione: sempre visibili, senza dover aprire la scheda */}
+              <div className="flex items-center justify-between pt-1.5 mt-auto border-t border-slate-100">
+                <div className="flex items-center gap-0.5">
+                  <button onClick={() => handleToggleTornaPresto(p)} className="p-1.5 hover:bg-red-50 rounded-lg transition-colors" title="Torna presto">
+                    <Clock className={`w-4 h-4 ${p.torna_presto ? 'text-red-500' : 'text-slate-300'}`} />
+                  </button>
+                  <button onClick={() => handleToggleActive(p)} title="Attivo">
+                    {p.is_active ? <ToggleRight className="w-5 h-5 text-cyan-600" /> : <ToggleLeft className="w-5 h-5 text-slate-300" />}
+                  </button>
+                  <button onClick={() => setManagingImagesFor(p.id)} className="p-1.5 hover:bg-slate-100 rounded-lg transition-colors" title="Foto">
+                    <Images className="w-4 h-4 text-slate-500" />
+                  </button>
+                </div>
+                <div className="flex items-center gap-0.5">
+                  <button onClick={() => openEdit(p)} className="p-1.5 hover:bg-slate-100 rounded-lg transition-colors" title="Modifica">
+                    <Pencil className="w-4 h-4 text-slate-500" />
+                  </button>
+                  <button onClick={() => handleDelete(p.id)} className="p-1.5 hover:bg-red-50 rounded-lg transition-colors" title="Elimina">
+                    <Trash2 className="w-4 h-4 text-red-400" />
+                  </button>
+                </div>
+              </div>
+
+              {/* Parole chiave: modifica rapida direttamente dalla card */}
+              <div className="relative">
+                <Tag className="absolute left-2 top-1/2 -translate-y-1/2 w-3 h-3 text-slate-300 pointer-events-none" />
+                <input
+                  value={p.keywords || ''}
+                  onChange={e => handleKeywordsChange(p.id, e.target.value)}
+                  onBlur={() => handleKeywordsSave(p)}
+                  placeholder="Parole chiave..."
+                  title="Parole chiave per la ricerca"
+                  className="w-full text-[11px] border border-slate-200 rounded-lg pl-6 pr-6 py-1.5 focus:outline-none focus:ring-1 focus:ring-cyan-500"
+                />
+                {savingKeywordsId === p.id && (
+                  <span className="absolute right-2 top-1/2 -translate-y-1/2 w-3 h-3 border-2 border-cyan-400 border-t-transparent rounded-full animate-spin" />
+                )}
+                {savedKeywordsId === p.id && savingKeywordsId !== p.id && (
+                  <Check className="absolute right-2 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-green-500" />
+                )}
+              </div>
             </div>
           </div>
         ))}
         {filteredProducts.length === 0 && (
-          <p className="text-center py-8 text-slate-400 text-sm">
+          <p className="col-span-full text-center py-8 text-slate-400 text-sm">
             {search || filterCategory || filterStock !== 'all' ? 'Nessun prodotto trovato' : 'Nessun prodotto. Creane uno!'}
           </p>
         )}
