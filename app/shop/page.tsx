@@ -28,7 +28,20 @@ async function getData(searchParams: { q?: string; categoria?: string; ordina?: 
     const cat = (categories || []).find((c: Category) => c.slug === searchParams.categoria)
     if (cat) query = query.eq('category_id', cat.id)
   }
-  if (searchParams.q) query = query.ilike('name', `%${searchParams.q}%`)
+  // Stessa ricerca "intelligente" per parole dell'API /api/shop/products:
+  // ogni parola cercata deve comparire in nome, descrizione, parole chiave
+  // o categoria del prodotto.
+  if (searchParams.q) {
+    const parole = searchParams.q.trim().split(/\s+/).filter(Boolean).map(w => w.replace(/[%_]/g, ''))
+    for (const parola of parole) {
+      if (!parola) continue
+      const { data: catMatch } = await supabase.from('categories').select('id').ilike('name', `%${parola}%`)
+      const catIds = (catMatch || []).map((c: { id: string }) => c.id)
+      const condizioni = [`name.ilike.%${parola}%`, `description.ilike.%${parola}%`, `keywords.ilike.%${parola}%`]
+      if (catIds.length) condizioni.push(`category_id.in.(${catIds.join(',')})`)
+      query = query.or(condizioni.join(','))
+    }
+  }
 
   query = query.range(0, PAGE_SIZE - 1)
 
