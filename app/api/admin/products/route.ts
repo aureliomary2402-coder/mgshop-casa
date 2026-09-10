@@ -36,6 +36,7 @@ export async function POST(request: NextRequest) {
       is_customizable: body.is_customizable ?? false,
       customization_options: body.is_customizable ? (body.customization_options ?? []) : [],
       customization_note: body.is_customizable ? (body.customization_note || null) : null,
+      keywords: body.keywords || null,
     })
     .select().single()
   if (error) return NextResponse.json({ error: error.message }, { status: 500 })
@@ -61,6 +62,7 @@ export async function PUT(request: NextRequest) {
       is_customizable: body.is_customizable ?? false,
       customization_options: body.is_customizable ? (body.customization_options ?? []) : [],
       customization_note: body.is_customizable ? (body.customization_note || null) : null,
+      keywords: body.keywords || null,
       updated_at: new Date().toISOString(),
     })
     .eq('id', body.id).select().single()
