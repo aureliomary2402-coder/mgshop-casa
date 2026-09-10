@@ -213,7 +213,7 @@ export function GlobalHeader({ categories = [] }: { categories?: Category[] }) {
               {searchValue && <button onClick={handleClearSearch} className="absolute right-3 top-1/2 -translate-y-1/2 text-cyan-400 hover:text-cyan-600 transition-colors"><X className="w-4 h-4" /></button>}
 
               {dropdownOpen && searchValue.trim() && (
-                <div className="absolute top-full right-0 sm:left-0 mt-2 w-full min-w-0 sm:!w-[340px] max-w-[92vw] rounded-2xl overflow-hidden shadow-xl animate-scale-in z-50"
+                <div className="absolute top-full left-0 mt-2 w-full min-w-0 sm:min-w-[280px] rounded-2xl overflow-hidden shadow-xl animate-scale-in z-50"
                   style={{ background: 'white', border: '1px solid rgba(8,145,178,0.15)', boxShadow: '0 20px 60px rgba(0,0,0,0.15)' }}>
                   {searchResults.length > 0 ? (
                     <>
@@ -226,10 +226,12 @@ export function GlobalHeader({ categories = [] }: { categories?: Category[] }) {
                               <div className="w-12 h-12 rounded-lg shrink-0 overflow-hidden" style={{ background: 'linear-gradient(135deg, #f0fbfd, #cffafe)' }}>
                                 {imgUrl ? <img src={imgUrl} alt={product.name} className="w-full h-full object-cover" /> : <ImageIcon className="w-4 h-4 text-cyan-300" />}
                               </div>
-                              <span className="flex-1 min-w-0 text-sm font-medium leading-snug line-clamp-2" style={{ color: '#0c2b36' }}>
-                                <HighlightedText text={product.name} query={searchValue} />
-                              </span>
-                              <span className="text-sm font-bold shrink-0 self-start pt-0.5" style={{ color: '#0891b2' }}>€{product.price.toFixed(2)}</span>
+                              <div className="flex-1 min-w-0">
+                                <div className="text-sm font-medium leading-snug line-clamp-2" style={{ color: '#0c2b36' }}>
+                                  <HighlightedText text={product.name} query={searchValue} />
+                                </div>
+                                <div className="text-sm font-bold mt-0.5" style={{ color: '#0891b2' }}>€{product.price.toFixed(2)}</div>
+                              </div>
                             </button>
                           )
                         })}
