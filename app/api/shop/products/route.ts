@@ -26,8 +26,7 @@ export async function GET(request: NextRequest) {
     if (error) return NextResponse.json({ error: error.message }, { status: 500 })
     const byId = Object.fromEntries((products || []).map(p => [p.id, p]))
     const ordered = ids.map(id => byId[id]).filter(Boolean)
-    return Ne
-xtResponse.json({ products: ordered, count: ordered.length })
+    return NextResponse.json({ products: ordered, count: ordered.length })
   }
 
   let query = supabase.from('products').select('*, category:categories(*)', { count: 'exact' }).eq('is_active', true)
@@ -51,8 +50,7 @@ xtResponse.json({ products: ordered, count: ordered.length })
     for (const parola of parole) {
       if (!parola) continue
       const { data: catMatch } = await supabase.from('categories').select('id').ilike('name', `%${parola}%`)
-      const catIds = (catMatch || []).map(c
- => c.id)
+      const catIds = (catMatch || []).map(c => c.id)
       const condizioni = [`name.ilike.%${parola}%`, `description.ilike.%${parola}%`]
       if (catIds.length) condizioni.push(`category_id.in.(${catIds.join(',')})`)
       query = query.or(condizioni.join(','))
