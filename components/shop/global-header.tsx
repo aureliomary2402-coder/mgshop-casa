@@ -193,7 +193,7 @@ export function GlobalHeader({ categories = [] }: { categories?: Category[] }) {
         </div>
 
         <div className="flex items-center gap-2">
-          <div ref={searchBoxRef} className={`transition-all duration-300 ${searchOpen ? 'flex w-56 sm:w-64' : 'hidden md:flex md:w-40'} ${searchFocused ? '!w-64 sm:!w-72' : ''}`}>
+          <div ref={searchBoxRef} className={`transition-all duration-300 min-w-0 ${searchOpen ? 'flex flex-1 sm:flex-none sm:w-64' : 'hidden md:flex md:w-40'} ${searchFocused ? 'sm:!w-72' : ''}`}>
             <div className="relative w-full">
               <Search className={`absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 pointer-events-none transition-colors duration-300 ${searchFocused ? 'text-cyan-500' : 'text-cyan-400'}`} />
               <input ref={inputRef} type="search" placeholder="Cerca prodotti..." value={searchValue}
@@ -219,17 +219,19 @@ export function GlobalHeader({ categories = [] }: { categories?: Category[] }) {
                     <>
                       <div className="max-h-96 overflow-y-auto p-1.5">
                         {searchResults.map(product => {
-                          const imgUrl = optimizeImage(product.card_image || product.cover_image, 80)
+                          const imgUrl = optimizeImage(product.card_image || product.cover_image, 160)
                           return (
                             <button key={product.id} onClick={() => handleSelectProduct(product)}
                               className="w-full flex items-center gap-3 p-2 rounded-xl text-left hover:bg-cyan-50 transition-colors">
-                              <div className="w-10 h-10 rounded-lg flex items-center justify-center shrink-0 overflow-hidden" style={{ background: 'rgba(8,145,178,0.06)' }}>
+                              <div className="w-12 h-12 rounded-lg shrink-0 overflow-hidden" style={{ background: 'linear-gradient(135deg, #f0fbfd, #cffafe)' }}>
                                 {imgUrl ? <img src={imgUrl} alt={product.name} className="w-full h-full object-cover" /> : <ImageIcon className="w-4 h-4 text-cyan-300" />}
                               </div>
-                              <span className="flex-1 min-w-0 text-sm font-medium truncate" style={{ color: '#0c2b36' }}>
-                                <HighlightedText text={product.name} query={searchValue} />
-                              </span>
-                              <span className="text-sm font-bold shrink-0" style={{ color: '#0891b2' }}>€{product.price.toFixed(2)}</span>
+                              <div className="flex-1 min-w-0">
+                                <div className="text-sm font-medium leading-snug line-clamp-2" style={{ color: '#0c2b36' }}>
+                                  <HighlightedText text={product.name} query={searchValue} />
+                                </div>
+                                <div className="text-sm font-bold mt-0.5" style={{ color: '#0891b2' }}>€{product.price.toFixed(2)}</div>
+                              </div>
                             </button>
                           )
                         })}
