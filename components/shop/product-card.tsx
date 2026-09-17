@@ -1,4 +1,5 @@
 "use client"
+import Image from 'next/image'
 
 import { ImageIcon, ShoppingCart, Eye, Heart } from 'lucide-react'
 import { toast } from 'sonner'
@@ -106,13 +107,14 @@ export function ProductCard({ product, index = 0 }: { product: Product; index?: 
       )}
       <div className="relative aspect-square overflow-hidden" style={{ background: 'linear-gradient(135deg, #f0fbfd, #cffafe)' }}>
         {imgUrl && !imgError ? (
-          <img
+          <Image
             src={imgUrl}
             alt={product.name}
+            fill
+            sizes="(max-width: 640px) 50vw, (max-width: 1024px) 25vw, 20vw"
             draggable={false}
-            loading={index < 8 ? 'eager' : 'lazy'}
-            decoding="async"
-            className="w-full h-full object-cover transition-transform duration-500 ease-out select-none"
+            priority={index < 8}
+            className="object-cover transition-transform duration-500 ease-out select-none"
             style={{ transform: isHovered ? 'scale(1.08)' : 'scale(1)', filter: product.torna_presto ? 'grayscale(1)' : undefined }}
             onError={() => setImgError(true)}
           />

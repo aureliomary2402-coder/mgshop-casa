@@ -1,5 +1,6 @@
 "use client"
 import Link from 'next/link'
+import Image from 'next/image'
 import { ShoppingBag, Search, X, ChevronDown, Tag, Sparkles, Newspaper, ImageIcon, Heart, Ticket, User, MapPin, Share2, Home as HomeIcon, Star } from 'lucide-react'
 import { useCartStore } from '@/lib/cart-store'
 import { useWishlistStore } from '@/lib/wishlist-store'
@@ -137,7 +138,7 @@ export function GlobalHeader({ categories = [] }: { categories?: Category[] }) {
       style={{ background: scrolled ? 'rgba(240,251,253,0.97)' : 'rgba(240,251,253,0.98)', backdropFilter: 'blur(16px)', borderBottom: '1px solid rgba(8,145,178,0.1)' }}>
       <div className="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between gap-3">
         <Link href="/" className="flex items-center gap-2 shrink-0 group">
-          <img src="/logo/mgshop-logo-neon.png" alt="MGShop Casa"
+          <Image src="/logo/mgshop-logo-neon.png" alt="MGShop Casa" width={36} height={36} priority
             className="w-9 h-9 rounded-full object-cover transition-transform group-hover:scale-110" />
           <span className="text-lg font-bold tracking-tight hidden sm:block" style={{ color: '#0c2b36' }}>
             MG<span style={{ color: '#0891b2' }}>Shop</span>
@@ -223,8 +224,8 @@ export function GlobalHeader({ categories = [] }: { categories?: Category[] }) {
                           return (
                             <button key={product.id} onClick={() => handleSelectProduct(product)}
                               className="w-full flex items-center gap-3 p-2 rounded-xl text-left hover:bg-cyan-50 transition-colors">
-                              <div className="w-12 h-12 rounded-lg shrink-0 overflow-hidden" style={{ background: 'linear-gradient(135deg, #f0fbfd, #cffafe)' }}>
-                                {imgUrl ? <img src={imgUrl} alt={product.name} className="w-full h-full object-cover" /> : <ImageIcon className="w-4 h-4 text-cyan-300" />}
+                              <div className="relative w-12 h-12 rounded-lg shrink-0 overflow-hidden" style={{ background: 'linear-gradient(135deg, #f0fbfd, #cffafe)' }}>
+                                {imgUrl ? <Image src={imgUrl} alt={product.name} fill sizes="48px" className="object-cover" /> : <ImageIcon className="w-4 h-4 text-cyan-300" />}
                               </div>
                               <div className="flex-1 min-w-0">
                                 <div className="text-sm font-medium leading-snug line-clamp-2" style={{ color: '#0c2b36' }}>

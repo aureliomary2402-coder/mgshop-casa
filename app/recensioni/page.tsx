@@ -1,5 +1,6 @@
 "use client"
 import { useState, useEffect } from 'react'
+import Image from 'next/image'
 import { Star, MessageSquare, Send, CheckCircle2, Camera, X, PlayCircle, Loader2 } from 'lucide-react'
 import { AmbientBubbles } from '@/components/shop/ambient-bubbles'
 import { Reveal } from '@/components/shop/reveal'
@@ -329,7 +330,7 @@ export default function RecensioniPage() {
                               </div>
                             </>
                           ) : (
-                            <img src={m.media_url} alt="" className="w-full h-full object-cover" />
+                            <Image src={m.media_url} alt="" fill sizes="25vw" className="object-cover" />
                           )}
                         </a>
                       ))}

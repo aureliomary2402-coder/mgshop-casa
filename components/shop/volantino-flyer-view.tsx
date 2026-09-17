@@ -1,6 +1,7 @@
 "use client"
 import { useState } from 'react'
 import Link from 'next/link'
+import Image from 'next/image'
 import { ArrowLeft, ShoppingBag, ShoppingCart, ImageIcon, Newspaper } from 'lucide-react'
 import { PageHero } from '@/components/shop/page-hero'
 import { useCartStore } from '@/lib/cart-store'
@@ -66,7 +67,7 @@ function FlyerCard({ product, salePrice, index }: { product: Product; salePrice:
       )}
       <div className="aspect-square overflow-hidden relative" style={{ background: 'linear-gradient(135deg,#f0fbfd,#cffafe)' }}>
         {(product.card_image || product.cover_image)
-          ? <img src={optimizeImage(product.card_image || product.cover_image, 400) || product.card_image || product.cover_image || ''} alt={product.name} draggable={false} loading="lazy" decoding="async" className="w-full h-full object-cover select-none" style={product.torna_presto ? { filter: 'grayscale(1)' } : undefined} />
+          ? <Image src={optimizeImage(product.card_image || product.cover_image, 400) || product.card_image || product.cover_image || ''} alt={product.name} fill draggable={false} sizes="(max-width: 640px) 50vw, 33vw" className="object-cover select-none" style={product.torna_presto ? { filter: 'grayscale(1)' } : undefined} />
           : <div className="w-full h-full flex items-center justify-center"><ImageIcon className="w-10 h-10" style={{ color: 'rgba(8,145,178,0.3)' }} /></div>}
         {product.torna_presto && <TornaPrestoStamp />}
       </div>

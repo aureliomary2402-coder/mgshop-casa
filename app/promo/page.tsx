@@ -1,6 +1,7 @@
 "use client"
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
+import Image from 'next/image'
 import { ArrowLeft, Clock, Tag, ShoppingBag, ShoppingCart, ImageIcon, X, Info } from 'lucide-react'
 import { PageHero } from '@/components/shop/page-hero'
 import { useCartStore } from '@/lib/cart-store'
@@ -90,7 +91,7 @@ function PromoProductCard({ product, salePrice, onOpenDetail }: { product: Produ
       style={{ border: '1px solid rgba(8,145,178,0.1)', boxShadow: '0 4px 20px rgba(8,145,178,0.08)' }}>
       <div className="aspect-square overflow-hidden relative" style={{ background: 'linear-gradient(135deg,#f0fbfd,#cffafe)' }}>
         {(product.card_image || product.cover_image)
-          ? <img src={product.card_image || product.cover_image || ''} alt={product.name} draggable={false} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300 select-none" style={product.torna_presto ? { filter: 'grayscale(1)' } : undefined} />
+          ? <Image src={product.card_image || product.cover_image || ''} alt={product.name} fill draggable={false} sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw" className="object-cover group-hover:scale-105 transition-transform duration-300 select-none" style={product.torna_presto ? { filter: 'grayscale(1)' } : undefined} />
           : <div className="w-full h-full flex items-center justify-center"><ImageIcon className="w-10 h-10" style={{color:'rgba(8,145,178,0.3)'}}/></div>}
         {product.torna_presto && <TornaPrestoStamp />}
         {hasDiscount && percentOff > 0 && !product.torna_presto && !hasVariablePricing && (
@@ -179,7 +180,7 @@ function PromoDetailModal({ product, salePrice, onClose }: { product: Product; s
       <div onClick={e => e.stopPropagation()} className="bg-white w-full sm:max-w-md sm:rounded-3xl rounded-t-3xl overflow-hidden max-h-[90vh] flex flex-col animate-slide-in-right">
         <div className="relative shrink-0" style={{ height: '200px', background: 'linear-gradient(135deg,#f0fbfd,#cffafe)' }}>
           {product.cover_image
-            ? <img src={product.cover_image} alt={product.name} className="w-full h-full object-cover" style={product.torna_presto ? { filter: 'grayscale(1)' } : undefined} />
+            ? <Image src={product.cover_image} alt={product.name} fill sizes="(max-width: 640px) 100vw, 448px" className="object-cover" style={product.torna_presto ? { filter: 'grayscale(1)' } : undefined} />
             : <div className="w-full h-full flex items-center justify-center"><ImageIcon className="w-12 h-12" style={{color:'rgba(8,145,178,0.3)'}}/></div>}
           {product.torna_presto && <TornaPrestoStamp size="50%" />}
           <button onClick={onClose} className="absolute top-3 right-3 w-8 h-8 rounded-full bg-white/90 flex items-center justify-center hover:scale-110 transition-transform"><X className="w-4 h-4 text-slate-600"/></button>
@@ -311,7 +312,7 @@ export default function PromoPage() {
         <div className="relative z-10 max-w-5xl mx-auto px-4 py-10 space-y-10">
           {(promo.image_url||promo.content)&&(
             <Reveal className={`grid gap-6 ${promo.image_url&&promo.content?'md:grid-cols-2':''}`}>
-              {promo.image_url&&<div className="rounded-2xl overflow-hidden aspect-video" style={{boxShadow:'0 16px 40px rgba(8,145,178,0.12)'}}><img src={promo.image_url} alt="Promo" className="w-full h-full object-cover"/></div>}
+              {promo.image_url&&<div className="relative rounded-2xl overflow-hidden aspect-video" style={{boxShadow:'0 16px 40px rgba(8,145,178,0.12)'}}><Image src={promo.image_url} alt="Promo" fill sizes="(max-width: 768px) 100vw, 50vw" className="object-cover"/></div>}
               {promo.content&&<div className="flex items-center"><div className="glass-card rounded-2xl p-6 w-full"><p className="text-slate-600 leading-relaxed whitespace-pre-line">{promo.content}</p></div></div>}
             </Reveal>
           )}

@@ -1,4 +1,5 @@
 "use client"
+import Image from 'next/image'
 
 import { useState, useEffect } from 'react'
 import { History } from 'lucide-react'
@@ -40,9 +41,9 @@ export function RecentlyViewed({ excludeId, title = 'Visti di recente' }: { excl
           return (
             <button key={p.id} onClick={() => openDetail(p.id)}
               className="shrink-0 w-28 text-left group">
-              <div className="w-28 h-28 rounded-2xl overflow-hidden mb-1.5 transition-transform group-hover:scale-105"
+              <div className="relative w-28 h-28 rounded-2xl overflow-hidden mb-1.5 transition-transform group-hover:scale-105"
                 style={{ background: 'linear-gradient(135deg, #f0fbfd, #cffafe)', border: '1px solid rgba(8,145,178,0.08)' }}>
-                {imgUrl && <img src={imgUrl} alt={p.name} className="w-full h-full object-cover" />}
+                {imgUrl && <Image src={imgUrl} alt={p.name} fill sizes="112px" className="object-cover" />}
               </div>
               <p className="text-xs font-medium line-clamp-2 leading-snug" style={{ color: '#0c2b36' }}>{p.name}</p>
               <p className="text-xs font-bold" style={{ color: '#0891b2' }}>€{p.price.toFixed(2)}</p>

@@ -1,6 +1,7 @@
 "use client"
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
+import Image from 'next/image'
 import { ArrowLeft, Clock, Gift, History, PartyPopper, ImageIcon, ShoppingCart, Hash, Sparkles, Ticket } from 'lucide-react'
 import { Reveal } from '@/components/shop/reveal'
 import { AmbientBubbles } from '@/components/shop/ambient-bubbles'
@@ -172,7 +173,7 @@ export default function LotteryPage() {
         {/* Premio */}
         {(data.image_url || data.prize_label) && (
           <Reveal className={`grid gap-6 ${data.image_url && data.prize_label ? 'md:grid-cols-2' : ''}`}>
-            {data.image_url && <div className="rounded-2xl overflow-hidden aspect-square max-w-xs mx-auto md:mx-0" style={{ boxShadow: '0 16px 40px rgba(8,145,178,0.12)' }}><img src={data.image_url} alt="Premio" className="w-full h-full object-cover" /></div>}
+            {data.image_url && <div className="relative rounded-2xl overflow-hidden aspect-square max-w-xs mx-auto md:mx-0" style={{ boxShadow: '0 16px 40px rgba(8,145,178,0.12)' }}><Image src={data.image_url} alt="Premio" fill sizes="(max-width: 640px) 100vw, 320px" className="object-cover" /></div>}
             {data.prize_label && (
               <div className="flex items-center">
                 <div className="bg-white rounded-2xl p-6 w-full" style={{ border: '1px solid rgba(8,145,178,0.1)' }}>
@@ -232,7 +233,7 @@ export default function LotteryPage() {
               {data.winners.map(w => (
                 <div key={w.id} className="flex items-center gap-3 p-3 rounded-2xl bg-white" style={{ border: '1px solid rgba(8,145,178,0.1)' }}>
                   {w.prize_image_url
-                    ? <img src={w.prize_image_url} alt="" className="w-12 h-12 rounded-xl object-cover shrink-0" />
+                    ? <Image src={w.prize_image_url} alt="" width={48} height={48} className="rounded-xl object-cover shrink-0" />
                     : <div className="w-12 h-12 rounded-xl flex items-center justify-center shrink-0" style={{ background: 'rgba(8,145,178,0.08)' }}><ImageIcon className="w-5 h-5" style={{ color: 'rgba(8,145,178,0.3)' }} /></div>}
                   <div className="flex-1 min-w-0">
                     <p className="text-sm font-semibold text-slate-800 truncate">{w.lottery_title}</p>

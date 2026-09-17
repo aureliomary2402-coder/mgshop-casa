@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
 import { usePathname } from 'next/navigation'
 import Link from 'next/link'
+import Image from 'next/image'
 import { MessageCircle, X, Send, Menu as MenuIcon, ShoppingBag, Gift, Share2, Bell, Star, Truck } from 'lucide-react'
 import { useCartStore } from '@/lib/cart-store'
 import { useUIPanelsStore } from '@/lib/ui-panels-store'
@@ -451,7 +452,7 @@ export function FloatingMenu() {
         <div className={`fixed ${menuOffsetClass} lg:top-20 lg:bottom-auto right-5 z-[45] w-[90vw] max-w-sm lg:max-h-[75vh] liquid-glass-card rounded-2xl flex flex-col overflow-hidden`}>
           <div className="px-4 py-3 text-white font-semibold flex items-center gap-2"
             style={{ background: 'linear-gradient(135deg,#0891b2,#06b6d4)' }}>
-            <img src="/images/mgshop-stamp.png" alt="" className="w-4 h-4 object-contain" /> Il mio account
+            <Image src="/images/mgshop-stamp.png" alt="" width={16} height={16} className="object-contain" /> Il mio account
           </div>
 
           {!pointsData ? (
@@ -503,7 +504,7 @@ export function FloatingMenu() {
                       >
                         {filled && (
                           // eslint-disable-next-line @next/next/no-img-element
-                          <img src="/images/mgshop-stamp.png" alt="" className="w-12 h-12 object-contain" />
+                          <Image src="/images/mgshop-stamp.png" alt="" width={48} height={48} className="object-contain" />
                         )}
                       </div>
                       <span

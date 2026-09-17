@@ -58,7 +58,7 @@ export function HomeHeader() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between gap-4">
         {/* Logo */}
         <Link href="/" className="flex items-center gap-2.5 shrink-0 select-none group">
-          <img src="/logo/mgshop-logo-neon.png" alt="MGShop Casa"
+          <Image src="/logo/mgshop-logo-neon.png" alt="MGShop Casa" width={44} height={44} priority
             className="w-10 h-10 sm:w-11 sm:h-11 rounded-full object-cover neon-glow-logo transition-transform group-hover:scale-105" />
           <span className="hidden sm:block text-lg font-bold tracking-tight text-white">
             MG<span className="text-shimmer">Shop</span> Casa
