@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
+import Image from 'next/image'
 import { Heart, ShoppingCart, Trash2, ImageIcon } from 'lucide-react'
 import { useWishlistStore } from '@/lib/wishlist-store'
 import { useCartStore } from '@/lib/cart-store'
@@ -81,7 +82,7 @@ export default function PreferitiPage() {
                 <div className="relative aspect-square cursor-pointer" style={{ background: 'linear-gradient(135deg, #f0fbfd, #cffafe)' }}
                   onClick={() => openDetail(p.id)}>
                   {imgUrl ? (
-                    <img src={imgUrl} alt={p.name} className="w-full h-full object-cover" />
+                    <Image src={imgUrl} alt={p.name} fill sizes="(max-width: 640px) 50vw, (max-width: 768px) 33vw, 25vw" className="object-cover" />
                   ) : (
                     <div className="w-full h-full flex items-center justify-center">
                       <ImageIcon className="w-8 h-8" style={{ color: 'rgba(8,145,178,0.3)' }} />
