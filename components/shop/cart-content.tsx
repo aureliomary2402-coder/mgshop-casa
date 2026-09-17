@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
+import Image from 'next/image'
 import { ArrowLeft, Minus, Plus, Trash2, ShoppingBag, ImageIcon, CheckCircle, ShoppingCart, Tag, X, Gift, MapPin, Truck, Store, MessageCircle, Phone, Bell } from 'lucide-react'
 import { useCartStore } from '@/lib/cart-store'
 import { LOTTERY_TICKET_PRODUCT_ID, createLotteryTicketProduct } from '@/lib/lottery-ticket-product'
@@ -325,8 +326,8 @@ export function CartContent({ scope = 'shop' }: { scope?: string }) {
             return (
             <div key={rowId} className="flex gap-3 sm:gap-4 rounded-2xl p-3 sm:p-4 animate-fade-in-up"
               style={{animationDelay:`${i*50}ms`,animationFillMode:'both',background:'white',border:'1px solid rgba(8,145,178,0.08)',boxShadow:'0 2px 8px rgba(0,0,0,0.04)'}}>
-              <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-xl overflow-hidden shrink-0" style={{background:'linear-gradient(135deg,#f0fbfd,#cffafe)'}}>
-                {product.cover_image ? <img src={product.cover_image} alt={product.name} className="w-full h-full object-cover"/> : <div className="w-full h-full flex items-center justify-center"><ImageIcon className="w-8 h-8" style={{color:'rgba(8,145,178,0.3)'}}/></div>}
+              <div className="relative w-16 h-16 sm:w-20 sm:h-20 rounded-xl overflow-hidden shrink-0" style={{background:'linear-gradient(135deg,#f0fbfd,#cffafe)'}}>
+                {product.cover_image ? <Image src={product.cover_image} alt={product.name} fill sizes="80px" className="object-cover"/> : <div className="w-full h-full flex items-center justify-center"><ImageIcon className="w-8 h-8" style={{color:'rgba(8,145,178,0.3)'}}/></div>}
               </div>
               <div className="flex-1 min-w-0">
                 <p className="text-sm sm:text-base font-semibold truncate mb-1" style={{color:'#0c2b36'}}>{product.name}</p>
