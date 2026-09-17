@@ -140,8 +140,8 @@ export function GlobalHeader({ categories = [] }: { categories?: Category[] }) {
         <Link href="/" className="flex items-center gap-2 shrink-0 group">
           <Image src="/logo/mgshop-logo-neon.png" alt="MGShop Casa" width={36} height={36} priority
             className="w-9 h-9 rounded-full object-cover transition-transform group-hover:scale-110" />
-          <span className="text-lg font-bold tracking-tight hidden sm:block" style={{ color: '#0c2b36' }}>
-            MG<span style={{ color: '#0891b2' }}>Shop</span>
+          <span className="text-lg font-bold tracking-tight text-shimmer">
+            MGShop
           </span>
         </Link>
 
@@ -171,7 +171,11 @@ export function GlobalHeader({ categories = [] }: { categories?: Category[] }) {
             rel="noopener noreferrer"
             className={`${searchOpen ? 'hidden' : 'flex'} lg:hidden items-center gap-1.5 px-2 sm:px-3 py-2 rounded-xl text-sm font-medium transition-all btn-press neon-glow-green`}
             style={{ color: '#128c4a', background: 'rgba(37,211,102,0.1)', border: '1px solid rgba(37,211,102,0.3)' }}>
-            <WhatsAppIcon size={16} /> <span className="hidden sm:inline">{WHATSAPP_NUMBER}</span>
+            <span className="relative flex items-center justify-center">
+              <WhatsAppIcon size={16} />
+              <span className="absolute -top-0.5 -right-0.5 w-1.5 h-1.5 rounded-full bg-green-400 neon-glow-green" />
+            </span>
+            <span className="hidden sm:inline">{WHATSAPP_NUMBER}</span>
           </a>
 
           {/* Solo desktop: su mobile questi collegamenti restano nella tab bar
