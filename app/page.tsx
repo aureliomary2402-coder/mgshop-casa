@@ -1,6 +1,7 @@
 "use client"
 import { useEffect, useState, Suspense } from 'react'
 import Link from 'next/link'
+import Image from 'next/image'
 import {
   Tag, Package, Star, ShoppingBag,
   Truck, Banknote, ShieldCheck, Headphones, Sparkles,
@@ -77,7 +78,7 @@ export default function WelcomePage() {
 
         <div className={`relative z-10 max-w-3xl mx-auto px-6 pt-10 pb-14 lg:py-20 text-center ${mounted ? 'animate-fade-in-up' : 'opacity-0'}`}>
           <div className="flex justify-center mb-5">
-            <img src="/logo/mgshop-logo-neon.png" alt="MGShop Casa"
+            <Image src="/logo/mgshop-logo-neon.png" alt="MGShop Casa" width={96} height={96} priority
               className="w-20 h-20 sm:w-24 sm:h-24 rounded-full neon-glow-logo" />
           </div>
 
