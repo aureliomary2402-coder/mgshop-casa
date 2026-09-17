@@ -1,6 +1,7 @@
 "use client"
 
 import Link from 'next/link'
+import Image from 'next/image'
 import { useState, useEffect, useRef } from 'react'
 import { Menu, X, ShoppingBag, User } from 'lucide-react'
 import { toast } from 'sonner'
