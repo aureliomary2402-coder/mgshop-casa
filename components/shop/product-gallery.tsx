@@ -2,6 +2,7 @@
 
 import { useState, useRef } from 'react'
 import { ImageIcon, ChevronLeft, ChevronRight, X, PlayCircle } from 'lucide-react'
+import Image from 'next/image'
 import { TornaPrestoStamp } from './torna-presto-stamp'
 
 interface GalleryImage {
@@ -156,7 +157,7 @@ export function ProductGallery({ images, productName, tornaPresto = false }: { i
               )}
             </>
           ) : (
-            <img src={images[currentImg].image_url} alt={productName} className="w-full h-full object-cover transition-transform duration-500 hover:scale-105" draggable={false} style={tornaPresto ? { filter: 'grayscale(1)' } : undefined} />
+            <Image src={images[currentImg].image_url} alt={productName} fill sizes="(max-width: 640px) 100vw, 500px" className="object-cover transition-transform duration-500 hover:scale-105" draggable={false} style={tornaPresto ? { filter: 'grayscale(1)' } : undefined} />
           )}
           {tornaPresto && images[currentImg].media_type !== 'video' && <TornaPrestoStamp size="55%" />}
           {images.length > 1 && (
@@ -194,7 +195,7 @@ export function ProductGallery({ images, productName, tornaPresto = false }: { i
                     </div>
                   </>
                 ) : (
-                  <img src={img.image_url} alt="" className="w-full h-full object-cover" style={tornaPresto ? { filter: 'grayscale(1)' } : undefined} />
+                  <Image src={img.image_url} alt="" fill sizes="64px" className="object-cover" style={tornaPresto ? { filter: 'grayscale(1)' } : undefined} />
                 )}
               </button>
             ))}
