@@ -18,13 +18,13 @@ export async function GET() {
   const last30 = new Date(now.getFullYear(), now.getMonth(), now.getDate() - 30).toISOString()
 
   const [total, todayViews, yesterdayViews, last7Views, last30Views, byPage, byDay] = await Promise.all([
-    supabase.from('page_views').select('*', { count: 'exact', head: true }),
-    supabase.from('page_views').select('*', { count: 'exact', head: true }).gte('created_at', today),
-    supabase.from('page_views').select('*', { count: 'exact', head: true }).gte('created_at', yesterday).lt('created_at', today),
-    supabase.from('page_views').select('*', { count: 'exact', head: true }).gte('created_at', last7),
-    supabase.from('page_views').select('*', { count: 'exact', head: true }).gte('created_at', last30),
-    supabase.from('page_views').select('page').gte('created_at', last30),
-    supabase.from('page_views').select('created_at').gte('created_at', last7),
+    supabase.from('page_views').select('*', { count: 'exact', head: true }).eq('is_bot', false),
+    supabase.from('page_views').select('*', { count: 'exact', head: true }).eq('is_bot', false).gte('created_at', today),
+    supabase.from('page_views').select('*', { count: 'exact', head: true }).eq('is_bot', false).gte('created_at', yesterday).lt('created_at', today),
+    supabase.from('page_views').select('*', { count: 'exact', head: true }).eq('is_bot', false).gte('created_at', last7),
+    supabase.from('page_views').select('*', { count: 'exact', head: true }).eq('is_bot', false).gte('created_at', last30),
+    supabase.from('page_views').select('page').eq('is_bot', false).gte('created_at', last30),
+    supabase.from('page_views').select('created_at').eq('is_bot', false).gte('created_at', last7),
   ])
 
   const pageCount: Record<string, number> = {}

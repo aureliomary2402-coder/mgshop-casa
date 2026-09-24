@@ -1,16 +1,28 @@
 "use client"
 
 import { useState, useEffect } from 'react'
-import { Bell, BellOff, Store, Shield, Eye, ArrowUp, ArrowDown, BarChart2, CalendarDays } from 'lucide-react'
+import { Bell, BellOff, Store, Shield, Eye, ArrowUp, ArrowDown, BarChart2, CalendarDays, MapPin } from 'lucide-react'
+
+interface VisitProduct {
+  id: string
+  name: string | null
+  image: string | null
+  url: string
+}
 
 interface VisitItem {
   page: string
   created_at: string
+  product?: VisitProduct
+  country?: string | null
+  region?: string | null
+  city?: string | null
 }
 
 interface VisitLogData {
   store: { total: number; items: VisitItem[] }
   admin: { total: number; items: VisitItem[] }
+  botFiltered?: number
 }
 
 interface AnalyticsData {
@@ -44,6 +56,11 @@ function pageLabel(page: string) {
   if (labels[page]) return labels[page]
   if (page.startsWith('/prodotto/')) return 'Scheda prodotto'
   return page
+}
+
+function locationLabel(v: VisitItem) {
+  const parts = [v.city, v.country].filter(Boolean)
+  return parts.length > 0 ? parts.join(', ') : null
 }
 
 function MiniChart({ data }: { data: { day: string; count: number }[] }) {
@@ -196,6 +213,13 @@ export function VisitLogManager() {
           <Eye className="w-4 h-4 text-cyan-600" /> Log delle 48 ore
         </h2>
 
+        {!!data?.botFiltered && (
+          <p className="text-xs text-slate-400 mb-3 bg-slate-50 border border-slate-100 rounded-xl px-3 py-2">
+            🤖 {data.botFiltered} visite di motori di ricerca/crawler (Google, Bing e simili) sono state
+            escluse automaticamente dai conteggi qui sotto: non sono clienti reali.
+          </p>
+        )}
+
         <div className="flex items-center justify-between p-4 rounded-2xl border mb-3"
           style={{ background: enabled ? 'rgba(8,145,178,0.06)' : 'rgba(0,0,0,0.02)', borderColor: enabled ? 'rgba(8,145,178,0.2)' : 'rgba(0,0,0,0.08)' }}>
           <div>
@@ -238,12 +262,51 @@ export function VisitLogManager() {
             {!list || list.items.length === 0 ? (
               <p className="text-center py-6 text-sm text-slate-400">Nessuna visita registrata</p>
             ) : (
-              list.items.map((v, i) => (
-                <div key={i} className="px-4 py-2.5 flex items-center justify-between text-sm">
-                  <span className="text-slate-700 truncate">{v.page}</span>
-                  <span className="text-xs text-slate-400 shrink-0 ml-3">{timeAgo(v.created_at)}</span>
-                </div>
-              ))
+              list.items.map((v, i) => {
+                const location = locationLabel(v)
+                return (
+                  <div key={i} className="px-4 py-2.5 flex items-center justify-between text-sm gap-3">
+                    {v.product ? (
+                      <a
+                        href={v.product.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex items-center gap-2 min-w-0 hover:underline"
+                      >
+                        {v.product.image ? (
+                          <img
+                            src={v.product.image}
+                            alt={v.product.name || 'Prodotto'}
+                            className="w-8 h-8 rounded-lg object-cover shrink-0 border border-slate-100"
+                          />
+                        ) : (
+                          <div className="w-8 h-8 rounded-lg bg-slate-100 shrink-0" />
+                        )}
+                        <span className="min-w-0">
+                          <span className="block text-slate-700 truncate">
+                            {v.product.name || 'Prodotto eliminato'}
+                          </span>
+                          {location && (
+                            <span className="flex items-center gap-1 text-xs text-slate-400">
+                              <MapPin className="w-3 h-3 shrink-0" /> {location}
+                            </span>
+                          )}
+                        </span>
+                      </a>
+                    ) : (
+                      <span className="min-w-0">
+                        <span className="block text-slate-700 truncate">{pageLabel(v.page)}</span>
+                        {location && (
+                          <span className="flex items-center gap-1 text-xs text-slate-400">
+                            <MapPin className="w-3 h-3 shrink-0" /> {location}
+                          </span>
+                        )}
+                      </span>
+                    )}
+                    <span className="text-xs text-slate-400 shrink-0 ml-auto">{timeAgo(v.created_at)}</span>
+                  </div>
+                )
+              })
             )}
           </div>
         </div>
