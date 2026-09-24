@@ -304,6 +304,7 @@ export async function POST(request: NextRequest) {
       ticket_numbers: ticketNumbers,
       referral_discount_percent: referralDiscountPercent || rewardDiscountPercent || 0,
       referral_error: referralError,
+      final_total: finalTotal,
     })
   } catch {
     return NextResponse.json({ error: 'Checkout failed' }, { status: 500 })

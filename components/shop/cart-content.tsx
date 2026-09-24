@@ -41,6 +41,7 @@ export function CartContent({ scope = 'shop' }: { scope?: string }) {
   const [referredByPhone, setReferredByPhone] = useState('')
   const [showReferralField, setShowReferralField] = useState(false)
   const [appliedReferralPercent, setAppliedReferralPercent] = useState(0)
+  const [finalPaidTotal, setFinalPaidTotal] = useState<number | null>(null)
   const [showNotifyReminder, setShowNotifyReminder] = useState(false)
   const [notifyActivating, setNotifyActivating] = useState(false)
 
@@ -212,6 +213,7 @@ export function CartContent({ scope = 'shop' }: { scope?: string }) {
       }
       if (data.ticket_numbers?.length) setTicketNumbers(data.ticket_numbers)
       setAppliedReferralPercent(data.referral_discount_percent || 0)
+      setFinalPaidTotal(typeof data.final_total === 'number' ? data.final_total : null)
       setChosenNumbers([])
       setDeliveryMethod(null); setAddress(''); setReferredByPhone(''); setShowReferralField(false)
       try {
@@ -275,9 +277,14 @@ export function CartContent({ scope = 'shop' }: { scope?: string }) {
           </div>
         </div>
       )}
-      <p className={`text-sm text-cyan-700 font-medium ${appliedReferralPercent > 0 ? 'mb-2' : 'mb-8'}`}>🎁 Riceverai i tuoi punti fedeltà via WhatsApp!</p>
+      <p className={`text-sm text-cyan-700 font-medium ${appliedReferralPercent > 0 || finalPaidTotal !== null ? 'mb-2' : 'mb-8'}`}>🎁 Riceverai i tuoi punti fedeltà via WhatsApp!</p>
       {appliedReferralPercent > 0 && (
-        <p className="text-sm text-green-600 font-medium mb-8">🤝 Sconto invito del {appliedReferralPercent}% applicato su questo ordine!</p>
+        <p className={`text-sm text-green-600 font-medium ${finalPaidTotal !== null ? 'mb-2' : 'mb-8'}`}>🤝 Sconto invito del {appliedReferralPercent}% applicato su questo ordine!</p>
+      )}
+      {finalPaidTotal !== null && (
+        <p className="text-lg font-bold mb-8" style={{ color: '#0c2b36' }}>
+          Totale da pagare: <span style={{ color: '#0891b2' }}>€{finalPaidTotal.toFixed(2)}</span>
+        </p>
       )}
       <Link href="/shop" className="inline-flex items-center gap-2 font-bold px-8 py-4 rounded-2xl text-white btn-press" style={{background:'linear-gradient(135deg,#0891b2,#06b6d4)'}}>
         <ShoppingBag className="w-5 h-5"/> Continua a fare shopping
