@@ -5,9 +5,27 @@ import { LOTTERY_TICKET_PRODUCT_ID } from '@/lib/lottery-ticket-product'
 import { isCustomPromoProductId } from '@/lib/promo-custom-product'
 import { sendPushToAdmin } from '@/lib/push'
 
+// Stessa normalizzazione usata in tutto il sito (admin/orders, account-lookup):
+// confronta i numeri di telefono ignorando prefissi internazionali e formattazione.
+function normalizePhone(phone: string): string {
+  let n = phone.replace(/\D/g, '')
+  const prefixes = ['0039', '0044', '0033', '0049', '0034', '001']
+  for (const p of prefixes) {
+    if (n.startsWith(p)) { n = n.slice(p.length); break }
+  }
+  if (n.startsWith('39') && n.length === 12) n = n.slice(2)
+  if (n.startsWith('44') && n.length === 12) n = n.slice(2)
+  if (n.startsWith('33') && n.length === 11) n = n.slice(2)
+  if (n.startsWith('49') && n.length === 12) n = n.slice(2)
+  if (n.startsWith('34') && n.length === 11) n = n.slice(2)
+  if (n.startsWith('1') && n.length === 11) n = n.slice(1)
+  if (n.length > 10) n = n.slice(-10)
+  return n
+}
+
 export async function POST(request: NextRequest) {
   try {
-    const { phone_number, items, total, coupon_code, ticket_number_choices, delivery_method, delivery_address } = await request.json()
+    const { phone_number, items, total, coupon_code, ticket_number_choices, delivery_method, delivery_address, referred_by_phone } = await request.json()
     if (!phone_number || !items || items.length === 0)
       return NextResponse.json({ error: 'Missing required fields' }, { status: 400 })
 
@@ -19,6 +37,77 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Inserisci l\'indirizzo di consegna' }, { status: 400 })
 
     const supabase = createAdminClient()
+
+    // --- Programma "Porta un amico" -----------------------------------
+    // Nessun codice o link: tutto si basa sul numero di telefono, già
+    // usato ovunque nel sito per riconoscere i clienti. Calcoliamo qui
+    // eventuali sconti PRIMA di creare l'ordine, così il totale salvato
+    // è già quello corretto.
+    const normalizedPhone = normalizePhone(phone_number)
+    const last8 = normalizedPhone.slice(-8)
+
+    // Tutti gli ordini (di chiunque) che condividono le ultime 8 cifre:
+    // filtriamo poi in JS con la normalizzazione esatta, stesso criterio
+    // già usato da /api/account-lookup.
+    const { data: candidatePhoneOrders } = last8.length >= 6
+      ? await supabase.from('orders').select('phone_number').ilike('phone_number', `%${last8}%`)
+      : { data: [] as { phone_number: string }[] }
+    const isFirstOrderForPhone = !(candidatePhoneOrders || []).some(o => normalizePhone(o.phone_number) === normalizedPhone)
+
+    let referralDiscountPercent = 0
+    let referralError: string | null = null
+    let pendingReferralInsert: { referrer_phone: string; referred_phone: string } | null = null
+
+    const referredByRaw = typeof referred_by_phone === 'string' ? referred_by_phone.trim() : ''
+    if (referredByRaw) {
+      const normalizedReferrer = normalizePhone(referredByRaw)
+      if (!normalizedReferrer || normalizedReferrer.length < 6) {
+        referralError = 'Numero di chi ti ha invitato non valido'
+      } else if (normalizedReferrer === normalizedPhone) {
+        referralError = 'Non puoi inserire il tuo stesso numero come invitante'
+      } else if (!isFirstOrderForPhone) {
+        referralError = 'Lo sconto invito vale solo sul primo ordine'
+      } else {
+        const referrerLast8 = normalizedReferrer.slice(-8)
+        const { data: referrerOrders } = await supabase.from('orders').select('phone_number').ilike('phone_number', `%${referrerLast8}%`)
+        const referrerIsCustomer = (referrerOrders || []).some(o => normalizePhone(o.phone_number) === normalizedReferrer)
+        if (!referrerIsCustomer) {
+          referralError = 'Il numero di chi ti ha invitato non risulta tra i nostri clienti'
+        } else {
+          const { data: existingReferral } = await supabase.from('referrals').select('id').eq('referred_phone', normalizedPhone).maybeSingle()
+          if (existingReferral) {
+            referralError = 'Hai già usato uno sconto invito in precedenza'
+          } else {
+            referralDiscountPercent = 5
+            pendingReferralInsert = { referrer_phone: normalizedReferrer, referred_phone: normalizedPhone }
+          }
+        }
+      }
+    }
+
+    // Sconto guadagnato da chi ha invitato: se questo numero ha un invito
+    // "pronto" (l'invitato è stato consegnato), lo applichiamo in automatico
+    // al suo prossimo ordine, senza che debba fare nulla.
+    let rewardDiscountPercent = 0
+    let readyReferralId: string | null = null
+    if (referralDiscountPercent === 0) {
+      const { data: readyReferral } = await supabase
+        .from('referrals')
+        .select('id')
+        .eq('referrer_phone', normalizedPhone)
+        .eq('status', 'reward_ready')
+        .order('created_at', { ascending: true })
+        .limit(1)
+        .maybeSingle()
+      if (readyReferral) {
+        rewardDiscountPercent = 10
+        readyReferralId = readyReferral.id
+      }
+    }
+
+    const referralDiscountAmount = referralDiscountPercent > 0 ? Number(total) * (referralDiscountPercent / 100) : 0
+    const rewardDiscountAmount = rewardDiscountPercent > 0 ? Number(total) * (rewardDiscountPercent / 100) : 0
+    const finalTotal = Math.max(0, Number(total) - referralDiscountAmount - rewardDiscountAmount)
 
     // Il "biglietto lotteria" è una voce speciale nel carrello: non è un
     // prodotto vero (niente magazzino, niente riga in order_items). Che il
@@ -99,9 +188,24 @@ export async function POST(request: NextRequest) {
 
     const { data: order, error: orderError } = await supabase
       .from('orders')
-      .insert({ phone_number, total, status: 'pending', is_ticket_only: realItems.length === 0, delivery_method: deliveryMethod, delivery_address: deliveryAddress })
+      .insert({ phone_number, total: finalTotal, status: 'pending', is_ticket_only: realItems.length === 0, delivery_method: deliveryMethod, delivery_address: deliveryAddress })
       .select().single()
     if (orderError) return NextResponse.json({ error: orderError.message }, { status: 500 })
+
+    // Registriamo il nuovo invito (sconto 5% appena applicato) o segniamo
+    // come "usato" l'invito che ha fruttato il 10% su questo ordine.
+    if (pendingReferralInsert) {
+      await supabase.from('referrals').insert({
+        referrer_phone: pendingReferralInsert.referrer_phone,
+        referred_phone: pendingReferralInsert.referred_phone,
+        referred_order_id: order.id,
+      })
+    }
+    if (readyReferralId) {
+      await supabase.from('referrals').update({
+        status: 'reward_used', reward_order_id: order.id, used_at: new Date().toISOString(),
+      }).eq('id', readyReferralId)
+    }
 
     if (ticketNumbers.length > 0) {
       const ticketPriceToCharge = lottery?.ticket_price != null ? Number(lottery.ticket_price) : 1
@@ -184,16 +288,23 @@ export async function POST(request: NextRequest) {
     const needsManualPricing = realItems.some((i: { customization?: { price?: number }[] }) =>
       i.customization && i.customization.length > 0 && !i.customization.some(c => typeof c.price === 'number'))
     const customizedSuffix = needsManualPricing ? ' 🎨 con personalizzazioni: contatta il cliente per confermare il prezzo' : (hasCustomized ? ' 🎨 con personalizzazioni' : '')
+    const referralSuffix = referralDiscountPercent > 0 ? ' 🤝 primo ordine da invito (-5%)' : (rewardDiscountPercent > 0 ? ' 🤝 sconto invita un amico (-10%)' : '')
     const notifBody = ticketQty > 0
-      ? `${phone_number} — ${itemsCount} articoli + ${ticketQty} bigliett${ticketQty > 1 ? 'i' : 'o'} lotteria — €${total.toFixed(2)}${customizedSuffix}`
-      : `${phone_number} — ${itemsCount} articoli — €${total.toFixed(2)}${customizedSuffix}`
+      ? `${phone_number} — ${itemsCount} articoli + ${ticketQty} bigliett${ticketQty > 1 ? 'i' : 'o'} lotteria — €${finalTotal.toFixed(2)}${customizedSuffix}${referralSuffix}`
+      : `${phone_number} — ${itemsCount} articoli — €${finalTotal.toFixed(2)}${customizedSuffix}${referralSuffix}`
     try {
       await sendPushToAdmin('Nuovo ordine ricevuto!', notifBody, '/mgadmin-panel')
     } catch (e) {
       console.error('Notifica nuovo ordine fallita:', e)
     }
 
-    return NextResponse.json({ success: true, order, ticket_numbers: ticketNumbers })
+    return NextResponse.json({
+      success: true,
+      order,
+      ticket_numbers: ticketNumbers,
+      referral_discount_percent: referralDiscountPercent || rewardDiscountPercent || 0,
+      referral_error: referralError,
+    })
   } catch {
     return NextResponse.json({ error: 'Checkout failed' }, { status: 500 })
   }

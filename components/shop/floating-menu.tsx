@@ -35,6 +35,13 @@ interface LotteryData {
   numbers: number[]
 }
 
+interface ReferralData {
+  phone: string
+  rewards_ready: number
+  pending_invites: number
+  rewards_used: number
+}
+
 interface OrderItemSummary {
   product_name: string
   quantity: number
@@ -74,6 +81,7 @@ export function FloatingMenu() {
   const [pointsError, setPointsError] = useState('')
   const [pointsData, setPointsData] = useState<PointsData | null>(null)
   const [lotteryData, setLotteryData] = useState<LotteryData | null>(null)
+  const [referralData, setReferralData] = useState<ReferralData | null>(null)
   const [ordersData, setOrdersData] = useState<OrderSummary[]>([])
 
   // Switch notifiche dentro il popup "Il mio account": riusa le stesse
@@ -212,10 +220,12 @@ export function FloatingMenu() {
         setPointsData(null)
         setLotteryData(null)
         setOrdersData([])
+        setReferralData(null)
       } else {
         setPointsData(data.points)
         setLotteryData(data.lottery)
         setOrdersData(data.orders || [])
+        setReferralData(data.referral || null)
         setNotifOn(!!data.notificationsEnabled)
         setNotifError('')
       }
@@ -224,12 +234,13 @@ export function FloatingMenu() {
       setPointsData(null)
       setLotteryData(null)
       setOrdersData([])
+      setReferralData(null)
     }
     setPointsChecking(false)
   }
 
   const resetPoints = () => {
-    setPointsData(null); setLotteryData(null); setOrdersData([]); setPointsError('')
+    setPointsData(null); setLotteryData(null); setOrdersData([]); setReferralData(null); setPointsError('')
     // Non azzeriamo notifOn qui: lo switch nella schermata "inserisci
     // numero" deve continuare a riflettere lo stato reale del dispositivo.
   }
@@ -527,6 +538,31 @@ export function FloatingMenu() {
                   Premio: {pointsData.reward_description}
                 </p>
               </div>
+
+              {/* Porta un amico: nessun codice da copiare, basta dare a voce il proprio
+                  numero di telefono. Se ha già un amico "consegnato", lo sconto del 10%
+                  si applica da solo al prossimo ordine, senza fare nulla. */}
+              {referralData && (
+                <div className="rounded-xl p-3 border" style={{ background: 'rgba(22,163,74,0.05)', borderColor: 'rgba(22,163,74,0.2)' }}>
+                  <p className="text-xs font-bold mb-1.5 flex items-center gap-1" style={{ color: '#15803d' }}>
+                    <Gift className="w-3.5 h-3.5" /> Invita un amico
+                  </p>
+                  {referralData.rewards_ready > 0 ? (
+                    <p className="text-xs text-green-700 font-semibold">
+                      🎉 Hai {referralData.rewards_ready > 1 ? `${referralData.rewards_ready} sconti del 10%` : 'uno sconto del 10%'} pronto per il tuo prossimo ordine: si applica da solo, non devi fare nulla!
+                    </p>
+                  ) : (
+                    <p className="text-xs text-slate-600">
+                      Di&apos; a un amico di dire il tuo numero ({referralData.phone}) quando fa il suo primo ordine: lui ha subito il 5% di sconto, e tu il 10% sul tuo prossimo ordine appena il suo viene consegnato.
+                    </p>
+                  )}
+                  {referralData.pending_invites > 0 && (
+                    <p className="text-[11px] text-slate-400 mt-1">
+                      {referralData.pending_invites} amico/i in attesa di consegna
+                    </p>
+                  )}
+                </div>
+              )}
 
               {/* Numero/i lotteria del turno in corso, se il cliente ha già partecipato */}
               {lotteryData && lotteryData.numbers.length > 0 && (

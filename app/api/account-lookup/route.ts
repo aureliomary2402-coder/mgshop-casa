@@ -38,11 +38,12 @@ export async function GET(request: NextRequest) {
   const last8 = normalized.slice(-8)
   const supabase = createAdminClient()
 
-  const [{ data: pointsRows, error: pointsError }, { data: settings }, { data: lottery }, { data: pushSubs }] = await Promise.all([
+  const [{ data: pointsRows, error: pointsError }, { data: settings }, { data: lottery }, { data: pushSubs }, { data: referralRows }] = await Promise.all([
     supabase.from('loyalty_points').select('points, type').eq('phone_normalized', normalized),
     supabase.from('loyalty_settings').select('*').eq('is_active', true).order('updated_at', { ascending: false }).limit(1).single(),
     supabase.from('lottery').select('*').limit(1).single(),
     supabase.from('push_subscriptions').select('phone_number').not('phone_number', 'is', null).ilike('phone_number', `%${last8}%`),
+    supabase.from('referrals').select('status').eq('referrer_phone', normalized),
   ])
 
   if (pointsError) {
@@ -99,10 +100,22 @@ export async function GET(request: NextRequest) {
     .slice(0, 5)
     .map(o => ({ id: o.id, status: o.status, total: o.total, created_at: o.created_at, items: o.order_items || [] }))
 
+  // Programma "Porta un amico": quanti inviti sono in attesa di consegna
+  // e quanti sconti del 10% sono già pronti da usare al prossimo ordine.
+  const referralRewardsReady = (referralRows || []).filter(r => r.status === 'reward_ready').length
+  const referralPending = (referralRows || []).filter(r => r.status === 'pending').length
+  const referralUsed = (referralRows || []).filter(r => r.status === 'reward_used').length
+
   return NextResponse.json({
     points: { total, threshold, reward_description: rewardDescription, cards_completed: cardsCompleted, progress },
     lottery: lotteryPayload,
     orders,
     notificationsEnabled,
+    referral: {
+      phone: normalized,
+      rewards_ready: referralRewardsReady,
+      pending_invites: referralPending,
+      rewards_used: referralUsed,
+    },
   })
 }

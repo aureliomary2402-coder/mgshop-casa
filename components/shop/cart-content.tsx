@@ -38,6 +38,9 @@ export function CartContent({ scope = 'shop' }: { scope?: string }) {
   const [chosenNumbers, setChosenNumbers] = useState<number[]>([])
   const [showCoupon, setShowCoupon] = useState(false)
   const [showLottery, setShowLottery] = useState(false)
+  const [referredByPhone, setReferredByPhone] = useState('')
+  const [showReferralField, setShowReferralField] = useState(false)
+  const [appliedReferralPercent, setAppliedReferralPercent] = useState(0)
   const [showNotifyReminder, setShowNotifyReminder] = useState(false)
   const [notifyActivating, setNotifyActivating] = useState(false)
 
@@ -188,7 +191,7 @@ export function CartContent({ scope = 'shop' }: { scope?: string }) {
     setSubmitting(true)
     try {
       const finalDeliveryMethod = onlyLotteryInCart ? null : deliveryMethod
-      const res = await fetch('/api/checkout', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ phone_number: phone, items, total, coupon_code: couponCode || null, ticket_number_choices: chosenNumbers, delivery_method: finalDeliveryMethod, delivery_address: finalDeliveryMethod === 'consegna' ? address : null }) })
+      const res = await fetch('/api/checkout', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ phone_number: phone, items, total, coupon_code: couponCode || null, ticket_number_choices: chosenNumbers, delivery_method: finalDeliveryMethod, delivery_address: finalDeliveryMethod === 'consegna' ? address : null, referred_by_phone: referredByPhone.trim() || null }) })
       const data = await res.json().catch(() => null)
       if (!res.ok) {
         // Uno o più numeri scelti sono stati presi da un altro cliente nel
@@ -208,8 +211,9 @@ export function CartContent({ scope = 'shop' }: { scope?: string }) {
         setError(data?.error || 'Si è verificato un errore. Riprova.'); setSubmitting(false); return
       }
       if (data.ticket_numbers?.length) setTicketNumbers(data.ticket_numbers)
+      setAppliedReferralPercent(data.referral_discount_percent || 0)
       setChosenNumbers([])
-      setDeliveryMethod(null); setAddress('')
+      setDeliveryMethod(null); setAddress(''); setReferredByPhone(''); setShowReferralField(false)
       try {
         const sessionId = sessionStorage.getItem('mgshop-session-id')
         sessionStorage.removeItem('mgshop-checkout-phone')
@@ -271,7 +275,10 @@ export function CartContent({ scope = 'shop' }: { scope?: string }) {
           </div>
         </div>
       )}
-      <p className="text-sm text-cyan-700 font-medium mb-8">🎁 Riceverai i tuoi punti fedeltà via WhatsApp!</p>
+      <p className={`text-sm text-cyan-700 font-medium ${appliedReferralPercent > 0 ? 'mb-2' : 'mb-8'}`}>🎁 Riceverai i tuoi punti fedeltà via WhatsApp!</p>
+      {appliedReferralPercent > 0 && (
+        <p className="text-sm text-green-600 font-medium mb-8">🤝 Sconto invito del {appliedReferralPercent}% applicato su questo ordine!</p>
+      )}
       <Link href="/shop" className="inline-flex items-center gap-2 font-bold px-8 py-4 rounded-2xl text-white btn-press" style={{background:'linear-gradient(135deg,#0891b2,#06b6d4)'}}>
         <ShoppingBag className="w-5 h-5"/> Continua a fare shopping
       </Link>
@@ -536,6 +543,19 @@ export function CartContent({ scope = 'shop' }: { scope?: string }) {
           <form onSubmit={handleSubmit} className="space-y-3">
             <input type="tel" placeholder="Numero di telefono" value={phone} onChange={e=>handlePhoneChange(e.target.value)}
               className="w-full h-11 px-4 rounded-xl text-base outline-none" style={{background:'rgba(8,145,178,0.05)',border:'1px solid rgba(8,145,178,0.15)',color:'#0c2b36'}}/>
+            {!showReferralField ? (
+              <button type="button" onClick={() => setShowReferralField(true)}
+                className="flex items-center gap-1.5 text-xs font-medium text-cyan-700 underline underline-offset-2">
+                <Gift className="w-3.5 h-3.5" /> Ti ha consigliato un amico? Inserisci il suo numero e hai il 5% di sconto
+              </button>
+            ) : (
+              <div className="space-y-1">
+                <label className="text-xs font-medium text-slate-500">Numero di telefono di chi ti ha invitato</label>
+                <input type="tel" placeholder="Es. 347 1234567" value={referredByPhone} onChange={e => setReferredByPhone(e.target.value)}
+                  className="w-full h-11 px-4 rounded-xl text-base outline-none" style={{background:'rgba(22,163,74,0.05)',border:'1px solid rgba(22,163,74,0.2)',color:'#0c2b36'}}/>
+                <p className="text-xs text-slate-400">Vale solo sul tuo primo ordine.</p>
+              </div>
+            )}
             {error&&<p className="text-red-500 text-xs">{error}</p>}
             <button type="submit" disabled={submitting} className="w-full py-3.5 rounded-xl font-bold text-white transition-all hover:scale-[1.02] btn-press disabled:opacity-60" style={{background:'linear-gradient(135deg,#0891b2,#06b6d4)',boxShadow:'0 8px 20px rgba(8,145,178,0.3)'}}>
               {submitting?'Invio in corso...':'Invia ordine'}
