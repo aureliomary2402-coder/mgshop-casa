@@ -8,6 +8,7 @@ interface ReferralPerson {
   normalized: string
   phone_number: string
   customer_name: string | null
+  referral_id: string
 }
 
 interface Cliente {
@@ -196,6 +197,17 @@ export function ClientiManager() {
     fetch('/api/admin/clienti').then(r => r.json()).then(d => { setClienti(d); setLoading(false) })
   }, [])
 
+  async function handleDeleteReferral(referralId: string) {
+    if (!confirm('Eliminare questo invito? Il collegamento tra i due clienti verrà rimosso.')) return
+    const res = await fetch(`/api/admin/clienti?id=${referralId}`, { method: 'DELETE' })
+    if (!res.ok) { alert('Errore durante l\'eliminazione dell\'invito.'); return }
+    setClienti(prev => prev.map(c => ({
+      ...c,
+      invitedBy: c.invitedBy?.referral_id === referralId ? null : c.invitedBy,
+      invited: c.invited?.filter(p => p.referral_id !== referralId),
+    })))
+  }
+
   const filtered = clienti
     .filter(c => {
       const q = search.toLowerCase()
@@ -299,8 +311,15 @@ export function ClientiManager() {
                       <span className="text-sm font-semibold text-slate-700">Porta un amico</span>
                     </div>
                     {c.invitedBy && (
-                      <p className="text-xs text-slate-500">
+                      <p className="text-xs text-slate-500 flex items-center gap-1.5">
                         Invitato da: <span className="font-medium text-slate-700">{c.invitedBy.customer_name || c.invitedBy.phone_number}</span>
+                        <button
+                          onClick={() => handleDeleteReferral(c.invitedBy!.referral_id)}
+                          className="text-slate-300 hover:text-red-500 transition-colors"
+                          title="Elimina invito"
+                        >
+                          <X className="w-3 h-3" />
+                        </button>
                       </p>
                     )}
                     {c.invited && c.invited.length > 0 && (
@@ -308,7 +327,16 @@ export function ClientiManager() {
                         Ha invitato {c.invited.length} {c.invited.length === 1 ? 'persona' : 'persone'}:
                         <ul className="mt-1 space-y-0.5">
                           {c.invited.map(p => (
-                            <li key={p.normalized} className="font-medium text-slate-700">• {p.customer_name || p.phone_number}</li>
+                            <li key={p.normalized} className="font-medium text-slate-700 flex items-center gap-1.5">
+                              • {p.customer_name || p.phone_number}
+                              <button
+                                onClick={() => handleDeleteReferral(p.referral_id)}
+                                className="text-slate-300 hover:text-red-500 transition-colors"
+                                title="Elimina invito"
+                              >
+                                <X className="w-3 h-3" />
+                              </button>
+                            </li>
                           ))}
                         </ul>
                       </div>

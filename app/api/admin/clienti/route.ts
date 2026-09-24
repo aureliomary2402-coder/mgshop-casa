@@ -88,17 +88,17 @@ export async function GET() {
   // Chi ha invitato chi (programma "porta un amico"): referrer_phone e
   // referred_phone sono già numeri normalizzati, come le chiavi di
   // clientiMap, quindi il collegamento è diretto.
-  const { data: referralRows } = await supabase.from('referrals').select('referrer_phone, referred_phone')
-  const describePhone = (normalized: string) => {
+  const { data: referralRows } = await supabase.from('referrals').select('id, referrer_phone, referred_phone')
+  const describePhone = (normalized: string, referralId: string) => {
     const c = clientiMap[normalized]
-    return { normalized, phone_number: c?.phone_number || normalized, customer_name: c?.customer_name || null }
+    return { normalized, phone_number: c?.phone_number || normalized, customer_name: c?.customer_name || null, referral_id: referralId }
   }
   const invitedByMap: Record<string, ReturnType<typeof describePhone>> = {}
   const invitedMap: Record<string, ReturnType<typeof describePhone>[]> = {}
   for (const r of referralRows || []) {
-    invitedByMap[r.referred_phone] = describePhone(r.referrer_phone)
+    invitedByMap[r.referred_phone] = describePhone(r.referrer_phone, r.id)
     if (!invitedMap[r.referrer_phone]) invitedMap[r.referrer_phone] = []
-    invitedMap[r.referrer_phone].push(describePhone(r.referred_phone))
+    invitedMap[r.referrer_phone].push(describePhone(r.referred_phone, r.id))
   }
 
   const clienti = Object.values(clientiMap).map(c => ({
@@ -110,4 +110,18 @@ export async function GET() {
   })).sort((a, b) => b.total - a.total)
 
   return NextResponse.json(clienti)
+}
+
+export async function DELETE(request: Request) {
+  if (!(await isAuthenticated())) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+
+  const { searchParams } = new URL(request.url)
+  const id = searchParams.get('id')
+  if (!id) return NextResponse.json({ error: 'Missing id' }, { status: 400 })
+
+  const supabase = createAdminClient()
+  const { error } = await supabase.from('referrals').delete().eq('id', id)
+
+  if (error) return NextResponse.json({ error: error.message }, { status: 500 })
+  return NextResponse.json({ success: true })
 }
