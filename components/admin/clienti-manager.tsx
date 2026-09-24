@@ -1,8 +1,14 @@
 "use client"
 
 import { useState, useEffect } from 'react'
-import { Users, Search, X, TrendingUp, ShoppingBag, Phone, Star, Gift, Plus, Minus, ChevronDown, ChevronUp, Clock, ArrowUpDown, RotateCcw } from 'lucide-react'
+import { Users, Search, X, TrendingUp, ShoppingBag, Phone, Star, Gift, Plus, Minus, ChevronDown, ChevronUp, Clock, ArrowUpDown, RotateCcw, UserPlus } from 'lucide-react'
 import { Input } from '@/components/ui/input'
+
+interface ReferralPerson {
+  normalized: string
+  phone_number: string
+  customer_name: string | null
+}
 
 interface Cliente {
   normalized: string
@@ -14,6 +20,8 @@ interface Cliente {
   statuses: string[]
   loyaltyPoints?: number
   loyaltyReady?: boolean
+  invitedBy?: ReferralPerson | null
+  invited?: ReferralPerson[]
 }
 
 interface LoyaltyHistory {
@@ -284,6 +292,29 @@ export function ClientiManager() {
             </div>
             {expanded === c.normalized && (
               <div className="px-4 pb-4">
+                {((c.invitedBy) || (c.invited && c.invited.length > 0)) && (
+                  <div className="mb-3 p-3 rounded-xl bg-slate-50 border border-slate-100 space-y-1.5">
+                    <div className="flex items-center gap-2 mb-1">
+                      <UserPlus className="w-4 h-4 text-cyan-600" />
+                      <span className="text-sm font-semibold text-slate-700">Porta un amico</span>
+                    </div>
+                    {c.invitedBy && (
+                      <p className="text-xs text-slate-500">
+                        Invitato da: <span className="font-medium text-slate-700">{c.invitedBy.customer_name || c.invitedBy.phone_number}</span>
+                      </p>
+                    )}
+                    {c.invited && c.invited.length > 0 && (
+                      <div className="text-xs text-slate-500">
+                        Ha invitato {c.invited.length} {c.invited.length === 1 ? 'persona' : 'persone'}:
+                        <ul className="mt-1 space-y-0.5">
+                          {c.invited.map(p => (
+                            <li key={p.normalized} className="font-medium text-slate-700">• {p.customer_name || p.phone_number}</li>
+                          ))}
+                        </ul>
+                      </div>
+                    )}
+                  </div>
+                )}
                 <LoyaltyPanel cliente={c} />
               </div>
             )}

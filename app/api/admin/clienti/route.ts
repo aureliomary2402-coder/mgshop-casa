@@ -85,10 +85,28 @@ export async function GET() {
     pointsMap[r.phone_normalized] = (pointsMap[r.phone_normalized] || 0) + r.points
   }
 
+  // Chi ha invitato chi (programma "porta un amico"): referrer_phone e
+  // referred_phone sono già numeri normalizzati, come le chiavi di
+  // clientiMap, quindi il collegamento è diretto.
+  const { data: referralRows } = await supabase.from('referrals').select('referrer_phone, referred_phone')
+  const describePhone = (normalized: string) => {
+    const c = clientiMap[normalized]
+    return { normalized, phone_number: c?.phone_number || normalized, customer_name: c?.customer_name || null }
+  }
+  const invitedByMap: Record<string, ReturnType<typeof describePhone>> = {}
+  const invitedMap: Record<string, ReturnType<typeof describePhone>[]> = {}
+  for (const r of referralRows || []) {
+    invitedByMap[r.referred_phone] = describePhone(r.referrer_phone)
+    if (!invitedMap[r.referrer_phone]) invitedMap[r.referrer_phone] = []
+    invitedMap[r.referrer_phone].push(describePhone(r.referred_phone))
+  }
+
   const clienti = Object.values(clientiMap).map(c => ({
     ...c,
     loyaltyPoints: pointsMap[c.normalized] || 0,
     loyaltyReady: (pointsMap[c.normalized] || 0) >= threshold,
+    invitedBy: invitedByMap[c.normalized] || null,
+    invited: invitedMap[c.normalized] || [],
   })).sort((a, b) => b.total - a.total)
 
   return NextResponse.json(clienti)
