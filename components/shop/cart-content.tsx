@@ -40,6 +40,10 @@ export function CartContent({ scope = 'shop' }: { scope?: string }) {
   const [showLottery, setShowLottery] = useState(false)
   const [referredByPhone, setReferredByPhone] = useState('')
   const [showReferralField, setShowReferralField] = useState(false)
+  const [referralPreviewLoading, setReferralPreviewLoading] = useState(false)
+  const [referralPreviewPercent, setReferralPreviewPercent] = useState(0)
+  const [referralPreviewSource, setReferralPreviewSource] = useState<'invited' | 'reward' | null>(null)
+  const [referralPreviewError, setReferralPreviewError] = useState('')
   const [appliedReferralPercent, setAppliedReferralPercent] = useState(0)
   const [finalPaidTotal, setFinalPaidTotal] = useState<number | null>(null)
   const [showNotifyReminder, setShowNotifyReminder] = useState(false)
@@ -143,6 +147,49 @@ export function CartContent({ scope = 'shop' }: { scope?: string }) {
     : 0
   const total = Math.max(0, subtotal - discountAmount)
 
+  // Verifica in tempo reale (con un piccolo debounce) il numero di
+  // telefono proprio e quello di chi ha invitato: appena entrambi sono
+  // numeri validi, chiediamo al server se lo sconto invito è applicabile,
+  // così il cliente vede subito lo sconto (o l'errore) prima di inviare
+  // l'ordine, senza dover creare un ordine di prova.
+  useEffect(() => {
+    const ownDigits = phone.replace(/\D/g, '')
+    const friendDigits = referredByPhone.replace(/\D/g, '')
+    if (ownDigits.length < 6) {
+      setReferralPreviewPercent(0); setReferralPreviewSource(null); setReferralPreviewError(''); setReferralPreviewLoading(false)
+      return
+    }
+    if (showReferralField && friendDigits.length > 0 && friendDigits.length < 6) {
+      // Numero amico ancora incompleto: niente chiamata, nessun errore ancora.
+      setReferralPreviewPercent(0); setReferralPreviewSource(null); setReferralPreviewError(''); setReferralPreviewLoading(false)
+      return
+    }
+    setReferralPreviewLoading(true)
+    const timer = setTimeout(() => {
+      fetch('/api/referral-check', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ phone_number: phone, referred_by_phone: showReferralField ? referredByPhone : '' }),
+      })
+        .then(r => r.json())
+        .then(d => {
+          if (d.referral_discount_percent > 0) {
+            setReferralPreviewPercent(d.referral_discount_percent); setReferralPreviewSource('invited'); setReferralPreviewError('')
+          } else if (d.reward_discount_percent > 0) {
+            setReferralPreviewPercent(d.reward_discount_percent); setReferralPreviewSource('reward'); setReferralPreviewError('')
+          } else {
+            setReferralPreviewPercent(0); setReferralPreviewSource(null)
+            setReferralPreviewError(showReferralField && friendDigits.length > 0 ? (d.referral_error || '') : '')
+          }
+        })
+        .catch(() => {})
+        .finally(() => setReferralPreviewLoading(false))
+    }, 500)
+    return () => { clearTimeout(timer); setReferralPreviewLoading(false) }
+  }, [phone, referredByPhone, showReferralField])
+
+  const referralPreviewAmount = referralPreviewPercent > 0 ? total * referralPreviewPercent / 100 : 0
+  const totalWithReferralPreview = Math.max(0, total - referralPreviewAmount)
+
   // Link WhatsApp per il banner di aiuto: se ci sono prodotti nel carrello,
   // apre la chat con un messaggio già pronto che elenca cosa sta comprando il cliente.
   const buildHelpWhatsappLink = () => {
@@ -216,6 +263,7 @@ export function CartContent({ scope = 'shop' }: { scope?: string }) {
       setFinalPaidTotal(typeof data.final_total === 'number' ? data.final_total : null)
       setChosenNumbers([])
       setDeliveryMethod(null); setAddress(''); setReferredByPhone(''); setShowReferralField(false)
+      setReferralPreviewPercent(0); setReferralPreviewSource(null); setReferralPreviewError('')
       try {
         const sessionId = sessionStorage.getItem('mgshop-session-id')
         sessionStorage.removeItem('mgshop-checkout-phone')
@@ -514,7 +562,13 @@ export function CartContent({ scope = 'shop' }: { scope?: string }) {
           <div className="border-t border-cyan-100 pt-3 space-y-1.5">
             <div className="flex justify-between text-sm text-slate-500"><span>Subtotale</span><span>€{subtotal.toFixed(2)}</span></div>
             {couponData&&discountAmount>0&&<div className="flex justify-between text-sm text-green-600 font-medium"><span>Sconto coupon</span><span>-€{discountAmount.toFixed(2)}</span></div>}
-            <div className="flex justify-between font-bold pt-1"><span style={{color:'#0c2b36'}}>Totale</span><span className="text-xl" style={{color:'#0891b2'}}>€{total.toFixed(2)}</span></div>
+            {referralPreviewPercent>0&&(
+              <div className="flex justify-between text-sm text-green-600 font-medium">
+                <span>{referralPreviewSource === 'reward' ? 'Premio invito amico' : 'Sconto invito'} (-{referralPreviewPercent}%)</span>
+                <span>-€{referralPreviewAmount.toFixed(2)}</span>
+              </div>
+            )}
+            <div className="flex justify-between font-bold pt-1"><span style={{color:'#0c2b36'}}>Totale</span><span className="text-xl" style={{color:'#0891b2'}}>€{totalWithReferralPreview.toFixed(2)}</span></div>
           </div>
           {!onlyLotteryInCart && (
             <div className="space-y-2.5">
@@ -559,12 +613,24 @@ export function CartContent({ scope = 'shop' }: { scope?: string }) {
               <div className="space-y-1">
                 <label className="text-xs font-medium text-slate-500">Numero di telefono di chi ti ha invitato</label>
                 <input type="tel" placeholder="Es. 347 1234567" value={referredByPhone} onChange={e => setReferredByPhone(e.target.value)}
-                  className="w-full h-11 px-4 rounded-xl text-base outline-none" style={{background:'rgba(22,163,74,0.05)',border:'1px solid rgba(22,163,74,0.2)',color:'#0c2b36'}}/>
-                <p className="text-xs text-slate-400">Vale solo sul tuo primo ordine.</p>
+                  className="w-full h-11 px-4 rounded-xl text-base outline-none" style={{background:'rgba(22,163,74,0.05)',border:`1px solid ${referralPreviewSource==='invited'?'rgba(22,163,74,0.5)':referralPreviewError?'rgba(239,68,68,0.4)':'rgba(22,163,74,0.2)'}`,color:'#0c2b36'}}/>
+                {referralPreviewLoading && <p className="text-xs text-slate-400">Verifica in corso...</p>}
+                {!referralPreviewLoading && referralPreviewSource==='invited' && (
+                  <p className="text-xs text-green-600 font-medium">✅ Numero verificato: avrai il {referralPreviewPercent}% di sconto su questo ordine!</p>
+                )}
+                {!referralPreviewLoading && referralPreviewError && (
+                  <p className="text-xs text-red-500">{referralPreviewError}</p>
+                )}
+                {!referralPreviewLoading && !referralPreviewError && referralPreviewSource!=='invited' && (
+                  <p className="text-xs text-slate-400">Vale solo sul tuo primo ordine.</p>
+                )}
               </div>
             )}
+            {!showReferralField && referralPreviewSource==='reward' && !referralPreviewLoading && (
+              <p className="text-xs text-green-600 font-medium">🎁 Hai un premio pronto: il {referralPreviewPercent}% di sconto è già applicato su questo ordine!</p>
+            )}
             {error&&<p className="text-red-500 text-xs">{error}</p>}
-            <button type="submit" disabled={submitting} className="w-full py-3.5 rounded-xl font-bold text-white transition-all hover:scale-[1.02] btn-press disabled:opacity-60" style={{background:'linear-gradient(135deg,#0891b2,#06b6d4)',boxShadow:'0 8px 20px rgba(8,145,178,0.3)'}}>
+            <button type="submit" disabled={submitting || referralPreviewLoading || (showReferralField && !!referredByPhone.trim() && !!referralPreviewError)} className="w-full py-3.5 rounded-xl font-bold text-white transition-all hover:scale-[1.02] btn-press disabled:opacity-60" style={{background:'linear-gradient(135deg,#0891b2,#06b6d4)',boxShadow:'0 8px 20px rgba(8,145,178,0.3)'}}>
               {submitting?'Invio in corso...':'Invia ordine'}
             </button>
           </form>
