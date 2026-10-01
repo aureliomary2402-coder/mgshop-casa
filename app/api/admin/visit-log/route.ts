@@ -10,9 +10,6 @@ async function isAuthenticated() {
 type PageViewRow = {
   page: string
   created_at: string
-  country?: string | null
-  region?: string | null
-  city?: string | null
   visitor_id?: string | null
   timezone?: string | null
   visits?: number | null
@@ -74,9 +71,9 @@ export async function GET() {
   const supabase = createAdminClient()
 
   const [storeRes, adminRes, storeCount, adminCount, botCount] = await Promise.all([
-    supabase.from('page_views').select('page, created_at, country, region, city, visitor_id, timezone')
+    supabase.from('page_views').select('page, created_at, visitor_id, timezone')
       .eq('is_admin', false).eq('is_bot', false).order('created_at', { ascending: false }).limit(100),
-    supabase.from('page_views').select('page, created_at, country, region, city, visitor_id, timezone')
+    supabase.from('page_views').select('page, created_at, visitor_id, timezone')
       .eq('is_admin', true).eq('is_bot', false).order('created_at', { ascending: false }).limit(100),
     supabase.from('page_views').select('*', { count: 'exact', head: true }).eq('is_admin', false).eq('is_bot', false),
     supabase.from('page_views').select('*', { count: 'exact', head: true }).eq('is_admin', true).eq('is_bot', false),

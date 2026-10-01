@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect } from 'react'
-import { Bell, BellOff, Store, Shield, Eye, ArrowUp, ArrowDown, BarChart2, CalendarDays, MapPin } from 'lucide-react'
+import { Bell, BellOff, Store, Shield, Eye, ArrowUp, ArrowDown, BarChart2, CalendarDays, User } from 'lucide-react'
 
 interface VisitProduct {
   id: string
@@ -14,9 +14,6 @@ interface VisitItem {
   page: string
   created_at: string
   product?: VisitProduct
-  country?: string | null
-  region?: string | null
-  city?: string | null
   visitor_id?: string | null
   timezone?: string | null
   visits?: number | null
@@ -62,12 +59,10 @@ function pageLabel(page: string) {
 }
 
 function locationLabel(v: VisitItem) {
-  const parts = [v.city, v.country].filter(Boolean)
-  const place = parts.length > 0 ? parts.join(', ') : null
   const who = v.visitor_id ? '#' + v.visitor_id.slice(0, 4).toUpperCase() : null
   const tag = v.visits && v.visits > 1 ? v.visits + 'ª visita' : v.visits === 1 ? 'nuovo' : null
   const tz = v.timezone && v.timezone !== 'Europe/Rome' ? v.timezone : null
-  const all = [place, who, tag, tz].filter(Boolean)
+  const all = [who, tag, tz].filter(Boolean)
   return all.length > 0 ? all.join(' · ') : null
 }
 
@@ -296,7 +291,7 @@ export function VisitLogManager() {
                           </span>
                           {location && (
                             <span className="flex items-center gap-1 text-xs text-slate-400">
-                              <MapPin className="w-3 h-3 shrink-0" /> {location}
+                              <User className="w-3 h-3 shrink-0" /> {location}
                             </span>
                           )}
                         </span>
@@ -306,7 +301,7 @@ export function VisitLogManager() {
                         <span className="block text-slate-700 truncate">{pageLabel(v.page)}</span>
                         {location && (
                           <span className="flex items-center gap-1 text-xs text-slate-400">
-                            <MapPin className="w-3 h-3 shrink-0" /> {location}
+                            <User className="w-3 h-3 shrink-0" /> {location}
                           </span>
                         )}
                       </span>

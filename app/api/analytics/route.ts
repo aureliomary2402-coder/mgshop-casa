@@ -15,23 +15,11 @@ function detectBot(userAgent: string) {
   return BOT_PATTERNS.test(userAgent)
 }
 
-// Geolocalizzazione approssimativa fornita da Vercel (solo da IP).
-function getLocation(request: NextRequest) {
-  const country = request.headers.get('x-vercel-ip-country') || null
-  const region = request.headers.get('x-vercel-ip-country-region') || null
-  const cityRaw = request.headers.get('x-vercel-ip-city')
-  const city = cityRaw ? decodeURIComponent(cityRaw) : null
-  return { country, region, city }
-}
-
-type Loc = { country: string | null; region: string | null; city: string | null }
-
 // Registra o aggiorna il visitatore. Conta una nuova visita se sono
 // passati più di 30 minuti dall'ultima attività.
 async function trackVisitor(
   supabase: ReturnType<typeof createAdminClient>,
-  visitorId: string,
-  loc: Loc
+  visitorId: string
 ) {
   const now = new Date()
   const { data: v } = await supabase
@@ -41,7 +29,7 @@ async function trackVisitor(
     .maybeSingle()
 
   if (!v) {
-    await supabase.from('visitors').insert({ visitor_id: visitorId, visits: 1, ...loc })
+    await supabase.from('visitors').insert({ visitor_id: visitorId, visits: 1 })
     return { returning: false, visits: 1 }
   }
 
@@ -49,7 +37,7 @@ async function trackVisitor(
   const visits = gap > 30 * 60 * 1000 ? v.visits + 1 : v.visits
   await supabase
     .from('visitors')
-    .update({ visits, last_seen: now.toISOString(), ...(loc.city ? loc : {}) })
+    .update({ visits, last_seen: now.toISOString() })
     .eq('visitor_id', visitorId)
   return { returning: visits > 1, visits }
 }
@@ -63,7 +51,6 @@ export async function POST(request: NextRequest) {
 
     const userAgent = request.headers.get('user-agent') || ''
     const isBot = detectBot(userAgent)
-    const loc = getLocation(request)
     const vid = typeof visitorId === 'string' && visitorId.length <= 64 ? visitorId : null
 
     await supabase.from('page_views').insert({
@@ -72,9 +59,6 @@ export async function POST(request: NextRequest) {
       session_id: sessionId || null,
       user_agent: userAgent || null,
       is_bot: isBot,
-      country: loc.country,
-      region: loc.region,
-      city: loc.city,
       visitor_id: vid,
       timezone: typeof tz === 'string' ? tz.slice(0, 60) : null,
       screen: typeof screen === 'string' ? screen.slice(0, 20) : null,
@@ -83,7 +67,7 @@ export async function POST(request: NextRequest) {
     let returning = false
     let visits = 1
     if (vid && !admin && !isBot) {
-      const r = await trackVisitor(supabase, vid, loc)
+      const r = await trackVisitor(supabase, vid)
       returning = r.returning
       visits = r.visits
     }
