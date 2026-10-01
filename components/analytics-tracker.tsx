@@ -2,10 +2,9 @@
 import { useEffect } from 'react'
 import { usePathname } from 'next/navigation'
 
-const HEARTBEAT_INTERVAL = 20000 // 20 secondi
+const HEARTBEAT_INTERVAL = 20000
 
 function getSessionId() {
-  if (typeof window === 'undefined') return ''
   try {
     let id = sessionStorage.getItem('mgshop-session-id')
     if (!id) {
@@ -18,6 +17,29 @@ function getSessionId() {
   }
 }
 
+function getVisitorId() {
+  try {
+    const m = document.cookie.match(/(?:^|; )mgshop-vid=([^;]+)/)
+    const id = localStorage.getItem('mgshop-visitor-id') || (m ? m[1] : '') || crypto.randomUUID()
+    localStorage.setItem('mgshop-visitor-id', id)
+    document.cookie = `mgshop-vid=${id}; max-age=31536000; path=/; SameSite=Lax`
+    return id
+  } catch {
+    return ''
+  }
+}
+
+function getInfo() {
+  try {
+    return {
+      tz: Intl.DateTimeFormat().resolvedOptions().timeZone || null,
+      screen: `${window.screen.width}x${window.screen.height}`,
+    }
+  } catch {
+    return { tz: null, screen: null }
+  }
+}
+
 export function AnalyticsTracker() {
   const pathname = usePathname()
 
@@ -25,17 +47,18 @@ export function AnalyticsTracker() {
     fetch('/api/analytics', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ page: pathname, sessionId: getSessionId() }),
+      body: JSON.stringify({ page: pathname, sessionId: getSessionId(), visitorId: getVisitorId(), ...getInfo() }),
     }).catch(() => {})
   }, [pathname])
 
   useEffect(() => {
     const sessionId = getSessionId()
+    const visitorId = getVisitorId()
     const beat = () => {
       fetch('/api/analytics/heartbeat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ sessionId, page: pathname }),
+        body: JSON.stringify({ sessionId, visitorId, page: pathname }),
       }).catch(() => {})
     }
     beat()
