@@ -18,10 +18,19 @@ export async function GET() {
 
   const { data } = await supabase
     .from('active_sessions')
-    .select('page, last_seen')
+    .select('page, last_seen, visitor_id')
     .gte('last_seen', since)
 
   const sessions = data || []
+
+  // Persone distinte: più schede dello stesso visitatore contano una volta sola
+  const people = new Set<string>()
+  let anonymous = 0
+  for (const s of sessions) {
+    if (s.visitor_id) people.add(s.visitor_id)
+    else anonymous++
+  }
+
   const pageCounts: Record<string, number> = {}
   for (const s of sessions) {
     const p = s.page || '/'
@@ -31,5 +40,5 @@ export async function GET() {
     .sort((a, b) => b[1] - a[1])
     .map(([page, count]) => ({ page, count }))
 
-  return NextResponse.json({ count: sessions.length, pages })
+  return NextResponse.json({ count: people.size + anonymous, tabs: sessions.length, pages })
 }
