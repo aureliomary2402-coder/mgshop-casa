@@ -6,6 +6,14 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: 'subscription non valida' }, { status: 400 })
   }
   const supabase = createAdminClient()
+  // Il ricollegamento silenzioso (senza isAdmin) NON deve togliere il flag
+  // admin a una iscrizione che lo ha gia: lo mantiene com'e'.
+  const { data: existing } = await supabase
+    .from('push_subscriptions')
+    .select('is_admin')
+    .contains('subscription', { endpoint: subscription.endpoint })
+    .limit(1)
+    .maybeSingle()
   // phoneNumber viene incluso solo se il chiamante lo ha passato davvero:
   // il ricollegamento silenzioso (syncPushSession) non lo invia mai, così
   // non cancelliamo un numero già salvato in precedenza per la stessa
@@ -25,7 +33,7 @@ export async function POST(req: Request) {
     // marcate qui: sendPushToAdmin() usa questo flag per mandare solo a
     // te le notifiche di servizio (nuovo ordine, chat, visite...) invece
     // che a tutti i clienti iscritti.
-    is_admin: isAdmin === true,
+    is_admin: isAdmin === true || existing?.is_admin === true,
     updated_at: new Date().toISOString(),
   }
   if (phoneNumber !== undefined) updateData.phone_number = phoneNumber ?? null

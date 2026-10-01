@@ -17,7 +17,14 @@ self.addEventListener('fetch', (event) => {
 })
 
 self.addEventListener('push', function(event) {
-  const data = event.data ? event.data.json() : {}
+  // Se il testo ricevuto non e' JSON valido non deve bloccarsi: ogni push
+  // deve mostrare una notifica, altrimenti iPhone puo' revocare l'iscrizione.
+  let data = {}
+  try {
+    data = event.data ? event.data.json() : {}
+  } catch (e) {
+    data = { body: event.data ? event.data.text() : '' }
+  }
   const title = data.title || 'MGShop Casa'
   const options = {
     body: data.body || 'Nuovo ordine ricevuto!',
