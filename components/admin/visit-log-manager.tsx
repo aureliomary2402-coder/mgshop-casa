@@ -17,6 +17,9 @@ interface VisitItem {
   country?: string | null
   region?: string | null
   city?: string | null
+  visitor_id?: string | null
+  timezone?: string | null
+  visits?: number | null
 }
 
 interface VisitLogData {
@@ -60,7 +63,12 @@ function pageLabel(page: string) {
 
 function locationLabel(v: VisitItem) {
   const parts = [v.city, v.country].filter(Boolean)
-  return parts.length > 0 ? parts.join(', ') : null
+  const place = parts.length > 0 ? parts.join(', ') : null
+  const who = v.visitor_id ? '#' + v.visitor_id.slice(0, 4).toUpperCase() : null
+  const tag = v.visits && v.visits > 1 ? v.visits + 'ª visita' : v.visits === 1 ? 'nuovo' : null
+  const tz = v.timezone && v.timezone !== 'Europe/Rome' ? v.timezone : null
+  const all = [place, who, tag, tz].filter(Boolean)
+  return all.length > 0 ? all.join(' · ') : null
 }
 
 function MiniChart({ data }: { data: { day: string; count: number }[] }) {

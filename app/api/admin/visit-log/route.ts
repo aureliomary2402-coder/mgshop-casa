@@ -13,6 +13,9 @@ type PageViewRow = {
   country?: string | null
   region?: string | null
   city?: string | null
+  visitor_id?: string | null
+  timezone?: string | null
+  visits?: number | null
 }
 
 // Estrae l'id prodotto da un path tipo "/prodotto/123"
@@ -53,14 +56,27 @@ async function enrichWithProducts(
   })
 }
 
+async function enrichWithVisitors(
+  supabase: ReturnType<typeof createAdminClient>,
+  items: PageViewRow[]
+) {
+  const ids = Array.from(
+    new Set(items.map((i) => i.visitor_id).filter((x): x is string => !!x))
+  )
+  if (ids.length === 0) return items
+  const { data } = await supabase.from('visitors').select('visitor_id, visits').in('visitor_id', ids)
+  const map = new Map((data || []).map((v) => [v.visitor_id, v.visits]))
+  return items.map((i) => (i.visitor_id ? { ...i, visits: map.get(i.visitor_id) ?? null } : i))
+}
+
 export async function GET() {
   if (!(await isAuthenticated())) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   const supabase = createAdminClient()
 
   const [storeRes, adminRes, storeCount, adminCount, botCount] = await Promise.all([
-    supabase.from('page_views').select('page, created_at, country, region, city')
+    supabase.from('page_views').select('page, created_at, country, region, city, visitor_id, timezone')
       .eq('is_admin', false).eq('is_bot', false).order('created_at', { ascending: false }).limit(100),
-    supabase.from('page_views').select('page, created_at, country, region, city')
+    supabase.from('page_views').select('page, created_at, country, region, city, visitor_id, timezone')
       .eq('is_admin', true).eq('is_bot', false).order('created_at', { ascending: false }).limit(100),
     supabase.from('page_views').select('*', { count: 'exact', head: true }).eq('is_admin', false).eq('is_bot', false),
     supabase.from('page_views').select('*', { count: 'exact', head: true }).eq('is_admin', true).eq('is_bot', false),
@@ -71,8 +87,8 @@ export async function GET() {
   ])
 
   const [storeItems, adminItems] = await Promise.all([
-    enrichWithProducts(supabase, storeRes.data || []),
-    enrichWithProducts(supabase, adminRes.data || []),
+    enrichWithProducts(supabase, await enrichWithVisitors(supabase, storeRes.data || [])),
+    enrichWithProducts(supabase, await enrichWithVisitors(supabase, adminRes.data || [])),
   ])
 
   return NextResponse.json({
