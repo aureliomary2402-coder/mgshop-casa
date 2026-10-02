@@ -20,28 +20,28 @@ import {
 
 const categories = [
   {
-    title: "Detergenza",
-    subtitle: "Casa sempre pulita",
-    icon: "🫧",
-    href: "/shop?categoria=detergenza#prodotti-grid",
+    title: "Scopri lo Shop",
+    subtitle: "Tutto il catalogo MGShop",
+    icon: "🛒",
+    href: "/shop",
   },
   {
-    title: "Cura persona",
-    subtitle: "Tutto per te",
-    icon: "✨",
-    href: "/shop?categoria=cura%20persona#prodotti-grid",
+    title: "Promo del momento",
+    subtitle: "Offerte e Promo Box",
+    icon: "🔥",
+    href: "/promo",
   },
   {
-    title: "Casa",
-    subtitle: "Tutto ciò che serve",
-    icon: "🏠",
-    href: "/shop?categoria=casa#prodotti-grid",
+    title: "Consegna a casa",
+    subtitle: "Scopri dove consegniamo",
+    icon: "🚚",
+    href: "/consegne",
   },
   {
-    title: "Cartoleria",
-    subtitle: "Scuola e ufficio",
-    icon: "✏️",
-    href: "/shop?categoria=cartoleria#prodotti-grid",
+    title: "Ordina su WhatsApp",
+    subtitle: "Parla direttamente con noi",
+    icon: "💬",
+    href: "https://wa.me/393522209558",
   },
 ];
 
