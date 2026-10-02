@@ -8,6 +8,7 @@ import { MessageCircle, X, Send, Menu as MenuIcon, ShoppingBag, Gift, Share2, Be
 import { useCartStore } from '@/lib/cart-store'
 import { useUIPanelsStore } from '@/lib/ui-panels-store'
 import { subscribeToPush, unsubscribeFromPush } from '@/lib/push-subscribe'
+import { InviteWhatsAppButton } from '@/components/shop/invite-whatsapp-button'
 
 interface ChatMessage {
   id: string
@@ -556,6 +557,7 @@ export function FloatingMenu() {
                       Di&apos; a un amico di dire il tuo numero ({referralData.phone}) quando fa il suo primo ordine: lui ha subito il 5% di sconto, e tu il 10% sul tuo prossimo ordine appena il suo viene consegnato.
                     </p>
                   )}
+                  <InviteWhatsAppButton phone={referralData.phone} />
                   {referralData.pending_invites > 0 && (
                     <p className="text-[11px] text-slate-400 mt-1">
                       {referralData.pending_invites} amico/i in attesa di consegna
