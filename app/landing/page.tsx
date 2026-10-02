@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react'
 import Link from 'next/link'
-import { ShoppingBag, Star, Truck, Shield, ArrowRight, Sparkles, Heart, Package } from 'lucide-react'
+import { ShoppingBag, Star, Truck, ArrowRight, Sparkles, Heart, Package, Banknote, MessageCircle, Gift, Tag } from 'lucide-react'
 
 export default function LandingPage() {
   const [scrollY, setScrollY] = useState(0)
@@ -102,8 +102,8 @@ export default function LandingPage() {
           </h1>
 
           <p className="text-lg md:text-xl text-cyan-100/50 max-w-2xl mx-auto mb-12 leading-relaxed animate-fade-in-up" style={{ animationDelay: '0.1s', animationFillMode: 'both' }}>
-            Prodotti selezionati con cura per ogni angolo della tua casa.
-            Qualità garantita, prezzi onesti, consegna diretta.
+            Casa, pulizia e cura della persona: circa 500 prodotti scelti con cura,
+            portati a casa tua nella zona etnea. Ordini dal sito o su WhatsApp e paghi alla consegna.
           </p>
 
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4 animate-fade-in-up" style={{ animationDelay: '0.2s', animationFillMode: 'both' }}>
@@ -122,7 +122,7 @@ export default function LandingPage() {
 
           {/* Stats */}
           <div className="flex items-center justify-center gap-8 mt-16 animate-fade-in-up" style={{ animationDelay: '0.3s', animationFillMode: 'both' }}>
-            {[['400+', 'Prodotti'], ['⭐⭐⭐⭐⭐', 'Qualità'], ['🚚', 'Consegna']].map(([val, label]) => (
+            {[['500+', 'Prodotti'], ['Gratis', 'Consegna in città'], ['Contanti', 'Paghi alla consegna']].map(([val, label]) => (
               <div key={label} className="text-center">
                 <div className="text-xl font-bold text-cyan-400">{val}</div>
                 <div className="text-xs text-cyan-200/40 mt-1">{label}</div>
@@ -151,9 +151,12 @@ export default function LandingPage() {
 
           <div className="grid md:grid-cols-3 gap-6">
             {[
-              { icon: Star, title: 'Prodotti selezionati', desc: 'Ogni articolo è scelto con cura. Solo qualità che dura nel tempo.', gradient: 'from-cyan-600/20 to-cyan-900/10', border: 'border-cyan-500/20', iconBg: 'bg-cyan-500/20', iconColor: 'text-cyan-400' },
-              { icon: Truck, title: 'Consegna o ritiro', desc: 'Scegli la consegna a domicilio oppure vieni a ritirare tu stesso. Ti contattiamo su WhatsApp per organizzare tutto.', gradient: 'from-sky-600/20 to-sky-900/10', border: 'border-sky-500/20', iconBg: 'bg-sky-500/20', iconColor: 'text-sky-400' },
-              { icon: Shield, title: 'Acquisto sicuro', desc: 'Nessun rischio. Se non sei soddisfatto, ti aiutiamo a risolvere.', gradient: 'from-teal-600/20 to-teal-900/10', border: 'border-teal-500/20', iconBg: 'bg-teal-500/20', iconColor: 'text-teal-400' },
+              { icon: Star, title: 'Circa 500 prodotti', desc: 'Detersivi, pulizia, casa e cura della persona: tutto quello che serve in casa, in un solo posto.', gradient: 'from-cyan-600/20 to-cyan-900/10', border: 'border-cyan-500/20', iconBg: 'bg-cyan-500/20', iconColor: 'text-cyan-400' },
+              { icon: Truck, title: 'Consegna o ritiro', desc: 'Consegna gratuita ad Aci Sant’Antonio, €2 nei paesi etnei. Oppure vieni a ritirare, senza costi.', gradient: 'from-sky-600/20 to-sky-900/10', border: 'border-sky-500/20', iconBg: 'bg-sky-500/20', iconColor: 'text-sky-400' },
+              { icon: Banknote, title: 'Paghi alla consegna', desc: 'Niente carte e niente registrazioni: paghi in contanti quando ricevi l’ordine o lo ritiri.', gradient: 'from-teal-600/20 to-teal-900/10', border: 'border-teal-500/20', iconBg: 'bg-teal-500/20', iconColor: 'text-teal-400' },
+              { icon: MessageCircle, title: 'Ordina anche su WhatsApp', desc: 'Invia l’ordine dal sito o su WhatsApp, con il riepilogo già pronto. Ti rispondiamo per confermare.', gradient: 'from-green-600/20 to-green-900/10', border: 'border-green-500/20', iconBg: 'bg-green-500/20', iconColor: 'text-green-400' },
+              { icon: Gift, title: 'Fedeltà e premi', desc: 'Ogni consegna dà un timbro sulla tessera fedeltà. Consiglia MGShop a un’amica: lei ha il 5% di sconto, tu il 10% sul prossimo ordine.', gradient: 'from-amber-600/20 to-amber-900/10', border: 'border-amber-500/20', iconBg: 'bg-amber-500/20', iconColor: 'text-amber-400' },
+              { icon: Tag, title: 'Offerte e volantini', desc: 'Volantini digitali, pagina Promo e coupon sconto per risparmiare sui prodotti di tutti i giorni.', gradient: 'from-rose-600/20 to-rose-900/10', border: 'border-rose-500/20', iconBg: 'bg-rose-500/20', iconColor: 'text-rose-400' },
             ].map(({ icon: Icon, title, desc, gradient, border, iconBg, iconColor }, i) => (
               <div key={title}
                 className={`group relative bg-gradient-to-br ${gradient} border ${border} rounded-3xl p-7 card-3d warm-glow-hover`}
@@ -162,6 +165,28 @@ export default function LandingPage() {
                   <Icon className="w-7 h-7" />
                 </div>
                 <h3 className="text-xl font-bold text-white mb-3">{title}</h3>
+                <p className="text-cyan-200/50 leading-relaxed">{desc}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Come funziona */}
+      <section className="relative py-24 px-6" style={{ background: 'linear-gradient(180deg, #03131a 0%, #0c2b36 100%)' }}>
+        <div className="max-w-5xl mx-auto">
+          <h2 className="text-3xl md:text-5xl font-bold text-white text-center mb-14">
+            Come <span className="text-shimmer">funziona</span>
+          </h2>
+          <div className="grid md:grid-cols-3 gap-6">
+            {[
+              { n: '1', title: 'Scegli', desc: 'Aggiungi i prodotti al carrello e scrivi il tuo numero di telefono: non serve registrarsi.' },
+              { n: '2', title: 'Ordina', desc: 'Scegli consegna o ritiro e invia l’ordine dal sito oppure su WhatsApp.' },
+              { n: '3', title: 'Ricevi e paghi', desc: 'Ti contattiamo per confermare. Paghi in contanti alla consegna o al ritiro.' },
+            ].map(({ n, title, desc }) => (
+              <div key={n} className="rounded-3xl border border-cyan-500/20 p-7 text-center" style={{ background: 'rgba(8,145,178,0.06)' }}>
+                <div className="w-12 h-12 rounded-full mx-auto mb-4 flex items-center justify-center text-xl font-extrabold text-white" style={{ background: 'linear-gradient(135deg, #0891b2, #06b6d4)' }}>{n}</div>
+                <h3 className="text-xl font-bold text-white mb-2">{title}</h3>
                 <p className="text-cyan-200/50 leading-relaxed">{desc}</p>
               </div>
             ))}
@@ -184,7 +209,7 @@ export default function LandingPage() {
             Pronto per il tuo <span className="text-shimmer">primo ordine</span>?
           </h2>
           <p className="text-cyan-200/50 text-lg mb-12 leading-relaxed">
-            Sfoglia oltre 400 prodotti, aggiungi al carrello e ordina in pochi secondi.
+            Sfoglia circa 500 prodotti, aggiungi al carrello e ordina in pochi secondi, dal sito o su WhatsApp.
           </p>
           <Link href="/"
             className="group inline-flex items-center gap-3 font-bold text-xl px-12 py-6 rounded-2xl transition-all hover:scale-105 active:scale-95 btn-press"
@@ -197,7 +222,7 @@ export default function LandingPage() {
 
       {/* Footer */}
       <footer className="border-t border-cyan-900/20 py-8 px-6 text-center" style={{ background: '#03131a' }}>
-        <p className="text-cyan-200/20 text-sm">© 2025 MGShop Casa — Tutti i diritti riservati</p>
+        <p className="text-cyan-200/20 text-sm">© 2026 MGShop Casa — Tutti i diritti riservati</p>
       </footer>
     </div>
   )
