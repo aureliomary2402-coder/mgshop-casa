@@ -54,29 +54,84 @@ export default async function ShopPage({ searchParams }: { searchParams: Promise
   const { banners, products, categories, count } = await getData(params)
 
   return (
-    <main>
-      <HeroBanner banners={banners as Banner[]} />
-      <div className="mg-page-shell max-w-7xl mx-auto px-4 py-8">
-        <div className="lg:grid lg:grid-cols-[240px_1fr] lg:gap-8 lg:items-start">
-          <CategorySidebar categories={categories as Category[]} />
+    <main className="mg-shop-v5">
 
-          <div className="mg-content-column space-y-5 mt-5 lg:mt-0 min-w-0">
-            <LotteryTicketCard />
-            <LoyaltyBanner />
-            <Suspense><RecentlyViewed /></Suspense>
-            {products.length === 0 ? (
-              <div className="text-center py-20 animate-fade-in">
-                <div className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4" style={{ background: 'rgba(8,145,178,0.08)' }}>
-                  <span className="text-2xl">🔍</span>
-                </div>
-                <p className="text-lg font-medium text-slate-600">Nessun prodotto trovato</p>
+      <HeroBanner banners={banners as Banner[]} />
+
+      <div className="mg-shop-v5-shell">
+
+        <section className="mg-shop-v5-intro">
+          <div className="mg-shop-v5-intro-copy">
+            <span className="mg-shop-v5-eyebrow">MGSHOP · CATALOGO ONLINE</span>
+            <h2>Esplora il nostro shop</h2>
+            <p>
+              Tutto quello che ti serve per la casa, la persona e il bucato.
+              Scegli, aggiungi al carrello e ricevi il tuo ordine comodamente.
+            </p>
+          </div>
+
+          <div className="mg-shop-v5-counter">
+            <strong>{count}</strong>
+            <span>prodott{count === 1 ? 'o' : 'i'}</span>
+          </div>
+        </section>
+
+        <section className="mg-shop-v5-layout">
+
+          <aside className="mg-shop-v5-sidebar">
+            <div className="mg-shop-v5-sidebar-label">
+              <span>ESPLORA</span>
+              <span className="mg-shop-v5-sidebar-dot" />
+            </div>
+
+            <CategorySidebar categories={categories as Category[]} />
+
+            <div className="mg-shop-v5-side-note">
+              <span>⚡</span>
+              <div>
+                <strong>Trova quello che cerchi</strong>
+                <small>Usa la ricerca o scegli una categoria.</small>
               </div>
+            </div>
+          </aside>
+
+          <div className="mg-shop-v5-content">
+
+            <div className="mg-shop-v5-featured">
+              <LotteryTicketCard />
+              <LoyaltyBanner />
+            </div>
+
+            <Suspense>
+              <RecentlyViewed />
+            </Suspense>
+
+            {products.length === 0 ? (
+              <section className="mg-shop-v5-empty">
+                <div className="mg-shop-v5-empty-orb">🔍</div>
+                <span>RICERCA</span>
+                <h3>Nessun prodotto trovato</h3>
+                <p>Prova a modificare la ricerca o a scegliere un'altra categoria.</p>
+              </section>
             ) : (
               <>
-                <div className="flex items-center justify-between">
-                  <p className="text-sm text-slate-500">{count} prodott{count === 1 ? 'o' : 'i'}</p>
-                  <Suspense><SortDropdown /></Suspense>
-                </div>
+                <section className="mg-shop-v5-products-head">
+                  <div>
+                    <span>CATALOGO</span>
+                    <h3>
+                      {params.q
+                        ? <>Risultati per <strong>“{params.q}”</strong></>
+                        : params.categoria
+                          ? <>Prodotti selezionati</>
+                          : <>Scopri i prodotti</>}
+                    </h3>
+                  </div>
+
+                  <Suspense>
+                    <SortDropdown />
+                  </Suspense>
+                </section>
+
                 <ProductGrid
                   initialProducts={products as Product[]}
                   count={count}
@@ -86,8 +141,10 @@ export default async function ShopPage({ searchParams }: { searchParams: Promise
                 />
               </>
             )}
+
           </div>
-        </div>
+        </section>
+
       </div>
     </main>
   )
