@@ -4,7 +4,7 @@ import Link from 'next/link'
 import Image from 'next/image'
 import {
   Tag, Package, Star, ShoppingBag,
-  Truck, Banknote, ShieldCheck, Headphones, Sparkles,
+  Truck, Banknote, ShieldCheck, Headphones, Sparkles, MessageCircle, Gift,
 } from 'lucide-react'
 import { GlobalHeader } from '@/components/shop/global-header'
 import { AmbientBubbles } from '@/components/shop/ambient-bubbles'
@@ -23,6 +23,21 @@ const BOTTOM_ADVANTAGES = [
   { icon: Banknote, title: 'PAGAMENTO COMODO', sub: 'Paga alla consegna o al ritiro' },
   { icon: ShieldCheck, title: 'ACQUISTI SICURI', sub: 'Sito sicuro e affidabile' },
   { icon: Headphones, title: 'ASSISTENZA DEDICATA', sub: 'Siamo sempre disponibili per aiutarti' },
+]
+
+const WHY_CHOOSE = [
+  { icon: Package, title: 'Circa 500 prodotti', desc: 'Detersivi, pulizia, casa e cura della persona: tutto quello che serve in casa, in un solo posto.' },
+  { icon: Truck, title: 'Consegna o ritiro', desc: 'Consegna gratuita ad Aci Sant’Antonio, €2 nei paesi etnei. Oppure vieni a ritirare, senza costi.' },
+  { icon: Banknote, title: 'Paghi alla consegna', desc: 'Niente carte e niente registrazioni: paghi in contanti quando ricevi l’ordine o lo ritiri.' },
+  { icon: MessageCircle, title: 'Ordina anche su WhatsApp', desc: 'Invia l’ordine dal sito o su WhatsApp, con il riepilogo già pronto. Ti rispondiamo per confermare.' },
+  { icon: Gift, title: 'Fedeltà e premi', desc: 'Ogni consegna dà un timbro sulla tessera fedeltà. Consiglia MGShop a un’amica: lei ha il 5% di sconto, tu il 10% sul prossimo ordine.' },
+  { icon: Tag, title: 'Offerte e volantini', desc: 'Volantini digitali, pagina Promo e coupon sconto per risparmiare sui prodotti di tutti i giorni.' },
+]
+
+const STEPS = [
+  { n: '1', title: 'Scegli', desc: 'Aggiungi i prodotti al carrello e scrivi il tuo numero di telefono: non serve registrarsi.' },
+  { n: '2', title: 'Ordina', desc: 'Scegli consegna o ritiro e invia l’ordine dal sito oppure su WhatsApp.' },
+  { n: '3', title: 'Ricevi e paghi', desc: 'Ti contattiamo per confermare. Paghi in contanti alla consegna o al ritiro.' },
 ]
 
 export default function WelcomePage() {
@@ -157,6 +172,50 @@ export default function WelcomePage() {
               </div>
             ))}
           </div>
+        </div>
+      </section>
+
+      {/* ===== PERCHÉ SCEGLIERE ===== */}
+      <section className="max-w-5xl mx-auto px-4 sm:px-6 pb-10 sm:pb-14">
+        <h2 className="text-2xl sm:text-3xl font-extrabold text-center mb-2" style={{ color: '#0c2b36' }}>
+          Perché scegliere MGShop Casa
+        </h2>
+        <p className="text-sm text-slate-500 text-center mb-8">Qualità, convenienza e un servizio che senti vicino</p>
+        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          {WHY_CHOOSE.map(({ icon: Icon, title, desc }) => (
+            <div key={title} className="glass-card rounded-2xl p-5">
+              <span className="w-10 h-10 rounded-full flex items-center justify-center mb-3"
+                style={{ background: 'rgba(8,145,178,0.08)', color: '#0891b2' }}>
+                <Icon className="w-5 h-5" />
+              </span>
+              <h3 className="font-bold mb-1" style={{ color: '#0c2b36' }}>{title}</h3>
+              <p className="text-sm text-slate-500 leading-relaxed">{desc}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* ===== COME FUNZIONA ===== */}
+      <section className="max-w-5xl mx-auto px-4 sm:px-6 pb-14 sm:pb-20">
+        <h2 className="text-2xl sm:text-3xl font-extrabold text-center mb-8" style={{ color: '#0c2b36' }}>
+          Come funziona
+        </h2>
+        <div className="grid sm:grid-cols-3 gap-4">
+          {STEPS.map(({ n, title, desc }) => (
+            <div key={n} className="glass-card rounded-2xl p-5 text-center">
+              <div className="w-11 h-11 rounded-full mx-auto mb-3 flex items-center justify-center text-lg font-extrabold text-white"
+                style={{ background: 'linear-gradient(135deg,#0891b2,#06b6d4)' }}>{n}</div>
+              <h3 className="font-bold mb-1" style={{ color: '#0c2b36' }}>{title}</h3>
+              <p className="text-sm text-slate-500 leading-relaxed">{desc}</p>
+            </div>
+          ))}
+        </div>
+        <div className="text-center mt-8">
+          <Link href="/shop"
+            className="inline-flex items-center gap-2 px-7 py-3.5 rounded-full font-bold text-white transition-transform hover:scale-105 btn-press"
+            style={{ background: 'linear-gradient(135deg,#0891b2,#06b6d4)', boxShadow: '0 8px 20px rgba(8,145,178,0.3)' }}>
+            <ShoppingBag className="w-4 h-4" /> Inizia a fare shopping
+          </Link>
         </div>
       </section>
     </div>
