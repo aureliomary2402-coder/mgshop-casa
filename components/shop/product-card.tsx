@@ -83,11 +83,11 @@ export function ProductCard({ product, index = 0 }: { product: Product; index?: 
       style={{
         animationDelay: `${Math.min(index * 40, 400)}ms`,
         animationFillMode: 'both',
-        background: 'white',
-        border: '1px solid rgba(8,145,178,0.08)',
+        background: 'rgba(8, 29, 38, 0.96'),
+        border: '1px solid rgba(89,234,255,0.24)',
         boxShadow: isHovered
-          ? '0 20px 40px rgba(8,145,178,0.15), 0 8px 16px rgba(0,0,0,0.06)'
-          : '0 2px 8px rgba(0,0,0,0.04)',
+          ? '0 20px 40px rgba(0,220,255,0.16), 0 8px 16px rgba(0,0,0,0.22)'
+          : '0 6px 20px rgba(0,0,0,0.18)',
         transform: isHovered
           ? `perspective(800px) rotateX(${tilt.x}deg) rotateY(${tilt.y}deg) translateY(-6px) scale(1.02)`
           : 'perspective(800px) rotateX(0deg) rotateY(0deg) translateY(0px) scale(1)',
@@ -126,7 +126,7 @@ export function ProductCard({ product, index = 0 }: { product: Product; index?: 
         {product.torna_presto && <TornaPrestoStamp />}
         <button onClick={handleToggleWishlist}
           className="absolute top-2 right-2 w-8 h-8 rounded-full flex items-center justify-center btn-press transition-all z-10"
-          style={{ background: 'rgba(255,255,255,0.9)', boxShadow: '0 2px 8px rgba(0,0,0,0.12)' }}
+          style={{ background: 'rgba(8,29,38,0.96)', boxShadow: '0 2px 8px rgba(0,0,0,0.12)' }}
           aria-label="Aggiungi ai preferiti">
           <Heart className="w-4 h-4 transition-all" style={{ color: isWishlisted ? '#ef4444' : '#94a3b8', fill: isWishlisted ? '#ef4444' : 'none' }} />
         </button>
@@ -146,13 +146,13 @@ export function ProductCard({ product, index = 0 }: { product: Product; index?: 
 
       <div className="p-3">
         <h3 className="font-semibold text-sm line-clamp-2 mb-2 leading-snug transition-colors"
-          style={{ color: isHovered ? '#155e75' : '#0c2b36' }}>
+          style={{ color: isHovered ? '#7df3ff' : '#f2fbff' }}>
           {product.name}
         </h3>
         <div className="flex items-center justify-between">
           <span className="flex items-baseline gap-1.5">
             {hasDiscount && <span className="text-xs text-slate-400 line-through">€{product.old_price!.toFixed(2)}</span>}
-            <span className="font-bold text-base" style={{ color: hasDiscount ? '#dc2626' : '#0891b2' }}>{priceLabel}</span>
+            <span className="font-bold text-base" style={{ color: hasDiscount ? '#ff7373' : '#63eaff' }}>{priceLabel}</span>
           </span>
           <button
             onClick={handleAddToCart}
