@@ -607,3 +607,379 @@ main { animation: fadeIn 0.3s ease-out; }
   }
 }
 .neon-glow-navbar { animation: neon-pulse-navbar 2.6s ease-in-out infinite; }
+
+/* =========================================================
+   MGSHOP V5 — GLOBAL VISUAL SYSTEM
+   SOLO GRAFICA — NESSUNA LOGICA MODIFICATA
+   ========================================================= */
+
+:root {
+  --mg-cyan: #0891b2;
+  --mg-cyan-bright: #06b6d4;
+  --mg-cyan-light: #cffafe;
+  --mg-dark: #06151c;
+  --mg-dark-2: #0c2b36;
+  --mg-surface: #ffffff;
+  --mg-page: #f4fcfe;
+  --mg-text: #071923;
+  --mg-muted: #64748b;
+}
+
+/* ---------- BASE ---------- */
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background:
+    radial-gradient(circle at 10% 0%, rgba(103,232,249,.10), transparent 28%),
+    radial-gradient(circle at 90% 10%, rgba(8,145,178,.07), transparent 25%),
+    linear-gradient(180deg, #f2fbfd 0%, #ffffff 48%, #f7fcfd 100%);
+  color: var(--mg-text);
+}
+
+/* ---------- SELECTION ---------- */
+
+::selection {
+  background: rgba(8,145,178,.20);
+  color: #04202b;
+}
+
+/* ---------- SCROLLBAR ---------- */
+
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #edf8fa;
+}
+
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(
+    180deg,
+    var(--mg-cyan),
+    var(--mg-cyan-bright)
+  );
+  border-radius: 999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #06758f;
+}
+
+/* ---------- GLOBAL LINKS ---------- */
+
+a {
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* ---------- BUTTON FEEL ---------- */
+
+button,
+[role="button"] {
+  -webkit-tap-highlight-color: transparent;
+}
+
+.btn-press {
+  transition:
+    transform .2s ease,
+    box-shadow .2s ease,
+    background-color .2s ease;
+}
+
+.btn-press:hover {
+  transform: translateY(-2px);
+}
+
+.btn-press:active {
+  transform: translateY(0) scale(.97);
+}
+
+/* ---------- PREMIUM CARDS ---------- */
+
+.mg-premium-card,
+.glass-card,
+.liquid-glass-card {
+  border-radius: 24px;
+  transition:
+    transform .35s ease,
+    box-shadow .35s ease,
+    border-color .35s ease;
+}
+
+.mg-premium-card:hover {
+  transform: translateY(-5px);
+  box-shadow:
+    0 24px 60px rgba(8,145,178,.13),
+    0 4px 16px rgba(15,23,42,.05);
+}
+
+/* ---------- PAGE BACKGROUND ---------- */
+
+.theme-page-bg {
+  background:
+    radial-gradient(
+      circle at 15% 0%,
+      rgba(103,232,249,.14),
+      transparent 28%
+    ),
+    radial-gradient(
+      circle at 85% 12%,
+      rgba(8,145,178,.08),
+      transparent 24%
+    ),
+    linear-gradient(
+      180deg,
+      #eafbff 0%,
+      #f6fdff 38%,
+      #ffffff 100%
+    );
+}
+
+/* ---------- HERO ---------- */
+
+.theme-hero {
+  background:
+    radial-gradient(
+      circle at 20% 20%,
+      rgba(103,232,249,.24),
+      transparent 30%
+    ),
+    radial-gradient(
+      circle at 85% 15%,
+      rgba(8,145,178,.12),
+      transparent 28%
+    ),
+    linear-gradient(
+      160deg,
+      #d9f7fc 0%,
+      #eafbff 48%,
+      #ffffff 100%
+    );
+}
+
+.theme-hero-dark {
+  background:
+    radial-gradient(
+      circle at 18% 10%,
+      rgba(34,211,238,.18),
+      transparent 30%
+    ),
+    radial-gradient(
+      circle at 82% 30%,
+      rgba(8,145,178,.16),
+      transparent 28%
+    ),
+    linear-gradient(
+      135deg,
+      #04202b 0%,
+      #06303d 35%,
+      #0c2b36 62%,
+      #03131a 100%
+    );
+}
+
+/* ---------- HEADINGS ---------- */
+
+.text-shimmer {
+  background:
+    linear-gradient(
+      90deg,
+      #ffffff 0%,
+      #a5f3fc 45%,
+      #ffffff 70%,
+      #67e8f9 100%
+    );
+  background-size: 220% auto;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: mgTextShimmer 5s linear infinite;
+}
+
+@keyframes mgTextShimmer {
+  0% {
+    background-position: 200% center;
+  }
+  100% {
+    background-position: -20% center;
+  }
+}
+
+/* ---------- CYAN GLOW ---------- */
+
+.neon-glow-header {
+  box-shadow:
+    0 8px 30px rgba(8,145,178,.06),
+    0 1px 0 rgba(255,255,255,.8);
+}
+
+.mg-neon {
+  box-shadow:
+    0 0 0 1px rgba(34,211,238,.14),
+    0 0 24px rgba(34,211,238,.12);
+}
+
+/* ---------- INPUTS ---------- */
+
+input,
+textarea,
+select {
+  border-radius: 14px;
+  transition:
+    border-color .2s ease,
+    box-shadow .2s ease,
+    background-color .2s ease;
+}
+
+input:focus,
+textarea:focus,
+select:focus {
+  outline: none;
+  border-color: rgba(8,145,178,.55) !important;
+  box-shadow:
+    0 0 0 3px rgba(8,145,178,.10),
+    0 8px 24px rgba(8,145,178,.06);
+}
+
+/* ---------- SEARCH / DROPDOWNS ---------- */
+
+.animate-scale-in {
+  animation: mgScaleIn .18s ease-out;
+}
+
+@keyframes mgScaleIn {
+  from {
+    opacity: 0;
+    transform: translateY(-5px) scale(.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* ---------- PRODUCT SURFACES ---------- */
+
+.product-card,
+[class*="product-card"] {
+  transition:
+    transform .35s cubic-bezier(.2,.8,.2,1),
+    box-shadow .35s ease,
+    border-color .35s ease;
+}
+
+/* ---------- IMAGE SURFACES ---------- */
+
+img {
+  max-width: 100%;
+}
+
+/* ---------- MOBILE ---------- */
+
+@media (max-width: 767px) {
+
+  body {
+    background:
+      radial-gradient(
+        circle at 50% 0%,
+        rgba(103,232,249,.10),
+        transparent 25%
+      ),
+      linear-gradient(
+        180deg,
+        #f4fcfe 0%,
+        #ffffff 55%,
+        #f8fcfd 100%
+      );
+  }
+
+  .glass-card,
+  .liquid-glass-card {
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+  }
+
+  .mg-premium-card:hover {
+    transform: none;
+  }
+
+  .btn-press:hover {
+    transform: none;
+  }
+}
+
+/* ---------- REDUCED MOTION ---------- */
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: .01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: .01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* ---------- DARK PREMIUM SURFACES ---------- */
+
+.mg-dark-surface {
+  background:
+    radial-gradient(
+      circle at 15% 10%,
+      rgba(34,211,238,.12),
+      transparent 30%
+    ),
+    linear-gradient(
+      145deg,
+      #06151c,
+      #0a2630 55%,
+      #03131a
+    );
+}
+
+/* ---------- SOFT GLOW ORBS ---------- */
+
+.mg-glow-orb {
+  position: absolute;
+  border-radius: 999px;
+  pointer-events: none;
+  filter: blur(35px);
+  opacity: .35;
+  background: rgba(34,211,238,.28);
+}
+
+/* ---------- PREMIUM DIVIDER ---------- */
+
+.mg-divider {
+  height: 1px;
+  background:
+    linear-gradient(
+      90deg,
+      transparent,
+      rgba(8,145,178,.20),
+      transparent
+    );
+}
+
+/* ---------- FOCUS ACCESSIBILITY ---------- */
+
+:focus-visible {
+  outline: 2px solid rgba(8,145,178,.65);
+  outline-offset: 3px;
+}
+
+/* ---------- MOBILE TOUCH ---------- */
+
+@media (hover: none) {
+  .group:hover .group-hover\:scale-110 {
+    transform: none;
+  }
+}
+
+/* =========================================================
+   FINE MGSHOP V5
+   ========================================================= */
