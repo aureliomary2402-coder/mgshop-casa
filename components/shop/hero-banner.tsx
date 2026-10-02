@@ -3,8 +3,7 @@
 import { useState, useEffect } from 'react'
 import { ChevronLeft, ChevronRight, ShoppingBag, Truck, Banknote, Star, Package } from 'lucide-react'
 import type { Banner, Category } from '@/lib/types'
-import { AmbientBubbles } from './ambient-bubbles'
-import { PageHeroIcon } from './page-hero-icon'
+import { HeroBackdrop, AccentTitle } from './hero-backdrop'
 import { SOCIAL_LINKS, WHATSAPP_NUMBER, WhatsAppIcon } from './social-icons'
 
 const ADVANTAGES = [
@@ -13,6 +12,9 @@ const ADVANTAGES = [
   { icon: Star, label: 'Raccogli punti ad ogni acquisto' },
   { icon: Package, label: 'Lotteria ogni settimana' },
 ]
+
+const ARROW =
+  'absolute top-1/2 z-20 -translate-y-1/2 rounded-full border border-white/15 bg-white/10 p-2 text-cyan-200 backdrop-blur-md transition hover:bg-white/15'
 
 export function HeroBanner({ banners }: { banners: Banner[]; categories?: Category[] }) {
   const [currentIndex, setCurrentIndex] = useState(0)
@@ -29,22 +31,29 @@ export function HeroBanner({ banners }: { banners: Banner[]; categories?: Catego
 
   return (
     <section>
-      <div className="relative overflow-hidden theme-hero-dark">
-        <AmbientBubbles count={9} theme="dark" />
-        <div className="relative z-10 max-w-4xl mx-auto px-4 py-12 text-center">
-          <PageHeroIcon icon={ShoppingBag} color="#db2777" />
-          <div className="inline-flex items-center gap-2 rounded-full px-4 py-1.5 text-sm font-medium mb-4" style={{ background: 'rgba(8,145,178,0.15)', color: '#67e8f9', border: '1px solid rgba(103,232,249,0.3)' }}>
-            <ShoppingBag className="w-4 h-4" /> Il tuo negozio online
+      <div className="relative overflow-hidden bg-[#06151c]">
+        <HeroBackdrop />
+        <div className="relative z-10 mx-auto max-w-4xl px-5 pb-14 pt-12 text-center sm:px-8 sm:pb-20">
+          <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-2xl border border-cyan-300/20 bg-cyan-300/10">
+            <ShoppingBag className="h-7 w-7 text-cyan-300" />
           </div>
-          <h1 className="text-4xl md:text-5xl font-extrabold mb-3 text-shimmer">{title}</h1>
-          <p className="text-lg" style={{ color: 'rgba(224,247,250,0.75)' }}>{subtitle}</p>
+          <div className="mb-5">
+            <span className="inline-flex items-center gap-2 rounded-full border border-cyan-300/20 bg-cyan-300/10 px-4 py-2 text-xs font-bold uppercase tracking-[0.18em] text-cyan-200 backdrop-blur-md">
+              <span className="h-2 w-2 animate-pulse rounded-full bg-cyan-300" />
+              Il tuo negozio online
+            </span>
+          </div>
+          <h1 className="text-4xl font-black leading-[0.95] tracking-[-0.045em] text-white sm:text-6xl">
+            <AccentTitle text={title} />
+          </h1>
+          <p className="mx-auto mt-5 max-w-xl text-base leading-7 text-slate-300 sm:text-lg">{subtitle}</p>
 
           {banners.length > 1 && (
-            <div className="flex items-center justify-center gap-2 mt-6">
+            <div className="mt-7 flex items-center justify-center gap-2">
               {banners.map((_, i) => (
-                <button key={i} onClick={() => setCurrentIndex(i)}
+                <button key={i} onClick={() => setCurrentIndex(i)} aria-label={`Banner ${i + 1}`}
                   className="h-1.5 rounded-full transition-all"
-                  style={{ width: i === currentIndex ? 16 : 6, background: i === currentIndex ? '#db2777' : 'rgba(255,255,255,0.25)' }} />
+                  style={{ width: i === currentIndex ? 20 : 6, background: i === currentIndex ? '#22d3ee' : 'rgba(255,255,255,0.3)' }} />
               ))}
             </div>
           )}
@@ -53,49 +62,42 @@ export function HeroBanner({ banners }: { banners: Banner[]; categories?: Catego
         {banners.length > 1 && (
           <>
             <button onClick={() => setCurrentIndex((prev) => (prev - 1 + banners.length) % banners.length)}
-              className="absolute left-3 top-1/2 -translate-y-1/2 rounded-full p-2 transition z-20 hover:bg-white/10"
-              style={{ background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.15)' }}>
-              <ChevronLeft className="w-5 h-5" style={{ color: '#67e8f9' }} />
+              className={`${ARROW} left-3`} aria-label="Banner precedente">
+              <ChevronLeft className="h-5 w-5" />
             </button>
             <button onClick={() => setCurrentIndex((prev) => (prev + 1) % banners.length)}
-              className="absolute right-3 top-1/2 -translate-y-1/2 rounded-full p-2 transition z-20 hover:bg-white/10"
-              style={{ background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.15)' }}>
-              <ChevronRight className="w-5 h-5" style={{ color: '#67e8f9' }} />
+              className={`${ARROW} right-3`} aria-label="Banner successivo">
+              <ChevronRight className="h-5 w-5" />
             </button>
           </>
         )}
       </div>
 
-      <div className="relative overflow-hidden" style={{ background: 'linear-gradient(180deg,#eafbff 0%,#f5fdff 45%,#ffffff 100%)' }}>
-        <AmbientBubbles count={10} theme="light" />
-        <div className="relative z-10 max-w-7xl mx-auto px-6 py-6">
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-px rounded-2xl overflow-hidden"
-            style={{ background: 'rgba(8,145,178,0.1)' }}>
-            {ADVANTAGES.map((a, i) => (
-              <div key={i} className="flex items-center gap-2.5 p-3.5 sm:p-4" style={{ background: 'rgba(255,255,255,0.85)' }}>
-                <span className="w-8 h-8 sm:w-9 sm:h-9 rounded-full flex items-center justify-center shrink-0"
-                  style={{ background: 'rgba(8,145,178,0.1)', color: '#0891b2' }}>
-                  <a.icon className="w-4 h-4" />
-                </span>
-                <span className="text-[11px] sm:text-xs font-semibold leading-snug" style={{ color: '#0c2b36' }}>{a.label}</span>
-              </div>
-            ))}
-          </div>
-            <a
-            href={SOCIAL_LINKS.whatsappChat}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="mt-3 flex items-center justify-center gap-2.5 w-full rounded-2xl p-3.5 sm:p-4 transition-transform hover:-translate-y-0.5"
-            style={{ background: 'rgba(37,211,102,0.1)', border: '1px solid rgba(37,211,102,0.25)' }}
-          >
-            <span className="w-8 h-8 sm:w-9 sm:h-9 rounded-full flex items-center justify-center shrink-0 text-white" style={{ background: '#25d366' }}>
-              <WhatsAppIcon size={16} />
-            </span>
-            <span className="text-[11px] sm:text-xs font-semibold" style={{ color: '#0c2b36' }}>
-              Scrivici su WhatsApp · {WHATSAPP_NUMBER}
-            </span>
-          </a>
+      <div className="border-b border-slate-200 bg-white">
+        <div className="mx-auto grid max-w-7xl grid-cols-2 divide-x divide-y divide-slate-100 sm:grid-cols-4 sm:divide-y-0">
+          {ADVANTAGES.map((a, i) => (
+            <div key={i} className="flex items-center gap-3 px-4 py-4 sm:px-6">
+              <a.icon className="h-5 w-5 shrink-0 text-cyan-600" />
+              <span className="text-xs font-bold leading-snug text-slate-800">{a.label}</span>
+            </div>
+          ))}
         </div>
+      </div>
+
+      <div className="bg-[#f0fbfd] px-5 py-5 sm:px-8">
+        <a
+          href={SOCIAL_LINKS.whatsappChat}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="mx-auto flex max-w-7xl items-center justify-center gap-3 rounded-2xl border border-emerald-200 bg-white p-4 transition hover:-translate-y-0.5"
+        >
+          <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#25d366] text-white">
+            <WhatsAppIcon size={17} />
+          </span>
+          <span className="text-xs font-bold text-slate-800 sm:text-sm">
+            Scrivici su WhatsApp · {WHATSAPP_NUMBER}
+          </span>
+        </a>
       </div>
     </section>
   )

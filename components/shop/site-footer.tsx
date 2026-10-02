@@ -20,8 +20,8 @@ export function SiteFooter() {
   if (pathname?.startsWith('/mgadmin-panel')) return null
 
   return (
-    <footer className="relative overflow-hidden mt-10 pb-24"
-      style={{ background: 'linear-gradient(135deg,#0c2b36 0%,#0e3644 55%,#0c2b36 100%)' }}>
+    <footer className="relative overflow-hidden pb-24"
+      style={{ background: '#041017' }}>
       {/* Bolle decorative leggere, coerenti col resto del sito */}
       <div className="absolute inset-0 pointer-events-none opacity-60">
         {[
@@ -59,7 +59,7 @@ export function SiteFooter() {
           </div>
 
           <div>
-            <p className="text-xs font-semibold uppercase tracking-wider text-cyan-300/60 mb-3">Link utili</p>
+            <p className="text-xs font-semibold uppercase tracking-wider text-cyan-300 mb-3">Link utili</p>
             <ul className="grid grid-cols-2 gap-x-4 gap-y-2">
               {LINKS.map(l => (
                 <li key={l.href}>
@@ -72,7 +72,7 @@ export function SiteFooter() {
           </div>
 
           <div>
-            <p className="text-xs font-semibold uppercase tracking-wider text-cyan-300/60 mb-3">Seguici sui social</p>
+            <p className="text-xs font-semibold uppercase tracking-wider text-cyan-300 mb-3">Seguici sui social</p>
             <div className="flex items-center gap-2.5">
               <a href={SOCIAL_LINKS.instagram} target="_blank" rel="noopener noreferrer" aria-label="Instagram"
                 className="w-10 h-10 rounded-full flex items-center justify-center transition-transform hover:scale-110 btn-press"
@@ -103,7 +103,7 @@ export function SiteFooter() {
           </div>
         </div>
 
-        <div className="mt-10 pt-6 flex flex-col sm:flex-row items-center justify-center gap-1.5 text-xs text-cyan-200/40"
+        <div className="mt-10 pt-6 flex flex-col sm:flex-row items-center justify-center gap-1.5 text-xs text-slate-400"
           style={{ borderTop: '1px solid rgba(255,255,255,0.08)' }}>
           <span className="flex items-center gap-1.5">
             <Heart className="w-3 h-3 text-pink-400" style={{ fill: '#f472b6' }} />

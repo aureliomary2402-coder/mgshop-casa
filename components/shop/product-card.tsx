@@ -79,12 +79,12 @@ export function ProductCard({ product, index = 0 }: { product: Product; index?: 
   return (
     <div
       ref={cardRef}
-      className="group relative rounded-2xl overflow-hidden animate-fade-in-up cursor-pointer"
+      className="group relative rounded-[24px] overflow-hidden animate-fade-in-up cursor-pointer"
       style={{
         animationDelay: `${Math.min(index * 40, 400)}ms`,
         animationFillMode: 'both',
         background: '#ffffff',
-        border: '1px solid rgba(8,145,178,0.14)',
+        border: '1px solid #e2e8f0',
         boxShadow: isHovered
           ? '0 20px 44px rgba(8,145,178,0.18), 0 8px 16px rgba(5,70,85,0.08)'
           : '0 6px 20px rgba(5,70,85,0.08)',

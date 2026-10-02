@@ -1,15 +1,14 @@
 import Link from 'next/link'
 import type { ComponentType, CSSProperties, ReactNode } from 'react'
 import { ArrowLeft, ShoppingBag } from 'lucide-react'
-import { PageHeroIcon } from '@/components/shop/page-hero-icon'
-import { AmbientBubbles } from '@/components/shop/ambient-bubbles'
+import { HeroBackdrop, AccentTitle } from '@/components/shop/hero-backdrop'
 
 // Hero condiviso da tutte le pagine "vetrina" (volantino, promo, lotteria,
-// consegne...) cosi' che struttura, spaziatura e stile del badge restino
-// identici ovunque: cambia solo icona/colore/testo passati come props.
+// consegne, recensioni, social, preferiti, carrello) con lo stesso stile
+// della landing: cambia solo icona/testo passati come props.
 interface PageHeroProps {
   icon: ComponentType<{ className?: string; style?: CSSProperties }>
-  iconColor: string
+  iconColor?: string
   title: ReactNode
   subtitle?: ReactNode
   badge?: { icon: ComponentType<{ className?: string }>; text: string }
@@ -18,9 +17,11 @@ interface PageHeroProps {
   children?: ReactNode
 }
 
+const PILL =
+  'inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/10 px-4 py-2.5 text-sm font-semibold text-white backdrop-blur-md transition hover:bg-white/15'
+
 export function PageHero({
-  icon,
-  iconColor,
+  icon: Icon,
   title,
   subtitle,
   badge,
@@ -31,20 +32,19 @@ export function PageHero({
   const BadgeIcon = badge?.icon
 
   return (
-    <div className="relative overflow-hidden theme-hero-dark">
-      <AmbientBubbles count={9} theme="dark" />
-      <div className={`relative z-10 ${maxWidth} mx-auto px-4 py-12 text-center`}>
-        <div className="flex items-center justify-between mb-6">
-          <Link href="/shop" className="inline-flex items-center gap-2 text-sm transition-colors" style={{ color: '#67e8f9' }}>
-            <ArrowLeft className="w-4 h-4" /> Negozio
+    <section className="relative overflow-hidden bg-[#06151c]">
+      <HeroBackdrop />
+      <div className={`relative z-10 ${maxWidth} mx-auto px-5 pb-14 pt-6 text-center sm:px-8 sm:pb-20`}>
+        <div className="mb-8 flex items-center justify-between">
+          <Link href="/shop" className={PILL}>
+            <ArrowLeft className="h-4 w-4" /> Negozio
           </Link>
           {cart && (
-            <Link href={cart.href} className="relative flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium transition-all hover:bg-white/10"
-              style={{ color: '#e0f7fa', border: '1px solid rgba(255,255,255,0.15)', background: 'rgba(255,255,255,0.08)' }}>
-              <ShoppingBag className="w-4 h-4" />
+            <Link href={cart.href} className={`relative ${PILL}`}>
+              <ShoppingBag className="h-4 w-4" />
               Carrello
               {cart.count > 0 && (
-                <span className="absolute -top-1 -right-1 w-5 h-5 text-white text-xs rounded-full flex items-center justify-center font-bold" style={{ background: 'linear-gradient(135deg,#0891b2,#06b6d4)' }}>
+                <span className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-cyan-400 text-xs font-black text-[#062029]">
                   {cart.count}
                 </span>
               )}
@@ -52,22 +52,28 @@ export function PageHero({
           )}
         </div>
 
-        <PageHeroIcon icon={icon} color={iconColor} />
+        <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-2xl border border-cyan-300/20 bg-cyan-300/10">
+          <Icon className="h-7 w-7 text-cyan-300" />
+        </div>
 
         {badge && BadgeIcon && (
-          <div className="inline-flex items-center gap-2 rounded-full px-4 py-1.5 text-sm font-medium mb-4" style={{ background: 'rgba(8,145,178,0.15)', color: '#67e8f9', border: '1px solid rgba(103,232,249,0.3)' }}>
-            <BadgeIcon className="w-4 h-4" /> {badge.text}
+          <div className="mb-5">
+            <span className="inline-flex items-center gap-2 rounded-full border border-cyan-300/20 bg-cyan-300/10 px-4 py-2 text-xs font-bold uppercase tracking-[0.18em] text-cyan-200 backdrop-blur-md">
+              <BadgeIcon className="h-4 w-4" /> {badge.text}
+            </span>
           </div>
         )}
 
-        <h1 className="text-4xl md:text-5xl font-extrabold mb-3 text-shimmer">{title}</h1>
+        <h1 className="text-4xl font-black leading-[0.95] tracking-[-0.045em] text-white sm:text-6xl">
+          <AccentTitle text={title} />
+        </h1>
         {subtitle && (
-          <p className={`text-lg ${children ? 'mb-6' : ''}`} style={{ color: 'rgba(224,247,250,0.75)' }}>
+          <p className={`mx-auto mt-5 max-w-xl text-base leading-7 text-slate-300 sm:text-lg ${children ? 'mb-6' : ''}`}>
             {subtitle}
           </p>
         )}
         {children}
       </div>
-    </div>
+    </section>
   )
 }

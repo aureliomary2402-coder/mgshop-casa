@@ -712,23 +712,6 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* =========================================================
-          FOOTER
-      ========================================================= */}
-      <footer className="bg-[#041017] px-5 py-8 text-center sm:px-8">
-        <Image
-          src="/logo/mgshop-logo-neon.png"
-          alt="MGShop"
-          width={130}
-          height={55}
-          className="mx-auto mb-4 h-auto w-[110px] opacity-80"
-        />
-
-        <p className="text-xs text-slate-600">
-          © {new Date().getFullYear()} MGShop · Tutto per la tua casa,
-          consegnato a casa tua.
-        </p>
-      </footer>
 
     </main>
   );
