@@ -350,33 +350,75 @@ export default function HomePage() {
               <Link
                 href={category.href}
                 key={category.title}
-                className="group relative min-h-[230px] overflow-hidden rounded-[28px] border border-slate-200 bg-white p-5 shadow-[0_15px_50px_rgba(15,23,42,.06)] transition duration-500 hover:-translate-y-2 hover:border-cyan-200 hover:shadow-[0_25px_70px_rgba(8,145,178,.13)] sm:min-h-[270px] sm:p-7"
+                className={`group relative min-h-[230px] overflow-hidden rounded-[28px] border border-slate-200 bg-white p-5 shadow-[0_15px_50px_rgba(15,23,42,.06)] transition-all duration-500 [transform-style:preserve-3d] hover:-translate-y-3 hover:[transform:perspective(900px)_rotateX(2deg)_rotateY(-2deg)_translateY(-12px)] hover:border-cyan-300 hover:shadow-[0_30px_80px_rgba(8,145,178,.18)] sm:min-h-[270px] sm:p-7 ${
+                  index === 0
+                    ? "hover:shadow-[0_30px_80px_rgba(8,145,178,.20)]"
+                    : index === 1
+                      ? "hover:border-orange-300 hover:shadow-[0_30px_80px_rgba(249,115,22,.18)]"
+                      : index === 2
+                        ? "hover:border-cyan-300"
+                        : "hover:border-emerald-300 hover:shadow-[0_30px_80px_rgba(16,185,129,.16)]"
+                }`}
               >
-                <div className="absolute right-[-35px] top-[-35px] h-32 w-32 rounded-full bg-cyan-50 transition duration-500 group-hover:scale-150" />
+                <div
+                  className={`absolute right-[-55px] top-[-55px] h-40 w-40 rounded-full blur-[2px] transition-all duration-700 group-hover:scale-[1.7] group-hover:opacity-80 ${
+                    index === 1
+                      ? "bg-orange-100"
+                      : index === 3
+                        ? "bg-emerald-50"
+                        : "bg-cyan-50"
+                  }`}
+                />
 
-                <div className="relative">
-                  <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-slate-50 text-3xl shadow-inner transition duration-500 group-hover:rotate-3 group-hover:scale-110">
-                    {category.icon}
+                <div className="absolute bottom-[-70px] left-[-70px] h-36 w-36 rounded-full bg-cyan-100/30 blur-2xl transition duration-700 group-hover:scale-150" />
+
+                <div className="relative z-10 h-full [transform:translateZ(18px)]">
+                  <div
+                    className={`flex h-16 w-16 items-center justify-center rounded-2xl bg-slate-50 text-3xl shadow-inner transition-all duration-500 group-hover:-translate-y-1 group-hover:rotate-3 group-hover:scale-110 ${
+                      index === 1
+                        ? "group-hover:bg-orange-50"
+                        : index === 3
+                          ? "group-hover:bg-emerald-50"
+                          : "group-hover:bg-cyan-50"
+                    }`}
+                  >
+                    <span className="transition-transform duration-500 group-hover:scale-110">
+                      {category.icon}
+                    </span>
                   </div>
 
                   <div className="mt-12">
-                    <div className="mb-1 text-[10px] font-black uppercase tracking-[.2em] text-cyan-600">
+                    <div
+                      className={`mb-1 text-[10px] font-black uppercase tracking-[.2em] ${
+                        index === 1 ? "text-orange-500" : "text-cyan-600"
+                      }`}
+                    >
                       0{index + 1}
                     </div>
 
-                    <h3 className="text-xl font-black text-slate-950 sm:text-2xl">
+                    <h3 className="text-xl font-black tracking-[-.02em] text-slate-950 sm:text-2xl">
                       {category.title}
                     </h3>
 
-                    <p className="mt-1 text-xs text-slate-500">
+                    <p className="mt-1 max-w-[170px] text-xs leading-5 text-slate-500">
                       {category.subtitle}
                     </p>
                   </div>
 
-                  <div className="absolute bottom-0 right-0 flex h-9 w-9 items-center justify-center rounded-full bg-slate-950 text-white transition duration-300 group-hover:bg-cyan-500">
-                    <ChevronRight size={17} />
+                  <div
+                    className={`absolute bottom-0 right-0 flex h-10 w-10 items-center justify-center rounded-full bg-slate-950 text-white shadow-lg transition-all duration-500 group-hover:scale-110 group-hover:rotate-[-8deg] ${
+                      index === 1
+                        ? "group-hover:bg-orange-500"
+                        : index === 3
+                          ? "group-hover:bg-emerald-500"
+                          : "group-hover:bg-cyan-500"
+                    }`}
+                  >
+                    <ChevronRight size={18} className="transition-transform duration-300 group-hover:translate-x-0.5" />
                   </div>
                 </div>
+
+                <div className="pointer-events-none absolute inset-0 rounded-[28px] border border-white/70 opacity-0 transition duration-500 group-hover:opacity-100" />
               </Link>
             ))}
           </div>
