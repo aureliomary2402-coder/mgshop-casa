@@ -8,11 +8,17 @@ async function isAuthenticated() {
   return cookieStore.get('admin_session')?.value === 'authenticated'
 }
 
-webpush.setVapidDetails(
-  process.env.VAPID_EMAIL!,
-  process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY!,
-  process.env.VAPID_PRIVATE_KEY!
-)
+const vapidEmail = process.env.VAPID_EMAIL
+const vapidPublicKey = process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY
+const vapidPrivateKey = process.env.VAPID_PRIVATE_KEY
+
+if (vapidEmail && vapidPublicKey && vapidPrivateKey) {
+  webpush.setVapidDetails(
+    vapidEmail,
+    vapidPublicKey,
+    vapidPrivateKey
+  )
+}
 
 // Manda un promemoria push mirato a chi ha questi prodotti nei preferiti,
 // usando l'iscrizione notifiche collegata alla stessa sessione del browser

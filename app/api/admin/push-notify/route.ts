@@ -6,11 +6,17 @@ async function isAuthenticated() {
   const cookieStore = await cookies()
   return cookieStore.get('admin_session')?.value === 'authenticated'
 }
-webpush.setVapidDetails(
-  process.env.VAPID_EMAIL!,
-  process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY!,
-  process.env.VAPID_PRIVATE_KEY!
-)
+const vapidEmail = process.env.VAPID_EMAIL
+const vapidPublicKey = process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY
+const vapidPrivateKey = process.env.VAPID_PRIVATE_KEY
+
+if (vapidEmail && vapidPublicKey && vapidPrivateKey) {
+  webpush.setVapidDetails(
+    vapidEmail,
+    vapidPublicKey,
+    vapidPrivateKey
+  )
+}
 export async function POST(request: NextRequest) {
   if (!(await isAuthenticated())) {
     return NextResponse.json({ error: 'Non autorizzato' }, { status: 401 })
