@@ -11,7 +11,7 @@ import { CodBanner } from './cod-banner'
 import { RecentlyViewed } from './recently-viewed'
 import { PageHero } from './page-hero'
 import { subscribeToPush } from '@/lib/push-subscribe'
-import { WHATSAPP_NUMBER, SOCIAL_LINKS } from './social-icons'
+import { WHATSAPP_NUMBER, SOCIAL_LINKS, WhatsAppIcon } from './social-icons'
 
 export function CartContent({ scope = 'shop' }: { scope?: string }) {
   const [mounted, setMounted] = useState(false)
@@ -48,6 +48,7 @@ export function CartContent({ scope = 'shop' }: { scope?: string }) {
   const [finalPaidTotal, setFinalPaidTotal] = useState<number | null>(null)
   const [showNotifyReminder, setShowNotifyReminder] = useState(false)
   const [notifyActivating, setNotifyActivating] = useState(false)
+  const [whatsappLink, setWhatsappLink] = useState('')
 
   const items = useCartStore(s => s.items)
   const addItem = useCartStore(s => s.addItem)
@@ -275,6 +276,60 @@ export function CartContent({ scope = 'shop' }: { scope?: string }) {
     finally { setSubmitting(false) }
   }
 
+  // Ordine via WhatsApp: salva l'ordine con lo stesso checkout di sempre (punti
+  // fedeltà, lotteria, notifica all'admin) e prepara il messaggio di riepilogo
+  // da inviare su WhatsApp. L'indirizzo è facoltativo: se manca viene salvato
+  // "Da concordare su WhatsApp". Il normale "Invia ordine" non cambia.
+  const handleWhatsAppOrder = async () => {
+    setError('')
+    if (!phone.trim()) { setError('Inserisci il tuo numero di telefono'); return }
+    if (!onlyLotteryInCart && !deliveryMethod) { setError('Scegli se vuoi la consegna a domicilio o vieni a ritirare'); return }
+    setSubmitting(true)
+    try {
+      const finalDeliveryMethod = onlyLotteryInCart ? null : deliveryMethod
+      const finalAddress = finalDeliveryMethod === 'consegna' ? (address.trim() || 'Da concordare su WhatsApp') : null
+      const itemsSnapshot = items
+      const res = await fetch('/api/checkout', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ phone_number: phone, items, total, coupon_code: couponCode || null, ticket_number_choices: chosenNumbers, delivery_method: finalDeliveryMethod, delivery_address: finalAddress, referred_by_phone: referredByPhone.trim() || null }) })
+      const data = await res.json().catch(() => null)
+      if (!res.ok) {
+        if (data?.unavailable_numbers?.length) {
+          setChosenNumbers(prev => prev.filter(n => !data.unavailable_numbers.includes(n)))
+          setTakenNumbers(prev => Array.from(new Set([...prev, ...data.unavailable_numbers])))
+          setShowNumberPicker(true)
+        }
+        if (data?.ticket_price_changed && typeof data.ticket_price === 'number') {
+          setTicketPrice(data.ticket_price)
+        }
+        setError(data?.error || 'Si è verificato un errore. Riprova.'); setSubmitting(false); return
+      }
+      const paidTotal = typeof data.final_total === 'number' ? data.final_total : total
+      const itemsText = itemsSnapshot.map(({ product, quantity, customization }) => {
+        const custom = customization && customization.length > 0
+          ? ` (${customization.map(c => `${c.label}: ${c.value}`).join(', ')})`
+          : ''
+        return `- ${product.name}${custom} x${quantity}`
+      }).join('\n')
+      const orderRef = data.order?.id ? ` (n. ${String(data.order.id).slice(0, 8).toUpperCase()})` : ''
+      const deliveryText = finalDeliveryMethod === 'consegna' ? `Consegna a domicilio: ${finalAddress}` : finalDeliveryMethod === 'ritiro' ? 'Ritiro di persona' : ''
+      const msg = `Ciao! Ho appena inviato un ordine su MGShop Casa${orderRef}:\n${itemsText}\n\nTotale: €${paidTotal.toFixed(2)}${deliveryText ? `\n${deliveryText}` : ''}\nIl mio numero: ${phone}`
+      setWhatsappLink(`${SOCIAL_LINKS.whatsappChat}?text=${encodeURIComponent(msg)}`)
+      if (data.ticket_numbers?.length) setTicketNumbers(data.ticket_numbers)
+      setAppliedReferralPercent(data.referral_discount_percent || 0)
+      setFinalPaidTotal(typeof data.final_total === 'number' ? data.final_total : null)
+      setChosenNumbers([])
+      setDeliveryMethod(null); setAddress(''); setReferredByPhone(''); setShowReferralField(false)
+      setReferralPreviewPercent(0); setReferralPreviewSource(null); setReferralPreviewError('')
+      try {
+        const sessionId = sessionStorage.getItem('mgshop-session-id')
+        sessionStorage.removeItem('mgshop-checkout-phone')
+        if (sessionId) fetch('/api/analytics/cart-abandon', { method: 'DELETE', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ sessionId }) }).catch(() => {})
+      } catch {}
+      clearCart(); setSubmitted(true)
+      subscribeToPush(phone).catch(() => {})
+    } catch { setError('Si è verificato un errore. Riprova.') }
+    finally { setSubmitting(false) }
+  }
+
   if (!mounted) return (
     <>
       <PageHero icon={ShoppingBag} iconColor="#22d3ee" title="Carrello" subtitle="Rivedi i prodotti scelti e completa l'ordine." />
@@ -315,6 +370,13 @@ export function CartContent({ scope = 'shop' }: { scope?: string }) {
       </div>
       <h2 className="text-3xl font-bold mb-3" style={{color:'#0c2b36'}}>Ordine inviato!</h2>
       <p className="text-slate-500 mb-2">Ti contatteremo presto su WhatsApp per confermare.</p>
+      {whatsappLink && (
+        <a href={whatsappLink} target="_blank" rel="noopener noreferrer"
+          className="flex items-center justify-center gap-2 w-full max-w-xs mx-auto font-bold px-6 py-3.5 rounded-2xl text-white mt-3 mb-4"
+          style={{ background: '#16a34a' }}>
+          <WhatsAppIcon size={20} /> Apri WhatsApp con il riepilogo
+        </a>
+      )}
       {ticketNumbers.length > 0 && (
         <div className="mb-2">
           <p className="text-sm font-bold text-slate-700 mb-2">I tuoi numeri per la lotteria:</p>
@@ -633,6 +695,12 @@ export function CartContent({ scope = 'shop' }: { scope?: string }) {
             <button type="submit" disabled={submitting || referralPreviewLoading || (showReferralField && !!referredByPhone.trim() && !!referralPreviewError)} className="w-full py-3.5 rounded-xl font-bold text-white transition-all hover:scale-[1.02] btn-press disabled:opacity-60" style={{background:'linear-gradient(135deg,#0891b2,#06b6d4)',boxShadow:'0 8px 20px rgba(8,145,178,0.3)'}}>
               {submitting?'Invio in corso...':'Invia ordine'}
             </button>
+            <button type="button" onClick={handleWhatsAppOrder} disabled={submitting || referralPreviewLoading || (showReferralField && !!referredByPhone.trim() && !!referralPreviewError)}
+              className="w-full py-3.5 rounded-xl font-bold text-white flex items-center justify-center gap-2 transition-all hover:scale-[1.02] btn-press disabled:opacity-60"
+              style={{ background: '#16a34a' }}>
+              <WhatsAppIcon size={18} /> {submitting ? 'Invio in corso...' : 'Ordina su WhatsApp'}
+            </button>
+            <p className="text-[11px] text-center text-slate-400 -mt-1">Su WhatsApp puoi dare l&apos;indirizzo anche in chat.</p>
           </form>
           <p className="text-xs text-center text-slate-400">Ti contatteremo su WhatsApp per confermare</p>
 
