@@ -24,7 +24,7 @@ const ZONES = [
 export default function ConsegnePage() {
   const openChat = useUIPanelsStore(s => s.openChat)
   return (
-    <div className="min-h-screen" style={{ background: 'linear-gradient(180deg,#eafbff 0%,#f5fdff 45%,#ffffff 100%)' }}>
+    <div className="min-h-screen" style={{ background: 'linear-gradient(180deg,#e9fbff 0%,#f5fdff 38%,#ffffff 100%)' }}>
       {/* Hero */}
       <PageHero
         icon={MapPin}
@@ -37,7 +37,7 @@ export default function ConsegnePage() {
       {/* Content */}
       <div className="relative overflow-hidden">
         <AmbientBubbles count={16} theme="light" />
-        <div className="relative z-10 max-w-3xl mx-auto px-4 py-10 space-y-6">
+        <div className="mg-page-shell relative z-10 max-w-3xl mx-auto px-4 py-10 space-y-6">
           <Reveal>
             <div className="grid sm:grid-cols-2 gap-5">
               {ZONES.map(z => (

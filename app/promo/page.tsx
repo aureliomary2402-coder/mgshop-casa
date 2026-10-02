@@ -87,7 +87,7 @@ function PromoProductCard({ product, salePrice, onOpenDetail }: { product: Produ
 
   return (
     <div onClick={onOpenDetail} role="button"
-      className="bg-white rounded-2xl overflow-hidden shadow-sm hover:-translate-y-1 transition-all group cursor-pointer"
+      className="mg-premium-product-card bg-white rounded-2xl overflow-hidden shadow-sm hover:-translate-y-1 transition-all group cursor-pointer"
       style={{ border: '1px solid rgba(8,145,178,0.1)', boxShadow: '0 4px 20px rgba(8,145,178,0.08)' }}>
       <div className="aspect-square overflow-hidden relative" style={{ background: 'linear-gradient(135deg,#f0fbfd,#cffafe)' }}>
         {(product.card_image || product.cover_image)
@@ -265,7 +265,7 @@ export default function PromoPage() {
   },[])
 
   if(loading) return (
-    <div className="min-h-screen" style={{ background: 'linear-gradient(180deg,#eafbff 0%,#f5fdff 45%,#ffffff 100%)' }}>
+    <div className="min-h-screen" style={{ background: 'linear-gradient(180deg,#e9fbff 0%,#f5fdff 38%,#ffffff 100%)' }}>
       <div className="max-w-4xl mx-auto px-4 py-12 space-y-6">
         <div className="skeleton h-40 rounded-3xl" />
         <div className="skeleton h-10 w-2/3 mx-auto rounded-lg" />
@@ -277,7 +277,7 @@ export default function PromoPage() {
   )
 
   if(!promo||!promo.is_active) return (
-    <div className="min-h-screen flex items-center justify-center px-4" style={{ background: 'linear-gradient(180deg,#eafbff 0%,#f5fdff 45%,#ffffff 100%)' }}>
+    <div className="min-h-screen flex items-center justify-center px-4" style={{ background: 'linear-gradient(180deg,#e9fbff 0%,#f5fdff 38%,#ffffff 100%)' }}>
       <div className="text-center max-w-md">
         <div className="w-24 h-24 rounded-full flex items-center justify-center mx-auto mb-6" style={{background:'rgba(8,145,178,0.08)',border:'2px dashed rgba(8,145,178,0.2)'}}><ShoppingBag className="w-12 h-12" style={{color:'rgba(8,145,178,0.4)'}}/></div>
         <h1 className="text-2xl font-bold mb-2" style={{color:'#0c2b36'}}>Nessuna promo attiva</h1>
@@ -288,7 +288,7 @@ export default function PromoPage() {
   )
 
   return (
-    <div className="min-h-screen" style={{ background: 'linear-gradient(180deg,#eafbff 0%,#f5fdff 45%,#ffffff 100%)' }}>
+    <div className="min-h-screen" style={{ background: 'linear-gradient(180deg,#e9fbff 0%,#f5fdff 38%,#ffffff 100%)' }}>
       {/* Hero */}
       <PageHero
         icon={Tag}
@@ -309,7 +309,7 @@ export default function PromoPage() {
       {/* Content */}
       <div className="relative overflow-hidden">
         <AmbientBubbles count={16} theme="light" />
-        <div className="relative z-10 max-w-5xl mx-auto px-4 py-10 space-y-10">
+        <div className="mg-page-shell relative z-10 max-w-5xl mx-auto px-4 py-10 space-y-10">
           {(promo.image_url||promo.content)&&(
             <Reveal className={`grid gap-6 ${promo.image_url&&promo.content?'md:grid-cols-2':''}`}>
               {promo.image_url&&<div className="relative rounded-2xl overflow-hidden aspect-video" style={{boxShadow:'0 16px 40px rgba(8,145,178,0.12)'}}><Image src={promo.image_url} alt="Promo" fill sizes="(max-width: 768px) 100vw, 50vw" className="object-cover"/></div>}

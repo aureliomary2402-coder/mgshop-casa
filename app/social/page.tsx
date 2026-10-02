@@ -81,7 +81,7 @@ export default function SocialPage() {
         subtitle="Tutti i nostri canali in un unico posto: novità, promo e curiosità di MGShop Casa."
       />
 
-      <div className="relative max-w-4xl mx-auto px-4 pb-20 -mt-4">
+      <div className="mg-page-shell relative max-w-4xl mx-auto px-4 pb-20 -mt-4">
         <button
           onClick={openChat}
           className="group relative flex items-center gap-4 w-full rounded-2xl p-5 mb-5 transition-transform hover:-translate-y-1 neon-glow text-left"

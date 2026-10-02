@@ -47,7 +47,7 @@ export default function PreferitiPage() {
     return (
       <>
         <PageHero icon={Heart} iconColor="#f472b6" title="Preferiti" subtitle="I prodotti che hai salvato, pronti quando vuoi tu." />
-        <div className="max-w-5xl mx-auto px-4 py-8">
+        <div className="mg-page-shell max-w-5xl mx-auto px-4 py-10">
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
             {Array.from({ length: 4 }).map((_, i) => <div key={i} className="skeleton aspect-[3/4] rounded-2xl" />)}
           </div>
@@ -59,7 +59,7 @@ export default function PreferitiPage() {
   return (
     <>
       <PageHero icon={Heart} iconColor="#f472b6" title="Preferiti" subtitle="I prodotti che hai salvato, pronti quando vuoi tu." />
-      <div className="max-w-5xl mx-auto px-4 py-8">
+      <div className="mg-page-shell max-w-5xl mx-auto px-4 py-10">
       {products.length === 0 ? (
         <div className="text-center py-20 animate-fade-in">
           <div className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4" style={{ background: 'rgba(239,68,68,0.08)' }}>
@@ -77,7 +77,7 @@ export default function PreferitiPage() {
           {products.map(p => {
             const imgUrl = optimizeImage(p.card_image || p.cover_image, 300)
             return (
-              <div key={p.id} className="rounded-2xl overflow-hidden animate-fade-in-up"
+              <div key={p.id} className="mg-premium-product-card rounded-2xl overflow-hidden animate-fade-in-up"
                 style={{ background: 'white', border: '1px solid rgba(8,145,178,0.08)' }}>
                 <div className="relative aspect-square cursor-pointer" style={{ background: 'linear-gradient(135deg, #f0fbfd, #cffafe)' }}
                   onClick={() => openDetail(p.id)}>

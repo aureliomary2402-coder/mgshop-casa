@@ -88,7 +88,7 @@ export default function LotteryPage() {
   }, [phase])
 
   if (loading) return (
-    <div className="min-h-screen" style={{ background: 'linear-gradient(180deg,#eafbff 0%,#f5fdff 45%,#ffffff 100%)' }}>
+    <div className="min-h-screen" style={{ background: 'linear-gradient(180deg,#e9fbff 0%,#f5fdff 38%,#ffffff 100%)' }}>
       <div className="max-w-4xl mx-auto px-4 py-12 space-y-6">
         <div className="skeleton h-40 rounded-3xl" />
         <div className="skeleton h-10 w-2/3 mx-auto rounded-lg" />
@@ -97,7 +97,7 @@ export default function LotteryPage() {
   )
 
   if (!data || !data.is_active) return (
-    <div className="min-h-screen flex items-center justify-center px-4" style={{ background: 'linear-gradient(180deg,#eafbff 0%,#f5fdff 45%,#ffffff 100%)' }}>
+    <div className="min-h-screen flex items-center justify-center px-4" style={{ background: 'linear-gradient(180deg,#e9fbff 0%,#f5fdff 38%,#ffffff 100%)' }}>
       <div className="text-center max-w-md">
         <div className="w-24 h-24 rounded-full flex items-center justify-center mx-auto mb-6" style={{ background: 'rgba(8,145,178,0.08)', border: '2px dashed rgba(8,145,178,0.2)' }}><Gift className="w-12 h-12" style={{ color: 'rgba(8,145,178,0.4)' }} /></div>
         <h1 className="text-2xl font-bold mb-2" style={{ color: '#0c2b36' }}>Nessuna lotteria attiva</h1>
@@ -112,7 +112,7 @@ export default function LotteryPage() {
   const revealPhase = phase !== 'idle'
 
   return (
-    <div className="min-h-screen" style={{ background: 'linear-gradient(180deg,#eafbff 0%,#f5fdff 45%,#ffffff 100%)' }}>
+    <div className="min-h-screen" style={{ background: 'linear-gradient(180deg,#e9fbff 0%,#f5fdff 38%,#ffffff 100%)' }}>
       {/* Hero */}
       <PageHero
         icon={Ticket}
@@ -138,7 +138,7 @@ export default function LotteryPage() {
 
       <div className="relative overflow-hidden">
         <AmbientBubbles count={16} theme="light" />
-        <div className="relative z-10 max-w-5xl mx-auto px-4 py-10 space-y-10">
+        <div className="mg-page-shell relative z-10 max-w-5xl mx-auto px-4 py-10 space-y-10">
         {/* Acquista il biglietto */}
         <Reveal>
           <LotteryTicketCard hideDetailsLink />

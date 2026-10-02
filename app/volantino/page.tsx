@@ -52,8 +52,8 @@ export default function VolantinoPage() {
   // Più volantini attivi contemporaneamente: mostra un selettore.
   if (list.length > 1) {
     return (
-      <div className="min-h-screen" style={{ background: 'linear-gradient(180deg,#eafbff 0%,#f5fdff 45%,#ffffff 100%)' }}>
-        <div className="max-w-3xl mx-auto px-4 py-12">
+      <div className="min-h-screen" style={{ background: 'linear-gradient(180deg,#e9fbff 0%,#f5fdff 38%,#ffffff 100%)' }}>
+        <div className="mg-page-shell max-w-3xl mx-auto px-4 py-12">
           <h1 className="text-2xl font-bold mb-6 text-center" style={{ color: '#0c2b36' }}>Scegli un volantino</h1>
           <div className="space-y-3">
             {list.map(item => (
