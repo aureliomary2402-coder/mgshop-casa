@@ -145,7 +145,7 @@ export function ShopHeader({ categories }: { categories: Category[] }) {
       <div className="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between gap-3">
         <Link href="/" className="flex items-center gap-2 shrink-0 group">
           <Image src="/logo/mgshop-logo-orizzontale.png" alt="MGShop Casa" width={900} height={240} priority
-            className="h-12 sm:h-14 w-auto rounded-xl bg-[#06202b] px-3 py-1.5 transition-transform group-hover:scale-105" />
+            className="h-14 w-auto rounded-full bg-[radial-gradient(ellipse_at_center,#06202b_50%,rgba(6,32,43,0)_100%)] px-6 py-2 transition-transform group-hover:scale-105" />
         </Link>
 
         <div className="flex items-center gap-1">
