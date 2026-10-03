@@ -21,7 +21,7 @@ export function SiteFooter() {
 
   return (
     <footer className="relative overflow-hidden pb-24"
-      style={{ background: '#041017' }}>
+      style={{ background: '#06151c' }}>
       {/* Bolle decorative leggere, coerenti col resto del sito */}
       <div className="absolute inset-0 pointer-events-none opacity-60">
         {[

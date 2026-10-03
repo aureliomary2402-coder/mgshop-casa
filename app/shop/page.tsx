@@ -7,6 +7,8 @@ import { LotteryTicketCard } from '@/components/shop/lottery-ticket-card'
 import { SortDropdown } from '@/components/shop/sort-dropdown'
 import { RecentlyViewed } from '@/components/shop/recently-viewed'
 import { Suspense } from 'react'
+import Link from 'next/link'
+import { ArrowRight, Truck } from 'lucide-react'
 import type { Product, Category, Banner } from '@/lib/types'
 
 export const revalidate = 0
@@ -76,6 +78,12 @@ export default async function ShopPage({ searchParams }: { searchParams: Promise
           </div>
         </section>
 
+        {/* Fascia scura: lotteria + fedeltà (spariscono da sole se non attive) */}
+        <div className="mg-shop-v5-band">
+          <LotteryTicketCard />
+          <LoyaltyBanner />
+        </div>
+
         <section className="mg-shop-v5-layout">
 
           <aside className="mg-shop-v5-sidebar">
@@ -96,11 +104,6 @@ export default async function ShopPage({ searchParams }: { searchParams: Promise
           </aside>
 
           <div className="mg-shop-v5-content">
-
-            <div className="mg-shop-v5-featured">
-              <LotteryTicketCard />
-              <LoyaltyBanner />
-            </div>
 
             <Suspense>
               <RecentlyViewed />
@@ -142,6 +145,33 @@ export default async function ShopPage({ searchParams }: { searchParams: Promise
               </>
             )}
 
+          </div>
+        </section>
+
+        <section className="relative mt-16 overflow-hidden rounded-[34px] border border-cyan-100 bg-gradient-to-br from-white to-cyan-50 p-7 sm:p-12">
+          <div className="pointer-events-none absolute right-[-100px] top-[-100px] h-[300px] w-[300px] rounded-full bg-cyan-200/30 blur-[80px]" />
+          <div className="relative flex flex-col items-start justify-between gap-8 md:flex-row md:items-center">
+            <div>
+              <div className="flex items-center gap-2 text-xs font-black uppercase tracking-[.22em] text-cyan-700">
+                <Truck size={17} />
+                Consegna locale
+              </div>
+              <h2 className="mt-4 text-3xl font-black tracking-[-.04em] text-slate-950 sm:text-4xl">
+                Tu ordini.
+                <br />
+                Noi te lo portiamo a casa.
+              </h2>
+              <p className="mt-4 max-w-xl text-sm leading-6 text-slate-600">
+                Consegna gratuita ad Aci Sant&apos;Antonio. Per i paesi etnei e le zone vicine è previsto un piccolo contributo di consegna.
+              </p>
+            </div>
+            <Link
+              href="/consegne"
+              className="group inline-flex shrink-0 items-center gap-3 rounded-2xl bg-slate-950 px-6 py-4 text-sm font-black text-white transition hover:bg-cyan-600"
+            >
+              Scopri la consegna
+              <ArrowRight size={18} className="transition-transform group-hover:translate-x-1" />
+            </Link>
           </div>
         </section>
 

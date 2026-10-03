@@ -7,7 +7,7 @@ import type { Product } from '@/lib/types'
 import { useCartStore } from '@/lib/cart-store'
 import { useProductDetailStore } from '@/lib/product-detail-store'
 import { useWishlistStore } from '@/lib/wishlist-store'
-import { useState, useRef } from 'react'
+import { useState } from 'react'
 import { optimizeImage } from '@/lib/image'
 import { TornaPrestoStamp } from './torna-presto-stamp'
 import { getMinCustomizedPrice, getMaxCustomizedPrice, normalizeChoices } from '@/lib/customization'
@@ -18,17 +18,7 @@ export function ProductCard({ product, index = 0 }: { product: Product; index?: 
   const isWishlisted = useWishlistStore(s => s.has(product.id))
   const toggleWishlist = useWishlistStore(s => s.toggle)
   const [imgError, setImgError] = useState(false)
-  const [tilt, setTilt] = useState({ x: 0, y: 0 })
   const [isHovered, setIsHovered] = useState(false)
-  const cardRef = useRef<HTMLDivElement>(null)
-
-  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
-    if (!cardRef.current) return
-    const rect = cardRef.current.getBoundingClientRect()
-    const x = (e.clientX - rect.left) / rect.width - 0.5
-    const y = (e.clientY - rect.top) / rect.height - 0.5
-    setTilt({ x: y * 12, y: x * -12 })
-  }
 
   const handleAddToCart = (e: React.MouseEvent) => {
     e.preventDefault()
@@ -78,29 +68,23 @@ export function ProductCard({ product, index = 0 }: { product: Product; index?: 
 
   return (
     <div
-      ref={cardRef}
-      className="group relative rounded-[24px] overflow-hidden animate-fade-in-up cursor-pointer"
+      className="group relative cursor-pointer overflow-hidden rounded-[28px] border bg-white animate-fade-in-up"
       style={{
         animationDelay: `${Math.min(index * 40, 400)}ms`,
         animationFillMode: 'both',
-        background: '#ffffff',
-        border: '1px solid #e2e8f0',
+        borderColor: isHovered ? '#67e8f9' : '#e2e8f0',
         boxShadow: isHovered
-          ? '0 20px 44px rgba(8,145,178,0.18), 0 8px 16px rgba(5,70,85,0.08)'
-          : '0 6px 20px rgba(5,70,85,0.08)',
-        transform: isHovered
-          ? `perspective(800px) rotateX(${tilt.x}deg) rotateY(${tilt.y}deg) translateY(-6px) scale(1.02)`
-          : 'perspective(800px) rotateX(0deg) rotateY(0deg) translateY(0px) scale(1)',
-        transition: 'transform 0.3s cubic-bezier(0.22,1,0.36,1), box-shadow 0.3s ease',
-        willChange: 'transform',
+          ? '0 30px 80px rgba(8,145,178,0.20)'
+          : '0 15px 50px rgba(15,23,42,0.06)',
+        transform: isHovered ? 'translateY(-6px)' : 'translateY(0)',
+        transition: 'transform 0.4s cubic-bezier(0.22,1,0.36,1), box-shadow 0.4s ease, border-color 0.3s ease',
       }}
       onClick={() => openDetail(product.id)}
-      onMouseMove={handleMouseMove}
       onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => { setIsHovered(false); setTilt({ x: 0, y: 0 }) }}
+      onMouseLeave={() => setIsHovered(false)}
     >
       {hasDiscount && discountPercent > 0 && !product.torna_presto && !hasVariablePricing && (
-        <div className="absolute top-0 left-0 z-10 flex items-center justify-center w-14 h-14 rounded-bl-2xl font-extrabold text-white text-sm"
+        <div className="absolute left-3 top-3 z-10 flex items-center justify-center rounded-full px-2.5 py-1 text-xs font-black text-white shadow-lg"
           style={{ background: '#dc2626' }}>
           -{discountPercent}%
         </div>
@@ -144,23 +128,23 @@ export function ProductCard({ product, index = 0 }: { product: Product; index?: 
         </div>
       </div>
 
-      <div className="p-3">
-        <h3 className="font-semibold text-sm line-clamp-2 mb-2 leading-snug transition-colors"
-          style={{ color: isHovered ? '#0e7490' : '#06232d' }}>
+      <div className="p-4">
+        <h3 className="mb-3 line-clamp-2 text-sm font-black leading-snug tracking-[-0.01em] transition-colors"
+          style={{ color: isHovered ? '#0e7490' : '#020617' }}>
           {product.name}
         </h3>
         <div className="flex items-center justify-between">
           <span className="flex items-baseline gap-1.5">
             {hasDiscount && <span className="text-xs text-slate-500 line-through">€{product.old_price!.toFixed(2)}</span>}
-            <span className="font-bold text-base" style={{ color: hasDiscount ? '#dc2626' : '#0e7490' }}>{priceLabel}</span>
+            <span className="text-base font-black" style={{ color: hasDiscount ? '#dc2626' : '#0e7490' }}>{priceLabel}</span>
           </span>
           <button
             onClick={handleAddToCart}
             disabled={product.torna_presto}
-            className="flex items-center gap-1 text-xs font-bold px-3 py-1.5 rounded-full btn-press transition-all disabled:cursor-not-allowed"
+            className="flex items-center gap-1.5 rounded-2xl px-3.5 py-2 text-xs font-black btn-press transition-all hover:-translate-y-0.5 disabled:cursor-not-allowed"
             style={product.torna_presto
               ? { background: '#e2e8f0', color: '#475569', boxShadow: 'none' }
-              : { background: 'linear-gradient(135deg, #22d3ee, #06b6d4)', color: '#05212a', boxShadow: '0 2px 8px rgba(8,145,178,0.3)' }}>
+              : { background: '#22d3ee', color: '#05212a', boxShadow: '0 10px 25px rgba(34,211,238,0.28)' }}>
             <ShoppingCart className="w-3.5 h-3.5" />
             <span className="hidden sm:inline">{product.torna_presto ? 'Non disponibile' : product.is_customizable ? 'Personalizza' : 'Aggiungi'}</span>
           </button>

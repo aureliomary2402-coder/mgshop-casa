@@ -41,22 +41,21 @@ export function CategorySidebar({ categories }: { categories: Category[] }) {
 
   return (
     <>
-      {/* Desktop: colonna sticky con etichetta CATEGORIE, come da riferimento */}
+      {/* Desktop: colonna sticky (l'etichetta sta nella pagina) */}
       <aside className="hidden lg:block lg:sticky lg:top-24 self-start">
-        <p className="text-xs font-bold tracking-wider mb-3 px-1" style={{ color: '#0c2b36' }}>CATEGORIE</p>
         <nav className="rounded-2xl p-2 space-y-0.5" style={{ background: 'white', border: '1px solid rgba(8,145,178,0.1)', boxShadow: '0 8px 24px rgba(8,145,178,0.06)' }}>
           {items.map(it => {
             const Icon = it.icon
             const isActive = it.slug === active
             return (
               <button key={it.slug ?? 'all'} onClick={() => go(it.slug)}
-                className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-left transition-all btn-press"
+                className="w-full flex items-center gap-3 px-3 py-2.5 rounded-2xl text-sm font-bold text-left transition-all btn-press hover:bg-cyan-50"
                 style={{
-                  background: isActive ? 'rgba(8,145,178,0.1)' : 'transparent',
-                  color: isActive ? '#0891b2' : '#334155',
+                  background: isActive ? '#06151c' : 'transparent',
+                  color: isActive ? '#ffffff' : '#1e293b',
                 }}>
-                <span className="w-8 h-8 rounded-lg flex items-center justify-center shrink-0"
-                  style={{ background: isActive ? 'rgba(8,145,178,0.15)' : 'rgba(8,145,178,0.07)', color: '#0891b2' }}>
+                <span className="w-8 h-8 rounded-xl flex items-center justify-center shrink-0"
+                  style={{ background: isActive ? 'rgba(34,211,238,0.18)' : '#ecfeff', color: isActive ? '#67e8f9' : '#0e7490' }}>
                   <Icon className="w-4 h-4" />
                 </span>
                 <span className="truncate">{it.name}</span>
@@ -65,8 +64,8 @@ export function CategorySidebar({ categories }: { categories: Category[] }) {
           })}
         </nav>
         <a href="/promo"
-          className="mt-3 flex items-center gap-2.5 rounded-2xl px-4 py-3.5 text-sm font-bold transition-transform hover:scale-[1.02] btn-press"
-          style={{ background: 'linear-gradient(135deg,#db2777,#ec4899)', color: 'white', boxShadow: '0 8px 20px rgba(219,39,119,0.3)' }}>
+          className="mt-3 flex items-center gap-2.5 rounded-2xl px-4 py-3.5 text-sm font-black transition hover:-translate-y-0.5 btn-press"
+          style={{ background: '#c2410c', color: 'white', boxShadow: '0 15px 40px rgba(249,115,22,0.25)' }}>
           <Tag className="w-4 h-4" /> Offerte della settimana
         </a>
       </aside>
@@ -93,9 +92,9 @@ export function CategorySidebar({ categories }: { categories: Category[] }) {
                   <button key={it.slug ?? 'all'} onClick={() => go(it.slug)}
                     className="flex items-center gap-1.5 pl-2.5 pr-3.5 py-2 rounded-full text-xs font-semibold transition-all btn-press"
                     style={{
-                      background: isActive ? '#0891b2' : 'rgba(8,145,178,0.05)',
-                      color: isActive ? 'white' : '#334155',
-                      border: `1px solid ${isActive ? '#0891b2' : 'rgba(8,145,178,0.12)'}`,
+                      background: isActive ? '#06151c' : '#f8fdfe',
+                      color: isActive ? 'white' : '#1e293b',
+                      border: `1px solid ${isActive ? '#06151c' : '#e2e8f0'}`,
                     }}>
                     <span className="w-5 h-5 rounded-full flex items-center justify-center shrink-0"
                       style={{ background: isActive ? 'rgba(255,255,255,0.2)' : 'rgba(8,145,178,0.08)', color: isActive ? 'white' : '#0891b2' }}>
