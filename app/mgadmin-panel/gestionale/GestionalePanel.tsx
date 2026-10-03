@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
+import { RefreshCw } from "lucide-react";
 import { Panel } from "./components/Panel";
 
 type StatusResponse = {
@@ -18,23 +19,27 @@ export function GestionalePanel() {
   const [data, setData] = useState<StatusResponse | null>(null);
   const [lastSync, setLastSync] = useState<Date | null>(null);
 
-  useEffect(() => {
-    let active = true;
-    async function load() {
+  const [refreshing, setRefreshing] = useState(false);
+
+  const load = useCallback(async () => {
+    setRefreshing(true);
+    try {
       const res = await fetch("/api/gestionale/status", { cache: "no-store" });
       const json = await res.json();
-      if (active) {
-        setData(json);
-        setLastSync(new Date());
-      }
+      setData(json);
+      setLastSync(new Date());
+    } catch {
+      // se la richiesta fallisce teniamo i dati precedenti
+    } finally {
+      setRefreshing(false);
     }
+  }, []);
+
+  useEffect(() => {
     load();
     const interval = setInterval(load, 30000);
-    return () => {
-      active = false;
-      clearInterval(interval);
-    };
-  }, []);
+    return () => clearInterval(interval);
+  }, [load]);
 
   const lastDeploy = data?.deploys?.[0];
 
@@ -50,9 +55,21 @@ export function GestionalePanel() {
               Gestionale
             </h1>
           </div>
-          <p className="text-xs text-[#5B6270] font-mono">
-            {lastSync ? `sync ${lastSync.toLocaleTimeString("it-IT")}` : "sincronizzazione…"}
-          </p>
+          <div className="flex items-center gap-3">
+            <p className="text-xs text-[#5B6270] font-mono">
+              {lastSync ? `sync ${lastSync.toLocaleTimeString("it-IT")}` : "sincronizzazione…"}
+            </p>
+            <button
+              type="button"
+              onClick={load}
+              disabled={refreshing}
+              aria-label="Aggiorna dati"
+              className="flex items-center gap-1.5 rounded-lg border border-[#232830] bg-[#12161B] px-3 py-1.5 text-xs font-medium text-[#EDEFF2] transition-colors hover:border-cyan-500/50 hover:text-cyan-300 disabled:opacity-60"
+            >
+              <RefreshCw className={`h-3.5 w-3.5 ${refreshing ? "animate-spin" : ""}`} />
+              {refreshing ? "Aggiorno…" : "Aggiorna"}
+            </button>
+          </div>
         </header>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
