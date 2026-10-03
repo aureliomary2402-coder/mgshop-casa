@@ -11,7 +11,7 @@ interface LoyaltySettings {
   is_active: boolean
 }
 
-export function LoyaltyBanner({ compact = false }: { compact?: boolean }) {
+export function LoyaltyBanner({ compact = false, strip = false }: { compact?: boolean; strip?: boolean }) {
   const [settings, setSettings] = useState<LoyaltySettings | null>(null)
 
   useEffect(() => {
@@ -21,6 +21,22 @@ export function LoyaltyBanner({ compact = false }: { compact?: boolean }) {
   if (!settings || !settings.is_active) return null
 
   const euroPerPoint = settings.points_per_euro > 0 ? Math.round(1 / settings.points_per_euro) : 0
+
+  // Striscia sottile (shop): una riga chiara, per non occupare spazio prima dei prodotti.
+  if (strip) return (
+    <div className="flex items-center gap-3 rounded-2xl border border-cyan-100 bg-gradient-to-br from-white to-cyan-50 px-4 py-3"
+      style={{ boxShadow: '0 8px 24px rgba(8,145,178,0.07)' }}>
+      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-cyan-200 bg-cyan-100/70">
+        <Sparkles className="h-5 w-5 text-cyan-700" />
+      </div>
+      <div className="min-w-0 flex-1">
+        <p className="text-[11px] font-black uppercase tracking-[0.16em] text-cyan-700">Programma fedeltà</p>
+        <p className="text-sm font-bold leading-snug text-cyan-950">
+          Ogni {euroPerPoint}€ di spesa = 1 punto. A {settings.points_threshold} punti ricevi: {settings.reward_description}
+        </p>
+      </div>
+    </div>
+  )
 
   if (compact) return (
     <div className="flex items-center gap-3 p-3 rounded-xl bg-slate-50 border border-slate-200">

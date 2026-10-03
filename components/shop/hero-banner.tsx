@@ -2,17 +2,10 @@
 
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
-import { ChevronLeft, ChevronRight, ShoppingBag, Truck, Banknote, Star, Package, ArrowRight, Sparkles } from 'lucide-react'
+import { ChevronLeft, ChevronRight, ShoppingBag, ArrowRight, Sparkles } from 'lucide-react'
 import type { Banner, Category } from '@/lib/types'
 import { LandingHero } from './landing-hero'
 import { SOCIAL_LINKS, WHATSAPP_NUMBER, WhatsAppIcon } from './social-icons'
-
-const ADVANTAGES = [
-  { icon: Truck, label: 'Consegna a domicilio o ritiro' },
-  { icon: Banknote, label: 'Paghi alla consegna o al ritiro' },
-  { icon: Star, label: 'Raccogli punti ad ogni acquisto' },
-  { icon: Package, label: 'Lotteria ogni settimana' },
-]
 
 const ARROW =
   'rounded-full border border-white/15 bg-white/10 p-2 text-cyan-200 backdrop-blur-md transition hover:bg-white/15'
@@ -33,6 +26,7 @@ export function HeroBanner({ banners }: { banners: Banner[]; categories?: Catego
   return (
     <section>
       <LandingHero
+        variant="shop"
         icon={ShoppingBag}
         badge={{ text: 'Il tuo negozio online' }}
         title={title}
@@ -76,17 +70,6 @@ export function HeroBanner({ banners }: { banners: Banner[]; categories?: Catego
           </div>
         )}
       </LandingHero>
-
-      <div className="border-b border-slate-200 bg-white">
-        <div className="mx-auto grid max-w-7xl grid-cols-2 divide-x divide-y divide-slate-100 sm:grid-cols-4 sm:divide-y-0">
-          {ADVANTAGES.map((a, i) => (
-            <div key={i} className="flex items-center gap-3 px-4 py-4 sm:px-6">
-              <a.icon className="h-5 w-5 shrink-0 text-cyan-600" />
-              <span className="text-xs font-bold leading-snug text-slate-800">{a.label}</span>
-            </div>
-          ))}
-        </div>
-      </div>
 
       <div className="bg-[#f0fbfd] px-5 py-5 sm:px-8">
         <a

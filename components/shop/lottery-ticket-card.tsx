@@ -15,7 +15,7 @@ interface LotteryData {
   ticket_price?: number
 }
 
-export function LotteryTicketCard({ hideDetailsLink = false }: { hideDetailsLink?: boolean } = {}) {
+export function LotteryTicketCard({ hideDetailsLink = false, strip = false }: { hideDetailsLink?: boolean; strip?: boolean } = {}) {
   const [data, setData] = useState<LotteryData | null>(null)
   const [qty, setQty] = useState(1)
   const [added, setAdded] = useState(false)
@@ -64,6 +64,33 @@ export function LotteryTicketCard({ hideDetailsLink = false }: { hideDetailsLink
     toast.success(`${qty} bigliett${qty > 1 ? 'i' : 'o'} aggiunt${qty > 1 ? 'i' : 'o'} al carrello!`)
     setQty(1)
   }
+
+  // Striscia sottile (shop): una riga chiara con il tasto per prendere subito un biglietto.
+  if (strip) return (
+    <div className="flex flex-wrap items-center gap-3 rounded-2xl border border-cyan-100 bg-gradient-to-br from-white to-cyan-50 px-4 py-3"
+      style={{ boxShadow: '0 8px 24px rgba(8,145,178,0.07)' }}>
+      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-cyan-200 bg-cyan-100/70">
+        <Gift className="h-5 w-5 text-cyan-700" />
+      </div>
+      <div className="min-w-0 flex-1 basis-48">
+        <p className="text-[11px] font-black uppercase tracking-[0.16em] text-cyan-700">Lotteria a premi</p>
+        <p className="text-sm font-bold leading-snug text-cyan-950">
+          {data.title || 'Partecipa e vinci'}
+          {data.prize_label && <span className="font-medium text-slate-600"> · In palio: {data.prize_label}</span>}
+        </p>
+      </div>
+      <div className="flex items-center gap-3">
+        <Link href="/lotteria" className="text-xs font-bold text-cyan-700 underline underline-offset-2 hover:text-cyan-900">Dettagli</Link>
+        <button onClick={handleAdd}
+          className="inline-flex h-10 items-center gap-1.5 rounded-xl px-4 text-xs font-black transition-all active:scale-[0.97]"
+          style={added
+            ? { background: '#4ade80', color: '#052e16' }
+            : { background: '#22d3ee', color: '#05212a', boxShadow: '0 8px 20px rgba(34,211,238,.28)' }}>
+          {added ? <><Ticket className="h-3.5 w-3.5" /> Aggiunto!</> : <><ShoppingCart className="h-3.5 w-3.5" /> Biglietto €{ticketPrice.toFixed(2)}</>}
+        </button>
+      </div>
+    </div>
+  )
 
   return (
     <div className="relative overflow-hidden rounded-[32px] border border-cyan-300/15 bg-[#071a22] neon-glow">

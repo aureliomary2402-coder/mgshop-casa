@@ -62,26 +62,10 @@ export default async function ShopPage({ searchParams }: { searchParams: Promise
 
       <div className="mg-shop-v5-shell">
 
-        <section className="mg-shop-v5-intro">
-          <div className="mg-shop-v5-intro-copy">
-            <span className="mg-shop-v5-eyebrow">MGSHOP · CATALOGO ONLINE</span>
-            <h2>Esplora il nostro shop</h2>
-            <p>
-              Tutto quello che ti serve per la casa, la persona e il bucato.
-              Scegli, aggiungi al carrello e ricevi il tuo ordine comodamente.
-            </p>
-          </div>
-
-          <div className="mg-shop-v5-counter">
-            <strong>{count}</strong>
-            <span>prodott{count === 1 ? 'o' : 'i'}</span>
-          </div>
-        </section>
-
-        {/* Fascia scura: lotteria + fedeltà (spariscono da sole se non attive) */}
-        <div className="mg-shop-v5-band">
-          <LotteryTicketCard />
-          <LoyaltyBanner />
+        {/* Due strisce sottili: compaiono solo se fedeltà / lotteria sono attive */}
+        <div className="mb-6 flex flex-col gap-3 empty:hidden">
+          <LoyaltyBanner strip />
+          <LotteryTicketCard strip />
         </div>
 
         <section className="mg-shop-v5-layout">
