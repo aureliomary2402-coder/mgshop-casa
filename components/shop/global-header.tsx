@@ -98,6 +98,13 @@ export function GlobalHeader({ categories = [] }: { categories?: Category[] }) {
 
   const itemCount = mounted ? getTotalItems() : 0
 
+  // Stile comune dei collegamenti del menu desktop: pillole chiare, quella
+  // della pagina corrente evidenziata in ciano (come gli accenti della landing).
+  const navCls = (active: boolean, accent = false) =>
+    `hidden lg:flex items-center gap-1.5 px-3.5 py-2 rounded-full text-sm font-bold transition-all btn-press ${
+      active ? 'bg-cyan-100 text-cyan-800' : accent ? 'text-cyan-700 hover:bg-cyan-50' : 'text-slate-600 hover:bg-slate-100 hover:text-slate-950'
+    }`
+
   const handleSearch = (value: string) => {
     setSearchValue(value)
     setDropdownOpen(value.trim().length > 0)
@@ -134,32 +141,38 @@ export function GlobalHeader({ categories = [] }: { categories?: Category[] }) {
   }
 
   return (
-    <header className={`sticky top-0 z-50 transition-all duration-300 liquid-glass-header neon-glow-header ${scrolled ? 'shadow-lg' : ''}`}
-      style={{ background: scrolled ? 'rgba(240,251,253,0.97)' : 'rgba(240,251,253,0.98)', backdropFilter: 'blur(16px)', borderBottom: '1px solid rgba(8,145,178,0.1)' }}>
+    <header className="sticky top-0 z-50 transition-all duration-300"
+      style={{
+        background: 'rgba(247,253,255,0.88)',
+        backdropFilter: 'blur(18px)',
+        WebkitBackdropFilter: 'blur(18px)',
+        borderBottom: '1px solid rgba(15,23,42,0.08)',
+        boxShadow: scrolled ? '0 12px 40px rgba(15,23,42,0.08)' : 'none',
+      }}>
       <div className="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between gap-3">
         <Link href="/" className="flex items-center gap-2 shrink-0 group">
           <Image src="/logo/mgshop-logo-neon.png" alt="MGShop Casa" width={36} height={36} priority
             className="w-9 h-9 rounded-full object-cover transition-transform group-hover:scale-110" />
-          <span className="text-lg font-bold tracking-tight text-shimmer">
+          <span className="text-lg font-black tracking-[-0.03em] text-slate-950">
             MGShop
           </span>
         </Link>
 
         <div className="flex items-center gap-1">
-          <Link href="/" className="hidden lg:flex items-center gap-1.5 px-3 py-2 rounded-xl text-sm font-medium transition-all hover:bg-cyan-50 btn-press" style={{ color: pathname === '/' ? '#0891b2' : '#44403c' }}>
+          <Link href="/" className={navCls(pathname === '/')}>
             <HomeIcon className="w-4 h-4" /> Home
           </Link>
-          <Link href="/shop" className="hidden lg:flex items-center gap-1.5 px-3 py-2 rounded-xl text-sm font-medium transition-all hover:bg-cyan-50 btn-press" style={{ color: pathname?.startsWith('/shop') ? '#0891b2' : '#44403c' }}>
+          <Link href="/shop" className={navCls(!!pathname?.startsWith('/shop'))}>
             <Tag className="w-4 h-4" /> Negozio
           </Link>
 
           {promoActive && (
-            <Link href="/promo" className={`hidden lg:flex items-center gap-1.5 px-2 sm:px-3 py-2 rounded-xl text-sm font-medium transition-all hover:bg-cyan-50 btn-press`} style={{ color: '#0891b2' }}>
+            <Link href="/promo" className={navCls(!!pathname?.startsWith('/promo'), true)}>
               <Sparkles className="w-4 h-4" /> <span className="hidden sm:inline">Promo</span>
             </Link>
           )}
           {volantinoActive && (
-            <Link href="/volantino" className={`hidden lg:flex items-center gap-1.5 px-2 sm:px-3 py-2 rounded-xl text-sm font-medium transition-all hover:bg-cyan-50 btn-press`} style={{ color: '#0891b2' }}>
+            <Link href="/volantino" className={navCls(!!pathname?.startsWith('/volantino'), true)}>
               <Newspaper className="w-4 h-4" /> <span className="hidden sm:inline">Volantino</span>
             </Link>
           )}
@@ -180,19 +193,19 @@ export function GlobalHeader({ categories = [] }: { categories?: Category[] }) {
 
           {/* Solo desktop: su mobile questi collegamenti restano nella tab bar
               in basso, qui servirebbero solo a duplicarla. */}
-          <Link href="/lotteria" className="hidden lg:flex items-center gap-1.5 px-3 py-2 rounded-xl text-sm font-medium transition-all hover:bg-cyan-50 btn-press" style={{ color: '#44403c' }}>
+          <Link href="/lotteria" className={navCls(!!pathname?.startsWith('/lotteria'))}>
             <Ticket className="w-4 h-4" /> Lotteria
           </Link>
-          <Link href="/consegne" className="hidden lg:flex items-center gap-1.5 px-3 py-2 rounded-xl text-sm font-medium transition-all hover:bg-cyan-50 btn-press" style={{ color: '#44403c' }}>
+          <Link href="/consegne" className={navCls(pathname === '/consegne')}>
             <MapPin className="w-4 h-4" /> Consegne
           </Link>
-          <Link href="/recensioni" className="hidden lg:flex items-center gap-1.5 px-3 py-2 rounded-xl text-sm font-medium transition-all hover:bg-cyan-50 btn-press" style={{ color: pathname === '/recensioni' ? '#0891b2' : '#44403c' }}>
+          <Link href="/recensioni" className={navCls(pathname === '/recensioni')}>
             <Star className="w-4 h-4" /> Recensioni
           </Link>
-          <Link href="/social" className="hidden lg:flex items-center gap-1.5 px-3 py-2 rounded-xl text-sm font-medium transition-all hover:bg-cyan-50 btn-press" style={{ color: pathname === '/social' ? '#0891b2' : '#44403c' }}>
+          <Link href="/social" className={navCls(pathname === '/social')}>
             <Share2 className="w-4 h-4" /> Social
           </Link>
-          <button onClick={openPoints} className="hidden lg:flex items-center gap-1.5 px-3 py-2 rounded-xl text-sm font-medium transition-all hover:bg-cyan-50 btn-press" style={{ color: '#44403c' }}>
+          <button onClick={openPoints} className={navCls(false)}>
             <User className="w-4 h-4" /> Account
           </button>
         </div>
@@ -205,12 +218,12 @@ export function GlobalHeader({ categories = [] }: { categories?: Category[] }) {
                 onChange={e => handleSearch(e.target.value)}
                 onFocus={() => { setSearchFocused(true); if (searchValue.trim()) setDropdownOpen(true) }}
                 onBlur={() => setSearchFocused(false)}
-                className="search-glow w-full h-9 pl-9 pr-9 rounded-xl text-base outline-none transition-all duration-300"
+                className="w-full h-10 pl-9 pr-9 rounded-full text-base outline-none transition-all duration-300"
                 style={{
-                  background: searchFocused ? '#ffffff' : 'rgba(8,145,178,0.06)',
-                  border: searchFocused ? '1px solid rgba(8,145,178,0.5)' : '1px solid rgba(8,145,178,0.15)',
+                  background: searchFocused ? '#ffffff' : 'rgba(15,23,42,0.04)',
+                  border: searchFocused ? '1px solid #22d3ee' : '1px solid rgba(15,23,42,0.08)',
                   color: '#0c2b36',
-                  boxShadow: searchFocused ? '0 0 0 4px rgba(34,211,238,0.15), 0 4px 16px rgba(8,145,178,0.18)' : 'none',
+                  boxShadow: searchFocused ? '0 0 0 4px rgba(34,211,238,0.18)' : 'none',
                 }} />
               {searchLoading && (
                 <span className="absolute right-9 top-1/2 -translate-y-1/2 w-3.5 h-3.5 rounded-full border-2 border-cyan-300 border-t-cyan-600 animate-spin" />
@@ -257,12 +270,12 @@ export function GlobalHeader({ categories = [] }: { categories?: Category[] }) {
               )}
             </div>
           </div>
-          <button className="md:hidden w-9 h-9 flex items-center justify-center rounded-lg hover:bg-cyan-50 text-cyan-700"
+          <button className="md:hidden w-10 h-10 flex items-center justify-center rounded-full hover:bg-slate-100 text-slate-700"
             onClick={() => { searchOpen ? handleClearSearch() : setSearchOpen(true) }}>
             {searchOpen ? <X className="w-5 h-5" /> : <Search className="w-5 h-5" />}
           </button>
-          <Link href="/preferiti" className={`${searchOpen ? 'hidden sm:flex' : 'flex'} relative items-center gap-2 px-2 sm:px-3 py-2 rounded-xl transition-all hover:bg-cyan-50 btn-press group`}>
-            <Heart className="w-5 h-5 text-cyan-700 group-hover:scale-110 transition-transform" />
+          <Link href="/preferiti" className={`${searchOpen ? 'hidden sm:flex' : 'flex'} relative h-10 w-10 items-center justify-center rounded-full transition-all hover:bg-slate-100 btn-press group`}>
+            <Heart className="w-5 h-5 text-slate-700 group-hover:scale-110 transition-transform" />
             {mounted && wishlistCount > 0 && (
               <span className="absolute -top-1 -right-1 w-5 h-5 text-white text-xs rounded-full flex items-center justify-center font-bold"
                 style={{ background: '#ef4444' }}>
@@ -270,11 +283,12 @@ export function GlobalHeader({ categories = [] }: { categories?: Category[] }) {
               </span>
             )}
           </Link>
-          <Link href="/carrello" className="relative flex items-center gap-2 px-3 py-2 rounded-xl transition-all hover:bg-cyan-50 btn-press group">
-            <ShoppingBag className={`w-5 h-5 text-cyan-700 group-hover:scale-110 transition-transform ${cartBump ? 'animate-cart-bounce' : ''}`} />
+          <Link href="/carrello" aria-label="Carrello" className="relative flex h-10 w-10 items-center justify-center rounded-full transition-all hover:scale-105 btn-press group"
+            style={{ background: '#22d3ee', color: '#05212a', boxShadow: '0 8px 22px rgba(34,211,238,0.35)' }}>
+            <ShoppingBag className={`w-5 h-5 group-hover:scale-110 transition-transform ${cartBump ? 'animate-cart-bounce' : ''}`} />
             {itemCount > 0 && (
               <span className={`absolute -top-1 -right-1 w-5 h-5 text-white text-xs rounded-full flex items-center justify-center font-bold ${cartBump ? 'animate-badge-pop' : ''}`}
-                style={{ background: 'linear-gradient(135deg, #0891b2, #06b6d4)' }}>
+                style={{ background: '#0c2b36' }}>
                 {itemCount > 9 ? '9+' : itemCount}
               </span>
             )}
