@@ -55,9 +55,9 @@ export function BottomNav() {
       style={{ bottom: 'calc(36px + env(safe-area-inset-bottom, 0px))' }}
       aria-label="Navigazione principale"
     >
-      <div className="mx-3 mb-2 md:max-w-md md:mx-auto rounded-2xl overflow-hidden liquid-glass-nav neon-glow-navbar">
+      <div className="mx-3 mb-2 md:max-w-md md:mx-auto rounded-[26px] overflow-hidden mg-nav-dark">
         <div ref={trackRef} className="relative grid items-stretch" style={{ gridTemplateColumns: `repeat(${totalCols}, minmax(0, 1fr))` }}>
-          <div className="liquid-glass-pill" style={pillStyle} />
+          <div className="mg-nav-pill" style={pillStyle} />
 
           {linkItems.map(item => {
             const active = item.match(pathname || '')
@@ -65,9 +65,9 @@ export function BottomNav() {
             return (
               <Link key={item.key} href={item.href}
                 className="relative z-[1] flex flex-col items-center justify-center gap-0.5 py-2.5 btn-press transition-colors"
-                style={{ color: active ? '#0891b2' : '#5b7c85' }}>
-                <Icon className="w-5 h-5" style={active ? { filter: 'drop-shadow(0 0 6px rgba(8,145,178,0.4))' } : undefined} />
-                <span className="text-[10px] font-medium leading-none">{item.label}</span>
+                style={{ color: active ? '#67e8f9' : '#94a3b8' }}>
+                <Icon className="w-5 h-5" style={active ? { filter: 'drop-shadow(0 0 8px rgba(34,211,238,0.55))' } : undefined} />
+                <span className="text-[10px] font-bold leading-none" style={active ? { color: '#ffffff' } : undefined}>{item.label}</span>
               </Link>
             )
           })}
@@ -75,9 +75,9 @@ export function BottomNav() {
           <button
             onClick={openPoints}
             className="relative z-[1] flex flex-col items-center justify-center gap-0.5 py-2.5 btn-press transition-colors"
-            style={{ color: '#5b7c85' }}>
+            style={{ color: '#94a3b8' }}>
             <UserRound className="w-5 h-5" />
-            <span className="text-[10px] font-medium leading-none">Account</span>
+            <span className="text-[10px] font-bold leading-none">Account</span>
           </button>
         </div>
       </div>
