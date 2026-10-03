@@ -76,14 +76,14 @@ export default function VolantinoPage() {
                   <p className="truncate text-lg font-black tracking-[-.02em] text-slate-950">{item.title || 'Volantino'}</p>
                   {item.subtitle && <p className="truncate text-sm text-slate-600">{item.subtitle}</p>}
                 </div>
-                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-slate-950 text-white transition-all duration-500 group-hover:scale-110 group-hover:bg-cyan-500">
+                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-cyan-600 text-white shadow-[0_8px_20px_rgba(8,145,178,.35)] transition-all duration-500 group-hover:scale-110 group-hover:bg-cyan-500">
                   <ChevronRight className="h-5 w-5" />
                 </div>
               </Link>
             ))}
           </div>
           <div className="pt-10 text-center">
-            <Link href="/shop" className="group inline-flex h-14 items-center justify-center gap-3 rounded-2xl bg-slate-950 px-7 font-black text-white transition duration-300 hover:-translate-y-1 hover:bg-cyan-600">
+            <Link href="/shop" className="group inline-flex h-14 items-center justify-center gap-3 rounded-2xl bg-cyan-600 px-7 font-black text-white shadow-[0_12px_32px_rgba(8,145,178,.35)] transition duration-300 hover:-translate-y-1 hover:bg-cyan-500">
               <ArrowLeft className="h-5 w-5 transition-transform group-hover:-translate-x-1" /> Vai al negozio
             </Link>
           </div>
