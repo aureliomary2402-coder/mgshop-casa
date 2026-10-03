@@ -364,11 +364,11 @@ export function CartContent({ scope = 'shop' }: { scope?: string }) {
               animationDelay: `${i * 40}ms`,
             }} />
         ))}
-        <div className="w-24 h-24 rounded-full flex items-center justify-center animate-check-pop" style={{background:'linear-gradient(135deg,#0891b2,#06b6d4)',boxShadow:'0 20px 40px rgba(8,145,178,0.3)'}}>
-          <CheckCircle className="w-12 h-12 text-white"/>
+        <div className="w-24 h-24 rounded-full flex items-center justify-center animate-check-pop" style={{background:'#22d3ee',boxShadow:'0 20px 40px rgba(34,211,238,0.35)'}}>
+          <CheckCircle className="w-12 h-12" style={{color:'#05212a'}}/>
         </div>
       </div>
-      <h2 className="text-3xl font-black mb-3 tracking-[-.03em]" style={{color:'#020617'}}>Ordine inviato!</h2>
+      <h2 className="text-3xl font-black mb-3 tracking-[-.03em]" style={{color:'#083344'}}>Ordine inviato!</h2>
       <p className="text-slate-500 mb-2">Ti contatteremo presto su WhatsApp per confermare.</p>
       {whatsappLink && (
         <a href={whatsappLink} target="_blank" rel="noopener noreferrer"
@@ -396,7 +396,7 @@ export function CartContent({ scope = 'shop' }: { scope?: string }) {
           Totale da pagare: <span style={{ color: '#0891b2' }}>€{finalPaidTotal.toFixed(2)}</span>
         </p>
       )}
-      <Link href="/shop" className="inline-flex items-center gap-2 font-bold px-8 py-4 rounded-2xl text-white btn-press" style={{background:'linear-gradient(135deg,#0891b2,#06b6d4)'}}>
+      <Link href="/shop" className="inline-flex items-center gap-2 font-bold px-8 py-4 rounded-2xl text-white btn-press" style={{background:'#0891b2',boxShadow:'0 12px 32px rgba(8,145,178,0.35)'}}>
         <ShoppingBag className="w-5 h-5"/> Continua a fare shopping
       </Link>
     </div>
@@ -409,9 +409,9 @@ export function CartContent({ scope = 'shop' }: { scope?: string }) {
         <div className="w-24 h-24 rounded-full flex items-center justify-center mx-auto mb-6" style={{background:'rgba(8,145,178,0.08)',border:'2px dashed rgba(8,145,178,0.2)'}}>
           <ShoppingCart className="w-12 h-12" style={{color:'rgba(8,145,178,0.4)'}}/>
         </div>
-        <h2 className="text-2xl font-black mb-2 tracking-[-.03em]" style={{color:'#020617'}}>Il carrello è vuoto</h2>
+        <h2 className="text-2xl font-black mb-2 tracking-[-.03em]" style={{color:'#083344'}}>Il carrello è vuoto</h2>
         <p className="text-slate-400 mb-8">Aggiungi qualche prodotto per iniziare.</p>
-        <Link href="/shop" className="inline-flex items-center gap-2 font-bold px-8 py-4 rounded-2xl text-white btn-press" style={{background:'linear-gradient(135deg,#0891b2,#06b6d4)'}}>Vai ai prodotti</Link>
+        <Link href="/shop" className="inline-flex items-center gap-2 font-bold px-8 py-4 rounded-2xl text-white btn-press" style={{background:'#0891b2',boxShadow:'0 12px 32px rgba(8,145,178,0.35)'}}>Vai ai prodotti</Link>
         <div className="mt-10 text-left">
           <RecentlyViewed />
         </div>
@@ -426,13 +426,13 @@ export function CartContent({ scope = 'shop' }: { scope?: string }) {
       <Link href="/shop" className="inline-flex items-center gap-2 text-sm font-medium mb-4 sm:mb-6 group transition-all hover:gap-3" style={{color:'#155e75'}}>
         <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform"/> Continua lo shopping
       </Link>
-      <div className="mb-4 sm:mb-6 p-4 rounded-2xl flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4" style={{ background: 'linear-gradient(135deg, rgba(8,145,178,0.1), rgba(37,211,102,0.1))', border: '1px solid rgba(8,145,178,0.25)' }}>
+      <div className="mb-4 sm:mb-6 p-4 sm:p-5 rounded-[28px] flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4" style={{ background: 'linear-gradient(135deg, rgba(8,145,178,0.1), rgba(37,211,102,0.1))', border: '1px solid rgba(8,145,178,0.25)' }}>
         <div className="flex items-start gap-3 flex-1">
-          <div className="w-10 h-10 rounded-full flex items-center justify-center shrink-0" style={{ background: 'linear-gradient(135deg,#0891b2,#06b6d4)' }}>
-            <Phone className="w-5 h-5 text-white" />
+          <div className="w-10 h-10 rounded-full flex items-center justify-center shrink-0" style={{ background: '#22d3ee', boxShadow: '0 8px 20px rgba(34,211,238,0.30)' }}>
+            <Phone className="w-5 h-5" style={{ color: '#05212a' }} />
           </div>
           <div>
-            <p className="font-bold text-sm" style={{ color: '#0c2b36' }}>Hai difficoltà con il tuo ordine?</p>
+            <p className="font-black text-sm" style={{ color: '#164e63' }}>Hai difficoltà con il tuo ordine?</p>
             <p className="text-xs text-slate-500">Nessun problema, scrivici al {WHATSAPP_NUMBER} oppure clicca sul tasto WhatsApp qui sotto per essere reindirizzato.</p>
           </div>
         </div>
@@ -448,13 +448,13 @@ export function CartContent({ scope = 'shop' }: { scope?: string }) {
             const rowId = lineId || product.id
             const price = unitPrice ?? product.price
             return (
-            <div key={rowId} className="flex gap-3 sm:gap-4 rounded-2xl p-3 sm:p-4 animate-fade-in-up"
-              style={{animationDelay:`${i*50}ms`,animationFillMode:'both',background:'white',border:'1px solid rgba(8,145,178,0.08)',boxShadow:'0 2px 8px rgba(0,0,0,0.04)'}}>
-              <div className="relative w-16 h-16 sm:w-20 sm:h-20 rounded-xl overflow-hidden shrink-0" style={{background:'linear-gradient(135deg,#f0fbfd,#cffafe)'}}>
+            <div key={rowId} className="flex gap-3 sm:gap-4 rounded-[28px] p-3 sm:p-4 animate-fade-in-up"
+              style={{animationDelay:`${i*50}ms`,animationFillMode:'both',background:'white',border:'1px solid rgba(8,145,178,0.14)',boxShadow:'0 15px 50px rgba(15,23,42,0.06)'}}>
+              <div className="relative w-16 h-16 sm:w-20 sm:h-20 rounded-2xl overflow-hidden shrink-0" style={{background:'linear-gradient(135deg,#f0fbfd,#cffafe)'}}>
                 {product.cover_image ? <Image src={product.cover_image} alt={product.name} fill sizes="80px" className="object-cover"/> : <div className="w-full h-full flex items-center justify-center"><ImageIcon className="w-8 h-8" style={{color:'rgba(8,145,178,0.3)'}}/></div>}
               </div>
               <div className="flex-1 min-w-0">
-                <p className="text-sm sm:text-base font-semibold truncate mb-1" style={{color:'#0c2b36'}}>{product.name}</p>
+                <p className="text-sm sm:text-base font-black truncate mb-1" style={{color:'#164e63'}}>{product.name}</p>
                 {customization && customization.length > 0 && (
                   <div className="flex flex-wrap gap-1 mb-1.5">
                     {customization.map(c => (
@@ -480,8 +480,8 @@ export function CartContent({ scope = 'shop' }: { scope?: string }) {
           <LoyaltyBanner compact={true} />
         </div>
 
-        <div className="rounded-2xl p-4 sm:p-5 h-fit md:sticky md:top-20 animate-slide-in-right space-y-4 min-w-0 glass-card">
-          <h2 className="font-black tracking-[-.03em]" style={{color:'#020617'}}>Riepilogo ordine</h2>
+        <div className="rounded-[28px] p-4 sm:p-5 h-fit md:sticky md:top-20 animate-slide-in-right space-y-4 min-w-0 glass-card">
+          <h2 className="font-black tracking-[-.03em]" style={{color:'#083344'}}>Riepilogo ordine</h2>
           {showNotifyReminder && (
             <div className="flex items-center gap-3 p-3 rounded-xl" style={{ background: 'rgba(8,145,178,0.06)', border: '1px solid rgba(8,145,178,0.2)' }}>
               <Bell className="w-5 h-5 shrink-0" style={{ color: '#0891b2' }} />
@@ -490,8 +490,8 @@ export function CartContent({ scope = 'shop' }: { scope?: string }) {
                 <p className="text-[11px] text-slate-500">Così, se lasci il carrello a metà, possiamo avvisarti per completare l&apos;ordine.</p>
               </div>
               <button type="button" onClick={activateCartNotify} disabled={notifyActivating}
-                className="shrink-0 text-xs font-bold text-white px-3 py-2 rounded-xl transition-transform hover:scale-105 disabled:opacity-60"
-                style={{ background: 'linear-gradient(135deg,#0891b2,#06b6d4)' }}>
+                className="shrink-0 text-xs font-black px-3.5 py-2 rounded-full transition-transform hover:scale-105 disabled:opacity-60"
+                style={{ background: '#22d3ee', color: '#05212a' }}>
                 {notifyActivating ? '...' : 'Attiva'}
               </button>
             </div>
@@ -529,7 +529,7 @@ export function CartContent({ scope = 'shop' }: { scope?: string }) {
                       <input value={couponInput} onChange={e => setCouponInput(e.target.value.toUpperCase())} onKeyDown={e => e.key==='Enter'&&handleApplyCoupon()} placeholder="Codice coupon"
                         className="w-full h-10 pl-9 pr-3 rounded-xl text-base font-mono outline-none" style={{background:'rgba(8,145,178,0.05)',border:'1px solid rgba(8,145,178,0.15)',color:'#0c2b36'}}/>
                     </div>
-                    <button onClick={handleApplyCoupon} disabled={couponLoading||!couponInput.trim()} className="shrink-0 px-3 py-2 rounded-xl text-sm font-medium text-white disabled:opacity-50 transition-all hover:scale-105 btn-press" style={{background:'linear-gradient(135deg,#0891b2,#06b6d4)'}}>
+                    <button onClick={handleApplyCoupon} disabled={couponLoading||!couponInput.trim()} className="shrink-0 px-4 py-2 rounded-full text-sm font-black disabled:opacity-50 transition-all hover:scale-105 btn-press" style={{background:'#22d3ee',color:'#05212a'}}>
                       {couponLoading?'...':'Applica'}
                     </button>
                   </div>
@@ -593,7 +593,7 @@ export function CartContent({ scope = 'shop' }: { scope?: string }) {
                               style={isTaken
                                 ? { background: 'rgba(148,163,184,0.15)', color: 'rgba(100,116,139,0.5)', textDecoration: 'line-through' }
                                 : isChosen
-                                  ? { background: 'linear-gradient(135deg,#0891b2,#06b6d4)', color: 'white' }
+                                  ? { background: '#22d3ee', color: '#05212a' }
                                   : { background: 'rgba(8,145,178,0.05)', border: '1px solid rgba(8,145,178,0.15)', color: '#0c2b36' }}>
                               {n}
                             </button>
@@ -611,8 +611,8 @@ export function CartContent({ scope = 'shop' }: { scope?: string }) {
                     <button type="button" onClick={() => setTicketQtyToAdd(q => Math.min(20, q + 1))} className="w-7 h-7 flex items-center justify-center text-cyan-700"><Plus className="w-3 h-3" /></button>
                   </div>
                   <button type="button" onClick={() => addLotteryTickets(ticketQtyToAdd)}
-                    className="text-xs font-bold text-white px-3 py-2 rounded-lg transition-transform hover:scale-105 active:scale-95"
-                    style={{ background: 'linear-gradient(135deg,#0891b2,#06b6d4)' }}>
+                    className="text-xs font-black px-3.5 py-2 rounded-full transition-transform hover:scale-105 active:scale-95"
+                    style={{ background: '#22d3ee', color: '#05212a' }}>
                     Aggiungi (€{(ticketQtyToAdd * ticketPrice).toFixed(2)})
                   </button>
                 </div>
@@ -658,14 +658,14 @@ export function CartContent({ scope = 'shop' }: { scope?: string }) {
 
               {deliveryMethod === 'consegna' && (
                 <input type="text" placeholder="Indirizzo di consegna (via, civico, città)" value={address} onChange={e => setAddress(e.target.value)}
-                  className="w-full h-11 px-4 rounded-xl text-base outline-none" style={{ background: 'rgba(8,145,178,0.05)', border: '1px solid rgba(8,145,178,0.15)', color: '#0c2b36' }} />
+                  className="w-full h-11 px-4 rounded-2xl text-base outline-none" style={{ background: 'rgba(8,145,178,0.05)', border: '1px solid rgba(8,145,178,0.15)', color: '#0c2b36' }} />
               )}
             </div>
           )}
 
           <form onSubmit={handleSubmit} className="space-y-3">
             <input type="tel" placeholder="Numero di telefono" value={phone} onChange={e=>handlePhoneChange(e.target.value)}
-              className="w-full h-11 px-4 rounded-xl text-base outline-none" style={{background:'rgba(8,145,178,0.05)',border:'1px solid rgba(8,145,178,0.15)',color:'#0c2b36'}}/>
+              className="w-full h-11 px-4 rounded-2xl text-base outline-none" style={{background:'rgba(8,145,178,0.05)',border:'1px solid rgba(8,145,178,0.15)',color:'#0c2b36'}}/>
             {!showReferralField ? (
               <button type="button" onClick={() => setShowReferralField(true)}
                 className="flex items-center gap-1.5 text-xs font-medium text-cyan-700 underline underline-offset-2">
@@ -675,7 +675,7 @@ export function CartContent({ scope = 'shop' }: { scope?: string }) {
               <div className="space-y-1">
                 <label className="text-xs font-medium text-slate-500">Numero di telefono di chi ti ha invitato</label>
                 <input type="tel" placeholder="Es. 347 1234567" value={referredByPhone} onChange={e => setReferredByPhone(e.target.value)}
-                  className="w-full h-11 px-4 rounded-xl text-base outline-none" style={{background:'rgba(22,163,74,0.05)',border:`1px solid ${referralPreviewSource==='invited'?'rgba(22,163,74,0.5)':referralPreviewError?'rgba(239,68,68,0.4)':'rgba(22,163,74,0.2)'}`,color:'#0c2b36'}}/>
+                  className="w-full h-11 px-4 rounded-2xl text-base outline-none" style={{background:'rgba(22,163,74,0.05)',border:`1px solid ${referralPreviewSource==='invited'?'rgba(22,163,74,0.5)':referralPreviewError?'rgba(239,68,68,0.4)':'rgba(22,163,74,0.2)'}`,color:'#0c2b36'}}/>
                 {referralPreviewLoading && <p className="text-xs text-slate-400">Verifica in corso...</p>}
                 {!referralPreviewLoading && referralPreviewSource==='invited' && (
                   <p className="text-xs text-green-600 font-medium">✅ Numero verificato: avrai il {referralPreviewPercent}% di sconto su questo ordine!</p>
@@ -692,7 +692,7 @@ export function CartContent({ scope = 'shop' }: { scope?: string }) {
               <p className="text-xs text-green-600 font-medium">🎁 Hai un premio pronto: il {referralPreviewPercent}% di sconto è già applicato su questo ordine!</p>
             )}
             {error&&<p className="text-red-500 text-xs">{error}</p>}
-            <button type="submit" disabled={submitting || referralPreviewLoading || (showReferralField && !!referredByPhone.trim() && !!referralPreviewError)} className="w-full py-3.5 rounded-xl font-bold text-white transition-all hover:scale-[1.02] btn-press disabled:opacity-60" style={{background:'linear-gradient(135deg,#0891b2,#06b6d4)',boxShadow:'0 8px 20px rgba(8,145,178,0.3)'}}>
+            <button type="submit" disabled={submitting || referralPreviewLoading || (showReferralField && !!referredByPhone.trim() && !!referralPreviewError)} className="w-full py-4 rounded-2xl font-black transition-all hover:-translate-y-0.5 btn-press disabled:opacity-60" style={{background:'#22d3ee',color:'#05212a',boxShadow:'0 15px 40px rgba(34,211,238,0.30)'}}>
               {submitting?'Invio in corso...':'Invia ordine'}
             </button>
             <button type="button" onClick={handleWhatsAppOrder} disabled={submitting || referralPreviewLoading || (showReferralField && !!referredByPhone.trim() && !!referralPreviewError)}

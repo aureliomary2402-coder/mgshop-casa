@@ -148,7 +148,7 @@ export function ProductPageClient() {
                 {product.category.name}
               </Link>
             )}
-            <h1 className="text-2xl md:text-3xl font-black leading-tight tracking-[-.03em]" style={{ color: '#020617' }}>{product.name}</h1>
+            <h1 className="text-2xl md:text-3xl font-black leading-tight tracking-[-.03em]" style={{ color: '#164e63' }}>{product.name}</h1>
             <div className="flex items-baseline gap-2">
               {hasDiscount && <span className="text-lg text-slate-400 line-through">€{product.old_price!.toFixed(2)}</span>}
               <p className="text-4xl font-extrabold" style={{ color: hasDiscount ? '#dc2626' : '#0891b2' }}>€{displayPrice.toFixed(2)}</p>
@@ -172,12 +172,12 @@ export function ProductPageClient() {
             <div className="flex gap-3 pt-2">
               <button onClick={handleAddToCart}
                 disabled={product.torna_presto}
-                className="flex-1 flex items-center justify-center gap-2.5 font-bold py-4 rounded-2xl text-white btn-press disabled:cursor-not-allowed"
+                className="flex-1 flex items-center justify-center gap-2.5 font-black py-4 rounded-2xl btn-press disabled:cursor-not-allowed"
                 style={product.torna_presto
-                  ? { background: '#94a3b8', boxShadow: 'none' }
+                  ? { background: '#cbd5e1', color: '#475569', boxShadow: 'none' }
                   : {
-                    background: 'linear-gradient(135deg, #0891b2, #06b6d4)',
-                    boxShadow: addedAnim ? '0 0 0 6px rgba(8,145,178,0.2)' : '0 8px 24px rgba(8,145,178,0.35)',
+                    background: '#22d3ee', color: '#05212a',
+                    boxShadow: addedAnim ? '0 0 0 6px rgba(34,211,238,0.25)' : '0 15px 40px rgba(34,211,238,0.30)',
                     transform: addedAnim ? 'scale(0.97)' : undefined,
                     transition: 'all 0.2s ease'
                   }}>
