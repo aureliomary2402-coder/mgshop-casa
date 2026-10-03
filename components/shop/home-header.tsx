@@ -60,7 +60,7 @@ export function HomeHeader() {
         {/* Logo */}
         <Link href="/" className="flex items-center gap-2.5 shrink-0 select-none group">
           <Image src="/logo/mgshop-logo-orizzontale.png" alt="MGShop Casa" width={900} height={240} priority
-            className="h-10 sm:h-11 w-auto neon-glow-logo transition-transform group-hover:scale-105" />
+            className="h-12 sm:h-14 w-auto neon-glow-logo transition-transform group-hover:scale-105" />
         </Link>
 
         {/* Nav orizzontale, solo desktop */}

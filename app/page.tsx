@@ -114,7 +114,7 @@ export default function HomePage() {
               width={900}
               height={240}
               priority
-              className="h-auto w-[150px] sm:w-[200px]"
+              className="h-auto w-[200px] sm:w-[260px]"
             />
           </Link>
 
