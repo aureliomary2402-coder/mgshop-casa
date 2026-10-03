@@ -152,7 +152,7 @@ export function GlobalHeader({ categories = [] }: { categories?: Category[] }) {
       <div className="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between gap-3">
         <Link href="/" className="flex items-center gap-2 shrink-0 group">
           <Image src="/logo/mgshop-logo-orizzontale.png" alt="MGShop Casa" width={900} height={240} priority
-            className="h-10 sm:h-11 w-auto [filter:drop-shadow(1px_0_0_#0B2A4A)_drop-shadow(-1px_0_0_#0B2A4A)_drop-shadow(0_1px_0_#0B2A4A)_drop-shadow(0_-1px_0_#0B2A4A)] transition-transform group-hover:scale-105" />
+            className="h-10 sm:h-11 w-auto [filter:drop-shadow(0_0_2px_#0891b2)_drop-shadow(0_0_6px_#22d3ee)_drop-shadow(0_0_14px_rgba(34,211,238,0.7))] transition-transform group-hover:scale-105" />
         </Link>
 
         <div className="flex items-center gap-1">
