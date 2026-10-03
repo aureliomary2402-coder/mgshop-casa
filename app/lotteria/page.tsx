@@ -36,7 +36,7 @@ function Countdown({ remaining }: { remaining: number }) {
       {[{ v: d, l: 'Giorni' }, { v: h, l: 'Ore' }, { v: m, l: 'Min' }, { v: s, l: 'Sec' }].map(({ v, l }, i) => (
         <div key={l} className="flex items-center gap-3">
           <div className="text-center">
-            <div className="w-14 h-14 rounded-xl flex items-center justify-center font-bold text-2xl text-white" style={{ background: 'linear-gradient(135deg,#0891b2,#06b6d4)', boxShadow: '0 4px 16px rgba(8,145,178,0.3)' }}>{String(v).padStart(2, '0')}</div>
+            <div className="flex h-14 w-14 items-center justify-center rounded-2xl border border-cyan-300/20 bg-cyan-300/10 text-2xl font-black text-cyan-200 backdrop-blur-md">{String(v).padStart(2, '0')}</div>
             <p className="text-xs mt-1" style={{ color: 'rgba(224,247,250,0.65)' }}>{l}</p>
           </div>
           {i < 3 && <span className="text-cyan-500 font-bold text-xl mb-4">:</span>}
@@ -102,7 +102,7 @@ export default function LotteryPage() {
         <div className="w-24 h-24 rounded-full flex items-center justify-center mx-auto mb-6" style={{ background: 'rgba(8,145,178,0.08)', border: '2px dashed rgba(8,145,178,0.2)' }}><Gift className="w-12 h-12" style={{ color: 'rgba(8,145,178,0.4)' }} /></div>
         <h1 className="text-2xl font-black mb-2 tracking-[-.03em]" style={{ color: '#020617' }}>Nessuna lotteria attiva</h1>
         <p className="text-slate-400 mb-8">Torna presto per partecipare alle nostre estrazioni!</p>
-        <Link href="/shop" className="inline-flex items-center gap-2 font-bold px-8 py-4 rounded-2xl text-white" style={{ background: 'linear-gradient(135deg,#0891b2,#06b6d4)' }}><ArrowLeft className="w-4 h-4" /> Vai al negozio</Link>
+        <Link href="/shop" className="inline-flex h-14 items-center justify-center gap-3 rounded-2xl bg-cyan-600 px-8 font-black text-white shadow-[0_12px_32px_rgba(8,145,178,.35)] transition duration-300 hover:-translate-y-1 hover:bg-cyan-500"><ArrowLeft className="w-4 h-4" /> Vai al negozio</Link>
       </div>
     </div>
   )
@@ -129,7 +129,7 @@ export default function LotteryPage() {
         )}
         {revealPhase && (
           <div className="mt-2 animate-scale-in">
-            <div className="inline-flex items-center gap-2 text-white font-bold text-xl px-6 py-3 rounded-2xl" style={{ background: 'linear-gradient(135deg,#f59e0b,#f97316)', boxShadow: '0 8px 24px rgba(249,115,22,0.4)' }}>
+            <div className="inline-flex items-center gap-2 rounded-2xl px-6 py-3 text-xl font-black" style={{ background: '#22d3ee', color: '#05212a', boxShadow: '0 12px 32px rgba(34,211,238,.40)' }}>
               <PartyPopper className="w-6 h-6" /> Numero vincente: #{winnerNumber}
             </div>
           </div>
@@ -146,8 +146,8 @@ export default function LotteryPage() {
 
         {/* Come funziona */}
         <Reveal>
-          <div className="bg-white rounded-2xl p-6 sm:p-7" style={{ border: '1px solid rgba(8,145,178,0.1)' }}>
-            <h2 className="text-xl font-black mb-5 text-center tracking-[-.03em]" style={{ color: '#020617' }}>Come funziona</h2>
+          <div className="rounded-[32px] border border-slate-200 bg-white p-6 shadow-[0_15px_50px_rgba(15,23,42,.06)] sm:p-8">
+            <h2 className="text-xl font-black mb-6 text-center tracking-[-.03em]" style={{ color: '#020617' }}>Come funziona</h2>
             <div className="grid sm:grid-cols-4 gap-5">
               {[
                 { icon: Ticket, title: 'Scegli come partecipare', text: 'Compra un biglietto qui sopra senza fare un ordine, oppure spunta "Partecipa alla lotteria" mentre ordini i tuoi prodotti.' },
@@ -156,11 +156,9 @@ export default function LotteryPage() {
                 { icon: Sparkles, title: 'Scopri se hai vinto', text: 'Allo scadere del countdown le bolle scoppiano tutte tranne quella vincente.' },
               ].map((step, i) => (
                 <div key={step.title} className="text-center">
-                  <div className="w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-3 relative"
-                    style={{ background: 'linear-gradient(135deg, rgba(8,145,178,0.1), rgba(6,182,212,0.1))' }}>
+                  <div className="relative mx-auto mb-3 flex h-14 w-14 items-center justify-center rounded-full border border-cyan-200 bg-white shadow-[0_10px_30px_rgba(8,145,178,.10)]">
                     <step.icon className="w-5 h-5" style={{ color: '#0891b2' }} />
-                    <span className="absolute -top-1.5 -right-1.5 w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold text-white"
-                      style={{ background: '#0c2b36' }}>{i + 1}</span>
+                    <span className="absolute -right-1.5 -top-1.5 flex h-5 w-5 items-center justify-center rounded-full bg-[#06151c] text-[10px] font-black text-cyan-300">{i + 1}</span>
                   </div>
                   <p className="text-sm font-bold mb-1" style={{ color: '#0c2b36' }}>{step.title}</p>
                   <p className="text-xs text-slate-500 leading-relaxed">{step.text}</p>
@@ -173,11 +171,11 @@ export default function LotteryPage() {
         {/* Premio */}
         {(data.image_url || data.prize_label) && (
           <Reveal className={`grid gap-6 ${data.image_url && data.prize_label ? 'md:grid-cols-2' : ''}`}>
-            {data.image_url && <div className="relative rounded-2xl overflow-hidden aspect-square max-w-xs mx-auto md:mx-0" style={{ boxShadow: '0 16px 40px rgba(8,145,178,0.12)' }}><Image src={data.image_url} alt="Premio" fill sizes="(max-width: 640px) 100vw, 320px" className="object-cover" /></div>}
+            {data.image_url && <div className="relative mx-auto aspect-square max-w-xs overflow-hidden rounded-[32px] border border-slate-200 md:mx-0" style={{ boxShadow: '0 15px 50px rgba(15,23,42,.08)' }}><Image src={data.image_url} alt="Premio" fill sizes="(max-width: 640px) 100vw, 320px" className="object-cover" /></div>}
             {data.prize_label && (
               <div className="flex items-center">
-                <div className="bg-white rounded-2xl p-6 w-full" style={{ border: '1px solid rgba(8,145,178,0.1)' }}>
-                  <p className="text-xs font-medium text-cyan-600 mb-1 flex items-center gap-1"><Gift className="w-3.5 h-3.5" /> In palio</p>
+                <div className="w-full rounded-[32px] border border-slate-200 bg-white p-6 shadow-[0_15px_50px_rgba(15,23,42,.06)]">
+                  <p className="mb-1 flex items-center gap-1 text-xs font-black uppercase tracking-[0.2em] text-cyan-600"><Gift className="w-3.5 h-3.5" /> In palio</p>
                   <p className="text-lg font-bold" style={{ color: '#0c2b36' }}>{data.prize_label}</p>
                 </div>
               </div>
@@ -187,11 +185,13 @@ export default function LotteryPage() {
 
         {/* Bolle */}
         <Reveal delay={100}>
-          <h2 className="text-2xl font-black mb-2 text-center tracking-[-.03em]" style={{ color: '#020617' }}>{count} bolle in gioco</h2>
-          <p className="text-sm text-slate-400 text-center mb-6">
+          <div className="relative overflow-hidden rounded-[32px] border border-cyan-300/15 bg-[#071a22] px-5 py-8 shadow-[0_30px_80px_rgba(6,21,28,.20)] sm:px-8">
+          <div className="pointer-events-none absolute -right-20 -top-24 h-64 w-64 rounded-full bg-cyan-400/15 blur-3xl" />
+          <h2 className="relative mb-2 text-center text-2xl font-black tracking-[-.03em] text-white">{count} bolle in gioco</h2>
+          <p className="relative mb-6 text-center text-sm text-slate-400">
             {revealPhase ? 'Tutte le bolle sono scoppiate tranne quella vincente!' : 'Allo scadere del tempo, tutte le bolle scoppieranno tranne quella vincente'}
           </p>
-          <div className="flex flex-wrap justify-center gap-2 py-6">
+          <div className="relative flex flex-wrap justify-center gap-2 py-4">
             {Array.from({ length: count }).map((_, idx) => {
               const num = idx + 1
               const isWinner = winnerNumber === num
@@ -205,12 +205,10 @@ export default function LotteryPage() {
                     width: size, height: size, borderRadius: '9999px',
                     display: 'flex', alignItems: 'center', justifyContent: 'center',
                     fontSize: Math.max(9, size * 0.32), fontWeight: 700,
-                    color: winnerGlow ? '#fff' : '#0e7490',
-                    background: winnerGlow
-                      ? 'linear-gradient(135deg,#f59e0b,#f97316)'
-                      : 'radial-gradient(circle at 32% 28%, rgba(255,255,255,0.9), rgba(8,145,178,0.18) 55%, transparent 100%)',
-                    boxShadow: winnerGlow ? '0 0 24px rgba(249,115,22,0.6)' : '0 2px 6px rgba(8,145,178,0.12)',
-                    border: '1px solid rgba(8,145,178,0.2)',
+                    color: winnerGlow ? '#05212a' : '#a5f3fc',
+                    background: winnerGlow ? '#22d3ee' : 'rgba(103,232,249,0.10)',
+                    boxShadow: winnerGlow ? '0 0 28px rgba(34,211,238,0.7)' : 'none',
+                    border: winnerGlow ? '1px solid #67e8f9' : '1px solid rgba(103,232,249,0.25)',
                     animation: popped
                       ? `bubblePop 0.6s ease-in ${delay}s both`
                       : winnerGlow
@@ -223,6 +221,7 @@ export default function LotteryPage() {
               )
             })}
           </div>
+          </div>
         </Reveal>
 
         {/* Storico */}
@@ -231,7 +230,7 @@ export default function LotteryPage() {
             <h2 className="text-xl font-black mb-4 flex items-center gap-2 tracking-[-.03em]" style={{ color: '#020617' }}><History className="w-5 h-5" /> Storico vincitori</h2>
             <div className="space-y-2">
               {data.winners.map(w => (
-                <div key={w.id} className="flex items-center gap-3 p-3 rounded-2xl bg-white" style={{ border: '1px solid rgba(8,145,178,0.1)' }}>
+                <div key={w.id} className="flex items-center gap-3 rounded-2xl border border-slate-200 bg-white p-3">
                   {w.prize_image_url
                     ? <Image src={w.prize_image_url} alt="" width={48} height={48} className="rounded-xl object-cover shrink-0" />
                     : <div className="w-12 h-12 rounded-xl flex items-center justify-center shrink-0" style={{ background: 'rgba(8,145,178,0.08)' }}><ImageIcon className="w-5 h-5" style={{ color: 'rgba(8,145,178,0.3)' }} /></div>}
@@ -247,7 +246,7 @@ export default function LotteryPage() {
         )}
 
         <Reveal delay={200} className="text-center py-6">
-          <Link href="/shop" className="inline-flex items-center gap-2 font-bold px-10 py-4 rounded-2xl text-white" style={{ background: 'linear-gradient(135deg,#0891b2,#06b6d4)', boxShadow: '0 12px 32px rgba(8,145,178,0.35)' }}>
+          <Link href="/shop" className="inline-flex h-14 items-center justify-center gap-3 rounded-2xl bg-cyan-600 px-8 font-black text-white shadow-[0_12px_32px_rgba(8,145,178,.35)] transition duration-300 hover:-translate-y-1 hover:bg-cyan-500">
             <ArrowLeft className="w-5 h-5" /> Vai al negozio
           </Link>
         </Reveal>

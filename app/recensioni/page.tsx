@@ -212,7 +212,7 @@ export default function RecensioniPage() {
 
           {/* Form nuova recensione */}
           <Reveal>
-            <div className="glass-card rounded-2xl p-6">
+            <div className="rounded-[32px] border border-slate-200 bg-white p-6 shadow-[0_15px_50px_rgba(15,23,42,.06)]">
               <h2 className="text-lg font-black mb-4 tracking-[-.03em]" style={{ color: '#020617' }}>Lascia la tua recensione</h2>
               {sent ? (
                 <div className="flex flex-col items-center text-center gap-2 py-6">
@@ -232,20 +232,20 @@ export default function RecensioniPage() {
                     value={name}
                     onChange={e => setName(e.target.value)}
                     placeholder="Il tuo nome"
-                    className="w-full border border-slate-200 rounded-lg px-3 py-2.5 text-base focus:outline-none focus:ring-2 focus:ring-cyan-500"
+                    className="w-full border border-slate-200 rounded-2xl px-4 py-3 text-base focus:outline-none focus:ring-2 focus:ring-cyan-500"
                   />
                   <textarea
                     value={comment}
                     onChange={e => setComment(e.target.value)}
                     placeholder="Racconta la tua esperienza con MGShop Casa..."
                     rows={4}
-                    className="w-full border border-slate-200 rounded-lg px-3 py-2.5 text-base focus:outline-none focus:ring-2 focus:ring-cyan-500 resize-none"
+                    className="w-full border border-slate-200 rounded-2xl px-4 py-3 text-base focus:outline-none focus:ring-2 focus:ring-cyan-500 resize-none"
                   />
                   <div className="space-y-2">
                     {attachments.length > 0 && (
                       <div className="grid grid-cols-4 gap-2">
                         {attachments.map(a => (
-                          <div key={a.localId} className="relative aspect-square rounded-lg overflow-hidden bg-slate-100">
+                          <div key={a.localId} className="relative aspect-square rounded-2xl overflow-hidden bg-slate-100">
                             {a.type === 'video' ? (
                               <video src={a.previewUrl} className="w-full h-full object-cover" muted playsInline preload="metadata" />
                             ) : (
@@ -278,7 +278,7 @@ export default function RecensioniPage() {
                       </div>
                     )}
                     {attachments.length < MAX_ATTACHMENTS && (
-                      <label className="flex items-center justify-center gap-2 py-2.5 rounded-xl border border-dashed border-slate-300 text-sm font-medium text-slate-500 cursor-pointer hover:border-cyan-400 hover:text-cyan-600 transition-colors">
+                      <label className="flex items-center justify-center gap-2 py-3 rounded-2xl border border-dashed border-slate-300 text-sm font-medium text-slate-500 cursor-pointer hover:border-cyan-400 hover:text-cyan-600 transition-colors">
                         <Camera className="w-4 h-4" /> Aggiungi foto o video
                         <input type="file" accept="image/*,video/*" multiple className="hidden" onChange={handleFilesSelected} />
                       </label>
@@ -288,8 +288,8 @@ export default function RecensioniPage() {
                   <button
                     onClick={handleSubmit}
                     disabled={sending}
-                    className="w-full flex items-center justify-center gap-2 py-3 rounded-xl text-sm font-bold text-white disabled:opacity-50 btn-press"
-                    style={{ background: 'linear-gradient(135deg,#0891b2,#06b6d4)' }}
+                    className="flex h-14 w-full items-center justify-center gap-2 rounded-2xl text-sm font-black disabled:opacity-50 btn-press"
+                    style={{ background: '#22d3ee', color: '#05212a', boxShadow: '0 12px 32px rgba(34,211,238,.30)' }}
                   >
                     <Send className="w-4 h-4" /> {sending ? 'Invio in corso...' : 'Invia recensione'}
                   </button>
@@ -306,7 +306,7 @@ export default function RecensioniPage() {
               <p className="text-center py-8 text-slate-400 text-sm">Nessuna recensione ancora, sii il primo a scriverne una!</p>
             ) : reviews.map((r, i) => (
               <Reveal key={r.id} delay={i * 50}>
-                <div className="glass-card rounded-2xl p-5">
+                <div className="rounded-[32px] border border-slate-200 bg-white p-5 shadow-[0_15px_50px_rgba(15,23,42,.06)]">
                   <div className="flex items-start justify-between gap-3 mb-2">
                     <div>
                       <p className="font-bold" style={{ color: '#0c2b36' }}>{r.customer_name}</p>
@@ -321,7 +321,7 @@ export default function RecensioniPage() {
                   {r.media && r.media.length > 0 && (
                     <div className="grid grid-cols-4 gap-2 mt-3">
                       {r.media.map(m => (
-                        <a key={m.id} href={m.media_url} target="_blank" rel="noopener noreferrer" className="relative aspect-square rounded-lg overflow-hidden bg-slate-100 block">
+                        <a key={m.id} href={m.media_url} target="_blank" rel="noopener noreferrer" className="relative aspect-square rounded-2xl overflow-hidden bg-slate-100 block">
                           {m.media_type === 'video' ? (
                             <>
                               <video src={m.media_url} className="w-full h-full object-cover" muted playsInline preload="metadata" />
@@ -338,7 +338,7 @@ export default function RecensioniPage() {
                   )}
 
                   {r.admin_reply && (
-                    <div className="mt-3 rounded-xl p-3" style={{ background: 'rgba(8,145,178,0.06)', border: '1px solid rgba(8,145,178,0.15)' }}>
+                    <div className="mt-3 rounded-2xl p-3" style={{ background: 'rgba(8,145,178,0.06)', border: '1px solid rgba(8,145,178,0.15)' }}>
                       <p className="text-xs font-bold mb-1" style={{ color: '#0891b2' }}>Risposta di MGShop Casa</p>
                       <p className="text-sm text-slate-600 leading-relaxed">{r.admin_reply}</p>
                     </div>

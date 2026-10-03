@@ -37,30 +37,25 @@ export function LoyaltyBanner({ compact = false }: { compact?: boolean }) {
   )
 
   return (
-    <div className="relative overflow-hidden rounded-2xl neon-glow"
-      style={{ background: 'linear-gradient(135deg, #ffffff 0%, #f0fbfd 100%)', border: '1px solid rgba(8,145,178,0.15)' }}>
-
-      <AmbientBubbles count={4} theme="light" />
+    <div className="relative overflow-hidden rounded-[28px] border border-cyan-300/15 bg-[#071a22] neon-glow">
+      <div className="pointer-events-none absolute -right-16 -top-20 h-56 w-56 rounded-full bg-cyan-400/15 blur-3xl" />
+      <AmbientBubbles count={4} theme="dark" />
 
       <div className="relative z-10 flex items-center gap-4 px-5 py-5 sm:px-7 sm:py-6">
         <div className="shrink-0 animate-float">
-          <div className="w-14 h-14 rounded-full flex items-center justify-center"
-            style={{
-              background: 'radial-gradient(circle at 30% 25%, #a5f3fc, #0891b2 55%, #155e75 100%)',
-              boxShadow: 'inset -3px -4px 8px rgba(0,0,0,0.25), inset 3px 4px 7px rgba(255,255,255,0.5), 0 8px 18px rgba(8,145,178,0.35)',
-            }}>
-            <Sparkles className="w-6 h-6 text-white" style={{ filter: 'drop-shadow(0 1px 2px rgba(0,0,0,0.25))' }} />
+          <div className="flex h-14 w-14 items-center justify-center rounded-2xl border border-cyan-300/20 bg-cyan-300/10">
+            <Sparkles className="h-6 w-6 text-cyan-300" />
           </div>
         </div>
 
         <div className="min-w-0">
-          <p className="text-[11px] font-semibold tracking-wider text-cyan-600 uppercase">Programma fedeltà</p>
-          <p className="text-base font-bold text-slate-900 mb-1.5">Accumula punti ad ogni ordine</p>
-          <p className="text-sm text-slate-600 leading-relaxed">
-            Ogni <strong className="text-slate-900">{euroPerPoint}€</strong> di spesa ti fa guadagnare{' '}
-            <strong className="text-cyan-600">1 punto</strong>. Raggiunti{' '}
-            <strong className="text-slate-900">{settings.points_threshold} punti</strong>, ricevi:{' '}
-            <strong className="text-slate-900">{settings.reward_description}</strong>.
+          <p className="text-[11px] font-black uppercase tracking-[0.2em] text-cyan-300">Programma fedeltà</p>
+          <p className="mb-1.5 mt-0.5 text-base font-black tracking-[-0.02em] text-white">Accumula punti ad ogni ordine</p>
+          <p className="text-sm leading-relaxed text-slate-400">
+            Ogni <strong className="text-white">{euroPerPoint}€</strong> di spesa ti fa guadagnare{' '}
+            <strong className="text-cyan-300">1 punto</strong>. Raggiunti{' '}
+            <strong className="text-white">{settings.points_threshold} punti</strong>, ricevi:{' '}
+            <strong className="text-white">{settings.reward_description}</strong>.
           </p>
         </div>
       </div>

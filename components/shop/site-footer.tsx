@@ -22,6 +22,7 @@ export function SiteFooter() {
   return (
     <footer className="relative overflow-hidden pb-24"
       style={{ background: '#06151c' }}>
+      <div className="pointer-events-none absolute left-1/2 top-[-160px] h-[320px] w-[600px] -translate-x-1/2 rounded-full bg-cyan-400/10 blur-[110px]" />
       {/* Bolle decorative leggere, coerenti col resto del sito */}
       <div className="absolute inset-0 pointer-events-none opacity-60">
         {[
@@ -45,11 +46,11 @@ export function SiteFooter() {
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-8 sm:gap-6">
           <div>
             <div className="flex items-center gap-2 mb-3">
-              <div className="w-9 h-9 rounded-xl flex items-center justify-center text-white"
-                style={{ background: 'linear-gradient(135deg,#0891b2,#06b6d4)' }}>
+              <div className="flex h-10 w-10 items-center justify-center rounded-2xl text-[#05212a]"
+                style={{ background: '#22d3ee', boxShadow: '0 0 30px rgba(34,211,238,.30)' }}>
                 <MGShopStamp size={20} />
               </div>
-              <span className="text-lg font-bold text-white tracking-tight">
+              <span className="text-lg font-black text-white tracking-[-0.03em]">
                 MG<span style={{ color: '#22d3ee' }}>Shop</span>
               </span>
             </div>
@@ -59,7 +60,7 @@ export function SiteFooter() {
           </div>
 
           <div>
-            <p className="text-xs font-semibold uppercase tracking-wider text-cyan-300 mb-3">Link utili</p>
+            <p className="text-[11px] font-black uppercase tracking-[0.2em] text-cyan-300 mb-4">Link utili</p>
             <ul className="grid grid-cols-2 gap-x-4 gap-y-2">
               {LINKS.map(l => (
                 <li key={l.href}>
@@ -72,7 +73,7 @@ export function SiteFooter() {
           </div>
 
           <div>
-            <p className="text-xs font-semibold uppercase tracking-wider text-cyan-300 mb-3">Seguici sui social</p>
+            <p className="text-[11px] font-black uppercase tracking-[0.2em] text-cyan-300 mb-4">Seguici sui social</p>
             <div className="flex items-center gap-2.5">
               <a href={SOCIAL_LINKS.instagram} target="_blank" rel="noopener noreferrer" aria-label="Instagram"
                 className="w-10 h-10 rounded-full flex items-center justify-center transition-transform hover:scale-110 btn-press"

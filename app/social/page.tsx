@@ -84,12 +84,11 @@ export default function SocialPage() {
       <div className="mg-page-shell relative max-w-4xl mx-auto px-4 pb-20 -mt-4">
         <button
           onClick={openChat}
-          className="group relative flex items-center gap-4 w-full rounded-2xl p-5 mb-5 transition-transform hover:-translate-y-1 neon-glow text-left"
-          style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)' }}
+          className="group relative mb-5 flex w-full items-center gap-4 rounded-[28px] border border-cyan-300/15 bg-[#071a22] p-5 text-left transition-transform hover:-translate-y-1 neon-glow"
         >
           <span
-            className="w-16 h-16 shrink-0 rounded-2xl flex items-center justify-center text-white"
-            style={{ background: 'linear-gradient(135deg,#0891b2,#06b6d4)' }}
+            className="flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl text-[#05212a]"
+            style={{ background: '#22d3ee' }}
           >
             <MessageCircle className="w-7 h-7" />
           </span>
@@ -113,8 +112,7 @@ export default function SocialPage() {
               href={href}
               target="_blank"
               rel="noopener noreferrer"
-              className={`group relative flex items-center gap-4 rounded-2xl p-5 transition-transform hover:-translate-y-1 ${neonClass}`}
-              style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)' }}
+              className={`group relative flex items-center gap-4 rounded-[28px] border border-cyan-300/15 bg-[#071a22] p-5 transition-transform hover:-translate-y-1 ${neonClass}`}
             >
               <span
                 className="w-16 h-16 shrink-0 rounded-2xl flex items-center justify-center text-white"

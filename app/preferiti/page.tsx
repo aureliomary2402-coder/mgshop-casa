@@ -67,8 +67,7 @@ export default function PreferitiPage() {
           </div>
           <p className="text-lg font-medium text-slate-600 mb-1">Nessun preferito ancora</p>
           <p className="text-sm text-slate-400 mb-6">Tocca il cuoricino su un prodotto per salvarlo qui.</p>
-          <Link href="/shop" className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl font-semibold text-white btn-press"
-            style={{ background: 'linear-gradient(135deg, #0891b2, #06b6d4)' }}>
+          <Link href="/shop" className="inline-flex h-14 items-center justify-center gap-3 rounded-2xl bg-cyan-600 px-8 font-black text-white shadow-[0_12px_32px_rgba(8,145,178,.35)] transition duration-300 hover:-translate-y-1 hover:bg-cyan-500">
             Vai al negozio
           </Link>
         </div>
@@ -77,7 +76,7 @@ export default function PreferitiPage() {
           {products.map(p => {
             const imgUrl = optimizeImage(p.card_image || p.cover_image, 300)
             return (
-              <div key={p.id} className="mg-premium-product-card rounded-2xl overflow-hidden animate-fade-in-up"
+              <div key={p.id} className="mg-premium-product-card rounded-[28px] overflow-hidden animate-fade-in-up"
                 style={{ background: 'white', border: '1px solid rgba(8,145,178,0.08)' }}>
                 <div className="relative aspect-square cursor-pointer" style={{ background: 'linear-gradient(135deg, #f0fbfd, #cffafe)' }}
                   onClick={() => openDetail(p.id)}>
@@ -103,10 +102,10 @@ export default function PreferitiPage() {
                   <div className="flex items-center justify-between">
                     <span className="font-bold text-base" style={{ color: '#0891b2' }}>€{p.price.toFixed(2)}</span>
                     <button onClick={() => handleAdd(p)} disabled={p.torna_presto}
-                      className="flex items-center gap-1 text-white text-xs font-semibold px-3 py-1.5 rounded-full btn-press transition-all disabled:cursor-not-allowed"
+                      className="flex h-9 w-9 items-center justify-center rounded-full btn-press transition-all disabled:cursor-not-allowed"
                       style={p.torna_presto
-                        ? { background: '#94a3b8', boxShadow: 'none' }
-                        : { background: 'linear-gradient(135deg, #0891b2, #06b6d4)', boxShadow: '0 2px 8px rgba(8,145,178,0.3)' }}>
+                        ? { background: '#e2e8f0', color: '#94a3b8' }
+                        : { background: '#22d3ee', color: '#05212a', boxShadow: '0 8px 20px rgba(34,211,238,.30)' }}>
                       <ShoppingCart className="w-3.5 h-3.5" />
                     </button>
                   </div>

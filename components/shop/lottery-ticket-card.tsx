@@ -66,51 +66,49 @@ export function LotteryTicketCard({ hideDetailsLink = false }: { hideDetailsLink
   }
 
   return (
-    <div className="relative overflow-hidden rounded-2xl neon-glow"
-      style={{ background: 'linear-gradient(135deg, #fff7ed 0%, #ffffff 100%)', border: '1px solid rgba(249,115,22,0.25)' }}>
-      <AmbientBubbles count={4} theme="light" />
+    <div className="relative overflow-hidden rounded-[32px] border border-cyan-300/15 bg-[#071a22] neon-glow">
+      <div className="pointer-events-none absolute -right-20 -top-24 h-64 w-64 rounded-full bg-cyan-400/15 blur-3xl" />
+      <AmbientBubbles count={4} theme="dark" />
 
-      <div className="relative z-10 flex flex-col sm:flex-row items-start sm:items-center gap-4 px-5 py-5 sm:px-7 sm:py-6">
+      <div className="relative z-10 flex flex-col items-start gap-5 px-5 py-6 sm:flex-row sm:items-center sm:px-8 sm:py-8">
         <div className="shrink-0 animate-float">
-          <div className="w-14 h-14 rounded-full flex items-center justify-center"
-            style={{
-              background: 'radial-gradient(circle at 30% 25%, #fde68a, #f59e0b 55%, #c2410c 100%)',
-              boxShadow: 'inset -3px -4px 8px rgba(0,0,0,0.25), inset 3px 4px 7px rgba(255,255,255,0.5), 0 8px 18px rgba(249,115,22,0.35)',
-            }}>
-            <Gift className="w-6 h-6 text-white" style={{ filter: 'drop-shadow(0 1px 2px rgba(0,0,0,0.25))' }} />
+          <div className="flex h-16 w-16 items-center justify-center rounded-2xl border border-cyan-300/20 bg-cyan-300/10">
+            <Gift className="h-7 w-7 text-cyan-300" />
           </div>
         </div>
 
         <div className="min-w-0 flex-1">
-          <p className="text-[11px] font-semibold tracking-wider text-orange-600 uppercase">Lotteria a premi</p>
-          <p className="text-base font-bold text-slate-900 mb-1">{data.title || 'Partecipa e vinci'}</p>
-          <p className="text-sm text-slate-600 leading-relaxed">
-            {data.prize_label && <>In palio: <strong className="text-slate-900">{data.prize_label}</strong>. </>}
-            Non vuoi comprare nulla ma vuoi comunque tentare la fortuna? Aggiungi un biglietto al carrello, <strong className="text-slate-900">€{ticketPrice.toFixed(2)} l'uno</strong> — puoi prenderne quanti vuoi.
+          <p className="text-[11px] font-black uppercase tracking-[0.2em] text-cyan-300">Lotteria a premi</p>
+          <p className="mb-1 mt-1 text-xl font-black tracking-[-0.02em] text-white">{data.title || 'Partecipa e vinci'}</p>
+          <p className="text-sm leading-relaxed text-slate-400">
+            {data.prize_label && <>In palio: <strong className="text-white">{data.prize_label}</strong>. </>}
+            Non vuoi comprare nulla ma vuoi comunque tentare la fortuna? Aggiungi un biglietto al carrello, <strong className="text-white">€{ticketPrice.toFixed(2)} l'uno</strong> — puoi prenderne quanti vuoi.
           </p>
 
-          <div className="mt-3 flex flex-wrap items-center gap-3">
-            <div className="flex items-center gap-2 bg-white rounded-lg border border-orange-200 px-1">
-              <button onClick={() => setQty(q => Math.max(1, q - 1))} className="w-8 h-8 flex items-center justify-center text-orange-600"><Minus className="w-3.5 h-3.5" /></button>
-              <span className="w-6 text-center font-bold text-slate-800">{qty}</span>
-              <button onClick={() => setQty(q => Math.min(20, q + 1))} className="w-8 h-8 flex items-center justify-center text-orange-600"><Plus className="w-3.5 h-3.5" /></button>
+          <div className="mt-4 flex flex-wrap items-center gap-3">
+            <div className="flex items-center gap-1 rounded-2xl border border-white/15 bg-white/10 px-1">
+              <button onClick={() => setQty(q => Math.max(1, q - 1))} className="flex h-10 w-10 items-center justify-center text-cyan-200"><Minus className="h-4 w-4" /></button>
+              <span className="w-7 text-center font-black text-white">{qty}</span>
+              <button onClick={() => setQty(q => Math.min(20, q + 1))} className="flex h-10 w-10 items-center justify-center text-cyan-200"><Plus className="h-4 w-4" /></button>
             </div>
 
             <button onClick={handleAdd}
-              className="inline-flex items-center gap-2 text-sm font-bold text-white px-5 py-2.5 rounded-xl transition-transform hover:scale-105 active:scale-95"
-              style={{ background: added ? 'linear-gradient(135deg,#16a34a,#22c55e)' : 'linear-gradient(135deg,#f59e0b,#ea580c)' }}>
-              {added ? <><Ticket className="w-4 h-4" /> Aggiunto!</> : <><ShoppingCart className="w-4 h-4" /> Aggiungi al carrello (€{(qty * ticketPrice).toFixed(2)})</>}
+              className="inline-flex h-12 items-center gap-2 rounded-2xl px-6 text-sm font-black transition-all active:scale-[0.98]"
+              style={added
+                ? { background: '#4ade80', color: '#052e16' }
+                : { background: '#22d3ee', color: '#05212a', boxShadow: '0 12px 32px rgba(34,211,238,.30)' }}>
+              {added ? <><Ticket className="h-4 w-4" /> Aggiunto!</> : <><ShoppingCart className="h-4 w-4" /> Aggiungi al carrello (€{(qty * ticketPrice).toFixed(2)})</>}
             </button>
 
             {inCart > 0 && (
-              <span className="text-xs font-medium text-orange-600 bg-orange-50 px-2.5 py-1 rounded-full">
+              <span className="rounded-full border border-cyan-300/20 bg-cyan-300/10 px-3 py-1 text-xs font-bold text-cyan-200">
                 {inCart} nel carrello
               </span>
             )}
           </div>
 
           {!hideDetailsLink && (
-            <Link href="/lotteria" className="block mt-2.5 text-xs text-orange-500 hover:text-orange-600 underline underline-offset-2">
+            <Link href="/lotteria" className="mt-3 block text-xs text-cyan-300 underline underline-offset-2 hover:text-cyan-200">
               Vedi tutti i dettagli della lotteria
             </Link>
           )}

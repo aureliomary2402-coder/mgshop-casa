@@ -218,10 +218,9 @@ export function SiteTicker() {
         className="fixed left-0 right-0 flex items-center h-9 overflow-hidden site-ticker-bar"
         style={{
           zIndex: 40,
-          background: 'linear-gradient(90deg, #0c4a6e, #075985, #0891b2, #06b6d4, #0891b2, #075985, #0c4a6e)',
-          backgroundSize: '400% 100%',
-          animation: 'ticker-gradient 12s ease infinite',
-          boxShadow: '0 -1px 0 rgba(255,255,255,0.15) inset, 0 -3px 12px rgba(8,145,178,0.25)',
+          background: '#06151c',
+          borderTop: '1px solid rgba(103,232,249,0.25)',
+          boxShadow: '0 -3px 18px rgba(34,211,238,0.18)',
         }}
       >
         <div className="flex-1 overflow-hidden relative h-full flex items-center">
@@ -230,7 +229,7 @@ export function SiteTicker() {
             style={{ animation: 'ticker-scroll 24s linear infinite' }}
           >
             {[0, 1, 2, 3].map(i => (
-              <span key={i} className="text-white text-xs font-semibold px-10 tracking-wide">
+              <span key={i} className="text-cyan-100 text-xs font-bold px-10 tracking-wide">
                 {message}
               </span>
             ))}

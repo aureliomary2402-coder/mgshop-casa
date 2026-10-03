@@ -26,7 +26,7 @@ export function RelatedProducts({ categorySlug, excludeId }: { categorySlug?: st
 
   return (
     <div className="pt-2">
-      <p className="text-sm font-semibold flex items-center gap-1.5 mb-2.5" style={{ color: '#0c2b36' }}>
+      <p className="mb-3 flex items-center gap-1.5 text-[11px] font-black uppercase tracking-[0.2em] text-slate-900">
         <Sparkles className="w-4 h-4 text-cyan-600" /> Potrebbero interessarti anche
       </p>
       <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-hide">
@@ -35,12 +35,11 @@ export function RelatedProducts({ categorySlug, excludeId }: { categorySlug?: st
           return (
             <button key={p.id} onClick={() => openDetail(p.id)}
               className="shrink-0 w-28 text-left group">
-              <div className="relative w-28 h-28 rounded-2xl overflow-hidden mb-1.5 transition-transform group-hover:scale-105"
-                style={{ background: 'linear-gradient(135deg, #f0fbfd, #cffafe)', border: '1px solid rgba(8,145,178,0.08)' }}>
+              <div className="relative mb-2 h-28 w-28 overflow-hidden rounded-[22px] border border-slate-200 bg-cyan-50 transition-transform group-hover:-translate-y-1">
                 {imgUrl && <Image src={imgUrl} alt={p.name} fill sizes="112px" className="object-cover" />}
               </div>
-              <p className="text-xs font-medium line-clamp-2 leading-snug" style={{ color: '#0c2b36' }}>{p.name}</p>
-              <p className="text-xs font-bold" style={{ color: '#0891b2' }}>€{p.price.toFixed(2)}</p>
+              <p className="line-clamp-2 text-xs font-bold leading-snug text-slate-900">{p.name}</p>
+              <p className="text-sm font-black text-cyan-700">€{p.price.toFixed(2)}</p>
             </button>
           )
         })}

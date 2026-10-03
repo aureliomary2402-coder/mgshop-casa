@@ -49,20 +49,20 @@ export function NotifyBanner() {
   // scorrendo la pagina finché non viene chiuso o attivato.
   return (
     <div className="fixed left-4 right-4 z-[60] animate-slide-in-up" style={{ bottom: 'calc(230px + env(safe-area-inset-bottom, 0px))' }}>
-      <div className="max-w-sm mx-auto flex items-center gap-3 p-3.5 rounded-2xl shadow-lg" style={{ background: 'white', border: '1px solid rgba(8,145,178,0.15)' }}>
-        <div className="w-10 h-10 rounded-full flex items-center justify-center shrink-0" style={{ background: 'rgba(8,145,178,0.1)' }}>
-          <Bell className="w-5 h-5" style={{ color: '#0891b2' }} />
+      <div className="neon-glow mx-auto flex max-w-sm items-center gap-3 rounded-[24px] border border-cyan-300/15 bg-[#071a22] p-3.5 shadow-2xl">
+        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl border border-cyan-300/20 bg-cyan-300/10">
+          <Bell className="h-5 w-5 text-cyan-300" />
         </div>
-        <div className="flex-1 min-w-0">
-          <p className="text-sm font-bold" style={{ color: '#0c2b36' }}>Non perderti le offerte!</p>
-          <p className="text-xs text-slate-500">Attiva le notifiche per promozioni e novità.</p>
+        <div className="min-w-0 flex-1">
+          <p className="text-sm font-black text-white">Non perderti le offerte!</p>
+          <p className="text-xs text-slate-400">Attiva le notifiche per promozioni e novità.</p>
         </div>
         <button onClick={activate} disabled={loading}
-          className="shrink-0 text-xs font-bold text-white px-3 py-2 rounded-xl transition-transform active:scale-95 disabled:opacity-60"
-          style={{ background: 'linear-gradient(135deg,#0891b2,#06b6d4)' }}>
+          className="shrink-0 rounded-2xl px-4 py-2.5 text-xs font-black transition-transform active:scale-95 disabled:opacity-60"
+          style={{ background: '#22d3ee', color: '#05212a' }}>
           {loading ? '...' : 'Attiva'}
         </button>
-        <button onClick={dismiss} className="shrink-0 p-1 text-slate-400 hover:text-slate-600">
+        <button onClick={dismiss} className="shrink-0 p-1 text-slate-500 hover:text-slate-300">
           <X className="w-4 h-4" />
         </button>
       </div>

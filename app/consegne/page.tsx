@@ -41,11 +41,11 @@ export default function ConsegnePage() {
           <Reveal>
             <div className="grid sm:grid-cols-2 gap-5">
               {ZONES.map(z => (
-                <div key={z.title} className="glass-card rounded-2xl p-6"
+                <div key={z.title} className="rounded-[32px] border border-slate-200 bg-white p-6 shadow-[0_15px_50px_rgba(15,23,42,.06)]"
                   style={{
                     border: z.highlight ? '1px solid rgba(22,163,74,0.25)' : undefined,
                   }}>
-                  <div className="w-11 h-11 rounded-xl flex items-center justify-center mb-4"
+                  <div className="w-11 h-11 rounded-2xl flex items-center justify-center mb-4"
                     style={{ background: z.highlight ? 'rgba(22,163,74,0.1)' : 'rgba(8,145,178,0.1)' }}>
                     <MapPin className="w-5 h-5" style={{ color: z.highlight ? '#16a34a' : '#0891b2' }} />
                   </div>
@@ -58,8 +58,8 @@ export default function ConsegnePage() {
           </Reveal>
 
           <Reveal delay={80}>
-            <div className="glass-card rounded-2xl p-6" style={{ border: '1px solid rgba(8,145,178,0.2)' }}>
-              <div className="w-11 h-11 rounded-xl flex items-center justify-center mb-4" style={{ background: 'rgba(8,145,178,0.1)' }}>
+            <div className="rounded-[32px] border border-slate-200 bg-white p-6 shadow-[0_15px_50px_rgba(15,23,42,.06)]" style={{ border: '1px solid rgba(8,145,178,0.2)' }}>
+              <div className="w-11 h-11 rounded-2xl flex items-center justify-center mb-4" style={{ background: 'rgba(8,145,178,0.1)' }}>
                 <Store className="w-5 h-5" style={{ color: '#0891b2' }} />
               </div>
               <h3 className="text-lg font-black mb-1 tracking-[-.03em]" style={{ color: '#020617' }}>Vieni a ritirare</h3>
@@ -71,7 +71,7 @@ export default function ConsegnePage() {
           </Reveal>
 
           <Reveal delay={100}>
-            <div className="flex items-start gap-3 p-4 rounded-xl" style={{ background: 'rgba(22,163,74,0.06)', border: '1px solid rgba(22,163,74,0.15)' }}>
+            <div className="flex items-start gap-3 p-4 rounded-2xl" style={{ background: 'rgba(22,163,74,0.06)', border: '1px solid rgba(22,163,74,0.15)' }}>
               <Banknote className="w-5 h-5 text-green-600 shrink-0 mt-0.5" />
               <p className="text-sm text-slate-600 leading-relaxed">
                 <strong className="text-green-700">Pagamento alla consegna o al ritiro:</strong> paghi comodamente in contanti quando ricevi l&apos;ordine o lo ritiri, nessun pagamento online richiesto.
@@ -85,16 +85,14 @@ export default function ConsegnePage() {
             </p>
             <div className="text-center mt-3">
               <button onClick={openChat}
-                className="inline-flex items-center gap-2 font-bold px-6 py-3 rounded-2xl text-sm"
-                style={{ background: 'rgba(8,145,178,0.1)', color: '#0891b2', border: '1px solid rgba(8,145,178,0.2)' }}>
+                className="inline-flex h-12 items-center justify-center gap-2 rounded-2xl border border-cyan-200 bg-cyan-50 px-6 text-sm font-black text-cyan-700 transition hover:-translate-y-0.5 hover:bg-cyan-100">
                 <MessageCircle className="w-4 h-4" /> Scrivici in chat
               </button>
             </div>
           </Reveal>
 
           <Reveal delay={200} className="text-center pt-4">
-            <Link href="/shop" className="inline-flex items-center gap-2 font-bold px-10 py-4 rounded-2xl text-white"
-              style={{ background: 'linear-gradient(135deg,#0891b2,#06b6d4)', boxShadow: '0 12px 32px rgba(8,145,178,0.35)' }}>
+            <Link href="/shop" className="inline-flex h-14 items-center justify-center gap-3 rounded-2xl bg-cyan-600 px-8 font-black text-white shadow-[0_12px_32px_rgba(8,145,178,.35)] transition duration-300 hover:-translate-y-1 hover:bg-cyan-500">
               <ShoppingBag className="w-5 h-5" /> Vai al negozio
             </Link>
           </Reveal>
