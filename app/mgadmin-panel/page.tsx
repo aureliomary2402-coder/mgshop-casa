@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect } from 'react'
-import { Package, Tag, Image, ShoppingBag, LogOut, Lock, LayoutDashboard, Megaphone, Ticket, Menu, X, ExternalLink, Users, Gift, MessageCircle, Newspaper, PartyPopper, Hash, TrendingUp, Eye, AlertTriangle, Rss, Star, Terminal, Heart } from 'lucide-react'
+import { Package, Tag, Image, ShoppingBag, LogOut, Lock, LayoutDashboard, Megaphone, Ticket, Menu, X, ExternalLink, Users, Gift, MessageCircle, Newspaper, PartyPopper, Hash, TrendingUp, Eye, AlertTriangle, Rss, Star, Terminal, Heart, Link2 } from 'lucide-react'
 import { GestionalePanel } from './gestionale/GestionalePanel'
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
@@ -27,8 +27,9 @@ import { WishlistManager } from '@/components/admin/wishlist-manager'
 import { TickerManager } from '@/components/admin/ticker-manager'
 import { CustomerPushNotify } from '@/components/admin/customer-push-notify'
 import { ReviewsManager } from '@/components/admin/reviews-manager'
+import { LinksManager } from '@/components/admin/links-manager'
 
-type Tab = 'dashboard' | 'products' | 'categories' | 'banners' | 'orders' | 'promo' | 'volantino' | 'coupons' | 'clienti' | 'fedelta' | 'chat' | 'lottery' | 'biglietti' | 'statistiche' | 'visite' | 'carrelli' | 'preferiti' | 'ticker' | 'notifiche' | 'recensioni' | 'gestionale'
+type Tab = 'dashboard' | 'products' | 'categories' | 'banners' | 'orders' | 'promo' | 'volantino' | 'coupons' | 'clienti' | 'fedelta' | 'chat' | 'lottery' | 'biglietti' | 'statistiche' | 'visite' | 'carrelli' | 'preferiti' | 'ticker' | 'notifiche' | 'recensioni' | 'gestionale' | 'link'
 type Group = 'generale' | 'ordini' | 'catalogo'
 
 const GROUP_LABELS: Record<Group, string> = {
@@ -43,6 +44,7 @@ const TABS: { id: Tab; label: string; icon: typeof Package; color: string; group
   { id: 'ticker', label: 'Striscia messaggi', icon: Rss, color: 'text-cyan-600 bg-cyan-50', group: 'generale' },
   { id: 'notifiche', label: 'Notifiche clienti', icon: Megaphone, color: 'text-cyan-600 bg-cyan-50', group: 'generale' },
   { id: 'gestionale', label: 'Gestionale', icon: Terminal, color: 'text-slate-600 bg-slate-100', group: 'generale' },
+  { id: 'link', label: 'Link del sito', icon: Link2, color: 'text-cyan-600 bg-cyan-50', group: 'generale' },
   { id: 'orders', label: 'Ordini', icon: ShoppingBag, color: 'text-sky-600 bg-sky-50', group: 'ordini' },
   { id: 'carrelli', label: 'Carrelli abbandonati', icon: AlertTriangle, color: 'text-orange-600 bg-orange-50', group: 'ordini' },
   { id: 'preferiti', label: 'Preferiti', icon: Heart, color: 'text-pink-600 bg-pink-50', group: 'ordini' },
@@ -217,6 +219,7 @@ export default function AdminPage() {
         {activeTab === 'chat' && <ChatManager />}
         {activeTab === 'recensioni' && <ReviewsManager />}
         {activeTab === 'gestionale' && <GestionalePanel />}
+        {activeTab === 'link' && <LinksManager />}
         {activeTab === 'statistiche' && <ProductStatsManager />}
       </div>
     </div>
