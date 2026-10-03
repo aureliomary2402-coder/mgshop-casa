@@ -459,7 +459,7 @@ export function CartContent({ scope = 'shop' }: { scope?: string }) {
                   <div className="flex flex-wrap gap-1 mb-1.5">
                     {customization.map(c => (
                       <span key={c.option_id} className="text-[11px] font-semibold px-2 py-0.5 rounded-full"
-                        style={{background:'rgba(217,70,239,0.1)',color:'#a21caf',border:'1px solid rgba(217,70,239,0.2)'}}>
+                        style={{background:'rgba(8,145,178,0.1)',color:'#0e7490',border:'1px solid rgba(8,145,178,0.2)'}}>
                         {c.label}: {c.value}
                       </span>
                     ))}
@@ -502,7 +502,7 @@ export function CartContent({ scope = 'shop' }: { scope?: string }) {
                 <span className="truncate mr-2">
                   {product.name} ×{quantity}
                   {customization && customization.length > 0 && (
-                    <span className="block text-[11px] text-fuchsia-600 font-medium truncate">
+                    <span className="block text-[11px] text-cyan-700 font-medium truncate">
                       {customization.map(c => `${c.label}: ${c.value}`).join(', ')}
                     </span>
                   )}

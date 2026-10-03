@@ -14,6 +14,7 @@ import type { Product, ProductImage } from '@/lib/types'
 import Link from 'next/link'
 import { ProductGallery } from '@/components/shop/product-gallery'
 import { ProductCustomizeForm } from '@/components/shop/product-customize-form'
+import { ProductTrustBadges } from '@/components/shop/product-trust-badges'
 
 // Stessa scheda prodotto di prima (galleria con zoom, descrizione, aggiungi
 // al carrello), ma in un popup invece che in una pagina a parte: si apre
@@ -194,14 +195,7 @@ export function ProductDetailModal() {
                     <Heart className="w-5 h-5" style={{ color: isWishlisted ? '#ef4444' : '#0891b2', fill: isWishlisted ? '#ef4444' : 'none' }} />
                   </button>
                 </div>
-                <div className="grid grid-cols-2 gap-3">
-                  {[['🚚', 'Consegna o ritiro'], ['✅', 'Qualità garantita'], ['💬', 'Supporto WhatsApp'], ['🔒', 'Acquisto sicuro']].map(([icon, label]) => (
-                    <div key={label} className="flex items-center gap-2 text-xs text-slate-500 rounded-xl p-3"
-                      style={{ background: 'rgba(8,145,178,0.04)', border: '1px solid rgba(8,145,178,0.08)' }}>
-                      <span>{icon}</span> {label}
-                    </div>
-                  ))}
-                </div>
+                <ProductTrustBadges />
               </div>
             </div>
           </div>
