@@ -48,7 +48,7 @@ export function NotifyBanner() {
   // così resta sempre leggibile, ed essendo "fixed" resta visibile anche
   // scorrendo la pagina finché non viene chiuso o attivato.
   return (
-    <div className="fixed left-4 right-4 z-[60] animate-slide-in-up" style={{ bottom: 'calc(230px + env(safe-area-inset-bottom, 0px))' }}>
+    <div className="fixed left-4 right-4 z-[60] animate-slide-in-up" style={{ bottom: 'calc(262px + env(safe-area-inset-bottom, 0px))' }}>
       <div className="neon-glow mx-auto flex max-w-sm items-center gap-3 rounded-[24px] border border-cyan-300/15 bg-[#071a22] p-3.5 shadow-2xl">
         <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl border border-cyan-300/20 bg-cyan-300/10">
           <Bell className="h-5 w-5 text-cyan-300" />

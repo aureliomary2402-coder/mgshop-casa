@@ -112,7 +112,11 @@ export function FloatingMenu() {
   const cartHref = pathname === '/promo' ? '/carrello?promo=1' : '/carrello'
   // La bottom nav è fissa su tutte le larghezze: alziamo tutto di uno
   // "scalino" in più per non finirci sopra, su mobile e da browser.
-  const menuOffsetClass = showStickyCart ? 'bottom-[13.5rem]' : 'bottom-[9.5rem]'
+  // Su mobile tutto sta più in alto della bottom nav (che occupa circa i primi
+  // 6,5rem dal basso più l'area sicura), così la barra resta libera.
+  // I pannelli usano solo la misura mobile (da lg hanno già top-20).
+  const menuOffsetClass = showStickyCart ? 'bottom-[calc(15.5rem+env(safe-area-inset-bottom,0px))]' : 'bottom-[calc(11.5rem+env(safe-area-inset-bottom,0px))]'
+  const stackOffsetClass = showStickyCart ? 'bottom-[calc(15.5rem+env(safe-area-inset-bottom,0px))] lg:bottom-[13.5rem]' : 'bottom-[calc(11.5rem+env(safe-area-inset-bottom,0px))] lg:bottom-[9.5rem]'
 
   useEffect(() => {
     const raw = localStorage.getItem(STORAGE_KEY)
@@ -327,7 +331,7 @@ export function FloatingMenu() {
       {/* Bolla principale */}
       <button
         onClick={() => (isOpen ? closeAll() : setMenuOpen(true))}
-        className="fixed bottom-[5.5rem] right-5 z-[45] w-14 h-14 rounded-full shadow-lg flex items-center justify-center text-white transition-transform hover:scale-105"
+        className="fixed bottom-[calc(7.5rem+env(safe-area-inset-bottom,0px))] lg:bottom-[5.5rem] right-5 z-[45] w-14 h-14 rounded-full shadow-lg flex items-center justify-center text-white transition-transform hover:scale-105"
         style={{ background: 'linear-gradient(135deg,#0891b2,#06b6d4)' }}
         aria-label="Apri menu"
       >
@@ -341,7 +345,7 @@ export function FloatingMenu() {
       {showStickyCart && cartCount > 0 && !isOpen && (
         <Link
           href={cartHref}
-          className="fixed bottom-[9.5rem] right-5 z-[45] w-14 h-14 rounded-full shadow-lg flex items-center justify-center transition-transform hover:scale-105 animate-scale-in"
+          className="fixed bottom-[calc(11.5rem+env(safe-area-inset-bottom,0px))] lg:bottom-[9.5rem] right-5 z-[45] w-14 h-14 rounded-full shadow-lg flex items-center justify-center transition-transform hover:scale-105 animate-scale-in"
           style={{ background: '#22d3ee', color: '#05212a', boxShadow: '0 12px 30px rgba(34,211,238,0.40)' }}
           aria-label="Vai al carrello"
         >
@@ -354,7 +358,7 @@ export function FloatingMenu() {
 
       {/* Mini-menu a scomparsa: social + chat */}
       {menuOpen && !chatOpen && !pointsOpen && (
-        <div className={`fixed ${menuOffsetClass} right-5 z-[45] flex flex-col items-end gap-3`}>
+        <div className={`fixed ${stackOffsetClass} right-5 z-[45] flex flex-col items-end gap-3`}>
           <Link href="/consegne" onClick={() => setMenuOpen(false)}
             className="flex items-center gap-2.5 pl-4 pr-2 py-2 rounded-full shadow-lg bg-white text-sm font-medium text-slate-700 transition-transform hover:scale-105">
             Consegne
