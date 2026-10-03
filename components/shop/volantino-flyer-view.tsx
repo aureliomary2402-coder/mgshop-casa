@@ -164,16 +164,20 @@ export function VolantinoFlyerView({ data, products, backHref = '/volantino', sh
 }
 
 export function VolantinoEmptyState() {
+  const cartCount = useCartStore(s => s.getTotalItems)()
   return (
-    <div className="min-h-screen flex items-center justify-center px-4" style={{ background: 'linear-gradient(180deg,#eafbff 0%,#f5fdff 45%,#ffffff 100%)' }}>
-      <div className="text-center max-w-md">
-        <div className="w-24 h-24 rounded-full flex items-center justify-center mx-auto mb-6" style={{ background: 'rgba(8,145,178,0.08)', border: '2px dashed rgba(8,145,178,0.2)' }}>
-          <Newspaper className="w-12 h-12" style={{ color: 'rgba(8,145,178,0.4)' }} />
-        </div>
-        <h1 className="text-2xl font-bold mb-2" style={{ color: '#0c2b36' }}>Nessun volantino attivo</h1>
-        <p className="text-slate-400 mb-8">Torna presto per le nostre offerte!</p>
-        <Link href="/shop" className="inline-flex items-center gap-2 font-bold px-8 py-4 rounded-2xl text-white" style={{ background: 'linear-gradient(135deg,#0891b2,#06b6d4)' }}>
-          <ArrowLeft className="w-4 h-4" /> Vai al negozio
+    <div className="min-h-screen bg-[#f0fbfd]">
+      <PageHero
+        icon={Newspaper}
+        iconColor="#2563eb"
+        badge={{ icon: Newspaper, text: 'Volantino digitale' }}
+        title="Nessun volantino attivo"
+        subtitle="Torna presto per le nostre offerte!"
+        cart={{ count: cartCount, href: '/carrello' }}
+      />
+      <div className="px-5 py-16 text-center sm:px-8">
+        <Link href="/shop" className="group inline-flex h-14 items-center justify-center gap-3 rounded-2xl bg-slate-950 px-7 font-black text-white transition duration-300 hover:-translate-y-1 hover:bg-cyan-600">
+          <ArrowLeft className="h-5 w-5 transition-transform group-hover:-translate-x-1" /> Vai al negozio
         </Link>
       </div>
     </div>
@@ -181,12 +185,20 @@ export function VolantinoEmptyState() {
 }
 
 export function VolantinoLoadingState() {
+  const cartCount = useCartStore(s => s.getTotalItems)()
   return (
-    <div className="min-h-screen" style={{ background: 'linear-gradient(180deg,#eafbff 0%,#f5fdff 45%,#ffffff 100%)' }}>
-      <div className="max-w-5xl mx-auto px-4 py-12 space-y-6">
-        <div className="skeleton h-24 rounded-3xl" />
+    <div className="min-h-screen bg-[#f0fbfd]">
+      <PageHero
+        icon={Newspaper}
+        iconColor="#2563eb"
+        badge={{ icon: Newspaper, text: 'Volantino digitale' }}
+        title="Volantino"
+        subtitle="Sto caricando le offerte…"
+        cart={{ count: cartCount, href: '/carrello' }}
+      />
+      <div className="max-w-5xl mx-auto px-4 py-10">
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
-          {Array.from({ length: 8 }).map((_, i) => <div key={i} className="skeleton aspect-square rounded-2xl" />)}
+          {Array.from({ length: 8 }).map((_, i) => <div key={i} className="skeleton aspect-square rounded-[28px]" />)}
         </div>
       </div>
     </div>

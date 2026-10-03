@@ -1,9 +1,10 @@
 "use client"
 
 import { useState, useEffect } from 'react'
-import { ChevronLeft, ChevronRight, ShoppingBag, Truck, Banknote, Star, Package } from 'lucide-react'
+import Link from 'next/link'
+import { ChevronLeft, ChevronRight, ShoppingBag, Truck, Banknote, Star, Package, ArrowRight, Sparkles } from 'lucide-react'
 import type { Banner, Category } from '@/lib/types'
-import { HeroBackdrop, AccentTitle } from './hero-backdrop'
+import { LandingHero } from './landing-hero'
 import { SOCIAL_LINKS, WHATSAPP_NUMBER, WhatsAppIcon } from './social-icons'
 
 const ADVANTAGES = [
@@ -14,7 +15,7 @@ const ADVANTAGES = [
 ]
 
 const ARROW =
-  'absolute top-1/2 z-20 -translate-y-1/2 rounded-full border border-white/15 bg-white/10 p-2 text-cyan-200 backdrop-blur-md transition hover:bg-white/15'
+  'rounded-full border border-white/15 bg-white/10 p-2 text-cyan-200 backdrop-blur-md transition hover:bg-white/15'
 
 export function HeroBanner({ banners }: { banners: Banner[]; categories?: Category[] }) {
   const [currentIndex, setCurrentIndex] = useState(0)
@@ -31,47 +32,50 @@ export function HeroBanner({ banners }: { banners: Banner[]; categories?: Catego
 
   return (
     <section>
-      <div className="relative overflow-hidden bg-[#06151c]">
-        <HeroBackdrop />
-        <div className="relative z-10 mx-auto max-w-4xl px-5 pb-14 pt-12 text-center sm:px-8 sm:pb-20">
-          <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-2xl border border-cyan-300/20 bg-cyan-300/10">
-            <ShoppingBag className="h-7 w-7 text-cyan-300" />
-          </div>
-          <div className="mb-5">
-            <span className="inline-flex items-center gap-2 rounded-full border border-cyan-300/20 bg-cyan-300/10 px-4 py-2 text-xs font-bold uppercase tracking-[0.18em] text-cyan-200 backdrop-blur-md">
-              <span className="h-2 w-2 animate-pulse rounded-full bg-cyan-300" />
-              Il tuo negozio online
-            </span>
-          </div>
-          <h1 className="text-4xl font-black leading-[0.95] tracking-[-0.045em] text-white sm:text-6xl">
-            <AccentTitle text={title} />
-          </h1>
-          <p className="mx-auto mt-5 max-w-xl text-base leading-7 text-slate-300 sm:text-lg">{subtitle}</p>
-
-          {banners.length > 1 && (
-            <div className="mt-7 flex items-center justify-center gap-2">
+      <LandingHero
+        icon={ShoppingBag}
+        badge={{ text: 'Il tuo negozio online' }}
+        title={title}
+        subtitle={subtitle}
+        actions={
+          <>
+            <a
+              href="#prodotti-grid"
+              className="group inline-flex h-14 items-center justify-center gap-3 rounded-2xl bg-cyan-400 px-7 font-black text-[#05212a] shadow-[0_15px_50px_rgba(34,211,238,.22)] transition duration-300 hover:-translate-y-1 hover:bg-cyan-300"
+            >
+              Sfoglia il catalogo
+              <ArrowRight className="h-5 w-5 transition-transform group-hover:translate-x-1" />
+            </a>
+            <Link
+              href="/promo"
+              className="inline-flex h-14 items-center justify-center gap-3 rounded-2xl border border-white/15 bg-white/10 px-7 font-bold text-white backdrop-blur-xl transition duration-300 hover:-translate-y-1 hover:bg-white/15"
+            >
+              <Sparkles className="h-[18px] w-[18px]" />
+              Scopri le promo
+            </Link>
+          </>
+        }
+      >
+        {banners.length > 1 && (
+          <div className="flex items-center gap-3">
+            <button onClick={() => setCurrentIndex((prev) => (prev - 1 + banners.length) % banners.length)}
+              className={ARROW} aria-label="Banner precedente">
+              <ChevronLeft className="h-5 w-5" />
+            </button>
+            <div className="flex items-center gap-2">
               {banners.map((_, i) => (
                 <button key={i} onClick={() => setCurrentIndex(i)} aria-label={`Banner ${i + 1}`}
                   className="h-1.5 rounded-full transition-all"
                   style={{ width: i === currentIndex ? 20 : 6, background: i === currentIndex ? '#22d3ee' : 'rgba(255,255,255,0.3)' }} />
               ))}
             </div>
-          )}
-        </div>
-
-        {banners.length > 1 && (
-          <>
-            <button onClick={() => setCurrentIndex((prev) => (prev - 1 + banners.length) % banners.length)}
-              className={`${ARROW} left-3`} aria-label="Banner precedente">
-              <ChevronLeft className="h-5 w-5" />
-            </button>
             <button onClick={() => setCurrentIndex((prev) => (prev + 1) % banners.length)}
-              className={`${ARROW} right-3`} aria-label="Banner successivo">
+              className={ARROW} aria-label="Banner successivo">
               <ChevronRight className="h-5 w-5" />
             </button>
-          </>
+          </div>
         )}
-      </div>
+      </LandingHero>
 
       <div className="border-b border-slate-200 bg-white">
         <div className="mx-auto grid max-w-7xl grid-cols-2 divide-x divide-y divide-slate-100 sm:grid-cols-4 sm:divide-y-0">

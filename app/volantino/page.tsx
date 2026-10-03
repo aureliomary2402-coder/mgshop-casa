@@ -1,7 +1,9 @@
 "use client"
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
-import { ArrowLeft, Newspaper } from 'lucide-react'
+import { ArrowLeft, ChevronRight, Newspaper } from 'lucide-react'
+import { PageHero } from '@/components/shop/page-hero'
+import { useCartStore } from '@/lib/cart-store'
 import type { Product } from '@/lib/types'
 import {
   VolantinoFlyerView, VolantinoEmptyState, VolantinoLoadingState,
@@ -22,6 +24,7 @@ export default function VolantinoPage() {
   const [data, setData] = useState<VolantinoData | null>(null)
   const [products, setProducts] = useState<Product[]>([])
   const [loading, setLoading] = useState(true)
+  const cartCount = useCartStore(s => s.getTotalItems)()
 
   useEffect(() => {
     fetch('/api/volantino', { cache: 'no-store' })
@@ -52,27 +55,36 @@ export default function VolantinoPage() {
   // Più volantini attivi contemporaneamente: mostra un selettore.
   if (list.length > 1) {
     return (
-      <div className="min-h-screen" style={{ background: 'linear-gradient(180deg,#e9fbff 0%,#f5fdff 38%,#ffffff 100%)' }}>
-        <div className="mg-page-shell max-w-3xl mx-auto px-4 py-12">
-          <h1 className="text-2xl font-bold mb-6 text-center" style={{ color: '#0c2b36' }}>Scegli un volantino</h1>
-          <div className="space-y-3">
+      <div className="min-h-screen bg-[#f0fbfd]">
+        <PageHero
+          icon={Newspaper}
+          iconColor="#2563eb"
+          badge={{ icon: Newspaper, text: 'Volantino digitale' }}
+          title="Scegli il volantino"
+          subtitle="Ci sono più volantini attivi: scegli quello che vuoi sfogliare."
+          cart={{ count: cartCount, href: '/carrello' }}
+        />
+        <div className="mg-page-shell mx-auto max-w-3xl px-4 py-12">
+          <div className="space-y-4">
             {list.map(item => (
               <Link key={item.id} href={`/volantino/${item.slug || item.id}`}
-                className="flex items-center gap-4 p-4 rounded-2xl bg-white hover:scale-[1.01] transition-transform"
-                style={{ border: '2px solid #0c2b36', boxShadow: '4px 4px 0 rgba(12,43,54,0.9)' }}>
-                <div className="w-12 h-12 rounded-xl flex items-center justify-center shrink-0" style={{ background: 'rgba(8,145,178,0.1)' }}>
-                  <Newspaper className="w-6 h-6" style={{ color: '#0891b2' }} />
+                className="group flex items-center gap-4 rounded-[28px] border border-slate-200 bg-white p-5 shadow-[0_15px_50px_rgba(15,23,42,.06)] transition-all duration-500 hover:-translate-y-1 hover:border-cyan-300 hover:shadow-[0_30px_80px_rgba(8,145,178,.20)]">
+                <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-cyan-50">
+                  <Newspaper className="h-6 w-6 text-cyan-600" />
                 </div>
-                <div className="min-w-0">
-                  <p className="font-bold text-slate-800 truncate">{item.title || 'Volantino'}</p>
-                  {item.subtitle && <p className="text-sm text-slate-400 truncate">{item.subtitle}</p>}
+                <div className="min-w-0 flex-1">
+                  <p className="truncate text-lg font-black tracking-[-.02em] text-slate-950">{item.title || 'Volantino'}</p>
+                  {item.subtitle && <p className="truncate text-sm text-slate-600">{item.subtitle}</p>}
+                </div>
+                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-slate-950 text-white transition-all duration-500 group-hover:scale-110 group-hover:bg-cyan-500">
+                  <ChevronRight className="h-5 w-5" />
                 </div>
               </Link>
             ))}
           </div>
-          <div className="text-center pt-8">
-            <Link href="/shop" className="inline-flex items-center gap-2 font-bold px-8 py-4 rounded-2xl text-white" style={{ background: 'linear-gradient(135deg,#0891b2,#06b6d4)' }}>
-              <ArrowLeft className="w-4 h-4" /> Vai al negozio
+          <div className="pt-10 text-center">
+            <Link href="/shop" className="group inline-flex h-14 items-center justify-center gap-3 rounded-2xl bg-slate-950 px-7 font-black text-white transition duration-300 hover:-translate-y-1 hover:bg-cyan-600">
+              <ArrowLeft className="h-5 w-5 transition-transform group-hover:-translate-x-1" /> Vai al negozio
             </Link>
           </div>
         </div>
