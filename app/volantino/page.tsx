@@ -55,7 +55,7 @@ export default function VolantinoPage() {
   // Più volantini attivi contemporaneamente: mostra un selettore.
   if (list.length > 1) {
     return (
-      <div className="min-h-screen bg-[#f0fbfd]">
+      <div className="min-h-screen" style={{ background: 'linear-gradient(180deg,#eafbff 0%,#f5fdff 45%,#ffffff 100%)' }}>
         <PageHero
           icon={Newspaper}
           iconColor="#2563eb"
@@ -64,19 +64,19 @@ export default function VolantinoPage() {
           subtitle="Ci sono più volantini attivi: scegli quello che vuoi sfogliare."
           cart={{ count: cartCount, href: '/carrello' }}
         />
-        <div className="mg-page-shell mx-auto max-w-3xl px-4 py-12">
-          <div className="space-y-4">
+        <div className="mg-page-shell mx-auto max-w-3xl px-4 pb-24 pt-8">
+          <div className="overflow-hidden rounded-[32px] border border-slate-200 bg-white shadow-[0_15px_50px_rgba(15,23,42,.06)]">
             {list.map(item => (
               <Link key={item.id} href={`/volantino/${item.slug || item.id}`}
-                className="group flex items-center gap-4 rounded-[28px] border border-slate-200 bg-white p-5 shadow-[0_15px_50px_rgba(15,23,42,.06)] transition-all duration-500 hover:-translate-y-1 hover:border-cyan-300 hover:shadow-[0_30px_80px_rgba(8,145,178,.20)]">
-                <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-cyan-50">
-                  <Newspaper className="h-6 w-6 text-cyan-600" />
+                className="group flex items-center gap-4 border-b border-slate-100 p-5 transition-colors last:border-b-0 hover:bg-cyan-50/60">
+                <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-[#06151c]">
+                  <Newspaper className="h-6 w-6 text-cyan-300" />
                 </div>
                 <div className="min-w-0 flex-1">
-                  <p className="truncate text-lg font-black tracking-[-.02em] text-slate-950">{item.title || 'Volantino'}</p>
+                  <p className="truncate text-lg font-black tracking-[-.02em] text-slate-950 transition-colors group-hover:text-cyan-700">{item.title || 'Volantino'}</p>
                   {item.subtitle && <p className="truncate text-sm text-slate-600">{item.subtitle}</p>}
                 </div>
-                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-cyan-600 text-white shadow-[0_8px_20px_rgba(8,145,178,.35)] transition-all duration-500 group-hover:scale-110 group-hover:bg-cyan-500">
+                <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-[#22d3ee] text-[#05212a] shadow-[0_10px_25px_rgba(34,211,238,.30)] transition-transform duration-300 group-hover:translate-x-1">
                   <ChevronRight className="h-5 w-5" />
                 </div>
               </Link>

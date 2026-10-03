@@ -341,12 +341,12 @@ export function FloatingMenu() {
       {showStickyCart && cartCount > 0 && !isOpen && (
         <Link
           href={cartHref}
-          className="fixed bottom-[9.5rem] right-5 z-[45] w-14 h-14 rounded-full shadow-lg flex items-center justify-center text-white transition-transform hover:scale-105 animate-scale-in"
-          style={{ background: '#0c2b36' }}
+          className="fixed bottom-[9.5rem] right-5 z-[45] w-14 h-14 rounded-full shadow-lg flex items-center justify-center transition-transform hover:scale-105 animate-scale-in"
+          style={{ background: '#22d3ee', color: '#05212a', boxShadow: '0 12px 30px rgba(34,211,238,0.40)' }}
           aria-label="Vai al carrello"
         >
           <ShoppingBag className="w-6 h-6" />
-          <span className="absolute -top-1 -right-1 w-5 h-5 text-white text-xs rounded-full flex items-center justify-center font-bold" style={{ background: 'linear-gradient(135deg,#0891b2,#06b6d4)' }}>
+          <span className="absolute -top-1 -right-1 w-5 h-5 text-white text-xs rounded-full flex items-center justify-center font-bold" style={{ background: '#0c2b36' }}>
             {cartCount}
           </span>
         </Link>

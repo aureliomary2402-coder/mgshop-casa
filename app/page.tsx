@@ -653,7 +653,7 @@ export default function HomePage() {
 
             <Link
               href="/consegne"
-              className="group inline-flex shrink-0 items-center gap-3 rounded-2xl bg-slate-950 px-6 py-4 text-sm font-black text-white transition hover:bg-cyan-600"
+              className="group inline-flex shrink-0 items-center gap-3 rounded-2xl bg-cyan-600 px-6 py-4 text-sm font-black text-white shadow-[0_12px_32px_rgba(8,145,178,.35)] transition hover:-translate-y-0.5 hover:bg-cyan-500"
             >
               Scopri la consegna
               <ArrowRight
