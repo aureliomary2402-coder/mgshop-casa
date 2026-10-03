@@ -72,7 +72,7 @@ export function ProductCard({ product, index = 0 }: { product: Product; index?: 
       style={{
         animationDelay: `${Math.min(index * 40, 400)}ms`,
         animationFillMode: 'both',
-        borderColor: isHovered ? '#67e8f9' : '#e2e8f0',
+        borderColor: isHovered ? '#67e8f9' : 'rgba(8,145,178,0.16)',
         boxShadow: isHovered
           ? '0 30px 80px rgba(8,145,178,0.20)'
           : '0 15px 50px rgba(15,23,42,0.06)',
@@ -130,13 +130,13 @@ export function ProductCard({ product, index = 0 }: { product: Product; index?: 
 
       <div className="p-4">
         <h3 className="mb-3 line-clamp-2 text-sm font-black leading-snug tracking-[-0.01em] transition-colors"
-          style={{ color: isHovered ? '#0e7490' : '#020617' }}>
+          style={{ color: isHovered ? '#0891b2' : '#164e63' }}>
           {product.name}
         </h3>
         <div className="flex items-center justify-between">
           <span className="flex items-baseline gap-1.5">
             {hasDiscount && <span className="text-xs text-slate-500 line-through">€{product.old_price!.toFixed(2)}</span>}
-            <span className="text-base font-black" style={{ color: hasDiscount ? '#dc2626' : '#0e7490' }}>{priceLabel}</span>
+            <span className="text-lg font-black tracking-[-0.02em]" style={{ color: hasDiscount ? '#dc2626' : '#0e7490' }}>{priceLabel}</span>
           </span>
           <button
             onClick={handleAddToCart}

@@ -153,8 +153,9 @@ export function GlobalHeader({ categories = [] }: { categories?: Category[] }) {
         <Link href="/" className="flex items-center gap-2 shrink-0 group">
           <Image src="/logo/mgshop-logo-neon.png" alt="MGShop Casa" width={36} height={36} priority
             className="w-9 h-9 rounded-full object-cover transition-transform group-hover:scale-110" />
-          <span className="text-lg font-black tracking-[-0.03em] text-slate-950">
-            MGShop
+          <span className="text-lg font-black tracking-[-0.03em]">
+            <span style={{ color: '#0c2b36' }}>MG</span>
+            <span className="bg-gradient-to-r from-cyan-600 via-cyan-500 to-sky-500 bg-clip-text text-transparent">Shop</span>
           </span>
         </Link>
 

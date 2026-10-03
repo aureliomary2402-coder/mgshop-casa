@@ -51,11 +51,12 @@ export function CategorySidebar({ categories }: { categories: Category[] }) {
               <button key={it.slug ?? 'all'} onClick={() => go(it.slug)}
                 className="w-full flex items-center gap-3 px-3 py-2.5 rounded-2xl text-sm font-bold text-left transition-all btn-press hover:bg-cyan-50"
                 style={{
-                  background: isActive ? '#06151c' : 'transparent',
-                  color: isActive ? '#ffffff' : '#1e293b',
+                  background: isActive ? '#22d3ee' : 'transparent',
+                  color: isActive ? '#05212a' : '#164e63',
+                  boxShadow: isActive ? '0 10px 25px rgba(34,211,238,0.28)' : 'none',
                 }}>
                 <span className="w-8 h-8 rounded-xl flex items-center justify-center shrink-0"
-                  style={{ background: isActive ? 'rgba(34,211,238,0.18)' : '#ecfeff', color: isActive ? '#67e8f9' : '#0e7490' }}>
+                  style={{ background: isActive ? 'rgba(5,33,42,0.12)' : '#ecfeff', color: isActive ? '#05212a' : '#0e7490' }}>
                   <Icon className="w-4 h-4" />
                 </span>
                 <span className="truncate">{it.name}</span>
@@ -92,12 +93,12 @@ export function CategorySidebar({ categories }: { categories: Category[] }) {
                   <button key={it.slug ?? 'all'} onClick={() => go(it.slug)}
                     className="flex items-center gap-1.5 pl-2.5 pr-3.5 py-2 rounded-full text-xs font-semibold transition-all btn-press"
                     style={{
-                      background: isActive ? '#06151c' : '#f8fdfe',
-                      color: isActive ? 'white' : '#1e293b',
-                      border: `1px solid ${isActive ? '#06151c' : '#e2e8f0'}`,
+                      background: isActive ? '#22d3ee' : '#f8fdfe',
+                      color: isActive ? '#05212a' : '#164e63',
+                      border: `1px solid ${isActive ? '#22d3ee' : 'rgba(8,145,178,0.18)'}`,
                     }}>
                     <span className="w-5 h-5 rounded-full flex items-center justify-center shrink-0"
-                      style={{ background: isActive ? 'rgba(255,255,255,0.2)' : 'rgba(8,145,178,0.08)', color: isActive ? 'white' : '#0891b2' }}>
+                      style={{ background: isActive ? 'rgba(5,33,42,0.12)' : 'rgba(8,145,178,0.08)', color: isActive ? '#05212a' : '#0891b2' }}>
                       <Icon className="w-3 h-3" />
                     </span>
                     {it.name}

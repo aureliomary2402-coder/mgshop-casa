@@ -156,7 +156,7 @@ export default async function ShopPage({ searchParams }: { searchParams: Promise
                 <Truck size={17} />
                 Consegna locale
               </div>
-              <h2 className="mt-4 text-3xl font-black tracking-[-.04em] text-slate-950 sm:text-4xl">
+              <h2 className="mt-4 text-3xl font-black tracking-[-.04em] text-cyan-950 sm:text-4xl">
                 Tu ordini.
                 <br />
                 Noi te lo portiamo a casa.
