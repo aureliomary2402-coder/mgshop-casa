@@ -628,7 +628,7 @@ main { animation: fadeIn 0.3s ease-out; }
   position: relative;
   max-width: 1440px;
   margin: 0 auto;
-  padding: 28px 24px 110px;
+  padding: 0 24px 110px;
 }
 
 .mg-shop-v5-intro {
@@ -894,7 +894,7 @@ main { animation: fadeIn 0.3s ease-out; }
 
 @media (max-width: 1023px) {
   .mg-shop-v5-shell {
-    padding: 20px 16px 100px;
+    padding: 0 16px 100px;
   }
 
   .mg-shop-v5-layout {
@@ -920,7 +920,7 @@ main { animation: fadeIn 0.3s ease-out; }
 
 @media (max-width: 640px) {
   .mg-shop-v5-shell {
-    padding: 14px 12px 90px;
+    padding: 0 12px 90px;
   }
 
   .mg-shop-v5-intro {

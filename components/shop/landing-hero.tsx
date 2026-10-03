@@ -1,5 +1,5 @@
 import type { ComponentType, CSSProperties, ReactNode } from 'react'
-import { Gift, Truck, Star, Ticket } from 'lucide-react'
+import { Truck, Star, Ticket } from 'lucide-react'
 import { HeroBackdrop, AccentTitle } from './hero-backdrop'
 
 // Hero in stile landing (app/page.tsx): stesso fondo #06151c con glow, griglia
@@ -16,11 +16,9 @@ export interface LandingHeroProps {
   children?: ReactNode
   actions?: ReactNode
   below?: ReactNode
-  // 'shop': mini card di consegna, raccolta punti e lotteria (usate in /shop).
-  variant?: 'default' | 'shop'
 }
 
-export function LandingHero({ icon: Icon, badge, title, subtitle, topBar, children, actions, below, variant = 'default' }: LandingHeroProps) {
+export function LandingHero({ icon: Icon, badge, title, subtitle, topBar, children, actions, below }: LandingHeroProps) {
   const BadgeIcon = badge?.icon
 
   return (
@@ -95,49 +93,8 @@ export function LandingHero({ icon: Icon, badge, title, subtitle, topBar, childr
                 </div>
               </div>
 
-              {variant === 'shop' ? (
-                <>
-                  {/* In basso, sotto la card principale: non coprono più "Pagamento: Alla consegna" */}
-                  <div className="absolute bottom-[-4%] left-[3%] rotate-[-4deg] rounded-2xl border border-white/15 bg-white/10 px-4 py-3 shadow-2xl backdrop-blur-xl">
-                    <div className="flex items-center gap-3">
-                      <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-cyan-300/15">
-                        <Truck size={19} className="text-cyan-200" />
-                      </div>
-                      <div>
-                        <div className="text-[10px] text-slate-400">CONSEGNA</div>
-                        <div className="text-sm font-black text-white">A CASA TUA</div>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="absolute bottom-[-4%] right-[3%] rotate-[4deg] rounded-2xl border border-white/15 bg-white/10 px-4 py-3 shadow-2xl backdrop-blur-xl">
-                    <div className="flex items-center gap-3">
-                      <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-cyan-300/15">
-                        <Ticket size={19} className="text-cyan-200" />
-                      </div>
-                      <div>
-                        <div className="text-[10px] text-slate-400">LOTTERIA</div>
-                        <div className="text-sm font-black text-white">OGNI SETTIMANA</div>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="absolute right-[1%] top-[14%] rotate-[5deg] rounded-2xl border border-white/15 bg-white/10 px-4 py-3 shadow-2xl backdrop-blur-xl">
-                    <div className="flex items-center gap-3">
-                      <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-cyan-300/15">
-                        <Star size={19} className="text-cyan-200" />
-                      </div>
-                      <div>
-                        <div className="text-[10px] text-slate-400">RACCOLTA PUNTI</div>
-                        <div className="text-sm font-black text-white">AD OGNI ACQUISTO</div>
-                      </div>
-                    </div>
-                  </div>
-                </>
-              ) : (
-                <>
-              {/* mini card consegna */}
-              <div className="absolute bottom-[13%] left-[1%] rotate-[6deg] rounded-2xl border border-white/15 bg-white/10 px-4 py-3 shadow-2xl backdrop-blur-xl">
+              {/* In basso, sotto la card principale: non coprono più "Pagamento: Alla consegna" */}
+              <div className="absolute bottom-[-4%] left-[3%] rotate-[-4deg] rounded-2xl border border-white/15 bg-white/10 px-4 py-3 shadow-2xl backdrop-blur-xl">
                 <div className="flex items-center gap-3">
                   <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-cyan-300/15">
                     <Truck size={19} className="text-cyan-200" />
@@ -149,20 +106,29 @@ export function LandingHero({ icon: Icon, badge, title, subtitle, topBar, childr
                 </div>
               </div>
 
-              {/* mini card punti */}
-              <div className="absolute right-[1%] top-[14%] rotate-[5deg] rounded-2xl border border-white/15 bg-white/10 px-4 py-3 shadow-2xl backdrop-blur-xl">
+              <div className="absolute bottom-[-4%] right-[3%] rotate-[4deg] rounded-2xl border border-white/15 bg-white/10 px-4 py-3 shadow-2xl backdrop-blur-xl">
                 <div className="flex items-center gap-3">
                   <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-cyan-300/15">
-                    <Gift size={19} className="text-cyan-200" />
+                    <Ticket size={19} className="text-cyan-200" />
                   </div>
                   <div>
-                    <div className="text-[10px] text-slate-400">VANTAGGI</div>
-                    <div className="text-sm font-black text-white">PUNTI + PROMO</div>
+                    <div className="text-[10px] text-slate-400">LOTTERIA</div>
+                    <div className="text-sm font-black text-white">OGNI SETTIMANA</div>
                   </div>
                 </div>
               </div>
-                </>
-              )}
+
+              <div className="absolute right-[1%] top-[14%] rotate-[5deg] rounded-2xl border border-white/15 bg-white/10 px-4 py-3 shadow-2xl backdrop-blur-xl">
+                <div className="flex items-center gap-3">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-cyan-300/15">
+                    <Star size={19} className="text-cyan-200" />
+                  </div>
+                  <div>
+                    <div className="text-[10px] text-slate-400">RACCOLTA PUNTI</div>
+                    <div className="text-sm font-black text-white">AD OGNI ACQUISTO</div>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>

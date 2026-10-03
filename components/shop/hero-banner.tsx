@@ -26,7 +26,6 @@ export function HeroBanner({ banners }: { banners: Banner[]; categories?: Catego
   return (
     <section>
       <LandingHero
-        variant="shop"
         icon={ShoppingBag}
         badge={{ text: 'Il tuo negozio online' }}
         title={title}
