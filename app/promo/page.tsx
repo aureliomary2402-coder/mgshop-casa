@@ -2,7 +2,7 @@
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
-import { ArrowLeft, Clock, Tag, ShoppingBag, ShoppingCart, ImageIcon, X, Info } from 'lucide-react'
+import { ArrowLeft, Check, Clock, Tag, ShoppingBag, ShoppingCart, Plus, ImageIcon, X, Info } from 'lucide-react'
 import { PageHero } from '@/components/shop/page-hero'
 import { useCartStore } from '@/lib/cart-store'
 import { useProductDetailStore } from '@/lib/product-detail-store'
@@ -47,7 +47,7 @@ function Countdown({ expiresAt }: { expiresAt: string }) {
       {[{v:t.days,l:'Giorni'},{v:t.hours,l:'Ore'},{v:t.minutes,l:'Min'},{v:t.seconds,l:'Sec'}].map(({v,l},i)=>(
         <div key={l} className="flex items-center gap-3">
           <div className="text-center">
-            <div className="w-14 h-14 rounded-xl flex items-center justify-center font-bold text-2xl text-white" style={{background:'linear-gradient(135deg,#0891b2,#06b6d4)',boxShadow:'0 4px 16px rgba(8,145,178,0.3)'}}>{String(v).padStart(2,'0')}</div>
+            <div className="flex h-14 w-14 items-center justify-center rounded-2xl border border-cyan-300/20 bg-cyan-300/10 text-2xl font-black text-cyan-200 backdrop-blur-md">{String(v).padStart(2,'0')}</div>
             <p className="text-xs mt-1" style={{ color: 'rgba(224,247,250,0.65)' }}>{l}</p>
           </div>
           {i<3&&<span className="text-cyan-500 font-bold text-xl mb-4">:</span>}
@@ -57,7 +57,7 @@ function Countdown({ expiresAt }: { expiresAt: string }) {
   )
 }
 
-function PromoProductCard({ product, salePrice, onOpenDetail }: { product: Product; salePrice: number; onOpenDetail: () => void }) {
+function PromoProductCard({ product, salePrice, onOpenDetail, index }: { product: Product; salePrice: number; onOpenDetail: () => void; index: number }) {
   const addItem = useCartStore(s => s.addItem)
   const [added, setAdded] = useState(false)
 
@@ -85,47 +85,41 @@ function PromoProductCard({ product, salePrice, onOpenDetail }: { product: Produ
     toast.success(`${product.name} aggiunto!`, { style: { background: '#cffafe', border: '1px solid #0891b2', color: '#155e75' } })
   }
 
+  const soldOut = !!product.torna_presto
+  const showDiscount = hasDiscount && percentOff > 0 && !soldOut && !hasVariablePricing
+  const priceLabel = hasVariablePricing ? `da €${getMinCustomizedPrice(product).toFixed(2)}` : `€${salePrice.toFixed(2)}`
+
   return (
-    <div onClick={onOpenDetail} role="button"
-      className="mg-premium-product-card bg-white rounded-2xl overflow-hidden shadow-sm hover:-translate-y-1 transition-all group cursor-pointer"
-      style={{ border: '1px solid rgba(8,145,178,0.1)', boxShadow: '0 4px 20px rgba(8,145,178,0.08)' }}>
-      <div className="aspect-square overflow-hidden relative" style={{ background: 'linear-gradient(135deg,#f0fbfd,#cffafe)' }}>
+    <div onClick={onOpenDetail} role="button" tabIndex={0}
+      onKeyDown={e => { if (e.key === 'Enter') onOpenDetail() }}
+      className="group flex cursor-pointer items-center gap-3 border-b border-slate-100 p-3.5 transition-colors hover:bg-cyan-50/60 sm:gap-4 sm:p-4 md:odd:border-r animate-fade-in-up"
+      style={{ animationDelay: `${Math.min(index * 40, 400)}ms`, animationFillMode: 'both' }}>
+      <div className="relative h-24 w-24 shrink-0 overflow-hidden rounded-2xl sm:h-28 sm:w-28" style={{ background: 'linear-gradient(135deg,#f0fbfd,#cffafe)' }}>
         {(product.card_image || product.cover_image)
-          ? <Image src={product.card_image || product.cover_image || ''} alt={product.name} fill draggable={false} sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw" className="object-cover group-hover:scale-105 transition-transform duration-300 select-none" style={product.torna_presto ? { filter: 'grayscale(1)' } : undefined} />
-          : <div className="w-full h-full flex items-center justify-center"><ImageIcon className="w-10 h-10" style={{color:'rgba(8,145,178,0.3)'}}/></div>}
-        {product.torna_presto && <TornaPrestoStamp />}
-        {hasDiscount && percentOff > 0 && !product.torna_presto && !hasVariablePricing && (
-          <div className="absolute top-2 left-2 text-white text-xs font-bold px-2 py-1 rounded-lg" style={{ background: '#dc2626' }}>
-            -{percentOff}%
-          </div>
+          ? <Image src={product.card_image || product.cover_image || ''} alt={product.name} fill draggable={false} sizes="112px" className="select-none object-cover" style={soldOut ? { filter: 'grayscale(1)' } : undefined} />
+          : <div className="flex h-full w-full items-center justify-center"><ImageIcon className="h-8 w-8" style={{ color: 'rgba(8,145,178,0.3)' }} /></div>}
+        {soldOut && <TornaPrestoStamp />}
+        {showDiscount && (
+          <span className="absolute left-1.5 top-1.5 z-10 rounded-full bg-red-600 px-2 py-0.5 text-[11px] font-black text-white shadow-md">-{percentOff}%</span>
         )}
       </div>
-      <div className="p-4">
-        <h3 className="font-black text-sm text-slate-800 line-clamp-2 mb-2 group-hover:text-cyan-700 transition-colors tracking-[-.03em]">{product.name}</h3>
-        <div className="flex items-center justify-between">
-          <div className="flex flex-col">
-            {hasVariablePricing ? (
-              <span className="font-bold text-lg" style={{ color: '#dc2626' }}>da €{getMinCustomizedPrice(product).toFixed(2)}</span>
-            ) : hasDiscount ? (
-              <>
-                <span className="text-xs text-slate-400 line-through">€{product.price.toFixed(2)}</span>
-                <span className="font-bold text-lg" style={{ color: '#dc2626' }}>€{salePrice.toFixed(2)}</span>
-              </>
-            ) : (
-              <span className="font-bold text-lg" style={{ color: '#0891b2' }}>€{salePrice.toFixed(2)}</span>
-            )}
-          </div>
-          <button onClick={handleAdd}
-            disabled={product.torna_presto}
-            className="flex items-center gap-1.5 text-white text-xs font-semibold px-4 py-2 rounded-full transition-all active:scale-95 disabled:cursor-not-allowed"
-            style={product.torna_presto
-              ? { background: '#94a3b8', boxShadow: 'none' }
-              : { background: added ? 'linear-gradient(135deg,#16a34a,#22c55e)' : 'linear-gradient(135deg,#0891b2,#06b6d4)', boxShadow: '0 4px 12px rgba(8,145,178,0.3)' }}>
-            <ShoppingCart className="w-3.5 h-3.5" />
-            {product.torna_presto ? 'Non disponibile' : hasVariablePricing ? 'Personalizza' : added ? 'Aggiunto!' : 'Aggiungi'}
-          </button>
+      <div className="min-w-0 flex-1">
+        <h3 className="line-clamp-2 text-[15px] font-black leading-snug tracking-[-0.01em] text-slate-950 transition-colors group-hover:text-cyan-700">{product.name}</h3>
+        <div className="mt-1.5 flex flex-wrap items-baseline gap-x-2">
+          <span className="text-2xl font-black leading-none tracking-[-0.02em]" style={{ color: showDiscount || hasVariablePricing ? '#dc2626' : '#0e7490' }}>{priceLabel}</span>
+          {showDiscount && <span className="text-xs text-slate-400 line-through">€{product.price.toFixed(2)}</span>}
         </div>
       </div>
+      <button onClick={handleAdd} disabled={soldOut}
+        aria-label={soldOut ? 'Non disponibile' : hasVariablePricing ? 'Personalizza' : 'Aggiungi al carrello'}
+        className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full transition-all active:scale-90 disabled:cursor-not-allowed"
+        style={soldOut
+          ? { background: '#e2e8f0', color: '#94a3b8' }
+          : added
+            ? { background: '#4ade80', color: '#052e16' }
+            : { background: '#22d3ee', color: '#05212a', boxShadow: '0 10px 25px rgba(34,211,238,.30)' }}>
+        {added ? <Check className="h-5 w-5" /> : <Plus className="h-5 w-5" />}
+      </button>
     </div>
   )
 }
@@ -211,10 +205,12 @@ function PromoDetailModal({ product, salePrice, onClose }: { product: Product; s
           )}
           <button onClick={handleAdd}
             disabled={product.torna_presto}
-            className="w-full flex items-center justify-center gap-2 text-white font-bold py-3.5 rounded-2xl transition-all active:scale-95 disabled:cursor-not-allowed"
+            className="flex h-14 w-full items-center justify-center gap-2 rounded-2xl text-sm font-black transition-all active:scale-[0.98] disabled:cursor-not-allowed"
             style={product.torna_presto
-              ? { background: '#94a3b8', boxShadow: 'none' }
-              : { background: added ? 'linear-gradient(135deg,#16a34a,#22c55e)' : 'linear-gradient(135deg,#0891b2,#06b6d4)', boxShadow: '0 8px 20px rgba(8,145,178,0.3)' }}>
+              ? { background: '#334155', color: '#cbd5e1' }
+              : added
+                ? { background: '#4ade80', color: '#052e16' }
+                : { background: '#22d3ee', color: '#05212a', boxShadow: '0 12px 32px rgba(34,211,238,.30)' }}>
             <ShoppingCart className="w-4 h-4" /> {product.torna_presto ? 'Non disponibile' : added ? 'Aggiunto!' : multipleSelected ? `Aggiungi ${cartCombinations.length} varianti` : 'Aggiungi al carrello'}
           </button>
         </div>
@@ -282,7 +278,7 @@ export default function PromoPage() {
         <div className="w-24 h-24 rounded-full flex items-center justify-center mx-auto mb-6" style={{background:'rgba(8,145,178,0.08)',border:'2px dashed rgba(8,145,178,0.2)'}}><ShoppingBag className="w-12 h-12" style={{color:'rgba(8,145,178,0.4)'}}/></div>
         <h1 className="text-2xl font-black mb-2 tracking-[-.03em]" style={{color:'#020617'}}>Nessuna promo attiva</h1>
         <p className="text-slate-400 mb-8">Torna presto per le nostre offerte!</p>
-        <Link href="/shop" className="inline-flex items-center gap-2 font-bold px-8 py-4 rounded-2xl text-white" style={{background:'linear-gradient(135deg,#0891b2,#06b6d4)'}}><ArrowLeft className="w-4 h-4"/> Vai al negozio</Link>
+        <Link href="/shop" className="inline-flex h-14 items-center justify-center gap-3 rounded-2xl bg-cyan-600 px-8 font-black text-white shadow-[0_12px_32px_rgba(8,145,178,.35)] transition duration-300 hover:-translate-y-1 hover:bg-cyan-500"><ArrowLeft className="w-4 h-4"/> Vai al negozio</Link>
       </div>
     </div>
   )
@@ -320,22 +316,28 @@ export default function PromoPage() {
           {/* Prodotti in promo */}
           {displayItems.length > 0 && (
             <Reveal delay={100}>
-              <h2 className="text-2xl font-black mb-6 tracking-[-.03em]" style={{color:'#020617'}}>Prodotti in promozione</h2>
-              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 stagger-children">
-                {displayItems.map(({ product, salePrice }) => (
-                  <PromoProductCard key={product.id} product={product} salePrice={salePrice}
-                    onOpenDetail={() => {
-                      if (isCustomPromoProductId(product.id)) setSelectedDetail({ product, salePrice })
-                      else useProductDetailStore.getState().open(product.id)
-                    }} />
-                ))}
+              <div className="mb-5 flex flex-wrap items-center gap-2">
+                <span className="inline-flex items-center gap-1.5 rounded-full bg-slate-950 px-4 py-2 text-xs font-black uppercase tracking-[0.14em] text-white">
+                  <Tag className="h-3.5 w-3.5 text-cyan-300" /> {displayItems.length} {displayItems.length === 1 ? 'offerta' : 'offerte'}
+                </span>
+              </div>
+              <div className="overflow-hidden rounded-[32px] border border-slate-200 bg-white shadow-[0_15px_50px_rgba(15,23,42,.06)]">
+                <div className="-mb-px grid md:grid-cols-2">
+                  {displayItems.map(({ product, salePrice }, i) => (
+                    <PromoProductCard key={product.id} product={product} salePrice={salePrice} index={i}
+                      onOpenDetail={() => {
+                        if (isCustomPromoProductId(product.id)) setSelectedDetail({ product, salePrice })
+                        else useProductDetailStore.getState().open(product.id)
+                      }} />
+                  ))}
+                </div>
               </div>
               {/* Sticky cart button */}
               {cartCount > 0 && (
                 <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 animate-scale-in">
                   <Link href="/carrello?promo=1"
-                    className="flex items-center gap-3 px-8 py-4 rounded-2xl text-white font-bold shadow-2xl transition-all hover:scale-105 neon-glow"
-                    style={{ background: 'linear-gradient(135deg,#0891b2,#06b6d4)' }}>
+                    className="flex items-center gap-3 rounded-2xl px-8 py-4 font-black shadow-2xl transition-all hover:scale-105"
+                    style={{ background: '#22d3ee', color: '#05212a', boxShadow: '0 16px 40px rgba(34,211,238,.40)' }}>
                     <ShoppingBag className="w-5 h-5"/>
                     Vai al carrello ({cartCount})
                   </Link>
@@ -345,7 +347,7 @@ export default function PromoPage() {
           )}
 
           <Reveal delay={150} className="text-center py-6">
-            <Link href="/shop" className="inline-flex items-center gap-2 font-bold px-10 py-4 rounded-2xl text-white" style={{background:'linear-gradient(135deg,#0891b2,#06b6d4)',boxShadow:'0 12px 32px rgba(8,145,178,0.35)'}}>
+            <Link href="/shop" className="inline-flex h-14 items-center justify-center gap-3 rounded-2xl bg-cyan-600 px-8 font-black text-white shadow-[0_12px_32px_rgba(8,145,178,.35)] transition duration-300 hover:-translate-y-1 hover:bg-cyan-500">
               <ShoppingBag className="w-5 h-5"/> Vai al negozio completo
             </Link>
           </Reveal>
