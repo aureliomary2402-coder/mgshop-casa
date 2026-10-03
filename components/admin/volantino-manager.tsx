@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { ToggleLeft, ToggleRight, Save, Eye, Plus, X, Search, Tag, Trash2, Newspaper } from 'lucide-react'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
@@ -42,6 +42,16 @@ export function VolantinoManager() {
   const [allProducts, setAllProducts] = useState<Product[]>([])
   const [productSearch, setProductSearch] = useState('')
   const [showProductPicker, setShowProductPicker] = useState(false)
+  const pickerRef = useRef<HTMLDivElement>(null)
+
+  // Quando il catalogo si apre, scorre fino a lui così è subito visibile
+  useEffect(() => {
+    if (!showProductPicker) return
+    const t = setTimeout(() => {
+      pickerRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+    }, 60)
+    return () => clearTimeout(t)
+  }, [showProductPicker])
   const [priceDrafts, setPriceDrafts] = useState<Record<string, string>>({})
 
   const loadList = () =>
@@ -252,8 +262,10 @@ export function VolantinoManager() {
               <div className="flex items-center justify-between mb-2">
                 <label className="text-xs font-medium text-slate-500">Prodotti nel volantino ({items.length})</label>
                 <button onClick={() => setShowProductPicker(v => !v)}
-                  className="flex items-center gap-1 text-xs text-cyan-700 font-medium px-3 py-1.5 rounded-lg border border-cyan-200 hover:bg-cyan-50 transition-colors">
-                  <Plus className="w-3.5 h-3.5" /> Aggiungi prodotti
+                  className={`flex items-center gap-1 text-xs font-medium px-3 py-1.5 rounded-lg border transition-colors ${showProductPicker ? 'bg-cyan-600 text-white border-cyan-600 hover:bg-cyan-700' : 'text-cyan-700 border-cyan-200 hover:bg-cyan-50'}`}>
+                  {showProductPicker
+                    ? <><X className="w-3.5 h-3.5" /> Chiudi catalogo</>
+                    : <><Plus className="w-3.5 h-3.5" /> Aggiungi prodotti</>}
                 </button>
               </div>
 
@@ -286,7 +298,11 @@ export function VolantinoManager() {
 
               {/* Product picker */}
               {showProductPicker && (
-                <div className="border border-slate-200 rounded-xl overflow-hidden">
+                <div ref={pickerRef} className="scroll-mt-20 border-2 border-cyan-400 rounded-xl overflow-hidden shadow-lg shadow-cyan-100">
+                  <div className="flex items-center justify-between px-3 py-2 bg-cyan-600 text-white">
+                    <span className="text-sm font-bold">Catalogo prodotti</span>
+                    <span className="text-xs opacity-90">Tocca un prodotto per aggiungerlo</span>
+                  </div>
                   <div className="p-2 border-b border-slate-100">
                     <div className="relative">
                       <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
