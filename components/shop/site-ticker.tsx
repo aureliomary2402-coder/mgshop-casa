@@ -1,8 +1,9 @@
 "use client"
 
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, useCallback } from 'react'
 import { usePathname } from 'next/navigation'
 import { X } from 'lucide-react'
+import { luminanceAt } from '@/lib/page-tone'
 
 const DISMISS_KEY = 'mgshop_ticker_dismissed'
 
@@ -59,6 +60,29 @@ function createBubble(id: number, width: number): BubbleData {
 
 const BUBBLE_COUNT = 8
 
+type Tone = 'dark' | 'light'
+
+// Striscia scura sulle parti scure della pagina, celeste chiaro sulle parti
+// chiare: il testo resta sempre leggibile e la barra non pesa.
+const TONES = {
+  dark: {
+    background: '#06151c',
+    borderTop: '1px solid rgba(103,232,249,0.25)',
+    boxShadow: '0 -3px 18px rgba(34,211,238,0.18)',
+    text: '#cffafe',
+    close: 'rgba(255,255,255,0.9)',
+    shine: 'rgba(255,255,255,0.4)',
+  },
+  light: {
+    background: 'rgba(207,250,254,0.94)',
+    borderTop: '1px solid rgba(8,145,178,0.28)',
+    boxShadow: '0 -3px 16px rgba(8,145,178,0.14)',
+    text: '#164e63',
+    close: '#155e75',
+    shine: 'rgba(255,255,255,0.75)',
+  },
+} as const
+
 export function SiteTicker() {
   const pathname = usePathname()
   const [message, setMessage] = useState('')
@@ -69,6 +93,8 @@ export function SiteTicker() {
   const elsRef = useRef<(HTMLDivElement | null)[]>([])
   const rafRef = useRef<number>(0)
   const containerRef = useRef<HTMLDivElement>(null)
+  const barRef = useRef<HTMLDivElement>(null)
+  const [tone, setTone] = useState<Tone>('dark')
   const widthRef = useRef(1200)
 
   useEffect(() => {
@@ -163,6 +189,43 @@ export function SiteTicker() {
     return () => cancelAnimationFrame(rafRef.current)
   }, [isActive, dismissed])
 
+  const detect = useCallback(() => {
+    const bar = barRef.current
+    if (!bar) return
+    const rect = bar.getBoundingClientRect()
+    if (rect.width === 0) return
+    const y = rect.top + rect.height / 2
+    const xs = [0.1, 0.3, 0.5, 0.7, 0.9].map(f => rect.left + rect.width * f)
+    const lum = xs.reduce((sum, x) => sum + luminanceAt(x, y, bar), 0) / xs.length
+    // Due soglie diverse per non farla "sfarfallare" sui colori intermedi.
+    setTone(prev => (prev === 'dark' ? (lum > 0.6 ? 'light' : 'dark') : (lum < 0.45 ? 'dark' : 'light')))
+  }, [])
+
+  useEffect(() => {
+    if (!isActive || dismissed) return
+    let raf = 0
+    const schedule = () => {
+      if (raf) return
+      raf = requestAnimationFrame(() => { raf = 0; detect() })
+    }
+    detect()
+    const t1 = window.setTimeout(detect, 250)
+    const t2 = window.setTimeout(detect, 900)
+    window.addEventListener('scroll', schedule, { passive: true, capture: true })
+    window.addEventListener('resize', schedule)
+    window.addEventListener('orientationchange', schedule)
+    const interval = window.setInterval(schedule, 800)
+    return () => {
+      if (raf) cancelAnimationFrame(raf)
+      window.clearTimeout(t1)
+      window.clearTimeout(t2)
+      window.removeEventListener('scroll', schedule, true)
+      window.removeEventListener('resize', schedule)
+      window.removeEventListener('orientationchange', schedule)
+      window.clearInterval(interval)
+    }
+  }, [isActive, dismissed, pathname, message, detect])
+
   if (pathname?.startsWith('/mgadmin-panel')) return null
   if (!isActive || !message.trim() || dismissed) return null
 
@@ -215,12 +278,14 @@ export function SiteTicker() {
 
       {/* TICKER — in primo piano, copre la base delle bolle */}
       <div
+        ref={barRef}
         className="fixed left-0 right-0 flex items-center h-9 overflow-hidden site-ticker-bar"
         style={{
           zIndex: 40,
-          background: '#06151c',
-          borderTop: '1px solid rgba(103,232,249,0.25)',
-          boxShadow: '0 -3px 18px rgba(34,211,238,0.18)',
+          background: TONES[tone].background,
+          borderTop: TONES[tone].borderTop,
+          boxShadow: TONES[tone].boxShadow,
+          transition: 'background-color .35s ease, box-shadow .35s ease, border-color .35s ease',
         }}
       >
         <div className="flex-1 overflow-hidden relative h-full flex items-center">
@@ -229,7 +294,7 @@ export function SiteTicker() {
             style={{ animation: 'ticker-scroll 24s linear infinite' }}
           >
             {[0, 1, 2, 3].map(i => (
-              <span key={i} className="text-cyan-100 text-xs font-bold px-10 tracking-wide">
+              <span key={i} className="text-xs font-bold px-10 tracking-wide" style={{ color: TONES[tone].text, transition: 'color .35s ease' }}>
                 {message}
               </span>
             ))}
@@ -240,7 +305,7 @@ export function SiteTicker() {
               left: '-20%',
               width: '20%',
               height: '100%',
-              background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent)',
+              background: `linear-gradient(90deg, transparent, ${TONES[tone].shine}, transparent)`,
               animation: 'shine-sweep 6s ease-in-out infinite',
             }}
           />
@@ -248,9 +313,9 @@ export function SiteTicker() {
         <button
           onClick={handleDismiss}
           aria-label="Chiudi"
-          className="shrink-0 h-full px-3 flex items-center justify-center hover:bg-black/15 transition-colors relative z-10"
+          className="shrink-0 h-full px-3 flex items-center justify-center hover:bg-black/10 transition-colors relative z-10"
         >
-          <X className="w-4 h-4 text-white/90" />
+          <X className="w-4 h-4" style={{ color: TONES[tone].close }} />
         </button>
       </div>
     </>
