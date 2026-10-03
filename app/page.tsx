@@ -109,12 +109,12 @@ export default function HomePage() {
         <header className="relative z-20 mx-auto flex max-w-7xl items-center justify-between px-5 py-5 sm:px-8">
           <Link href="/" className="relative block">
             <Image
-              src="/logo/mgshop-logo-neon.png"
-              alt="MGShop"
-              width={170}
-              height={70}
+              src="/logo/mgshop-logo-orizzontale.png"
+              alt="MGShop Casa"
+              width={900}
+              height={240}
               priority
-              className="h-auto w-[125px] sm:w-[155px]"
+              className="h-auto w-[150px] sm:w-[200px]"
             />
           </Link>
 

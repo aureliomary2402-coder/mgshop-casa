@@ -144,11 +144,8 @@ export function ShopHeader({ categories }: { categories: Category[] }) {
       style={{ background: scrolled ? 'rgba(240,251,253,0.97)' : 'rgba(240,251,253,0.98)', backdropFilter: 'blur(16px)', borderBottom: '1px solid rgba(8,145,178,0.1)' }}>
       <div className="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between gap-3">
         <Link href="/" className="flex items-center gap-2 shrink-0 group">
-          <Image src="/logo/mgshop-logo-neon.png" alt="MGShop Casa" width={36} height={36} priority
-            className="w-9 h-9 rounded-full object-cover transition-transform group-hover:scale-110" />
-          <span className="text-lg font-bold tracking-tight hidden sm:block" style={{ color: '#0c2b36' }}>
-            MG<span style={{ color: '#0891b2' }}>Shop</span>
-          </span>
+          <Image src="/logo/mgshop-logo-orizzontale.png" alt="MGShop Casa" width={900} height={240} priority
+            className="h-10 w-auto drop-shadow-[0_1px_2px_rgba(8,51,68,0.45)] transition-transform group-hover:scale-105" />
         </Link>
 
         <div className="flex items-center gap-1">
