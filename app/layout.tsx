@@ -14,6 +14,7 @@ import { SiteFooter } from '@/components/shop/site-footer'
 import { BottomNav } from '@/components/shop/bottom-nav'
 import { FloatingCart } from '@/components/shop/floating-cart'
 import { NotifyBanner } from '@/components/shop/notify-banner'
+import { PageTransition } from '@/components/shop/page-transition'
 import { Suspense } from 'react'
 import './globals.css'
 import './typography.css'
@@ -56,6 +57,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <CartAbandonTracker />
         <WishlistTracker />
         <ServiceWorkerRegister />
+        <PageTransition />
         {children}
         <SiteFooter />
         <BottomNav />
