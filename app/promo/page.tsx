@@ -101,7 +101,7 @@ function PromoProductCard({ product, salePrice, onOpenDetail }: { product: Produ
         )}
       </div>
       <div className="p-4">
-        <h3 className="font-semibold text-sm text-slate-800 line-clamp-2 mb-2 group-hover:text-cyan-700 transition-colors">{product.name}</h3>
+        <h3 className="font-black text-sm text-slate-800 line-clamp-2 mb-2 group-hover:text-cyan-700 transition-colors tracking-[-.03em]">{product.name}</h3>
         <div className="flex items-center justify-between">
           <div className="flex flex-col">
             {hasVariablePricing ? (
@@ -187,7 +187,7 @@ function PromoDetailModal({ product, salePrice, onClose }: { product: Product; s
           {hasDiscount && !product.torna_presto && <div className="absolute top-3 left-3 text-white text-xs font-bold px-2.5 py-1 rounded-lg" style={{ background: '#dc2626' }}>-{percentOff}%</div>}
         </div>
         <div className="p-5 overflow-y-auto flex-1 space-y-4">
-          <h2 className="text-xl font-bold" style={{color:'#0c2b36'}}>{product.name}</h2>
+          <h2 className="text-xl font-black tracking-[-.03em]" style={{color:'#020617'}}>{product.name}</h2>
           <div className="flex items-baseline gap-2">
             {hasDiscount && <span className="text-sm text-slate-400 line-through">€{product.price.toFixed(2)}</span>}
             <span className="text-2xl font-bold" style={{ color: hasDiscount ? '#dc2626' : '#0891b2' }}>€{displayPrice.toFixed(2)}</span>
@@ -280,7 +280,7 @@ export default function PromoPage() {
     <div className="min-h-screen flex items-center justify-center px-4" style={{ background: 'linear-gradient(180deg,#e9fbff 0%,#f5fdff 38%,#ffffff 100%)' }}>
       <div className="text-center max-w-md">
         <div className="w-24 h-24 rounded-full flex items-center justify-center mx-auto mb-6" style={{background:'rgba(8,145,178,0.08)',border:'2px dashed rgba(8,145,178,0.2)'}}><ShoppingBag className="w-12 h-12" style={{color:'rgba(8,145,178,0.4)'}}/></div>
-        <h1 className="text-2xl font-bold mb-2" style={{color:'#0c2b36'}}>Nessuna promo attiva</h1>
+        <h1 className="text-2xl font-black mb-2 tracking-[-.03em]" style={{color:'#020617'}}>Nessuna promo attiva</h1>
         <p className="text-slate-400 mb-8">Torna presto per le nostre offerte!</p>
         <Link href="/shop" className="inline-flex items-center gap-2 font-bold px-8 py-4 rounded-2xl text-white" style={{background:'linear-gradient(135deg,#0891b2,#06b6d4)'}}><ArrowLeft className="w-4 h-4"/> Vai al negozio</Link>
       </div>
@@ -320,7 +320,7 @@ export default function PromoPage() {
           {/* Prodotti in promo */}
           {displayItems.length > 0 && (
             <Reveal delay={100}>
-              <h2 className="text-2xl font-bold mb-6" style={{color:'#0c2b36'}}>Prodotti in promozione</h2>
+              <h2 className="text-2xl font-black mb-6 tracking-[-.03em]" style={{color:'#020617'}}>Prodotti in promozione</h2>
               <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 stagger-children">
                 {displayItems.map(({ product, salePrice }) => (
                   <PromoProductCard key={product.id} product={product} salePrice={salePrice}

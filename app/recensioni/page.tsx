@@ -213,7 +213,7 @@ export default function RecensioniPage() {
           {/* Form nuova recensione */}
           <Reveal>
             <div className="glass-card rounded-2xl p-6">
-              <h2 className="text-lg font-bold mb-4" style={{ color: '#0c2b36' }}>Lascia la tua recensione</h2>
+              <h2 className="text-lg font-black mb-4 tracking-[-.03em]" style={{ color: '#020617' }}>Lascia la tua recensione</h2>
               {sent ? (
                 <div className="flex flex-col items-center text-center gap-2 py-6">
                   <CheckCircle2 className="w-10 h-10" style={{ color: '#16a34a' }} />

@@ -368,7 +368,7 @@ export function CartContent({ scope = 'shop' }: { scope?: string }) {
           <CheckCircle className="w-12 h-12 text-white"/>
         </div>
       </div>
-      <h2 className="text-3xl font-bold mb-3" style={{color:'#0c2b36'}}>Ordine inviato!</h2>
+      <h2 className="text-3xl font-black mb-3 tracking-[-.03em]" style={{color:'#020617'}}>Ordine inviato!</h2>
       <p className="text-slate-500 mb-2">Ti contatteremo presto su WhatsApp per confermare.</p>
       {whatsappLink && (
         <a href={whatsappLink} target="_blank" rel="noopener noreferrer"
@@ -409,7 +409,7 @@ export function CartContent({ scope = 'shop' }: { scope?: string }) {
         <div className="w-24 h-24 rounded-full flex items-center justify-center mx-auto mb-6" style={{background:'rgba(8,145,178,0.08)',border:'2px dashed rgba(8,145,178,0.2)'}}>
           <ShoppingCart className="w-12 h-12" style={{color:'rgba(8,145,178,0.4)'}}/>
         </div>
-        <h2 className="text-2xl font-bold mb-2" style={{color:'#0c2b36'}}>Il carrello è vuoto</h2>
+        <h2 className="text-2xl font-black mb-2 tracking-[-.03em]" style={{color:'#020617'}}>Il carrello è vuoto</h2>
         <p className="text-slate-400 mb-8">Aggiungi qualche prodotto per iniziare.</p>
         <Link href="/shop" className="inline-flex items-center gap-2 font-bold px-8 py-4 rounded-2xl text-white btn-press" style={{background:'linear-gradient(135deg,#0891b2,#06b6d4)'}}>Vai ai prodotti</Link>
         <div className="mt-10 text-left">
@@ -481,7 +481,7 @@ export function CartContent({ scope = 'shop' }: { scope?: string }) {
         </div>
 
         <div className="rounded-2xl p-4 sm:p-5 h-fit md:sticky md:top-20 animate-slide-in-right space-y-4 min-w-0 glass-card">
-          <h2 className="font-bold" style={{color:'#0c2b36'}}>Riepilogo ordine</h2>
+          <h2 className="font-black tracking-[-.03em]" style={{color:'#020617'}}>Riepilogo ordine</h2>
           {showNotifyReminder && (
             <div className="flex items-center gap-3 p-3 rounded-xl" style={{ background: 'rgba(8,145,178,0.06)', border: '1px solid rgba(8,145,178,0.2)' }}>
               <Bell className="w-5 h-5 shrink-0" style={{ color: '#0891b2' }} />

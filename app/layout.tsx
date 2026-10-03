@@ -16,8 +16,11 @@ import { FloatingCart } from '@/components/shop/floating-cart'
 import { NotifyBanner } from '@/components/shop/notify-banner'
 import { Suspense } from 'react'
 import './globals.css'
+import './typography.css'
 
-const inter = Inter({ subsets: ['latin'] })
+// Un solo font per tutto il sito (come la landing): Inter, esposto anche come
+// variabile CSS così lo ereditano pure notifiche, pannelli e portali.
+const inter = Inter({ subsets: ['latin'], variable: '--font-inter', display: 'swap' })
 
 export const metadata: Metadata = {
   title: 'MGShop Casa',
@@ -47,7 +50,7 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="it">
+    <html lang="it" className={inter.variable}>
       <body className={inter.className}>
         <Suspense><AnalyticsTracker /></Suspense>
         <CartAbandonTracker />

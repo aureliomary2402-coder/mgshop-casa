@@ -96,7 +96,7 @@ export default function PreferitiPage() {
                   </button>
                 </div>
                 <div className="p-3">
-                  <h3 className="font-semibold text-sm line-clamp-2 mb-2 leading-snug cursor-pointer" style={{ color: '#0c2b36' }}
+                  <h3 className="font-black text-sm line-clamp-2 mb-2 leading-snug cursor-pointer tracking-[-.03em]" style={{ color: '#020617' }}
                     onClick={() => openDetail(p.id)}>
                     {p.name}
                   </h3>

@@ -1,0 +1,11 @@
+/* =========================================================
+   TIPOGRAFIA — un solo font (Inter) in tutto il sito, come la landing
+   ========================================================= */
+html, body, button, input, select, textarea {
+  font-family: var(--font-inter), ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+/* le notifiche (sonner) hanno un font proprio: lo allineiamo */
+[data-sonner-toaster],
+[data-sonner-toast] {
+  font-family: var(--font-inter), ui-sans-serif, system-ui, sans-serif !important;
+}

@@ -49,7 +49,7 @@ export default function ConsegnePage() {
                     style={{ background: z.highlight ? 'rgba(22,163,74,0.1)' : 'rgba(8,145,178,0.1)' }}>
                     <MapPin className="w-5 h-5" style={{ color: z.highlight ? '#16a34a' : '#0891b2' }} />
                   </div>
-                  <h3 className="text-lg font-bold mb-1" style={{ color: '#0c2b36' }}>{z.title}</h3>
+                  <h3 className="text-lg font-black mb-1 tracking-[-.03em]" style={{ color: '#020617' }}>{z.title}</h3>
                   <p className="text-xl font-extrabold mb-2" style={{ color: z.highlight ? '#16a34a' : '#0891b2' }}>{z.price}</p>
                   <p className="text-sm text-slate-500 leading-relaxed">{z.note}</p>
                 </div>
@@ -62,7 +62,7 @@ export default function ConsegnePage() {
               <div className="w-11 h-11 rounded-xl flex items-center justify-center mb-4" style={{ background: 'rgba(8,145,178,0.1)' }}>
                 <Store className="w-5 h-5" style={{ color: '#0891b2' }} />
               </div>
-              <h3 className="text-lg font-bold mb-1" style={{ color: '#0c2b36' }}>Vieni a ritirare</h3>
+              <h3 className="text-lg font-black mb-1 tracking-[-.03em]" style={{ color: '#020617' }}>Vieni a ritirare</h3>
               <p className="text-xl font-extrabold mb-2" style={{ color: '#0891b2' }}>Nessun costo</p>
               <p className="text-sm text-slate-500 leading-relaxed">
                 Non vuoi la consegna a casa? Nessun problema: puoi scegliere il ritiro al momento dell&apos;ordine. Come per la consegna, ci mettiamo d&apos;accordo su WhatsApp per orario e dettagli del ritiro.

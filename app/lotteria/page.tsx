@@ -100,7 +100,7 @@ export default function LotteryPage() {
     <div className="min-h-screen flex items-center justify-center px-4" style={{ background: 'linear-gradient(180deg,#e9fbff 0%,#f5fdff 38%,#ffffff 100%)' }}>
       <div className="text-center max-w-md">
         <div className="w-24 h-24 rounded-full flex items-center justify-center mx-auto mb-6" style={{ background: 'rgba(8,145,178,0.08)', border: '2px dashed rgba(8,145,178,0.2)' }}><Gift className="w-12 h-12" style={{ color: 'rgba(8,145,178,0.4)' }} /></div>
-        <h1 className="text-2xl font-bold mb-2" style={{ color: '#0c2b36' }}>Nessuna lotteria attiva</h1>
+        <h1 className="text-2xl font-black mb-2 tracking-[-.03em]" style={{ color: '#020617' }}>Nessuna lotteria attiva</h1>
         <p className="text-slate-400 mb-8">Torna presto per partecipare alle nostre estrazioni!</p>
         <Link href="/shop" className="inline-flex items-center gap-2 font-bold px-8 py-4 rounded-2xl text-white" style={{ background: 'linear-gradient(135deg,#0891b2,#06b6d4)' }}><ArrowLeft className="w-4 h-4" /> Vai al negozio</Link>
       </div>
@@ -147,7 +147,7 @@ export default function LotteryPage() {
         {/* Come funziona */}
         <Reveal>
           <div className="bg-white rounded-2xl p-6 sm:p-7" style={{ border: '1px solid rgba(8,145,178,0.1)' }}>
-            <h2 className="text-xl font-bold mb-5 text-center" style={{ color: '#0c2b36' }}>Come funziona</h2>
+            <h2 className="text-xl font-black mb-5 text-center tracking-[-.03em]" style={{ color: '#020617' }}>Come funziona</h2>
             <div className="grid sm:grid-cols-4 gap-5">
               {[
                 { icon: Ticket, title: 'Scegli come partecipare', text: 'Compra un biglietto qui sopra senza fare un ordine, oppure spunta "Partecipa alla lotteria" mentre ordini i tuoi prodotti.' },
@@ -187,7 +187,7 @@ export default function LotteryPage() {
 
         {/* Bolle */}
         <Reveal delay={100}>
-          <h2 className="text-2xl font-bold mb-2 text-center" style={{ color: '#0c2b36' }}>{count} bolle in gioco</h2>
+          <h2 className="text-2xl font-black mb-2 text-center tracking-[-.03em]" style={{ color: '#020617' }}>{count} bolle in gioco</h2>
           <p className="text-sm text-slate-400 text-center mb-6">
             {revealPhase ? 'Tutte le bolle sono scoppiate tranne quella vincente!' : 'Allo scadere del tempo, tutte le bolle scoppieranno tranne quella vincente'}
           </p>
@@ -228,7 +228,7 @@ export default function LotteryPage() {
         {/* Storico */}
         {data.winners.length > 0 && (
           <Reveal delay={150}>
-            <h2 className="text-xl font-bold mb-4 flex items-center gap-2" style={{ color: '#0c2b36' }}><History className="w-5 h-5" /> Storico vincitori</h2>
+            <h2 className="text-xl font-black mb-4 flex items-center gap-2 tracking-[-.03em]" style={{ color: '#020617' }}><History className="w-5 h-5" /> Storico vincitori</h2>
             <div className="space-y-2">
               {data.winners.map(w => (
                 <div key={w.id} className="flex items-center gap-3 p-3 rounded-2xl bg-white" style={{ border: '1px solid rgba(8,145,178,0.1)' }}>

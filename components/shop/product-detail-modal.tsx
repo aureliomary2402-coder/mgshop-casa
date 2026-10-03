@@ -152,7 +152,7 @@ export function ProductDetailModal() {
                     {product.category.name}
                   </Link>
                 )}
-                <h1 className="text-2xl md:text-3xl font-bold leading-tight" style={{ color: '#0c2b36' }}>{product.name}</h1>
+                <h1 className="text-2xl md:text-3xl font-black leading-tight tracking-[-.03em]" style={{ color: '#020617' }}>{product.name}</h1>
                 <div className="flex items-baseline gap-2">
                   {hasDiscount && <span className="text-lg text-slate-400 line-through">€{product.old_price!.toFixed(2)}</span>}
                   <p className="text-4xl font-extrabold" style={{ color: hasDiscount ? '#dc2626' : '#0891b2' }}>€{displayPrice.toFixed(2)}</p>

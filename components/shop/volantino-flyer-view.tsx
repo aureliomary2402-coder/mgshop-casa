@@ -72,7 +72,7 @@ function FlyerCard({ product, salePrice, index }: { product: Product; salePrice:
         {product.torna_presto && <TornaPrestoStamp />}
       </div>
       <div className="p-3">
-        <h3 className="font-bold text-sm text-slate-800 line-clamp-2 mb-2 leading-tight">{product.name}</h3>
+        <h3 className="font-black text-sm text-slate-800 line-clamp-2 mb-2 leading-tight tracking-[-.03em]">{product.name}</h3>
         <div className="flex items-end justify-between gap-2 mb-2">
           <div>
             {hasVariablePricing ? (
