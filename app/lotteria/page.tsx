@@ -142,7 +142,7 @@ export default function LotteryPage() {
         {/* Premio */}
         {(data.image_url || data.prize_label) && (
           <Reveal className={`grid gap-6 ${data.image_url && data.prize_label ? 'md:grid-cols-2' : ''}`}>
-            {data.image_url && <div className="relative mx-auto aspect-square max-w-xs overflow-hidden rounded-[32px] border border-slate-200 md:mx-0" style={{ boxShadow: '0 15px 50px rgba(15,23,42,.08)' }}><Image src={data.image_url} alt="Premio" fill sizes="(max-width: 640px) 100vw, 320px" className="object-cover" /></div>}
+            {data.image_url && <div className="relative mx-auto aspect-square w-full max-w-xs overflow-hidden rounded-[32px] border border-slate-200 md:mx-0" style={{ boxShadow: '0 15px 50px rgba(15,23,42,.08)' }}><Image src={data.image_url} alt="Premio" fill sizes="(max-width: 640px) 100vw, 320px" className="object-cover" /></div>}
             {data.prize_label && (
               <div className="flex items-center">
                 <div className="w-full rounded-[32px] border border-slate-200 bg-white p-6 shadow-[0_15px_50px_rgba(15,23,42,.06)]">
@@ -169,9 +169,9 @@ export default function LotteryPage() {
                 { icon: ShoppingCart, title: 'Paga il biglietto', text: 'Ogni biglietto costa pochi euro. Puoi prenderne quanti vuoi, da solo o insieme a un ordine.' },
                 { icon: Hash, title: 'Scegli il numero (o no)', text: 'Al checkout puoi scegliere tu il numero, se è ancora libero. Se non lo spunti, te ne viene assegnato uno in automatico tra quelli liberi.' },
                 { icon: Sparkles, title: 'Scopri se hai vinto', text: 'Allo scadere del countdown le bolle scoppiano tutte tranne quella vincente.' },
-              ].map((step) => (
+              ].map((step, i) => (
                 <div key={step.title} className="group px-5 py-7 transition hover:bg-cyan-50/60 sm:px-7">
-                  <step.icon size={23} className="mb-4 text-cyan-600 transition-transform duration-300 group-hover:-translate-y-1" />
+                  <div className="mb-4 flex items-start justify-between"><step.icon size={23} className="text-cyan-600 transition-transform duration-300 group-hover:-translate-y-1" /><span className="bg-gradient-to-br from-cyan-400 to-sky-600 bg-clip-text text-4xl font-black leading-none tracking-[-.05em] text-transparent">{i + 1}</span></div>
                   <h3 className="text-sm font-black text-slate-900">{step.title}</h3>
                   <p className="mt-1 text-xs leading-5 text-slate-500">{step.text}</p>
                 </div>
