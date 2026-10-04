@@ -36,7 +36,7 @@ function Countdown({ remaining }: { remaining: number }) {
       {[{ v: d, l: 'Giorni' }, { v: h, l: 'Ore' }, { v: m, l: 'Min' }, { v: s, l: 'Sec' }].map(({ v, l }, i) => (
         <div key={l} className="flex items-center gap-3">
           <div className="text-center">
-            <div className="flex h-14 w-14 items-center justify-center rounded-2xl border border-cyan-300/20 bg-cyan-300/10 text-2xl font-black text-cyan-200 backdrop-blur-md">{String(v).padStart(2, '0')}</div>
+            <div className="grid h-14 w-14 place-items-center rounded-2xl border border-cyan-300/20 bg-cyan-300/10 text-2xl font-black tabular-nums text-cyan-200 backdrop-blur-md">{String(v).padStart(2, '0')}</div>
             <p className="text-xs mt-1" style={{ color: 'rgba(224,247,250,0.65)' }}>{l}</p>
           </div>
           {i < 3 && <span className="text-cyan-500 font-bold text-xl mb-4">:</span>}
