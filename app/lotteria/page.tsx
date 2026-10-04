@@ -139,35 +139,6 @@ export default function LotteryPage() {
       <div className="relative overflow-hidden">
         <AmbientBubbles count={16} theme="light" />
         <div className="mg-page-shell relative z-10 max-w-5xl mx-auto px-4 py-10 space-y-10">
-        {/* Acquista il biglietto */}
-        <Reveal>
-          <LotteryTicketCard hideDetailsLink />
-        </Reveal>
-
-        {/* Come funziona */}
-        <Reveal>
-          <div className="rounded-[32px] border border-slate-200 bg-white p-6 shadow-[0_15px_50px_rgba(15,23,42,.06)] sm:p-8">
-            <h2 className="text-xl font-black mb-6 text-center tracking-[-.03em]" style={{ color: '#020617' }}>Come funziona</h2>
-            <div className="grid sm:grid-cols-4 gap-5">
-              {[
-                { icon: Ticket, title: 'Scegli come partecipare', text: 'Compra un biglietto qui sopra senza fare un ordine, oppure spunta "Partecipa alla lotteria" mentre ordini i tuoi prodotti.' },
-                { icon: ShoppingCart, title: 'Paga il biglietto', text: 'Ogni biglietto costa pochi euro. Puoi prenderne quanti vuoi, da solo o insieme a un ordine.' },
-                { icon: Hash, title: 'Scegli il numero (o no)', text: 'Al checkout puoi scegliere tu il numero, se è ancora libero. Se non lo spunti, te ne viene assegnato uno in automatico tra quelli liberi.' },
-                { icon: Sparkles, title: 'Scopri se hai vinto', text: 'Allo scadere del countdown le bolle scoppiano tutte tranne quella vincente.' },
-              ].map((step, i) => (
-                <div key={step.title} className="text-center">
-                  <div className="relative mx-auto mb-3 flex h-14 w-14 items-center justify-center rounded-full border border-cyan-200 bg-white shadow-[0_10px_30px_rgba(8,145,178,.10)]">
-                    <step.icon className="w-5 h-5" style={{ color: '#0891b2' }} />
-                    <span className="absolute -right-1.5 -top-1.5 flex h-5 w-5 items-center justify-center rounded-full bg-[#06151c] text-[10px] font-black text-cyan-300">{i + 1}</span>
-                  </div>
-                  <p className="text-sm font-bold mb-1" style={{ color: '#0c2b36' }}>{step.title}</p>
-                  <p className="text-xs text-slate-500 leading-relaxed">{step.text}</p>
-                </div>
-              ))}
-            </div>
-          </div>
-        </Reveal>
-
         {/* Premio */}
         {(data.image_url || data.prize_label) && (
           <Reveal className={`grid gap-6 ${data.image_url && data.prize_label ? 'md:grid-cols-2' : ''}`}>
@@ -182,6 +153,32 @@ export default function LotteryPage() {
             )}
           </Reveal>
         )}
+
+        {/* Acquista il biglietto */}
+        <Reveal>
+          <LotteryTicketCard hideDetailsLink />
+        </Reveal>
+
+        {/* Come funziona */}
+        <Reveal>
+          <div className="overflow-hidden rounded-[32px] border border-slate-200 bg-white shadow-[0_15px_50px_rgba(15,23,42,.06)]">
+            <h2 className="px-5 pt-6 text-center text-xl font-black tracking-[-.03em] sm:pt-8" style={{ color: '#020617' }}>Come funziona</h2>
+            <div className="mt-5 grid grid-cols-2 divide-x divide-y divide-slate-100 border-t border-slate-100 sm:grid-cols-4 sm:divide-y-0">
+              {[
+                { icon: Ticket, title: 'Scegli come partecipare', text: 'Compra un biglietto qui sopra senza fare un ordine, oppure spunta "Partecipa alla lotteria" mentre ordini i tuoi prodotti.' },
+                { icon: ShoppingCart, title: 'Paga il biglietto', text: 'Ogni biglietto costa pochi euro. Puoi prenderne quanti vuoi, da solo o insieme a un ordine.' },
+                { icon: Hash, title: 'Scegli il numero (o no)', text: 'Al checkout puoi scegliere tu il numero, se è ancora libero. Se non lo spunti, te ne viene assegnato uno in automatico tra quelli liberi.' },
+                { icon: Sparkles, title: 'Scopri se hai vinto', text: 'Allo scadere del countdown le bolle scoppiano tutte tranne quella vincente.' },
+              ].map((step) => (
+                <div key={step.title} className="group px-5 py-7 transition hover:bg-cyan-50/60 sm:px-7">
+                  <step.icon size={23} className="mb-4 text-cyan-600 transition-transform duration-300 group-hover:-translate-y-1" />
+                  <h3 className="text-sm font-black text-slate-900">{step.title}</h3>
+                  <p className="mt-1 text-xs leading-5 text-slate-500">{step.text}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </Reveal>
 
         {/* Bolle */}
         <Reveal delay={100}>
