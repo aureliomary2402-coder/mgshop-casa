@@ -1,5 +1,5 @@
 "use client"
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { ArrowLeft, Clock, Gift, History, PartyPopper, ImageIcon, ShoppingCart, Hash, Sparkles, Ticket } from 'lucide-react'
@@ -85,6 +85,18 @@ export default function LotteryPage() {
     if (phase !== 'popping') return
     const t = setTimeout(() => setPhase('revealed'), 2200)
     return () => clearTimeout(t)
+  }, [phase])
+
+  const gridRef = useRef<HTMLDivElement>(null)
+  const winnerRef = useRef<HTMLDivElement>(null)
+  const [shift, setShift] = useState<{ x: number; y: number } | null>(null)
+
+  useEffect(() => {
+    if (phase !== 'revealed') return
+    const g = gridRef.current, w = winnerRef.current
+    if (!g || !w) return
+    const gr = g.getBoundingClientRect(), wr = w.getBoundingClientRect()
+    setShift({ x: gr.left + gr.width / 2 - (wr.left + wr.width / 2), y: gr.top + gr.height / 2 - (wr.top + wr.height / 2) })
   }, [phase])
 
   if (loading) return (
@@ -188,7 +200,7 @@ export default function LotteryPage() {
           <p className="relative mb-6 text-center text-sm text-slate-400">
             {revealPhase ? 'Tutte le bolle sono scoppiate tranne quella vincente!' : 'Allo scadere del tempo, tutte le bolle scoppieranno tranne quella vincente'}
           </p>
-          <div className="relative flex flex-wrap justify-center gap-2 py-4">
+          <div ref={gridRef} className="relative flex flex-wrap justify-center gap-2 py-4">
             {Array.from({ length: count }).map((_, idx) => {
               const num = idx + 1
               const isWinner = winnerNumber === num
@@ -196,7 +208,7 @@ export default function LotteryPage() {
               const winnerGlow = isWinner && revealPhase
               const delay = ((idx * 47) % 24) / 24 * 1.1
               return (
-                <div key={num}
+                <div key={num} ref={isWinner ? winnerRef : undefined}
                   className={!revealPhase ? 'animate-bubble-bob' : ''}
                   style={{
                     width: size, height: size, borderRadius: '9999px',
@@ -208,9 +220,10 @@ export default function LotteryPage() {
                     border: winnerGlow ? '1px solid #67e8f9' : '1px solid rgba(103,232,249,0.25)',
                     animation: popped
                       ? `bubblePop 0.6s ease-in ${delay}s both`
-                      : winnerGlow
+                      : winnerGlow && phase === 'popping'
                         ? `bubbleReveal 1s cubic-bezier(0.22,1.2,0.36,1) ${delay}s both`
                         : undefined,
+                    ...(winnerGlow ? { position: 'relative' as const, zIndex: 10, transition: 'transform 1.2s cubic-bezier(0.22,1,0.36,1)', transform: shift ? `translate(${shift.x}px, ${shift.y}px) scale(1.8)` : undefined } : {}),
                     animationDelay: !revealPhase ? `${(idx % 5) * 0.3}s` : undefined,
                   }}>
                   {num}
