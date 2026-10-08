@@ -6,6 +6,7 @@ import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import Link from 'next/link'
 import type { Product } from '@/lib/types'
+import { useAdminNotes, AdminNoteInput } from './admin-notes'
 
 interface VolantinoItem {
   product_id: string
@@ -40,6 +41,7 @@ export function VolantinoManager() {
   const [deleting, setDeleting] = useState(false)
   const [error, setError] = useState('')
   const [allProducts, setAllProducts] = useState<Product[]>([])
+  const { notes, setNote } = useAdminNotes()
   const [productSearch, setProductSearch] = useState('')
   const [showProductPicker, setShowProductPicker] = useState(false)
   const pickerRef = useRef<HTMLDivElement>(null)
@@ -174,7 +176,7 @@ export function VolantinoManager() {
   }
 
   const filteredProducts = allProducts.filter(p =>
-    p.name.toLowerCase().includes(productSearch.toLowerCase())
+    p.name.toLowerCase().includes(productSearch.toLowerCase()) || (notes[p.id] || '').toLowerCase().includes(productSearch.toLowerCase())
   )
 
   const itemProducts = items
@@ -273,7 +275,8 @@ export function VolantinoManager() {
               {itemProducts.length > 0 && (
                 <div className="space-y-2 mb-3">
                   {itemProducts.map(({ item, product }) => (
-                    <div key={product.id} className="flex items-center gap-3 p-2.5 rounded-xl border border-cyan-100 bg-cyan-50">
+                    <div key={product.id} className="p-2.5 rounded-xl border border-cyan-100 bg-cyan-50 space-y-2">
+                     <div className="flex items-center gap-3">
                       {product.cover_image && <img src={product.cover_image} alt={product.name} className="w-12 h-12 rounded-lg object-cover shrink-0" />}
                       <div className="flex-1 min-w-0">
                         <p className="text-sm font-medium text-slate-800 truncate">{product.name}</p>
@@ -291,6 +294,8 @@ export function VolantinoManager() {
                       <button onClick={() => removeProduct(product.id)} className="p-1 hover:bg-red-100 rounded-lg transition-colors shrink-0">
                         <X className="w-4 h-4 text-red-400" />
                       </button>
+                     </div>
+                     <AdminNoteInput noteKey={product.id} notes={notes} setNote={setNote} />
                     </div>
                   ))}
                 </div>
@@ -322,6 +327,7 @@ export function VolantinoManager() {
                           <div className="flex-1 min-w-0">
                             <p className="text-sm font-medium text-slate-800 truncate">{p.name}</p>
                             <p className="text-xs text-cyan-700">€{p.price.toFixed(2)}</p>
+                            {notes[p.id] && <p className="text-[10px] text-amber-600 truncate">🔒 {notes[p.id]}</p>}
                           </div>
                           {already && <span className="text-xs text-slate-400 font-bold shrink-0">Aggiunto</span>}
                         </button>

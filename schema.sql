@@ -102,3 +102,11 @@ create table if not exists product_admin_notes (
   updated_at timestamptz default now()
 );
 alter table product_admin_notes enable row level security;
+
+-- Note private admin per i prodotti personalizzati della Promo. Vedi add-promo-item-notes.sql
+create table if not exists promo_item_admin_notes (
+  item_id text primary key,
+  supplier_note text not null default '',
+  updated_at timestamptz default now()
+);
+alter table promo_item_admin_notes enable row level security;

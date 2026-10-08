@@ -9,6 +9,7 @@ import type { Product, CustomizationOption } from '@/lib/types'
 import { ImageCropper } from './image-cropper'
 import { createCustomPromoId } from '@/lib/promo-custom-product'
 import { CustomizationOptionsEditor } from './customization-options-editor'
+import { useAdminNotes, AdminNoteInput } from './admin-notes'
 
 interface PromoItem {
   id: string
@@ -49,6 +50,7 @@ export function PromoManager() {
   const [uploading, setUploading] = useState(false)
   const [error, setError] = useState('')
   const [allProducts, setAllProducts] = useState<Product[]>([])
+  const { notes, setNote } = useAdminNotes()
   const [cropFile, setCropFile] = useState<File | null>(null)
   const [fetchingEdit, setFetchingEdit] = useState(false)
   const [cropAspect, setCropAspect] = useState(16 / 9)
@@ -265,7 +267,7 @@ export function PromoManager() {
   }
 
   const filteredProducts = allProducts.filter(p =>
-    p.name.toLowerCase().includes(productSearch.toLowerCase())
+    p.name.toLowerCase().includes(productSearch.toLowerCase()) || (notes[p.id] || '').toLowerCase().includes(productSearch.toLowerCase())
   )
 
   // Per i prodotti del negozio, nome/immagine/prezzo originale arrivano dal
@@ -465,6 +467,7 @@ export function PromoManager() {
                       <X className="w-4 h-4 text-red-400" />
                     </button>
                   </div>
+                  <AdminNoteInput noteKey={item.product_id ? item.product_id : `promo:${item.id}`} notes={notes} setNote={setNote} />
                   <textarea value={item.description || ''} onChange={e => updateDescription(item.id, e.target.value)}
                     className="w-full border border-cyan-200 bg-white rounded-lg p-2 text-xs resize-none h-12 focus:outline-none focus:ring-2 focus:ring-cyan-400"
                     placeholder="Informazioni aggiuntive per questo prodotto (facoltativo) — il cliente le vede aprendo la scheda dalla pagina promo" />
