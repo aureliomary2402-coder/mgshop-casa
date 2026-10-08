@@ -12,7 +12,7 @@ export function useAdminNotes() {
   useEffect(() => {
     fetch('/api/admin/product-notes')
       .then(r => (r.ok ? r.json() : {}))
-      .then(n => setNotes(n && typeof n === 'object' ? n : {}))
+      .then(n => setNotes(n && typeof n === "object" ? (n as Record<string, string>) : {}))
       .catch(() => {})
   }, [])
   const setNote = useCallback((key: string, value: string) => {

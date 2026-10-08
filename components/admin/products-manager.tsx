@@ -220,7 +220,7 @@ export function ProductsManager() {
       fetch('/api/admin/product-notes').then(r => r.ok ? r.json() : {}).catch(() => ({})),
     ])
     setProducts(p)
-    setNotes(n && typeof n === 'object' ? n : {})
+    setNotes(n && typeof n === "object" ? (n as Record<string, string>) : {})
     setCategories(c)
     setLoading(false)
   }
