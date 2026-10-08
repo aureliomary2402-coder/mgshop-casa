@@ -94,3 +94,11 @@ create policy "Public read banners" on banners for select using (is_active = tru
 
 -- Supabase Storage: crea bucket "images" pubblico dalla dashboard
 -- Storage > New bucket > nome: images > Public: ON
+
+-- Note private admin sui prodotti (dove rifornirsi). Vedi add-product-admin-notes.sql
+create table if not exists product_admin_notes (
+  product_id uuid primary key references products(id) on delete cascade,
+  supplier_note text not null default '',
+  updated_at timestamptz default now()
+);
+alter table product_admin_notes enable row level security;
