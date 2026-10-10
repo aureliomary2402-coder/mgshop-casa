@@ -75,7 +75,7 @@ export function HeroBanner({ banners }: { banners: Banner[]; categories?: Catego
           href={SOCIAL_LINKS.whatsappChat}
           target="_blank"
           rel="noopener noreferrer"
-          className="mx-auto flex max-w-7xl items-center justify-center gap-3 rounded-2xl border border-emerald-200 bg-white p-4 transition hover:-translate-y-0.5"
+          className="mg-glow-card mg-glow-green mx-auto flex max-w-7xl items-center justify-center gap-3 rounded-2xl border border-emerald-200 bg-white p-4 transition hover:-translate-y-0.5"
         >
           <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#25d366] text-white">
             <WhatsAppIcon size={17} />

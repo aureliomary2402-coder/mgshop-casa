@@ -24,7 +24,7 @@ export function LoyaltyBanner({ compact = false, strip = false }: { compact?: bo
 
   // Striscia sottile (shop): una riga chiara, per non occupare spazio prima dei prodotti.
   if (strip) return (
-    <div className="flex items-center gap-3 rounded-2xl border border-cyan-100 bg-gradient-to-br from-white to-cyan-50 px-4 py-3"
+    <div className="mg-glow-card flex items-center gap-3 rounded-2xl border border-cyan-100 bg-gradient-to-br from-white to-cyan-50 px-4 py-3"
       style={{ boxShadow: '0 8px 24px rgba(8,145,178,0.07)' }}>
       <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-cyan-200 bg-cyan-100/70">
         <Sparkles className="h-5 w-5 text-cyan-700" />

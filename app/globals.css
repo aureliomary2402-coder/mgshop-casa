@@ -1080,3 +1080,34 @@ main { animation: fadeIn 0.3s ease-out; }
 @media (prefers-reduced-motion: reduce) {
   .mg-nav-pill { transition: none; }
 }
+
+/* Cornice animata per le card in evidenza (WhatsApp, fedeltà, lotteria) */
+.mg-glow-card {
+  position: relative;
+  --glow-a: #22d3ee; --glow-b: #2563eb; --glow-c: #67e8f9; --glow-rgb: 34, 211, 238;
+  animation: mgGlowPulse 3.2s ease-in-out infinite;
+}
+.mg-glow-green { --glow-a: #25d366; --glow-b: #22d3ee; --glow-c: #86efac; --glow-rgb: 37, 211, 102; }
+.mg-glow-card::before {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  border-radius: inherit;
+  padding: 2px;
+  background: linear-gradient(110deg, var(--glow-a), var(--glow-b), var(--glow-c), var(--glow-a));
+  background-size: 200% 100%;
+  animation: mgBorderFlow 4s linear infinite;
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  mask-composite: exclude;
+  pointer-events: none;
+}
+@keyframes mgBorderFlow { from { background-position: 0% 50%; } to { background-position: 200% 50%; } }
+@keyframes mgGlowPulse {
+  0%, 100% { box-shadow: 0 6px 18px rgba(var(--glow-rgb), 0.10); }
+  50% { box-shadow: 0 8px 30px rgba(var(--glow-rgb), 0.34); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .mg-glow-card, .mg-glow-card::before { animation: none; }
+}
