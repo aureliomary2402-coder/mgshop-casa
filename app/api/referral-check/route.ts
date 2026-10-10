@@ -1,6 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createAdminClient } from '@/lib/supabase/admin'
 
+// Coupon di benvenuto: vale solo sul primo ordine di un numero di telefono.
+const WELCOME_COUPON_CODE = 'BENVENUTO5'
+
 // Stessa normalizzazione usata in checkout, account-lookup ecc.
 function normalizePhone(phone: string): string {
   let n = phone.replace(/\D/g, '')
@@ -23,7 +26,7 @@ function normalizePhone(phone: string): string {
 // numero inserito è valido e quale sconto avrà, prima di inviare l'ordine.
 export async function POST(request: NextRequest) {
   try {
-    const { phone_number, referred_by_phone } = await request.json()
+    const { phone_number, referred_by_phone, coupon_code } = await request.json()
     const rawPhone = typeof phone_number === 'string' ? phone_number.trim() : ''
     if (!rawPhone) return NextResponse.json({ error: 'Numero mancante' }, { status: 400 })
 
@@ -35,6 +38,9 @@ export async function POST(request: NextRequest) {
       ? await supabase.from('orders').select('phone_number').ilike('phone_number', `%${last8}%`)
       : { data: [] as { phone_number: string }[] }
     const isFirstOrderForPhone = !(candidatePhoneOrders || []).some(o => normalizePhone(o.phone_number) === normalizedPhone)
+
+    const couponNorm = typeof coupon_code === 'string' ? coupon_code.trim().toUpperCase() : ''
+    const welcomeCouponUsed = couponNorm === WELCOME_COUPON_CODE && !isFirstOrderForPhone
 
     let referralDiscountPercent = 0
     let referralError: string | null = null
@@ -84,6 +90,7 @@ export async function POST(request: NextRequest) {
       referral_discount_percent: referralDiscountPercent,
       referral_error: referralError,
       reward_discount_percent: rewardDiscountPercent,
+      welcome_coupon_used: welcomeCouponUsed,
       discount_percent: referralDiscountPercent || rewardDiscountPercent || 0,
     })
   } catch {
