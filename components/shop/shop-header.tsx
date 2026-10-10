@@ -224,7 +224,7 @@ export function ShopHeader({ categories }: { categories: Category[] }) {
               {searchValue && <button onClick={handleClearSearch} className="absolute right-3 top-1/2 -translate-y-1/2 text-cyan-400 hover:text-cyan-600 transition-colors"><X className="w-4 h-4" /></button>}
 
               {dropdownOpen && searchValue.trim() && (
-                <div className="absolute top-full left-0 mt-2 w-full min-w-0 sm:min-w-[280px] rounded-2xl overflow-hidden shadow-xl animate-scale-in z-50"
+                <div className="fixed left-3 right-3 top-[7.4rem] sm:absolute sm:top-full sm:left-0 sm:right-auto sm:mt-2 sm:w-full sm:min-w-[280px] rounded-2xl overflow-hidden shadow-xl animate-scale-in z-50"
                   style={{ background: 'white', border: '1px solid rgba(8,145,178,0.15)', boxShadow: '0 20px 60px rgba(0,0,0,0.15)' }}>
                   {searchResults.length > 0 ? (
                     <>
