@@ -21,6 +21,8 @@ interface VolantinoRecord {
   is_active: boolean
   items: VolantinoItem[]
   sort_order: number
+  start_date?: string | null
+  end_date?: string | null
 }
 
 export function VolantinoManager() {
@@ -35,6 +37,8 @@ export function VolantinoManager() {
   const [subtitle, setSubtitle] = useState('')
   const [slug, setSlug] = useState('')
   const [items, setItems] = useState<VolantinoItem[]>([])
+  const [startDate, setStartDate] = useState('')
+  const [endDate, setEndDate] = useState('')
 
   const [saving, setSaving] = useState(false)
   const [saved, setSaved] = useState(false)
@@ -88,6 +92,8 @@ export function VolantinoManager() {
     setSubtitle(v.subtitle || '')
     setSlug(v.slug || '')
     setItems(v.items || [])
+    setStartDate(v.start_date || '')
+    setEndDate(v.end_date || '')
     setPriceDrafts({})
     setError('')
     setShowProductPicker(false)
@@ -121,7 +127,7 @@ export function VolantinoManager() {
     const res = await fetch(`/api/admin/volantino/${selectedId}`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ is_active: isActive, title, subtitle, items, slug })
+      body: JSON.stringify({ is_active: isActive, title, subtitle, items, slug, start_date: startDate || null, end_date: endDate || null })
     })
     if (res.ok) {
       setSaved(true)
@@ -145,7 +151,7 @@ export function VolantinoManager() {
     if (arr.length > 0) selectVolantino(arr[0])
     else {
       setSelectedId(null)
-      setIsActive(false); setTitle(''); setSubtitle(''); setSlug(''); setItems([])
+      setIsActive(false); setTitle(''); setSubtitle(''); setSlug(''); setItems([]); setStartDate(''); setEndDate('')
     }
   }
 
@@ -252,6 +258,27 @@ export function VolantinoManager() {
             <div>
               <label className="text-xs font-medium text-slate-500 mb-1 block">Sottotitolo</label>
               <Input value={subtitle} onChange={e => setSubtitle(e.target.value)} placeholder="Es. Offerte valide fino ad esaurimento scorte" />
+            </div>
+            <div className="rounded-2xl border border-slate-200 p-4 space-y-3">
+              <p className="text-xs font-medium text-slate-500">Periodo delle offerte</p>
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="text-[11px] text-slate-400 mb-1 block">Inizio</label>
+                  <input type="date" value={startDate} onChange={e => setStartDate(e.target.value)}
+                    className="w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800" />
+                </div>
+                <div>
+                  <label className="text-[11px] text-slate-400 mb-1 block">Fine (ultimo giorno valido)</label>
+                  <input type="date" value={endDate} min={startDate || undefined} onChange={e => setEndDate(e.target.value)}
+                    className="w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800" />
+                </div>
+              </div>
+              <p className="text-[11px] text-slate-400">
+                Il volantino compare il giorno di inizio e sparisce dopo l&apos;ultimo giorno: da quel momento i prezzi tornano a quelli originali. Lascia vuoto per nessun limite. Il cliente vede fino a quando valgono le offerte.
+              </p>
+              {startDate && endDate && endDate < startDate && (
+                <p className="text-xs font-medium text-red-600">La data di fine è prima di quella di inizio.</p>
+              )}
             </div>
             <div>
               <label className="text-xs font-medium text-slate-500 mb-1 block">Indirizzo link (facoltativo)</label>

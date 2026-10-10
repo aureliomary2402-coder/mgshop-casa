@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createAdminClient } from '@/lib/supabase/admin'
 import { cookies } from 'next/headers'
+import { reconcileVolantini } from '@/lib/volantino-window'
 
 export const dynamic = 'force-dynamic'
 export const fetchCache = 'force-no-store'
@@ -9,6 +10,10 @@ export const revalidate = 0
 async function isAuthenticated() {
   const cookieStore = await cookies()
   return cookieStore.get('admin_session')?.value === 'authenticated'
+}
+
+function normDate(v: unknown): string | null {
+  return typeof v === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(v) ? v : null
 }
 
 function slugify(text: string) {
@@ -75,9 +80,24 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
   if (typeof body.is_active === 'boolean') update.is_active = body.is_active
   if (typeof body.title === 'string') update.title = body.title
   if (typeof body.subtitle === 'string') update.subtitle = body.subtitle
+  const { data: current } = await supabase
+    .from('volantino_page')
+    .select('items, start_date, end_date, prices_applied')
+    .eq('id', id)
+    .single()
+
+  if ('start_date' in body) update.start_date = normDate(body.start_date)
+  if ('end_date' in body) update.end_date = normDate(body.end_date)
+  const finalStart = 'start_date' in update ? update.start_date : current?.start_date
+  const finalEnd = 'end_date' in update ? update.end_date : current?.end_date
+  if (finalStart && finalEnd && finalEnd < finalStart) {
+    return NextResponse.json({ error: 'La data di fine non può essere prima della data di inizio' }, { status: 400 })
+  }
+
   if (Array.isArray(body.items)) {
-    const { data: existing } = await supabase.from('volantino_page').select('items').eq('id', id).single()
-    await syncProductPrices(supabase, existing?.items || [], body.items)
+    // Se le offerte sono già applicate nel negozio, aggiorna i prezzi in base alle
+    // differenze; altrimenti ci pensa reconcileVolantini quando il periodo parte.
+    if (current?.prices_applied) await syncProductPrices(supabase, current?.items || [], body.items)
     update.items = body.items
   }
 
@@ -91,6 +111,8 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
 
   const { data, error } = await supabase.from('volantino_page').update(update).eq('id', id).select().single()
   if (error) return NextResponse.json({ error: error.message }, { status: 500 })
+  // Applica o ripristina i prezzi in base alle nuove date.
+  try { await reconcileVolantini(supabase) } catch {}
   return NextResponse.json(data)
 }
 

@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
 import { createAdminClient } from '@/lib/supabase/admin'
+import { reconcileVolantini, isVisible } from '@/lib/volantino-window'
 
 export const dynamic = 'force-dynamic'
 export const fetchCache = 'force-no-store'
@@ -11,12 +12,15 @@ export const revalidate = 0
 // ce ne sono 2 o più).
 export async function GET() {
   const supabase = createAdminClient()
+  // Allinea i prezzi del negozio ai periodi dei volantini (scadenze/inizi).
+  try { await reconcileVolantini(supabase) } catch {}
   const { data, error } = await supabase
     .from('volantino_page')
-    .select('id, slug, title, subtitle, is_active, sort_order')
+    .select('id, slug, title, subtitle, is_active, sort_order, start_date, end_date')
     .eq('is_active', true)
     .order('sort_order', { ascending: true })
     .order('updated_at', { ascending: false })
   if (error) return NextResponse.json({ error: error.message }, { status: 500 })
-  return NextResponse.json(data)
+  // Solo i volantini il cui periodo di validità comprende oggi.
+  return NextResponse.json((data || []).filter(isVisible))
 }

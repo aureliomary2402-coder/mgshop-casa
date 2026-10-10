@@ -23,6 +23,8 @@ export interface VolantinoData {
   title: string
   subtitle: string
   items: VolantinoItem[]
+  start_date?: string | null
+  end_date?: string | null
 }
 
 // Calcoli comuni a ogni offerta (sconto, prezzo variabile, disponibilità).
@@ -160,6 +162,21 @@ function OfferRow({ product, salePrice, index }: { product: Product; salePrice: 
 // Volantino già caricato (dati + prodotti risolti). Usato sia da /volantino
 // (quando c'è un solo volantino attivo, per compatibilità con link/QR/catalogo
 // già condivisi) sia da /volantino/[slug].
+function formatDay(d: string) {
+  return new Date(d + 'T12:00:00').toLocaleDateString('it-IT', { day: 'numeric', month: 'long' })
+}
+
+// Scritta di validità mostrata al cliente (es. "Offerte valide fino al 18 ottobre").
+function validityLabel(data: VolantinoData): { text: string; lastDay: boolean } | null {
+  if (!data.end_date && !data.start_date) return null
+  const today = new Intl.DateTimeFormat('en-CA', { timeZone: 'Europe/Rome' }).format(new Date())
+  if (data.end_date) {
+    if (data.end_date === today) return { text: 'Ultimo giorno! Offerte valide solo oggi', lastDay: true }
+    return { text: `Offerte valide fino al ${formatDay(data.end_date)}`, lastDay: false }
+  }
+  return { text: `Offerte valide dal ${formatDay(data.start_date as string)}`, lastDay: false }
+}
+
 export function VolantinoFlyerView({ data, products, backHref = '/volantino', showBackToList = false }: {
   data: VolantinoData
   products: Product[]
@@ -182,6 +199,7 @@ export function VolantinoFlyerView({ data, products, backHref = '/volantino', sh
     }
   }
   const rest = featured ? offers.filter(o => o.product.id !== featured!.product.id) : offers
+  const validity = validityLabel(data)
   const maxOff = offers.reduce((m, o) => (o.info.showDiscount ? Math.max(m, o.info.percentOff) : m), 0)
 
   return (
@@ -210,6 +228,9 @@ export function VolantinoFlyerView({ data, products, backHref = '/volantino', sh
               </span>
               {maxOff > 0 && (
                 <span className="rounded-full bg-red-600 px-4 py-2 text-xs font-black uppercase tracking-[0.14em] text-white">Fino al -{maxOff}%</span>
+              )}
+              {validity && (
+                <span className={`rounded-full px-4 py-2 text-xs font-black uppercase tracking-[0.14em] ${validity.lastDay ? 'bg-amber-400 text-amber-950' : 'bg-cyan-100 text-cyan-900'}`}>{validity.text}</span>
               )}
             </div>
 

@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createAdminClient } from '@/lib/supabase/admin'
+import { reconcileVolantini, isVisible } from '@/lib/volantino-window'
 
 export const dynamic = 'force-dynamic'
 export const fetchCache = 'force-no-store'
@@ -11,6 +12,7 @@ export const revalidate = 0
 export async function GET(request: NextRequest, { params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params
   const supabase = createAdminClient()
+  try { await reconcileVolantini(supabase) } catch {}
 
   // Prima prova a cercare per slug (volantini creati/rinominati dal pannello
   // multi-volantino). Se non trova nulla, ricade sulla ricerca per id: i
@@ -23,5 +25,7 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
     error = byId.error
   }
   if (error || !data) return NextResponse.json({ error: 'Volantino non trovato' }, { status: 404 })
+  // Scaduto o non ancora iniziato: non è raggiungibile nemmeno dal link diretto.
+  if (!isVisible(data)) return NextResponse.json({ error: 'Volantino non disponibile' }, { status: 404 })
   return NextResponse.json(data)
 }
