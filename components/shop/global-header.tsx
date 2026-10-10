@@ -150,7 +150,7 @@ export function GlobalHeader({ categories = [] }: { categories?: Category[] }) {
         boxShadow: scrolled ? '0 12px 40px rgba(15,23,42,0.08)' : 'none',
       }}>
       <div className="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between gap-3">
-        <Link href="/" className="flex items-center gap-2 shrink-0 group">
+        <Link href="/" className={`flex items-center gap-2 shrink-0 group transition-all duration-300 ${searchOpen ? "overflow-hidden max-w-0 opacity-0 -translate-x-full -mr-3 sm:max-w-[16rem] sm:opacity-100 sm:translate-x-0 sm:mr-0" : "max-w-[16rem]"}`}>
           <Image src="/logo/mgshop-logo-orizzontale-scuro.png" alt="MGShop Casa" width={900} height={240} priority
             className="h-10 sm:h-11 w-auto transition-transform group-hover:scale-105" />
         </Link>
@@ -207,7 +207,7 @@ export function GlobalHeader({ categories = [] }: { categories?: Category[] }) {
           </button>
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className={`flex items-center gap-2 ${searchOpen ? "flex-1 min-w-0 sm:flex-none" : ""}`}>
           <div ref={searchBoxRef} className={`transition-all duration-300 min-w-0 ${searchOpen ? 'flex flex-1 sm:flex-none sm:w-64' : 'hidden md:flex md:flex-1 md:max-w-[10rem]'} ${searchFocused ? 'sm:w-72' : ''}`}>
             <div className="relative w-full">
               <Search className={`absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 pointer-events-none transition-colors duration-300 ${searchFocused ? 'text-cyan-500' : 'text-cyan-400'}`} />
