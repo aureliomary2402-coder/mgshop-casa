@@ -46,6 +46,7 @@ export function CartContent({ scope = 'shop' }: { scope?: string }) {
   const [referralPreviewError, setReferralPreviewError] = useState('')
   const [appliedReferralPercent, setAppliedReferralPercent] = useState(0)
   const [finalPaidTotal, setFinalPaidTotal] = useState<number | null>(null)
+  const [welcomeCouponUsed, setWelcomeCouponUsed] = useState(false)
   const [showNotifyReminder, setShowNotifyReminder] = useState(false)
   const [notifyActivating, setNotifyActivating] = useState(false)
   const [whatsappLink, setWhatsappLink] = useState('')
@@ -141,7 +142,7 @@ export function CartContent({ scope = 'shop' }: { scope?: string }) {
   // Se il coupon vale solo per la promo, lo sconto si calcola solo sui prodotti in promo presenti nel carrello
   const promoSubtotal = items.reduce((sum, i) => promoProductIds.includes(i.product.id) ? sum + i.product.price * i.quantity : sum, 0)
   const discountBase = couponData?.scope === 'promo' ? promoSubtotal : productsSubtotal
-  const discountAmount = couponData
+  const discountAmount = couponData && !welcomeCouponUsed
     ? couponData.discount_percent > 0
       ? discountBase * couponData.discount_percent / 100
       : Math.min(couponData.discount_fixed, discountBase)
@@ -157,6 +158,7 @@ export function CartContent({ scope = 'shop' }: { scope?: string }) {
     const ownDigits = phone.replace(/\D/g, '')
     const friendDigits = referredByPhone.replace(/\D/g, '')
     if (ownDigits.length < 6) {
+      setWelcomeCouponUsed(false)
       setReferralPreviewPercent(0); setReferralPreviewSource(null); setReferralPreviewError(''); setReferralPreviewLoading(false)
       return
     }
@@ -169,10 +171,11 @@ export function CartContent({ scope = 'shop' }: { scope?: string }) {
     const timer = setTimeout(() => {
       fetch('/api/referral-check', {
         method: 'POST', headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ phone_number: phone, referred_by_phone: showReferralField ? referredByPhone : '' }),
+        body: JSON.stringify({ phone_number: phone, referred_by_phone: showReferralField ? referredByPhone : '', coupon_code: couponCode || null }),
       })
         .then(r => r.json())
         .then(d => {
+          setWelcomeCouponUsed(!!d.welcome_coupon_used)
           if (d.referral_discount_percent > 0) {
             setReferralPreviewPercent(d.referral_discount_percent); setReferralPreviewSource('invited'); setReferralPreviewError('')
           } else if (d.reward_discount_percent > 0) {
@@ -186,7 +189,7 @@ export function CartContent({ scope = 'shop' }: { scope?: string }) {
         .finally(() => setReferralPreviewLoading(false))
     }, 500)
     return () => { clearTimeout(timer); setReferralPreviewLoading(false) }
-  }, [phone, referredByPhone, showReferralField])
+  }, [phone, referredByPhone, showReferralField, couponCode])
 
   const referralPreviewAmount = referralPreviewPercent > 0 ? total * referralPreviewPercent / 100 : 0
   const totalWithReferralPreview = Math.max(0, total - referralPreviewAmount)
@@ -240,7 +243,7 @@ export function CartContent({ scope = 'shop' }: { scope?: string }) {
     setSubmitting(true)
     try {
       const finalDeliveryMethod = onlyLotteryInCart ? null : deliveryMethod
-      const res = await fetch('/api/checkout', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ phone_number: phone, items, total, coupon_code: couponCode || null, ticket_number_choices: chosenNumbers, delivery_method: finalDeliveryMethod, delivery_address: finalDeliveryMethod === 'consegna' ? address : null, referred_by_phone: referredByPhone.trim() || null }) })
+      const res = await fetch('/api/checkout', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ phone_number: phone, items, total, coupon_discount: discountAmount, coupon_code: couponCode || null, ticket_number_choices: chosenNumbers, delivery_method: finalDeliveryMethod, delivery_address: finalDeliveryMethod === 'consegna' ? address : null, referred_by_phone: referredByPhone.trim() || null }) })
       const data = await res.json().catch(() => null)
       if (!res.ok) {
         // Uno o più numeri scelti sono stati presi da un altro cliente nel
@@ -289,7 +292,7 @@ export function CartContent({ scope = 'shop' }: { scope?: string }) {
       const finalDeliveryMethod = onlyLotteryInCart ? null : deliveryMethod
       const finalAddress = finalDeliveryMethod === 'consegna' ? (address.trim() || 'Da concordare su WhatsApp') : null
       const itemsSnapshot = items
-      const res = await fetch('/api/checkout', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ phone_number: phone, items, total, coupon_code: couponCode || null, ticket_number_choices: chosenNumbers, delivery_method: finalDeliveryMethod, delivery_address: finalAddress, referred_by_phone: referredByPhone.trim() || null }) })
+      const res = await fetch('/api/checkout', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ phone_number: phone, items, total, coupon_discount: discountAmount, coupon_code: couponCode || null, ticket_number_choices: chosenNumbers, delivery_method: finalDeliveryMethod, delivery_address: finalAddress, referred_by_phone: referredByPhone.trim() || null }) })
       const data = await res.json().catch(() => null)
       if (!res.ok) {
         if (data?.unavailable_numbers?.length) {
@@ -540,6 +543,7 @@ export function CartContent({ scope = 'shop' }: { scope?: string }) {
                   <div>
                     <p className="text-sm font-bold text-cyan-700">{couponData.code}</p>
                     <p className="text-xs text-slate-500">{couponData.discount_percent>0?`-${couponData.discount_percent}%`:`-€${couponData.discount_fixed}`}{couponData.scope==='promo' ? ' (solo prodotti in promo)' : ' (tutto il carrello)'}</p>
+                    {welcomeCouponUsed && <p className="text-xs text-red-500 mt-1">Coupon già utilizzato: l'ordine verrà inviato a prezzo intero</p>}
                     {couponData.scope==='promo' && promoSubtotal===0 && <p className="text-xs text-red-500 mt-1">Nessun prodotto in promo nel carrello: sconto non applicato</p>}
                   </div>
                   <button onClick={removeCoupon} className="p-1 hover:bg-cyan-100 rounded-lg"><X className="w-4 h-4 text-cyan-600"/></button>
