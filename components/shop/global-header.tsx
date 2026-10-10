@@ -62,10 +62,10 @@ export function GlobalHeader({ categories = [] }: { categories?: Category[] }) {
     fetch('/api/promo').then(r => r.json()).then(d => setPromoActive(d.is_active === true)).catch(() => {})
     fetch('/api/volantino').then(r => r.json()).then(d => setVolantinoActive(Array.isArray(d) && d.length > 0)).catch(() => {})
     const hc = (e: MouseEvent) => {
-      if (searchBoxRef.current && !searchBoxRef.current.contains(e.target as Node)) setDropdownOpen(false)
+      if (searchBoxRef.current && !searchBoxRef.current.contains(e.target as Node)) { setDropdownOpen(false); if (!(e.target as HTMLElement).closest("[data-search-toggle]")) setSearchOpen(false) }
     }
-    document.addEventListener('mousedown', hc)
-    return () => { window.removeEventListener('scroll', hs); document.removeEventListener('mousedown', hc) }
+    document.addEventListener('pointerdown', hc)
+    return () => { window.removeEventListener('scroll', hs); document.removeEventListener('pointerdown', hc) }
   }, [])
 
   useEffect(() => { if (searchOpen) setTimeout(() => inputRef.current?.focus(), 50) }, [searchOpen])
@@ -268,7 +268,7 @@ export function GlobalHeader({ categories = [] }: { categories?: Category[] }) {
             </div>
           </div>
           <button className="md:hidden w-10 h-10 flex items-center justify-center rounded-full hover:bg-slate-100 text-slate-700"
-            onClick={() => { searchOpen ? handleClearSearch() : setSearchOpen(true) }}>
+            data-search-toggle onClick={() => { searchOpen ? handleClearSearch() : setSearchOpen(true) }}>
             {searchOpen ? <X className="w-5 h-5" /> : <Search className="w-5 h-5" />}
           </button>
           <Link href="/preferiti" className={`${searchOpen ? 'hidden sm:flex' : 'flex'} relative h-10 w-10 items-center justify-center rounded-full transition-all hover:bg-slate-100 btn-press group`}>
