@@ -5,6 +5,9 @@ import { LOTTERY_TICKET_PRODUCT_ID } from '@/lib/lottery-ticket-product'
 import { isCustomPromoProductId } from '@/lib/promo-custom-product'
 import { sendPushToAdmin } from '@/lib/push'
 
+// Coupon di benvenuto: vale solo sul primo ordine di un numero di telefono.
+const WELCOME_COUPON_CODE = 'BENVENUTO5'
+
 // Stessa normalizzazione usata in tutto il sito (admin/orders, account-lookup):
 // confronta i numeri di telefono ignorando prefissi internazionali e formattazione.
 function normalizePhone(phone: string): string {
@@ -25,7 +28,7 @@ function normalizePhone(phone: string): string {
 
 export async function POST(request: NextRequest) {
   try {
-    const { phone_number, items, total, coupon_code, ticket_number_choices, delivery_method, delivery_address, referred_by_phone } = await request.json()
+    const { phone_number, items, total, coupon_discount, coupon_code, ticket_number_choices, delivery_method, delivery_address, referred_by_phone } = await request.json()
     if (!phone_number || !items || items.length === 0)
       return NextResponse.json({ error: 'Missing required fields' }, { status: 400 })
 
@@ -53,6 +56,15 @@ export async function POST(request: NextRequest) {
       ? await supabase.from('orders').select('phone_number').ilike('phone_number', `%${last8}%`)
       : { data: [] as { phone_number: string }[] }
     const isFirstOrderForPhone = !(candidatePhoneOrders || []).some(o => normalizePhone(o.phone_number) === normalizedPhone)
+
+    // BENVENUTO5 su un numero che ha gia ordinato: ordine a prezzo intero, senza coupon.
+    const couponNorm = typeof coupon_code === 'string' ? coupon_code.trim().toUpperCase() : ''
+    const welcomeCouponRejected = couponNorm === WELCOME_COUPON_CODE && !isFirstOrderForPhone
+    let baseTotal = Number(total)
+    if (welcomeCouponRejected) {
+      const sd = Number(coupon_discount)
+      if (Number.isFinite(sd) && sd > 0) baseTotal += sd
+    }
 
     let referralDiscountPercent = 0
     let referralError: string | null = null
@@ -105,9 +117,9 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    const referralDiscountAmount = referralDiscountPercent > 0 ? Number(total) * (referralDiscountPercent / 100) : 0
-    const rewardDiscountAmount = rewardDiscountPercent > 0 ? Number(total) * (rewardDiscountPercent / 100) : 0
-    const finalTotal = Math.max(0, Number(total) - referralDiscountAmount - rewardDiscountAmount)
+    const referralDiscountAmount = referralDiscountPercent > 0 ? baseTotal * (referralDiscountPercent / 100) : 0
+    const rewardDiscountAmount = rewardDiscountPercent > 0 ? baseTotal * (rewardDiscountPercent / 100) : 0
+    const finalTotal = Math.max(0, baseTotal - referralDiscountAmount - rewardDiscountAmount)
 
     // Il "biglietto lotteria" è una voce speciale nel carrello: non è un
     // prodotto vero (niente magazzino, niente riga in order_items). Che il
@@ -270,7 +282,7 @@ export async function POST(request: NextRequest) {
       // ordinare anche un prodotto esaurito: ci pensa l'admin ad acquistarlo.
     }
 
-    if (coupon_code) {
+    if (coupon_code && !welcomeCouponRejected) {
       const { data: coupon } = await supabase.from('coupons').select('id, uses_count').eq('code', coupon_code).single()
       if (coupon) await supabase.from('coupons').update({ uses_count: coupon.uses_count + 1 }).eq('id', coupon.id)
     }
@@ -305,6 +317,7 @@ export async function POST(request: NextRequest) {
       referral_discount_percent: referralDiscountPercent || rewardDiscountPercent || 0,
       referral_error: referralError,
       final_total: finalTotal,
+      coupon_error: welcomeCouponRejected ? 'Coupon già utilizzato' : null,
     })
   } catch {
     return NextResponse.json({ error: 'Checkout failed' }, { status: 500 })
