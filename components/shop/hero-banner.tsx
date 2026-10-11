@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
-import { ChevronLeft, ChevronRight, ShoppingBag, ArrowRight, Sparkles } from 'lucide-react'
+import { ChevronLeft, ChevronRight, ShoppingBag, ArrowRight, Sparkles, Tag } from 'lucide-react'
 import type { Banner, Category } from '@/lib/types'
 import { LandingHero } from './landing-hero'
 import { SOCIAL_LINKS, WHATSAPP_NUMBER, WhatsAppIcon } from './social-icons'
@@ -45,6 +45,13 @@ export function HeroBanner({ banners }: { banners: Banner[]; categories?: Catego
             >
               <Sparkles className="h-[18px] w-[18px]" />
               Scopri le promo
+            </Link>
+            <Link
+              href="/shop?categoria=scontati#prodotti-grid"
+              className="inline-flex h-14 items-center justify-center gap-3 rounded-2xl border border-white/15 bg-white/10 px-7 font-bold text-white backdrop-blur-xl transition duration-300 hover:-translate-y-1 hover:bg-white/15"
+            >
+              <Tag className="h-[18px] w-[18px]" />
+              In sconto
             </Link>
           </>
         }

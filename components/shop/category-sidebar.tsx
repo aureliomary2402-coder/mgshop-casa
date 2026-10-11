@@ -36,7 +36,7 @@ export function CategorySidebar({ categories }: { categories: Category[] }) {
     setOpen(false)
   }
 
-  const items = [{ slug: null as string | null, name: 'Tutti i prodotti', icon: Store }, ...categories.map(c => ({ slug: c.slug, name: c.name, icon: categoryIcon(c.name) }))]
+  const items = [{ slug: null as string | null, name: 'Tutti i prodotti', icon: Store }, { slug: 'scontati' as string | null, name: 'In sconto', icon: Tag }, ...categories.map(c => ({ slug: c.slug, name: c.name, icon: categoryIcon(c.name) }))]
   const activeLabel = items.find(it => it.slug === active)?.name || 'Categorie'
 
   return (

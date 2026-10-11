@@ -1,5 +1,6 @@
 import { createAdminClient } from '@/lib/supabase/admin'
 import { reconcileProductDiscounts } from '@/lib/product-discounts'
+import { reconcileVolantini } from '@/lib/volantino-window'
 import { HeroBanner } from '@/components/shop/hero-banner'
 import { CategorySidebar } from '@/components/shop/category-sidebar'
 import { ProductGrid } from '@/components/shop/product-grid'
@@ -18,7 +19,7 @@ const PAGE_SIZE = 30
 
 async function getData(searchParams: { q?: string; categoria?: string; ordina?: string }) {
   const supabase = createAdminClient()
-  try { await reconcileProductDiscounts(supabase) } catch {}
+  try { await reconcileVolantini(supabase); await reconcileProductDiscounts(supabase) } catch {}
   const [{ data: banners }, { data: categories }] = await Promise.all([
     supabase.from('banners').select('*').eq('is_active', true).order('display_order'),
     supabase.from('categories').select('*').order('name'),
@@ -28,7 +29,9 @@ async function getData(searchParams: { q?: string; categoria?: string; ordina?: 
     : searchParams.ordina === 'prezzo_desc' ? query.order('price', { ascending: false })
     : searchParams.ordina === 'nome' ? query.order('name', { ascending: true })
     : query.order('created_at', { ascending: false })
-  if (searchParams.categoria) {
+  if (searchParams.categoria === 'scontati') {
+    query = query.not('old_price', 'is', null)
+  } else if (searchParams.categoria) {
     const cat = (categories || []).find((c: Category) => c.slug === searchParams.categoria)
     if (cat) query = query.eq('category_id', cat.id)
   }
@@ -111,7 +114,7 @@ export default async function ShopPage({ searchParams }: { searchParams: Promise
                       {params.q
                         ? <>Risultati per <strong>“{params.q}”</strong></>
                         : params.categoria
-                          ? <>Prodotti selezionati</>
+                          ? <>{params.categoria === 'scontati' ? 'Prodotti in sconto' : 'Prodotti selezionati'}</>
                           : <>Scopri i prodotti</>}
                     </h3>
                   </div>

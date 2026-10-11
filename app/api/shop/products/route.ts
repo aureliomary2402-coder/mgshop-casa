@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createAdminClient } from '@/lib/supabase/admin'
 import { reconcileProductDiscounts } from '@/lib/product-discounts'
+import { reconcileVolantini } from '@/lib/volantino-window'
 
 export const dynamic = 'force-dynamic'
 
@@ -19,7 +20,7 @@ export async function GET(request: NextRequest) {
   const idsParam = searchParams.get('ids') || ''
 
   const supabase = createAdminClient()
-  try { await reconcileProductDiscounts(supabase) } catch {}
+  try { await reconcileVolantini(supabase); await reconcileProductDiscounts(supabase) } catch {}
 
   if (idsParam) {
     const ids = idsParam.split(',').map(s => s.trim()).filter(Boolean).slice(0, 50)
@@ -37,7 +38,9 @@ export async function GET(request: NextRequest) {
     : ordina === 'nome' ? query.order('name', { ascending: true })
     : query.order('created_at', { ascending: false })
 
-  if (categoria) {
+  if (categoria === 'scontati') {
+    query = query.not('old_price', 'is', null)
+  } else if (categoria) {
     const { data: cat } = await supabase.from('categories').select('id').eq('slug', categoria).single()
     if (cat) query = query.eq('category_id', cat.id)
   }

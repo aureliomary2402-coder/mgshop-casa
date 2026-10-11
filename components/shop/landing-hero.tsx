@@ -56,7 +56,7 @@ export function LandingHero({ icon: Icon, badge, title, subtitle, topBar, childr
               <div className="mt-6 [&_.justify-center]:!justify-start [&_.mx-auto]:!mx-0">{children}</div>
             )}
 
-            {actions && <div className="mt-9 flex flex-col gap-3 sm:flex-row">{actions}</div>}
+            {actions && <div className="mt-9 flex flex-col gap-3 sm:flex-row sm:flex-wrap">{actions}</div>}
           </div>
 
           {/* oggetto 3D */}
