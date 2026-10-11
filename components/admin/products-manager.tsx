@@ -195,6 +195,7 @@ export function ProductsManager() {
   const [managingImagesFor, setManagingImagesFor] = useState<string | null>(null)
   const [form, setForm] = useState({ name: '', description: '', price: '', category_id: '', cover_image: '', card_image: '', is_active: true, stock: '', torna_presto: false, is_customizable: false, customization_options: [] as CustomizationOption[], customization_note: '', keywords: '' })
   const [saving, setSaving] = useState(false)
+  const [sale, setSale] = useState({ price: '', ends: '' })
   const [uploadingCover, setUploadingCover] = useState(false)
   const [coverCropFile, setCoverCropFile] = useState<File | null>(null)
   const [uploadingCard, setUploadingCard] = useState(false)
@@ -240,6 +241,7 @@ export function ProductsManager() {
 
   const openCreate = () => {
     setForm({ name: '', description: '', price: '', category_id: '', cover_image: '', card_image: '', is_active: true, stock: '', torna_presto: false, is_customizable: false, customization_options: [], customization_note: '', keywords: '' })
+    setSale({ price: '', ends: '' })
     setCreating(true); setEditing(null)
   }
 
@@ -254,6 +256,7 @@ export function ProductsManager() {
       customization_note: p.customization_note || '',
       keywords: p.keywords || '',
     })
+    setSale({ price: '', ends: p.sale_ends_at || '' })
     setEditing(p); setCreating(false)
   }
 
@@ -319,11 +322,28 @@ export function ProductsManager() {
     setFetchingEdit(false)
   }
 
+  const handleRemoveDiscount = async () => {
+    if (!editing) return
+    setSaving(true)
+    const r = await fetch('/api/admin/product-discount', { method: 'DELETE', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ product_id: editing.id }) })
+    if (!r.ok) { const j = await r.json().catch(() => ({})); alert(j.error || 'Impossibile togliere lo sconto') }
+    setSaving(false); setEditing(null); setCreating(false); fetchAll()
+  }
+
   const handleSave = async () => {
     setSaving(true)
     const body = { ...form, price: parseFloat(form.price) || 0, category_id: form.category_id || null, stock: form.stock }
     if (editing) {
       await fetch('/api/admin/products', { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ ...body, id: editing.id }) })
+      // Sconto diretto: se è stato inserito un prezzo scontato lo applica;
+      // se il prodotto è già in offerta e cambia solo la data, aggiorna la scadenza.
+      if (sale.price !== '') {
+        const r = await fetch('/api/admin/product-discount', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ product_id: editing.id, sale_price: parseFloat(sale.price), sale_ends_at: sale.ends || null }) })
+        if (!r.ok) { const j = await r.json().catch(() => ({})); alert(j.error || 'Impossibile applicare lo sconto') }
+      } else if (editing.old_price != null && (sale.ends || null) !== (editing.sale_ends_at || null)) {
+        const r = await fetch('/api/admin/product-discount', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ product_id: editing.id, sale_price: parseFloat(form.price), sale_ends_at: sale.ends || null }) })
+        if (!r.ok) { const j = await r.json().catch(() => ({})); alert(j.error || 'Impossibile aggiornare la scadenza') }
+      }
     } else {
       await fetch('/api/admin/products', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) })
     }
@@ -408,7 +428,8 @@ export function ProductsManager() {
         <div className="grid grid-cols-2 gap-3">
           <div>
             <label className="text-xs font-medium text-slate-500 mb-1 block">Prezzo (€) *</label>
-            <Input type="number" step="0.01" value={form.price} onChange={e => setForm(f => ({ ...f, price: e.target.value }))} placeholder="0.00" />
+            <Input type="number" step="0.01" value={form.price} onChange={e => setForm(f => ({ ...f, price: e.target.value }))} placeholder="0.00" disabled={!!editing && editing.old_price != null} />
+            {editing && editing.old_price != null && <p className="text-xs text-slate-400 mt-1">In offerta: per cambiare il prezzo togli prima lo sconto.</p>}
           </div>
           <div>
             <label className="text-xs font-medium text-slate-500 mb-1 block">Categoria</label>
@@ -419,6 +440,28 @@ export function ProductsManager() {
             </select>
           </div>
         </div>
+        {editing && (
+          <div className="rounded-xl border border-cyan-200 bg-cyan-50/50 p-3 space-y-2">
+            <p className="text-xs font-semibold text-cyan-800 flex items-center gap-1"><Tag className="w-3.5 h-3.5" /> Sconto su questo prodotto</p>
+            {editing.old_price != null && (
+              <div className="flex items-center justify-between gap-2 text-xs text-slate-600">
+                <span>Ora in offerta a €{Number(editing.price).toFixed(2)} (prima €{Number(editing.old_price).toFixed(2)}){editing.sale_ends_at ? ` · fino al ${editing.sale_ends_at.split('-').reverse().join('/')}` : ''}</span>
+                <button type="button" onClick={handleRemoveDiscount} disabled={saving} className="shrink-0 text-red-600 font-semibold underline">Togli sconto</button>
+              </div>
+            )}
+            <div className="grid grid-cols-2 gap-3">
+              <div>
+                <label className="text-xs font-medium text-slate-500 mb-1 block">{editing.old_price != null ? 'Nuovo prezzo scontato (€)' : 'Prezzo scontato (€)'}</label>
+                <Input type="number" step="0.01" value={sale.price} onChange={e => setSale(x => ({ ...x, price: e.target.value }))} placeholder="Lascia vuoto = nessuno" />
+              </div>
+              <div>
+                <label className="text-xs font-medium text-slate-500 mb-1 block">Valido fino al (facoltativo)</label>
+                <Input type="date" value={sale.ends} onChange={e => setSale(x => ({ ...x, ends: e.target.value }))} />
+              </div>
+            </div>
+            <p className="text-xs text-slate-400">Lo sconto parte quando salvi. Senza data resta finché non lo togli; con la data, dopo quel giorno il prezzo torna normale da solo.</p>
+          </div>
+        )}
         <div>
           <label className="text-xs font-medium text-slate-500 mb-1 flex items-center gap-1">
             <Package className="w-3.5 h-3.5" /> Quantità in magazzino

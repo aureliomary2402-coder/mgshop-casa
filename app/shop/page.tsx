@@ -1,4 +1,5 @@
 import { createAdminClient } from '@/lib/supabase/admin'
+import { reconcileProductDiscounts } from '@/lib/product-discounts'
 import { HeroBanner } from '@/components/shop/hero-banner'
 import { CategorySidebar } from '@/components/shop/category-sidebar'
 import { ProductGrid } from '@/components/shop/product-grid'
@@ -17,6 +18,7 @@ const PAGE_SIZE = 30
 
 async function getData(searchParams: { q?: string; categoria?: string; ordina?: string }) {
   const supabase = createAdminClient()
+  try { await reconcileProductDiscounts(supabase) } catch {}
   const [{ data: banners }, { data: categories }] = await Promise.all([
     supabase.from('banners').select('*').eq('is_active', true).order('display_order'),
     supabase.from('categories').select('*').order('name'),

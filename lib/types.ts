@@ -51,6 +51,8 @@ export interface Product {
   // prodotto viene messo in offerta dal volantino: se presente, va mostrato
   // sbarrato accanto al prezzo attuale. Torna a null quando l'offerta finisce.
   old_price?: number | null
+  // Ultimo giorno (YYYY-MM-DD) dello sconto diretto sul prodotto.
+  sale_ends_at?: string | null
   category_id: string | null
   cover_image: string | null
   card_image?: string | null
