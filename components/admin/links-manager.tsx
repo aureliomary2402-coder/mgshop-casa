@@ -15,6 +15,7 @@ const PAGINE: LinkRow[] = [
   { key: 'home', label: 'Home', path: '/' },
   { key: 'landing', label: 'Pagina di benvenuto', path: '/landing' },
   { key: 'shop', label: 'Negozio', path: '/shop' },
+  { key: 'scontati', label: 'Prodotti in sconto', path: '/shop?ordina=scontati#prodotti-grid' },
   { key: 'promo', label: 'Promo', path: '/promo' },
   { key: 'volantino', label: 'Volantino (elenco)', path: '/volantino' },
   { key: 'lotteria', label: 'Lotteria', path: '/lotteria' },
