@@ -47,7 +47,7 @@ export function HeroBanner({ banners }: { banners: Banner[]; categories?: Catego
               Scopri le promo
             </Link>
             <Link
-              href="/shop?categoria=scontati#prodotti-grid"
+              href="/shop?ordina=scontati#prodotti-grid"
               className="inline-flex h-14 items-center justify-center gap-3 rounded-2xl border border-white/15 bg-white/10 px-7 font-bold text-white backdrop-blur-xl transition duration-300 hover:-translate-y-1 hover:bg-white/15"
             >
               <Tag className="h-[18px] w-[18px]" />

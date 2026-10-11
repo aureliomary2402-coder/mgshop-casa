@@ -29,9 +29,8 @@ async function getData(searchParams: { q?: string; categoria?: string; ordina?: 
     : searchParams.ordina === 'prezzo_desc' ? query.order('price', { ascending: false })
     : searchParams.ordina === 'nome' ? query.order('name', { ascending: true })
     : query.order('created_at', { ascending: false })
-  if (searchParams.categoria === 'scontati') {
-    query = query.not('old_price', 'is', null)
-  } else if (searchParams.categoria) {
+  if (searchParams.ordina === 'scontati') query = query.not('old_price', 'is', null)
+  if (searchParams.categoria) {
     const cat = (categories || []).find((c: Category) => c.slug === searchParams.categoria)
     if (cat) query = query.eq('category_id', cat.id)
   }
@@ -114,8 +113,8 @@ export default async function ShopPage({ searchParams }: { searchParams: Promise
                       {params.q
                         ? <>Risultati per <strong>“{params.q}”</strong></>
                         : params.categoria
-                          ? <>{params.categoria === 'scontati' ? 'Prodotti in sconto' : 'Prodotti selezionati'}</>
-                          : <>Scopri i prodotti</>}
+                          ? <>Prodotti selezionati</>
+                          : params.ordina === 'scontati' ? <>Prodotti in sconto</> : <>Scopri i prodotti</>}
                     </h3>
                   </div>
 

@@ -9,6 +9,7 @@ const OPTIONS = [
   { value: 'prezzo_asc', label: 'Prezzo: dal più basso' },
   { value: 'prezzo_desc', label: 'Prezzo: dal più alto' },
   { value: 'nome', label: 'Nome A-Z' },
+  { value: 'scontati', label: 'In sconto' },
 ]
 
 export function SortDropdown() {

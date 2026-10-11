@@ -38,9 +38,8 @@ export async function GET(request: NextRequest) {
     : ordina === 'nome' ? query.order('name', { ascending: true })
     : query.order('created_at', { ascending: false })
 
-  if (categoria === 'scontati') {
-    query = query.not('old_price', 'is', null)
-  } else if (categoria) {
+  if (ordina === 'scontati') query = query.not('old_price', 'is', null)
+  if (categoria) {
     const { data: cat } = await supabase.from('categories').select('id').eq('slug', categoria).single()
     if (cat) query = query.eq('category_id', cat.id)
   }
