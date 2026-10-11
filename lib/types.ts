@@ -53,6 +53,9 @@ export interface Product {
   old_price?: number | null
   // Ultimo giorno (YYYY-MM-DD) dello sconto diretto sul prodotto.
   sale_ends_at?: string | null
+  // Prezzo dello sconto diretto: resta memorizzato anche mentre un volantino
+  // lo sovrascrive, così a fine volantino il prodotto torna a questo prezzo.
+  direct_price?: number | null
   category_id: string | null
   cover_image: string | null
   card_image?: string | null

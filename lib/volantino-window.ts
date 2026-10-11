@@ -37,14 +37,24 @@ async function applyPrices(db: Db, items: VolantinoItem[]) {
   }
 }
 
+// Un prodotto esce da un'offerta del volantino: se ha ancora uno sconto
+// diretto valido torna a quel prezzo, altrimenti al prezzo pieno.
+export async function restoreAfterFlyer(db: Db, productId: string) {
+  const { data: p } = await db.from('products').select('old_price, direct_price, sale_ends_at').eq('id', productId).single()
+  if (!p || p.old_price == null) return
+  const directValid = p.direct_price != null && (!p.sale_ends_at || p.sale_ends_at >= todayRome())
+  if (directValid) {
+    await db.from('products').update({ price: p.direct_price }).eq('id', productId)
+  } else {
+    await db.from('products').update({ price: p.old_price, old_price: null, direct_price: null, sale_ends_at: null }).eq('id', productId)
+  }
+}
+
 async function restorePrices(db: Db, items: VolantinoItem[], keep: Set<string>) {
   for (const it of items) {
     // Se il prodotto è anche in un altro volantino ancora valido, resta in offerta.
     if (keep.has(it.product_id)) continue
-    const { data: product } = await db.from('products').select('old_price').eq('id', it.product_id).single()
-    if (product?.old_price != null) {
-      await db.from('products').update({ price: product.old_price, old_price: null }).eq('id', it.product_id)
-    }
+    await restoreAfterFlyer(db, it.product_id)
   }
 }
 

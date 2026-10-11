@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createAdminClient } from '@/lib/supabase/admin'
 import { cookies } from 'next/headers'
-import { reconcileVolantini } from '@/lib/volantino-window'
+import { reconcileVolantini, restoreAfterFlyer } from '@/lib/volantino-window'
 
 export const dynamic = 'force-dynamic'
 export const fetchCache = 'force-no-store'
@@ -43,10 +43,7 @@ async function syncProductPrices(
   // Prodotti tolti dal volantino: ripristina il prezzo pieno nel negozio.
   for (const productId of Array.from(oldMap.keys())) {
     if (newMap.has(productId)) continue
-    const { data: product } = await supabase.from('products').select('old_price').eq('id', productId).single()
-    if (product?.old_price != null) {
-      await supabase.from('products').update({ price: product.old_price, old_price: null }).eq('id', productId)
-    }
+    await restoreAfterFlyer(supabase, productId)
   }
 
   // Prodotti aggiunti o con prezzo promo modificato: applica il nuovo

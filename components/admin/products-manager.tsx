@@ -340,8 +340,8 @@ export function ProductsManager() {
       if (sale.price !== '') {
         const r = await fetch('/api/admin/product-discount', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ product_id: editing.id, sale_price: parseFloat(sale.price), sale_ends_at: sale.ends || null }) })
         if (!r.ok) { const j = await r.json().catch(() => ({})); alert(j.error || 'Impossibile applicare lo sconto') }
-      } else if (editing.old_price != null && (sale.ends || null) !== (editing.sale_ends_at || null)) {
-        const r = await fetch('/api/admin/product-discount', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ product_id: editing.id, sale_price: parseFloat(form.price), sale_ends_at: sale.ends || null }) })
+      } else if (editing.direct_price != null && (sale.ends || null) !== (editing.sale_ends_at || null)) {
+        const r = await fetch('/api/admin/product-discount', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ product_id: editing.id, sale_ends_at: sale.ends || null }) })
         if (!r.ok) { const j = await r.json().catch(() => ({})); alert(j.error || 'Impossibile aggiornare la scadenza') }
       }
     } else {
@@ -445,8 +445,8 @@ export function ProductsManager() {
             <p className="text-xs font-semibold text-cyan-800 flex items-center gap-1"><Tag className="w-3.5 h-3.5" /> Sconto su questo prodotto</p>
             {editing.old_price != null && (
               <div className="flex items-center justify-between gap-2 text-xs text-slate-600">
-                <span>Ora in offerta a €{Number(editing.price).toFixed(2)} (prima €{Number(editing.old_price).toFixed(2)}){editing.sale_ends_at ? ` · fino al ${editing.sale_ends_at.split('-').reverse().join('/')}` : ''}</span>
-                <button type="button" onClick={handleRemoveDiscount} disabled={saving} className="shrink-0 text-red-600 font-semibold underline">Togli sconto</button>
+                <span>Ora in offerta a €{Number(editing.price).toFixed(2)} (prima €{Number(editing.old_price).toFixed(2)}){editing.direct_price != null && Number(editing.direct_price) !== Number(editing.price) ? ` · sconto diretto €${Number(editing.direct_price).toFixed(2)}` : ''}{editing.sale_ends_at ? ` · fino al ${editing.sale_ends_at.split('-').reverse().join('/')}` : ''}</span>
+                {editing.direct_price != null && <button type="button" onClick={handleRemoveDiscount} disabled={saving} className="shrink-0 text-red-600 font-semibold underline">Togli sconto</button>}
               </div>
             )}
             <div className="grid grid-cols-2 gap-3">
