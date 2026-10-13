@@ -1,5 +1,5 @@
 import { createAdminClient } from '@/lib/supabase/admin'
-import { isInWindow, todayRome, type VolantinoItem } from '@/lib/volantino-window'
+import { isInWindow, isItemExpired, todayRome, type VolantinoItem } from '@/lib/volantino-window'
 
 type Db = ReturnType<typeof createAdminClient>
 
@@ -8,7 +8,7 @@ async function liveFlyerIds(db: Db, today: string = todayRome()) {
   const { data: vols } = await db.from('volantino_page').select('items, start_date, end_date')
   const live = new Set<string>()
   for (const v of vols || []) {
-    if (isInWindow(v, today)) for (const i of (v.items || []) as VolantinoItem[]) live.add(i.product_id)
+    if (isInWindow(v, today)) for (const i of (v.items || []) as VolantinoItem[]) if (!isItemExpired(i, today)) live.add(i.product_id)
   }
   return live
 }

@@ -5,6 +5,7 @@ type Db = ReturnType<typeof createAdminClient>
 export interface VolantinoItem {
   product_id: string
   sale_price: number
+  ends_at?: string | null
 }
 
 // Data di oggi in formato YYYY-MM-DD, nel fuso orario italiano.
@@ -30,6 +31,7 @@ export function isVisible(v: { is_active?: boolean; start_date?: string | null; 
 
 async function applyPrices(db: Db, items: VolantinoItem[]) {
   for (const it of items) {
+    if (isItemExpired(it)) continue
     const { data: product } = await db.from('products').select('price, old_price').eq('id', it.product_id).single()
     if (!product) continue
     const fullPrice = product.old_price != null ? product.old_price : product.price
@@ -58,9 +60,16 @@ async function restorePrices(db: Db, items: VolantinoItem[], keep: Set<string>) 
   }
 }
 
-// Allinea i prezzi del negozio al periodo di ogni volantino:
+// Un'offerta singola è scaduta se ha una sua data e oggi l'ha superata.
+export function isItemExpired(it: VolantinoItem, today: string = todayRome()): boolean {
+  return !!it.ends_at && it.ends_at < today
+}
+
+// Allinea i prezzi del negozio al periodo di ogni volantino e alle
+// scadenze dei singoli prodotti:
 // - dentro il periodo e prezzi non ancora applicati -> applica le offerte
-// - fuori dal periodo e prezzi ancora applicati -> ripristina i prezzi originali
+// - fuori dal periodo e prezzi ancora applicati -> ripristina i prezzi
+// - offerta singola scaduta -> la toglie dal volantino e ripristina il prezzo
 // Non fa nulla (nessuna scrittura) quando è già tutto allineato.
 export async function reconcileVolantini(db: Db) {
   const { data } = await db
@@ -71,7 +80,10 @@ export async function reconcileVolantini(db: Db) {
   const today = todayRome()
   const liveIds = new Set<string>()
   for (const v of data) {
-    if (isInWindow(v, today)) for (const i of (v.items || []) as VolantinoItem[]) liveIds.add(i.product_id)
+    if (!isInWindow(v, today)) continue
+    for (const i of (v.items || []) as VolantinoItem[]) {
+      if (!isItemExpired(i, today)) liveIds.add(i.product_id)
+    }
   }
 
   for (const v of data) {
@@ -83,6 +95,14 @@ export async function reconcileVolantini(db: Db) {
     } else if (!inWindow && v.prices_applied) {
       await restorePrices(db, items, liveIds)
       await db.from('volantino_page').update({ prices_applied: false }).eq('id', v.id)
+    }
+
+    // Offerte singole scadute: ripristino prezzo e via dal volantino.
+    const expired = items.filter((i) => isItemExpired(i, today))
+    if (inWindow && expired.length > 0) {
+      if (v.prices_applied) await restorePrices(db, expired, liveIds)
+      const left = items.filter((i) => !isItemExpired(i, today))
+      await db.from('volantino_page').update({ items: left }).eq('id', v.id)
     }
   }
 }

@@ -11,6 +11,7 @@ import { useAdminNotes, AdminNoteInput } from './admin-notes'
 interface VolantinoItem {
   product_id: string
   sale_price: number
+  ends_at?: string | null
 }
 
 interface VolantinoRecord {
@@ -181,6 +182,10 @@ export function VolantinoManager() {
     setItems(prev => prev.map(i => i.product_id === productId ? { ...i, sale_price: isNaN(val) ? 0 : val } : i))
   }
 
+  const updateItemEnd = (productId: string, value: string) => {
+    setItems(prev => prev.map(i => i.product_id === productId ? { ...i, ends_at: value || null } : i))
+  }
+
   const filteredProducts = allProducts.filter(p =>
     p.name.toLowerCase().includes(productSearch.toLowerCase()) || (notes[p.id] || '').toLowerCase().includes(productSearch.toLowerCase())
   )
@@ -321,6 +326,12 @@ export function VolantinoManager() {
                       <button onClick={() => removeProduct(product.id)} className="p-1 hover:bg-red-100 rounded-lg transition-colors shrink-0">
                         <X className="w-4 h-4 text-red-400" />
                       </button>
+                     </div>
+                     <div className="flex items-center gap-2">
+                       <label className="text-[11px] text-slate-500 shrink-0">Scade il</label>
+                       <input type="date" value={item.ends_at || ''} min={startDate || undefined} max={endDate || undefined} onChange={e => updateItemEnd(product.id, e.target.value)}
+                         className="flex-1 min-w-0 rounded-lg border border-slate-200 bg-white px-2 py-1 text-xs text-slate-800" />
+                       {item.ends_at && <button type="button" onClick={() => updateItemEnd(product.id, '')} className="text-[11px] text-slate-400 underline shrink-0">azzera</button>}
                      </div>
                      <AdminNoteInput noteKey={product.id} notes={notes} setNote={setNote} />
                     </div>
