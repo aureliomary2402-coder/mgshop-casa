@@ -3,22 +3,37 @@
 import { useState } from 'react'
 import { useRouter, useSearchParams, usePathname } from 'next/navigation'
 import {
-  Store, Droplets, SprayCan, Sparkles, WashingMachine, Flower2,
-  UtensilsCrossed, Home, MoreHorizontal, Tag, SlidersHorizontal, ChevronDown,
+  Store, Droplets, Droplet, SprayCan, Sparkles, WashingMachine, Flower2,
+  UtensilsCrossed, Home, Tag, SlidersHorizontal, ChevronDown,
+  Bath, Scissors, CupSoda, Baby, Pencil, Cookie, Palette, Plug, Sun,
+  PartyPopper, Gamepad2, ShieldCheck,
 } from 'lucide-react'
 import type { ComponentType } from 'react'
 import type { Category } from '@/lib/types'
 
 function categoryIcon(name: string): ComponentType<{ className?: string }> {
   const n = name.toLowerCase()
+  if (n.includes('bagno')) return Bath
+  if (n.includes('balsam')) return Scissors
+  if (n.includes('shampoo')) return Droplet
+  if (n.includes('bevand')) return CupSoda
+  if (n.includes('bimb')) return Baby
+  if (n.includes('cartoler')) return Pencil
+  if (n.includes('cosmetic') || n.includes('bellezza')) return Palette
   if (n.includes('detersiv')) return Droplets
+  if (n.includes('elettro')) return Plug
+  if (n.includes('estate')) return Sun
+  if (n.includes('fest')) return PartyPopper
+  if (n.includes('gioch')) return Gamepad2
+  if (n.includes('igieni')) return ShieldCheck
+  if (n.includes('profum')) return Flower2
+  if (n.includes('cibo')) return Cookie
+  if (n.includes('casa') || n.includes('accessor')) return Home
   if (n.includes('pulizia')) return SprayCan
   if (n.includes('person')) return Sparkles
   if (n.includes('bucato')) return WashingMachine
-  if (n.includes('profum')) return Flower2
   if (n.includes('cucina')) return UtensilsCrossed
-  if (n.includes('accessor')) return Home
-  return MoreHorizontal
+  return Tag
 }
 
 export function CategorySidebar({ categories }: { categories: Category[] }) {
