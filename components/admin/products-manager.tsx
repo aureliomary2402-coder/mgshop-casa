@@ -204,6 +204,7 @@ export function ProductsManager() {
   const [search, setSearch] = useState('')
   const [filterCategory, setFilterCategory] = useState('')
   const [filterStock, setFilterStock] = useState<'all' | 'low' | 'out'>('all')
+  const [filterActive, setFilterActive] = useState<'all' | 'active' | 'inactive'>('all')
   const [savingKeywordsId, setSavingKeywordsId] = useState<string | null>(null)
   const [savedKeywordsId, setSavedKeywordsId] = useState<string | null>(null)
   // Note private dell'admin (dove rifornirsi): vengono da una API protetta e
@@ -233,7 +234,8 @@ export function ProductsManager() {
       : filterStock === 'out' ? p.stock === 0
       : filterStock === 'low' ? (p.stock !== null && p.stock !== undefined && p.stock > 0 && p.stock <= 5)
       : true
-    return matchesSearch && matchesCategory && matchesStock
+    const matchesActive = filterActive === 'all' ? true : filterActive === 'active' ? p.is_active === true : p.is_active !== true
+    return matchesSearch && matchesCategory && matchesStock && matchesActive
   })
 
   const outOfStock = products.filter(p => p.stock === 0).length
@@ -630,6 +632,20 @@ export function ProductsManager() {
         </div>
       )}
 
+      {/* Filtro attivi / disattivati */}
+      <div className="flex gap-2 flex-wrap">
+        {([
+          ['all', 'Tutti', products.length],
+          ['active', 'Attivi', products.filter(p => p.is_active === true).length],
+          ['inactive', 'Disattivati', products.filter(p => p.is_active !== true).length],
+        ] as const).map(([key, label, count]) => (
+          <button key={key} onClick={() => setFilterActive(key)}
+            className={`text-xs font-medium px-3 py-1.5 rounded-full transition-all ${filterActive === key ? 'bg-cyan-600 text-white' : 'bg-cyan-50 text-cyan-700 border border-cyan-200'}`}>
+            {label} ({count})
+          </button>
+        ))}
+      </div>
+
       {/* Search + filters */}
       <div className="flex gap-2">
         <div className="relative flex-1">
@@ -737,7 +753,7 @@ export function ProductsManager() {
         ))}
         {filteredProducts.length === 0 && (
           <p className="col-span-full text-center py-8 text-slate-400 text-sm">
-            {search || filterCategory || filterStock !== 'all' ? 'Nessun prodotto trovato' : 'Nessun prodotto. Creane uno!'}
+            {search || filterCategory || filterStock !== 'all' || filterActive !== 'all' ? 'Nessun prodotto trovato' : 'Nessun prodotto. Creane uno!'}
           </p>
         )}
       </div>
