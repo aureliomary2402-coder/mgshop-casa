@@ -78,7 +78,7 @@ export async function GET() {
   // deve includere il dispositivo admin.
   const { data: subscribers } = await supabase
     .from('push_subscriptions')
-    .select('id, phone_number, label, created_at')
+    .select('id, phone_number, label, visitor_id, created_at')
     .or('is_admin.is.null,is_admin.eq.false')
     .order('created_at', { ascending: false })
   const { data: history } = await supabase

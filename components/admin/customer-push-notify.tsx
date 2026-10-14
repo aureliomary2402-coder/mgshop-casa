@@ -19,6 +19,7 @@ type Subscriber = {
   id: string
   phone_number: string | null
   label: string | null
+  visitor_id?: string | null
   created_at: string
 }
 
@@ -275,6 +276,9 @@ export function CustomerPushNotify() {
                       </p>
                       {s.label && s.phone_number && (
                         <p className="text-xs text-slate-400">{s.phone_number}</p>
+                      )}
+                      {s.visitor_id && (
+                        <span title={s.visitor_id} className="text-xs font-mono text-slate-500 bg-slate-100 rounded px-1.5 py-0.5">ID {s.visitor_id.slice(0, 8)}</span>
                       )}
                     </div>
                     <div className="flex items-center gap-2 shrink-0">

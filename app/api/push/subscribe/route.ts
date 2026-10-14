@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server'
 import { createAdminClient } from '@/lib/supabase/admin'
 export async function POST(req: Request) {
-  const { subscription, phoneNumber, isAdmin, sessionId, deviceId } = await req.json()
+  const { subscription, phoneNumber, isAdmin, sessionId, deviceId, visitorId } = await req.json()
   if (!subscription?.endpoint) {
     return NextResponse.json({ error: 'subscription non valida' }, { status: 400 })
   }
@@ -37,6 +37,7 @@ export async function POST(req: Request) {
     updated_at: new Date().toISOString(),
   }
   if (phoneNumber !== undefined) updateData.phone_number = phoneNumber ?? null
+  if (typeof visitorId === 'string' && visitorId.trim()) updateData.visitor_id = visitorId.trim().slice(0, 100)
   const { error } = await supabase
     .from('push_subscriptions')
     .upsert(updateData, { onConflict: 'endpoint' })

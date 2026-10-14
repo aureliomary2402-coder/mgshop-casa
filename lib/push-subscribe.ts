@@ -44,7 +44,7 @@ export async function subscribeToPush(phoneNumber?: string): Promise<SubscribeRe
       // sessionId collega questa iscrizione alla sessione del browser (per
       // i carrelli abbandonati); deviceId è invece stabile nel tempo e
       // serve per i preferiti, che restano salvati anche a distanza di giorni.
-      body: JSON.stringify({ subscription, phoneNumber, sessionId: getSessionId(), deviceId: getDeviceId() }),
+      body: JSON.stringify({ subscription, phoneNumber, sessionId: getSessionId(), deviceId: getDeviceId(), visitorId: (() => { try { return localStorage.getItem('mgshop-visitor-id') || '' } catch { return '' } })() }),
     })
 
     if (!res.ok) return { ok: false, reason: 'save-failed' }
@@ -77,7 +77,7 @@ export async function syncPushSession(): Promise<void> {
     await fetch('/api/push/subscribe', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ subscription, sessionId: getSessionId(), deviceId: getDeviceId() }),
+      body: JSON.stringify({ subscription, sessionId: getSessionId(), deviceId: getDeviceId(), visitorId: (() => { try { return localStorage.getItem('mgshop-visitor-id') || '' } catch { return '' } })() }),
     })
   } catch (err) {
     console.error('Errore sync sessione push:', err)
