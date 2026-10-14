@@ -62,5 +62,6 @@ export async function POST(request: NextRequest) {
   }
 
   if (sent === 0) return NextResponse.json({ error: 'Invio non riuscito' }, { status: 500 })
+  await supabase.from('abandoned_carts').update({ reminder_sent_at: new Date().toISOString() }).eq('id', cart.id)
   return NextResponse.json({ ok: true, sent })
 }

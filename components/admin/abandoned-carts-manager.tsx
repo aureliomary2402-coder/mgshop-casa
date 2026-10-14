@@ -13,6 +13,7 @@ interface AbandonedCart {
   phone_number: string | null
   has_push: boolean
   visitor_id?: string | null
+  reminder_sent_at?: string | null
   updated_at: string
 }
 
@@ -55,6 +56,7 @@ export function AbandonedCartsManager() {
     setNotifyingId(null)
     if (!res.ok) { setNotifyError({ id, message: data.error || 'Invio non riuscito' }); return }
     setNotifiedId(id)
+    setCarts(prev => prev.map(c => c.id === id ? { ...c, reminder_sent_at: new Date().toISOString() } : c))
     setTimeout(() => setNotifiedId(prev => prev === id ? null : prev), 3000)
   }
 
@@ -116,6 +118,9 @@ export function AbandonedCartsManager() {
                       style={{ background: 'linear-gradient(135deg,#0891b2,#06b6d4)' }}>
                       {notifiedId === cart.id ? <><Check className="w-3.5 h-3.5" /> Inviato!</> : notifyingId === cart.id ? 'Invio...' : <><Send className="w-3.5 h-3.5" /> Invia promemoria</>}
                     </button>
+                    {cart.reminder_sent_at && (
+                      <span className="ml-2 inline-flex items-center gap-1 text-xs font-medium text-emerald-600"><Check className="w-3 h-3" /> Promemoria inviato {timeAgo(cart.reminder_sent_at)}</span>
+                    )}
                     {notifyError && notifyError.id === cart.id && <p className="text-xs text-red-500 mt-1">{notifyError.message}</p>}
                   </div>
                 )}
