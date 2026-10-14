@@ -44,6 +44,7 @@ export async function GET() {
     id: w.id,
     device_id: w.device_id,
     visitor_id: w.visitor_id ?? null,
+    reminder_sent_at: w.reminder_sent_at ?? null,
     updated_at: w.updated_at,
     has_push: pushBySession.has(w.device_id),
     products: (w.product_ids as string[]).map(id => productById[id]).filter(Boolean),
