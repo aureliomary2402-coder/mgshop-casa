@@ -10,6 +10,7 @@ import { useRouter, useSearchParams, usePathname } from 'next/navigation'
 import type { Category, Product } from '@/lib/types'
 import { optimizeImage } from '@/lib/image'
 import { SOCIAL_LINKS, WHATSAPP_NUMBER, WhatsAppIcon } from './social-icons'
+import { SocialMenu } from './social-menu'
 
 function HighlightedText({ text, query }: { text: string; query: string }) {
   if (!query.trim()) return <>{text}</>
@@ -175,18 +176,7 @@ export function GlobalHeader({ categories = [] }: { categories?: Category[] }) {
           )}
           {/* Solo mobile: Promo e Volantino sono già nel menu in basso, qui
               al loro posto mettiamo il collegamento diretto a WhatsApp. */}
-          <a
-            href={SOCIAL_LINKS.whatsappChat}
-            target="_blank"
-            rel="noopener noreferrer"
-            className={`${searchOpen ? 'hidden' : 'flex'} lg:hidden items-center gap-1.5 px-2 sm:px-3 py-2 rounded-xl text-sm font-medium transition-all btn-press neon-glow-green`}
-            style={{ color: '#128c4a', background: 'rgba(37,211,102,0.1)', border: '1px solid rgba(37,211,102,0.3)' }}>
-            <span className="relative flex items-center justify-center">
-              <WhatsAppIcon size={16} />
-              <span className="absolute -top-0.5 -right-0.5 w-1.5 h-1.5 rounded-full bg-green-400 neon-glow-green" />
-            </span>
-            <span className="hidden sm:inline">{WHATSAPP_NUMBER}</span>
-          </a>
+          <SocialMenu className={`${searchOpen ? 'hidden' : 'flex'} lg:hidden`} />
 
           {/* Solo desktop: su mobile questi collegamenti restano nella tab bar
               in basso, qui servirebbero solo a duplicarla. */}

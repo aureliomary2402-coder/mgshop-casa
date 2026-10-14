@@ -3,6 +3,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { SocialSection } from "@/components/shop/social-section";
+import { SocialMenu } from "@/components/shop/social-menu";
 import {
   ArrowRight,
   Check,
@@ -128,13 +129,7 @@ export default function HomePage() {
               <span className="hidden sm:inline">Shop</span>
             </Link>
 
-            <Link
-              href="https://wa.me/393522209558"
-              className="flex h-11 w-11 items-center justify-center rounded-full bg-cyan-400 text-[#062029] shadow-[0_0_30px_rgba(34,211,238,.35)] transition hover:scale-105"
-              aria-label="Contattaci su WhatsApp"
-            >
-              <MessageCircle size={20} />
-            </Link>
+            <SocialMenu variant="dark" />
           </div>
         </header>
 
