@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import Image from "next/image";
+import { SocialSection } from "@/components/shop/social-section";
 import {
   ArrowRight,
   Check,
@@ -322,6 +323,8 @@ export default function HomePage() {
       {/* =========================================================
           CATEGORIE
       ========================================================= */}
+      <SocialSection />
+
       <section className="relative overflow-hidden px-5 py-20 sm:px-8 sm:py-28">
 
         <div className="pointer-events-none absolute right-[-150px] top-[20%] h-[350px] w-[350px] rounded-full bg-cyan-200/30 blur-[100px]" />
