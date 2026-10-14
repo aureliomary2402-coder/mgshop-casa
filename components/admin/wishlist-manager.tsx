@@ -7,6 +7,7 @@ interface WishlistProduct { id: string; name: string; price: number; image: stri
 interface WishlistEntry {
   id: string
   device_id: string
+  visitor_id?: string | null
   updated_at: string
   has_push: boolean
   products: WishlistProduct[]
@@ -82,6 +83,9 @@ export function WishlistManager() {
                     {w.products.length} preferit{w.products.length === 1 ? 'o' : 'i'}
                   </span>
                   <span className="text-xs text-slate-400">{timeAgo(w.updated_at)}</span>
+                  {w.visitor_id && (
+                    <span title={w.visitor_id} className="text-xs font-mono text-slate-500 bg-slate-100 rounded px-1.5 py-0.5">ID {w.visitor_id.slice(0, 8)}</span>
+                  )}
                   {w.has_push && (
                     <span className="text-xs px-2 py-0.5 rounded-full font-medium bg-cyan-100 text-cyan-700 flex items-center gap-1">
                       <Bell className="w-3 h-3" /> Notifiche attive

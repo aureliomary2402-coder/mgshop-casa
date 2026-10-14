@@ -23,7 +23,7 @@ export function WishlistTracker() {
       fetch('/api/analytics/wishlist', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ deviceId: getDeviceId(), productIds: ids }),
+        body: JSON.stringify({ deviceId: getDeviceId(), visitorId: (() => { try { return localStorage.getItem('mgshop-visitor-id') || '' } catch { return '' } })(), productIds: ids }),
       }).catch(() => {})
     }, 1500)
     return () => clearTimeout(timeout)

@@ -10,7 +10,7 @@ export async function POST(request: NextRequest) {
   try {
     const body = await request.json().catch(() => null)
     if (!body) return NextResponse.json({ ok: false })
-    const { deviceId, productIds } = body
+    const { deviceId, visitorId, productIds } = body
     if (!deviceId || !Array.isArray(productIds)) return NextResponse.json({ ok: false })
 
     const supabase = createAdminClient()
@@ -29,6 +29,7 @@ export async function POST(request: NextRequest) {
     await supabase.from('wishlist_snapshots').upsert({
       device_id: deviceId,
       product_ids: productIds,
+      ...(typeof visitorId === 'string' && visitorId.trim() ? { visitor_id: visitorId.trim().slice(0, 100) } : {}),
       updated_at: new Date().toISOString(),
     }, { onConflict: 'device_id' })
 

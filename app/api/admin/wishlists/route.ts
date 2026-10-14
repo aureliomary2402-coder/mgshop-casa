@@ -43,6 +43,7 @@ export async function GET() {
   const result = (data || []).map(w => ({
     id: w.id,
     device_id: w.device_id,
+    visitor_id: w.visitor_id ?? null,
     updated_at: w.updated_at,
     has_push: pushBySession.has(w.device_id),
     products: (w.product_ids as string[]).map(id => productById[id]).filter(Boolean),
