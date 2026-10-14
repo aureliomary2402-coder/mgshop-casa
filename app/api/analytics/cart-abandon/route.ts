@@ -8,11 +8,12 @@ export async function POST(request: NextRequest) {
   try {
     const body = await request.json().catch(() => null)
     if (!body) return NextResponse.json({ ok: false })
-    const { sessionId, items, total, phone } = body
+    const { sessionId, visitorId, items, total, phone } = body
     if (!sessionId || !Array.isArray(items) || items.length === 0) return NextResponse.json({ ok: false })
 
     const supabase = createAdminClient()
     const itemsCount = items.reduce((s: number, i: { quantity?: number }) => s + (i.quantity || 0), 0)
+    const cleanVisitor = typeof visitorId === 'string' && visitorId.trim() ? visitorId.trim().slice(0, 100) : null
     const cleanPhone = typeof phone === 'string' && phone.trim() ? phone.trim() : null
 
     // Un carrello per sessione: se il cliente aggiunge/toglie prodotti prima
@@ -30,6 +31,7 @@ export async function POST(request: NextRequest) {
       items_count: itemsCount,
       total: total || 0,
       phone_number: cleanPhone,
+      visitor_id: cleanVisitor,
       updated_at: new Date().toISOString(),
       notified: existing ? existing.notified : true,
     }, { onConflict: 'session_id' })

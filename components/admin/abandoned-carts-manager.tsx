@@ -12,6 +12,7 @@ interface AbandonedCart {
   total: number
   phone_number: string | null
   has_push: boolean
+  visitor_id?: string | null
   updated_at: string
 }
 
@@ -85,6 +86,9 @@ export function AbandonedCartsManager() {
                     {cart.items_count} articol{cart.items_count === 1 ? 'o' : 'i'}
                   </span>
                   <span className="text-xs text-slate-400">{timeAgo(cart.updated_at)}</span>
+                  {cart.visitor_id && (
+                    <span title={cart.visitor_id} className="text-xs font-mono text-slate-500 bg-slate-100 rounded px-1.5 py-0.5">ID {cart.visitor_id.slice(0, 8)}</span>
+                  )}
                   {cart.phone_number && (
                     <span className="text-xs px-2 py-0.5 rounded-full font-medium bg-green-100 text-green-700 flex items-center gap-1">
                       <Phone className="w-3 h-3" /> {cart.phone_number}
