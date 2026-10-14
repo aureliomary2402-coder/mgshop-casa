@@ -28,7 +28,7 @@ function normalizePhone(phone: string): string {
 
 export async function POST(request: NextRequest) {
   try {
-    const { phone_number, items, total, coupon_discount, coupon_code, ticket_number_choices, delivery_method, delivery_address, referred_by_phone } = await request.json()
+    const { phone_number, visitor_id, items, total, coupon_discount, coupon_code, ticket_number_choices, delivery_method, delivery_address, referred_by_phone } = await request.json()
     if (!phone_number || !items || items.length === 0)
       return NextResponse.json({ error: 'Missing required fields' }, { status: 400 })
 
@@ -200,7 +200,7 @@ export async function POST(request: NextRequest) {
 
     const { data: order, error: orderError } = await supabase
       .from('orders')
-      .insert({ phone_number, total: finalTotal, status: 'pending', is_ticket_only: realItems.length === 0, delivery_method: deliveryMethod, delivery_address: deliveryAddress })
+      .insert({ phone_number, visitor_id: typeof visitor_id === 'string' && visitor_id.trim() ? visitor_id.trim().slice(0, 100) : null, total: finalTotal, status: 'pending', is_ticket_only: realItems.length === 0, delivery_method: deliveryMethod, delivery_address: deliveryAddress })
       .select().single()
     if (orderError) return NextResponse.json({ error: orderError.message }, { status: 500 })
 

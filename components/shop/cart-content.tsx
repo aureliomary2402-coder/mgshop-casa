@@ -243,7 +243,7 @@ export function CartContent({ scope = 'shop' }: { scope?: string }) {
     setSubmitting(true)
     try {
       const finalDeliveryMethod = onlyLotteryInCart ? null : deliveryMethod
-      const res = await fetch('/api/checkout', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ phone_number: phone, items, total, coupon_discount: discountAmount, coupon_code: couponCode || null, ticket_number_choices: chosenNumbers, delivery_method: finalDeliveryMethod, delivery_address: finalDeliveryMethod === 'consegna' ? address : null, referred_by_phone: referredByPhone.trim() || null }) })
+      const res = await fetch('/api/checkout', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ phone_number: phone, visitor_id: (() => { try { return localStorage.getItem('mgshop-visitor-id') || '' } catch { return '' } })(), items, total, coupon_discount: discountAmount, coupon_code: couponCode || null, ticket_number_choices: chosenNumbers, delivery_method: finalDeliveryMethod, delivery_address: finalDeliveryMethod === 'consegna' ? address : null, referred_by_phone: referredByPhone.trim() || null }) })
       const data = await res.json().catch(() => null)
       if (!res.ok) {
         // Uno o più numeri scelti sono stati presi da un altro cliente nel
@@ -292,7 +292,7 @@ export function CartContent({ scope = 'shop' }: { scope?: string }) {
       const finalDeliveryMethod = onlyLotteryInCart ? null : deliveryMethod
       const finalAddress = finalDeliveryMethod === 'consegna' ? (address.trim() || 'Da concordare su WhatsApp') : null
       const itemsSnapshot = items
-      const res = await fetch('/api/checkout', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ phone_number: phone, items, total, coupon_discount: discountAmount, coupon_code: couponCode || null, ticket_number_choices: chosenNumbers, delivery_method: finalDeliveryMethod, delivery_address: finalAddress, referred_by_phone: referredByPhone.trim() || null }) })
+      const res = await fetch('/api/checkout', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ phone_number: phone, visitor_id: (() => { try { return localStorage.getItem('mgshop-visitor-id') || '' } catch { return '' } })(), items, total, coupon_discount: discountAmount, coupon_code: couponCode || null, ticket_number_choices: chosenNumbers, delivery_method: finalDeliveryMethod, delivery_address: finalAddress, referred_by_phone: referredByPhone.trim() || null }) })
       const data = await res.json().catch(() => null)
       if (!res.ok) {
         if (data?.unavailable_numbers?.length) {

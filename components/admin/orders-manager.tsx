@@ -17,7 +17,7 @@ const STATUS_COLORS: Record<string, string> = {
   cancelled: 'bg-red-100 text-red-700',
 }
 
-interface OrderWithItems extends Order { order_items: OrderItem[]; customer_name?: string; ticket_count?: number }
+interface OrderWithItems extends Order { order_items: OrderItem[]; customer_name?: string; ticket_count?: number; visitor_id?: string | null }
 
 // Confronta la quantità ordinata con lo stock attuale del prodotto e mostra
 // all'admin, riga per riga, quanto è già disponibile in magazzino e quanto
@@ -170,6 +170,7 @@ export function OrdersManager() {
                     <div className="flex items-center gap-1.5 group/name">
                       <span className="font-medium text-sm text-slate-800">{order.customer_name || order.phone_number}</span>
                       {order.customer_name && <span className="text-xs text-slate-400">{order.phone_number}</span>}
+                      {order.visitor_id && <span title={order.visitor_id} className="text-xs font-mono text-slate-500 bg-slate-100 rounded px-1.5 py-0.5">ID {order.visitor_id.slice(0, 8)}</span>}
                       <button onClick={e => { e.stopPropagation(); setEditingName(order.id); setNameInput(order.customer_name||'') }}
                         className="p-0.5 opacity-0 group-hover/name:opacity-100 hover:bg-slate-100 rounded transition-all">
                         <Pencil className="w-3 h-3 text-slate-400"/>
