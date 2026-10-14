@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react'
 import { AlertTriangle, Trash2, Phone, ShoppingCart, Bell, Send, Check } from 'lucide-react'
 
-interface AbandonedCartItem { name: string; quantity: number; price: number }
+interface AbandonedCartItem { name: string; quantity: number; price: number; unavailable?: boolean }
 interface AbandonedCart {
   id: string
   session_id: string
@@ -98,7 +98,10 @@ export function AbandonedCartsManager() {
                 </div>
                 <div className="mt-2 space-y-0.5">
                   {cart.items.map((it, i) => (
-                    <p key={i} className="text-sm text-slate-600 truncate">{it.name} <span className="text-slate-400">×{it.quantity}</span></p>
+                    <p key={i} className={`text-sm truncate ${it.unavailable ? 'text-red-500' : 'text-slate-600'}`}>
+                      <span className={it.unavailable ? 'line-through' : ''}>{it.name}</span> <span className="text-slate-400">×{it.quantity}</span>
+                      {it.unavailable && <span className="ml-1.5 text-xs font-bold text-red-600">non più disponibile</span>}
+                    </p>
                   ))}
                 </div>
                 <p className="text-sm font-bold text-slate-800 mt-1.5">Totale: €{cart.total.toFixed(2)}</p>

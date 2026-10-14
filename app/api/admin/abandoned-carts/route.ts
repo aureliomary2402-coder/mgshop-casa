@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createAdminClient } from '@/lib/supabase/admin'
 import { cookies } from 'next/headers'
+import { LOTTERY_TICKET_PRODUCT_ID } from '@/lib/lottery-ticket-product'
+import { isCustomPromoProductId } from '@/lib/promo-custom-product'
 
 async function isAuthenticated() {
   const cookieStore = await cookies()
@@ -30,7 +32,39 @@ export async function GET() {
       .or('is_admin.is.null,is_admin.eq.false')
     for (const s of subs || []) { if (s.session_id) pushBySession.add(s.session_id) }
   }
-  const withPushInfo = (data || []).map(c => ({ ...c, has_push: pushBySession.has(c.session_id) }))
+  // Prodotti non più ordinabili (disattivati o eliminati): i carrelli nuovi
+  // salvano l'id del prodotto e il controllo è preciso; quelli vecchi hanno
+  // solo il nome, quindi lì segnaliamo solo i prodotti che esistono ancora
+  // ma sono disattivati (un nome non trovato potrebbe essere un prodotto
+  // creato nella pagina Promo, che non sta nella tabella prodotti).
+  type CartItem = { id?: string; name?: string; quantity?: number; price?: number }
+  const allItems: CartItem[] = (data || []).flatMap(c => (Array.isArray(c.items) ? c.items : []))
+  const itemIds = Array.from(new Set(allItems.map(i => i.id).filter((x): x is string => typeof x === 'string' && x !== LOTTERY_TICKET_PRODUCT_ID && !isCustomPromoProductId(x))))
+  const itemNames = Array.from(new Set(allItems.filter(i => !i.id).map(i => i.name).filter((x): x is string => !!x && x !== 'Biglietto Lotteria')))
+  const activeIds = new Set<string>()
+  let idsChecked = false
+  if (itemIds.length > 0) {
+    const { data: rows, error: idErr } = await supabase.from('products').select('id').eq('is_active', true).in('id', itemIds)
+    if (!idErr) { idsChecked = true; for (const r of rows || []) activeIds.add(String(r.id)) }
+  }
+  const inactiveNames = new Set<string>()
+  const activeNames = new Set<string>()
+  if (itemNames.length > 0) {
+    const { data: rows } = await supabase.from('products').select('name, is_active').in('name', itemNames)
+    for (const r of rows || []) (r.is_active ? activeNames : inactiveNames).add(r.name)
+  }
+  const withPushInfo = (data || []).map(c => {
+    const items = (Array.isArray(c.items) ? c.items : []).map((i: CartItem) => {
+      let unavailable = false
+      if (i.id) {
+        if (idsChecked && i.id !== LOTTERY_TICKET_PRODUCT_ID && !isCustomPromoProductId(i.id)) unavailable = !activeIds.has(i.id)
+      } else if (i.name) {
+        unavailable = inactiveNames.has(i.name) && !activeNames.has(i.name)
+      }
+      return { ...i, unavailable }
+    })
+    return { ...c, items, has_push: pushBySession.has(c.session_id) }
+  })
   return NextResponse.json(withPushInfo)
 }
 

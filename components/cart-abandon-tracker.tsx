@@ -32,7 +32,7 @@ export function CartAbandonTracker() {
       if (!sessionId) return
       const payload = JSON.stringify({
         sessionId,
-        items: currentItems.map(i => ({ name: i.product.name, quantity: i.quantity, price: i.unitPrice ?? i.product.price })),
+        items: currentItems.map(i => ({ id: i.product.id, name: i.product.name, quantity: i.quantity, price: i.unitPrice ?? i.product.price })),
         total: totalRef.current,
         // Se l'utente ha già scritto il numero nel checkout (salvato a parte
         // in sessionStorage dal form del carrello) lo includiamo, così
