@@ -12,6 +12,7 @@ const LINKS = [
   { href: '/lotteria', label: 'Lotteria' },
   { href: '/volantino', label: 'Volantino' },
   { href: '/consegne', label: 'Consegna e ritiro' },
+  { href: '/social', label: 'Social' },
   { href: '/carrello', label: 'Carrello' },
 ]
 
@@ -73,7 +74,7 @@ export function SiteFooter() {
           </div>
 
           <div>
-            <p className="text-[11px] font-black uppercase tracking-[0.2em] text-cyan-300 mb-4">Seguici sui social</p>
+            <Link href="/social" className="inline-block text-[11px] font-black uppercase tracking-[0.2em] text-cyan-300 hover:text-white transition-colors mb-4">Seguici sui social →</Link>
             <div className="flex items-center gap-2.5">
               <a href={SOCIAL_LINKS.instagram} target="_blank" rel="noopener noreferrer" aria-label="Instagram"
                 className="w-10 h-10 rounded-full flex items-center justify-center transition-transform hover:scale-110 btn-press"
