@@ -437,35 +437,35 @@ export function PromoManager() {
 
           {/* Prodotti selezionati, con prezzo originale e nuovo prezzo modificabile */}
           {itemProducts.length > 0 && (
-            <div className="space-y-2 mb-3">
+            <div className="grid grid-cols-2 gap-3 mb-3">
               {itemProducts.map(({ item, name, image, originalPrice, isCustom }) => (
-                <div key={item.id} className="p-2.5 rounded-xl border border-cyan-100 bg-cyan-50 space-y-2">
-                  <div className="flex items-center gap-3">
-                    <div className="shrink-0 flex flex-col items-center gap-1">
-                      {image ? <img src={image} alt={name} className="w-12 h-12 rounded-lg object-cover" /> : <div className="w-12 h-12 rounded-lg bg-slate-200" />}
-                      {image && (
-                        <button type="button" onClick={() => openItemEditCropper(item.id, image)} disabled={fetchingEdit}
-                          className="text-[9px] leading-none text-cyan-700 font-medium px-1.5 py-0.5 rounded border border-cyan-200 bg-white disabled:opacity-50">
-                          {fetchingEdit ? '...' : 'Modifica'}
-                        </button>
-                      )}
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <p className="text-sm font-medium text-slate-800 truncate">{name}{isCustom && <span className="ml-1.5 text-[10px] font-semibold text-amber-600 bg-amber-100 px-1.5 py-0.5 rounded">personalizzato</span>}</p>
-                      <p className="text-xs text-slate-400 line-through">€{originalPrice.toFixed(2)}</p>
-                    </div>
-                    <div className="flex items-center gap-1 shrink-0">
-                      <Tag className="w-3.5 h-3.5 text-red-500" />
-                      <Input
-                        type="text" inputMode="decimal"
-                        value={priceDrafts[item.id] ?? String(item.sale_price)}
-                        onChange={e => updateSalePrice(item.id, e.target.value)}
-                        className="w-20 h-9 text-sm font-bold text-red-600"
-                      />
-                    </div>
-                    <button onClick={() => removeProduct(item.id)} className="p-1 hover:bg-red-100 rounded-lg transition-colors shrink-0">
+                <div key={item.id} className={`p-2.5 rounded-2xl border border-cyan-100 bg-white shadow-sm space-y-2 overflow-hidden ${isCustom ? 'col-span-2' : ''}`}>
+                  <div className={`relative bg-slate-50 -mx-2.5 -mt-2.5 ${isCustom ? 'aspect-[2/1]' : 'aspect-square'}`}>
+                    {image
+                      ? <img src={image} alt={name} className="w-full h-full object-cover" />
+                      : <div className="w-full h-full bg-slate-100" />}
+                    {image && (
+                      <button type="button" onClick={() => openItemEditCropper(item.id, image)} disabled={fetchingEdit}
+                        className="absolute bottom-1.5 left-1.5 text-[10px] leading-none text-cyan-700 font-medium px-2 py-1 rounded-full border border-cyan-200 bg-white/90 disabled:opacity-50">
+                        {fetchingEdit ? '...' : 'Modifica'}
+                      </button>
+                    )}
+                    <button onClick={() => removeProduct(item.id)} className="absolute top-1.5 right-1.5 p-1 bg-white/90 hover:bg-red-100 rounded-full shadow-sm transition-colors">
                       <X className="w-4 h-4 text-red-400" />
                     </button>
+                  </div>
+                  <div className="min-w-0">
+                    <p className="text-sm font-medium text-slate-800 truncate">{name}{isCustom && <span className="ml-1.5 text-[10px] font-semibold text-amber-600 bg-amber-100 px-1.5 py-0.5 rounded">personalizzato</span>}</p>
+                    <p className="text-xs text-slate-400 line-through">€{originalPrice.toFixed(2)}</p>
+                  </div>
+                  <div className="flex items-center gap-1">
+                    <Tag className="w-3.5 h-3.5 text-red-500 shrink-0" />
+                    <Input
+                      type="text" inputMode="decimal"
+                      value={priceDrafts[item.id] ?? String(item.sale_price)}
+                      onChange={e => updateSalePrice(item.id, e.target.value)}
+                      className="flex-1 min-w-0 h-9 text-sm font-bold text-red-600"
+                    />
                   </div>
                   <AdminNoteInput noteKey={item.product_id ? item.product_id : `promo:${item.id}`} notes={notes} setNote={setNote} />
                   <textarea value={item.description || ''} onChange={e => updateDescription(item.id, e.target.value)}
