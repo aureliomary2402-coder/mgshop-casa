@@ -305,29 +305,31 @@ export function VolantinoManager() {
 
               {/* Prodotti selezionati con prezzo scontato editabile */}
               {itemProducts.length > 0 && (
-                <div className="space-y-2 mb-3">
+                <div className="grid grid-cols-2 gap-3 mb-3">
                   {itemProducts.map(({ item, product }) => (
-                    <div key={product.id} className="p-2.5 rounded-xl border border-cyan-100 bg-cyan-50 space-y-2">
-                     <div className="flex items-center gap-3">
-                      {product.cover_image && <img src={product.cover_image} alt={product.name} className="w-12 h-12 rounded-lg object-cover shrink-0" />}
-                      <div className="flex-1 min-w-0">
-                        <p className="text-sm font-medium text-slate-800 truncate">{product.name}</p>
-                        <p className="text-xs text-slate-400 line-through">€{(product.old_price ?? product.price).toFixed(2)}</p>
-                      </div>
-                      <div className="flex items-center gap-1 shrink-0">
-                        <Tag className="w-3.5 h-3.5 text-red-500" />
-                        <Input
-                          type="text" inputMode="decimal"
-                          value={priceDrafts[product.id] ?? String(item.sale_price)}
-                          onChange={e => updateSalePrice(product.id, e.target.value)}
-                          className="w-20 h-9 text-sm font-bold text-red-600"
-                        />
-                      </div>
-                      <button onClick={() => removeProduct(product.id)} className="p-1 hover:bg-red-100 rounded-lg transition-colors shrink-0">
+                    <div key={product.id} className="p-2.5 rounded-2xl border border-cyan-100 bg-white shadow-sm space-y-2 overflow-hidden">
+                     <div className="relative aspect-square bg-slate-50 -mx-2.5 -mt-2.5">
+                      {product.cover_image
+                        ? <img src={product.cover_image} alt={product.name} className="w-full h-full object-cover" />
+                        : <div className="w-full h-full bg-slate-100" />}
+                      <button onClick={() => removeProduct(product.id)} className="absolute top-1.5 right-1.5 p-1 bg-white/90 hover:bg-red-100 rounded-full shadow-sm transition-colors">
                         <X className="w-4 h-4 text-red-400" />
                       </button>
                      </div>
-                     <div className="flex items-center gap-2">
+                     <div className="min-w-0">
+                       <p className="text-sm font-medium text-slate-800 truncate">{product.name}</p>
+                       <p className="text-xs text-slate-400 line-through">€{(product.old_price ?? product.price).toFixed(2)}</p>
+                     </div>
+                     <div className="flex items-center gap-1">
+                       <Tag className="w-3.5 h-3.5 text-red-500 shrink-0" />
+                       <Input
+                         type="text" inputMode="decimal"
+                         value={priceDrafts[product.id] ?? String(item.sale_price)}
+                         onChange={e => updateSalePrice(product.id, e.target.value)}
+                         className="flex-1 min-w-0 h-9 text-sm font-bold text-red-600"
+                       />
+                     </div>
+                     <div className="flex flex-wrap items-center gap-2">
                        <label className="text-[11px] text-slate-500 shrink-0">Scade il</label>
                        <input type="date" value={item.ends_at || ''} min={startDate || undefined} max={endDate || undefined} onChange={e => updateItemEnd(product.id, e.target.value)}
                          className="flex-1 min-w-0 rounded-lg border border-slate-200 bg-white px-2 py-1 text-xs text-slate-800" />
