@@ -77,12 +77,12 @@ export default function HomePage() {
       {/* =========================================================
           HERO
       ========================================================= */}
-      <section className="relative min-h-[760px] overflow-hidden bg-[#120a22] sm:min-h-[820px]">
+      <section className="relative min-h-[760px] overflow-hidden bg-[linear-gradient(160deg,#c24a00,#a23800_55%,#6e2400)] sm:min-h-[820px]">
 
         {/* glow ambientali */}
         <div className="pointer-events-none absolute inset-0">
           <div className="absolute left-[-180px] top-[80px] h-[420px] w-[420px] rounded-full bg-zucca-400/15 blur-[110px]" />
-          <div className="absolute right-[-160px] top-[160px] h-[500px] w-[500px] rounded-full bg-sky-500/10 blur-[130px]" />
+          <div className="absolute right-[-160px] top-[160px] h-[500px] w-[500px] rounded-full bg-purple-900/30 blur-[130px]" />
           <div className="absolute bottom-[-250px] left-1/2 h-[500px] w-[700px] -translate-x-1/2 rounded-full bg-zucca-300/10 blur-[120px]" />
         </div>
 
@@ -149,7 +149,7 @@ export default function HomePage() {
                 TUTTO PER
                 <br />
                 LA TUA{" "}
-                <span className="bg-gradient-to-r from-zucca-200 via-zucca-400 to-sky-300 bg-clip-text text-transparent">
+                <span className="bg-gradient-to-r from-yellow-100 via-yellow-300 to-yellow-100 bg-clip-text text-transparent">
                   CASA.
                 </span>
               </h1>
@@ -162,7 +162,7 @@ export default function HomePage() {
               <div className="mt-9 flex flex-col gap-3 sm:flex-row">
                 <Link
                   href="/shop"
-                  className="group inline-flex h-14 items-center justify-center gap-3 rounded-2xl bg-zucca-400 px-7 font-black text-[#1a0d33] shadow-[0_15px_50px_rgba(255,154,61,.22)] transition duration-300 hover:-translate-y-1 hover:bg-zucca-300"
+                  className="group inline-flex h-14 items-center justify-center gap-3 rounded-2xl bg-[#fff7ee] px-7 font-black text-[#1a0d33] shadow-[0_15px_50px_rgba(255,154,61,.22)] transition duration-300 hover:-translate-y-1 hover:bg-white"
                 >
                   Vai allo shop
                   <ArrowRight
@@ -221,7 +221,7 @@ export default function HomePage() {
                   ORDINA.
                 </div>
 
-                <div className="text-3xl font-black text-zucca-300">
+                <div className="text-3xl font-black text-yellow-200">
                   RICEVI.
                 </div>
 

@@ -9,7 +9,7 @@ export function HeroBackdrop() {
     <>
       <div className="pointer-events-none absolute inset-0">
         <div className="absolute left-[-180px] top-[80px] h-[420px] w-[420px] rounded-full bg-zucca-400/15 blur-[110px]" />
-        <div className="absolute right-[-160px] top-[160px] h-[500px] w-[500px] rounded-full bg-sky-500/10 blur-[130px]" />
+        <div className="absolute right-[-160px] top-[160px] h-[500px] w-[500px] rounded-full bg-purple-900/30 blur-[130px]" />
         <div className="absolute bottom-[-250px] left-1/2 h-[500px] w-[700px] -translate-x-1/2 rounded-full bg-zucca-300/10 blur-[120px]" />
       </div>
       <div className="pointer-events-none absolute inset-0 overflow-hidden">
@@ -38,7 +38,7 @@ export function AccentTitle({ text }: { text: ReactNode }) {
   return (
     <>
       {parole.length > 0 && <>{parole.join(' ')}{' '}</>}
-      <span className="bg-gradient-to-r from-zucca-200 via-zucca-400 to-sky-300 bg-clip-text text-transparent">
+      <span className="bg-gradient-to-r from-yellow-100 via-yellow-300 to-yellow-100 bg-clip-text text-transparent">
         {ultima}
       </span>
     </>

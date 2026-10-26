@@ -22,7 +22,7 @@ export function LandingHero({ icon: Icon, badge, title, subtitle, topBar, childr
   const BadgeIcon = badge?.icon
 
   return (
-    <section className="relative overflow-hidden bg-[#120a22]">
+    <section className="relative overflow-hidden bg-[linear-gradient(160deg,#c24a00,#a23800_55%,#6e2400)]">
       <HeroBackdrop />
 
       <div className="relative z-10 mx-auto max-w-7xl px-5 pb-16 pt-6 sm:px-8 sm:pb-24">
@@ -79,7 +79,7 @@ export function LandingHero({ icon: Icon, badge, title, subtitle, topBar, childr
 
                 <div className="text-xs font-semibold uppercase tracking-[.2em] text-slate-400">Spesa semplice</div>
                 <div className="mt-2 text-3xl font-black text-white">ORDINA.</div>
-                <div className="text-3xl font-black text-zucca-300">RICEVI.</div>
+                <div className="text-3xl font-black text-yellow-200">RICEVI.</div>
 
                 <div className="mt-6 space-y-2">
                   <div className="h-3 rounded-full bg-white/10" />
