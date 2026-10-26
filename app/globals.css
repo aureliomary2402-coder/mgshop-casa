@@ -1111,3 +1111,16 @@ main { animation: fadeIn 0.3s ease-out; }
 @media (prefers-reduced-motion: reduce) {
   .mg-glow-card, .mg-glow-card::before { animation: none; }
 }
+
+/* =========================================================
+   MODALITA VELOCE (Halloween): toglie gli effetti piu pesanti.
+   Per tornare come prima basta cancellare questo blocco.
+   ========================================================= */
+.blur-\[80px\], .blur-\[100px\], .blur-\[110px\], .blur-\[120px\], .blur-\[130px\] { display: none !important; }
+.animate-bubble-rise { display: none !important; }
+[class*="backdrop-blur"], .glass-card, .liquid-glass-nav, .liquid-glass-pill, .mg-nav-dark {
+  -webkit-backdrop-filter: none !important;
+  backdrop-filter: none !important;
+}
+.mg-nav-dark { background: rgba(18, 10, 34, 0.96) !important; }
+.mg-glow-card, .mg-glow-card::before { animation: none !important; }
