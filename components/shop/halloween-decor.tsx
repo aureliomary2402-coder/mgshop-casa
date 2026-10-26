@@ -17,8 +17,8 @@ const CSS = `
   50% { transform: translateY(-8px) rotate(6deg); }
 }
 .hw-layer { position: fixed; inset: 0; z-index: 30; pointer-events: none; overflow: hidden; }
-.hw-bat { position: absolute; left: 0; font-size: 24px; animation: hw-bat 22s linear infinite; filter: drop-shadow(0 2px 3px rgba(0,0,0,.35)); }
-.hw-pumpkin { position: absolute; font-size: 44px; animation: hw-bob 4.5s ease-in-out infinite; filter: drop-shadow(0 4px 6px rgba(0,0,0,.35)); }
+.hw-bat { position: absolute; left: 0; font-size: 24px; animation: hw-bat 22s linear infinite; will-change: transform; }
+.hw-pumpkin { position: absolute; font-size: 44px; animation: hw-bob 4.5s ease-in-out infinite; will-change: transform; }
 @media (prefers-reduced-motion: reduce) {
   .hw-bat { animation: none; left: 70%; }
   .hw-pumpkin { animation: none; }
