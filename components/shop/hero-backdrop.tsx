@@ -7,6 +7,9 @@ import { AmbientBubbles } from './ambient-bubbles'
 export function HeroBackdrop() {
   return (
     <>
+      <span aria-hidden="true" className="pointer-events-none absolute bottom-2 right-3 select-none text-5xl leading-none -rotate-6 sm:text-7xl">🎃</span>
+      <span aria-hidden="true" className="pointer-events-none absolute left-1 top-[46%] select-none text-4xl leading-none rotate-12 sm:text-6xl">🎃</span>
+      <span aria-hidden="true" className="pointer-events-none absolute right-2 top-24 select-none text-3xl leading-none rotate-6 sm:text-5xl">🎃</span>
       <div className="pointer-events-none absolute inset-0">
         <div className="absolute left-[-180px] top-[80px] h-[420px] w-[420px] rounded-full bg-zucca-400/15 blur-[110px]" />
         <div className="absolute right-[-160px] top-[160px] h-[500px] w-[500px] rounded-full bg-purple-900/30 blur-[130px]" />

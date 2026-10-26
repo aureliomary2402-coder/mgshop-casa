@@ -79,6 +79,9 @@ export default function HomePage() {
       ========================================================= */}
       <section className="relative min-h-[760px] overflow-hidden bg-[linear-gradient(160deg,#c24a00,#a23800_55%,#6e2400)] sm:min-h-[820px]">
 
+        <span aria-hidden="true" className="pointer-events-none absolute bottom-2 right-3 select-none text-5xl leading-none -rotate-6 sm:text-7xl">🎃</span>
+        <span aria-hidden="true" className="pointer-events-none absolute left-1 top-[46%] select-none text-4xl leading-none rotate-12 sm:text-6xl">🎃</span>
+        <span aria-hidden="true" className="pointer-events-none absolute right-2 top-24 select-none text-3xl leading-none rotate-6 sm:text-5xl">🎃</span>
         {/* glow ambientali */}
         <div className="pointer-events-none absolute inset-0">
           <div className="absolute left-[-180px] top-[80px] h-[420px] w-[420px] rounded-full bg-zucca-400/15 blur-[110px]" />
