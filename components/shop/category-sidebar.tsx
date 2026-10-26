@@ -58,20 +58,20 @@ export function CategorySidebar({ categories }: { categories: Category[] }) {
     <>
       {/* Desktop: colonna sticky (l'etichetta sta nella pagina) */}
       <aside className="hidden lg:block lg:sticky lg:top-24 self-start">
-        <nav className="rounded-2xl p-2 space-y-0.5" style={{ background: 'white', border: '1px solid rgba(8,145,178,0.1)', boxShadow: '0 8px 24px rgba(8,145,178,0.06)' }}>
+        <nav className="rounded-2xl p-2 space-y-0.5" style={{ background: 'white', border: '1px solid rgba(217,85,0,0.1)', boxShadow: '0 8px 24px rgba(217,85,0,0.06)' }}>
           {items.map(it => {
             const Icon = it.icon
             const isActive = it.slug === active
             return (
               <button key={it.slug ?? 'all'} onClick={() => go(it.slug)}
-                className="w-full flex items-center gap-3 px-3 py-2.5 rounded-2xl text-sm font-bold text-left transition-all btn-press hover:bg-cyan-50"
+                className="w-full flex items-center gap-3 px-3 py-2.5 rounded-2xl text-sm font-bold text-left transition-all btn-press hover:bg-zucca-50"
                 style={{
-                  background: isActive ? '#22d3ee' : 'transparent',
-                  color: isActive ? '#05212a' : '#164e63',
-                  boxShadow: isActive ? '0 10px 25px rgba(34,211,238,0.28)' : 'none',
+                  background: isActive ? '#ff9a3d' : 'transparent',
+                  color: isActive ? '#1a0d33' : '#2d1458',
+                  boxShadow: isActive ? '0 10px 25px rgba(255,154,61,0.28)' : 'none',
                 }}>
                 <span className="w-8 h-8 rounded-xl flex items-center justify-center shrink-0"
-                  style={{ background: isActive ? 'rgba(5,33,42,0.12)' : '#ecfeff', color: isActive ? '#05212a' : '#0e7490' }}>
+                  style={{ background: isActive ? 'rgba(5,33,42,0.12)' : '#ecfeff', color: isActive ? '#1a0d33' : '#5b2a9e' }}>
                   <Icon className="w-4 h-4" />
                 </span>
                 <span className="truncate">{it.name}</span>
@@ -90,16 +90,16 @@ export function CategorySidebar({ categories }: { categories: Category[] }) {
       <div className="lg:hidden">
         <button onClick={() => setOpen(v => !v)}
           className="w-full flex items-center justify-between gap-2 px-4 py-3 rounded-2xl text-sm font-semibold transition-all btn-press"
-          style={{ background: 'white', border: '1px solid rgba(8,145,178,0.15)', color: active ? '#0891b2' : '#334155', boxShadow: '0 4px 14px rgba(8,145,178,0.07)' }}>
+          style={{ background: 'white', border: '1px solid rgba(217,85,0,0.15)', color: active ? '#d95500' : '#334155', boxShadow: '0 4px 14px rgba(217,85,0,0.07)' }}>
           <span className="flex items-center gap-2">
-            <SlidersHorizontal className="w-4 h-4" style={{ color: '#0891b2' }} />
+            <SlidersHorizontal className="w-4 h-4" style={{ color: '#d95500' }} />
             {activeLabel}
           </span>
-          <ChevronDown className={`w-4 h-4 transition-transform duration-200 ${open ? 'rotate-180' : ''}`} style={{ color: '#0891b2' }} />
+          <ChevronDown className={`w-4 h-4 transition-transform duration-200 ${open ? 'rotate-180' : ''}`} style={{ color: '#d95500' }} />
         </button>
 
         {open && (
-          <div className="mt-2.5 rounded-2xl p-3 animate-scale-in" style={{ background: 'white', border: '1px solid rgba(8,145,178,0.12)', boxShadow: '0 12px 30px rgba(8,45,60,0.1)' }}>
+          <div className="mt-2.5 rounded-2xl p-3 animate-scale-in" style={{ background: 'white', border: '1px solid rgba(217,85,0,0.12)', boxShadow: '0 12px 30px rgba(26,13,51,0.1)' }}>
             <div className="flex flex-wrap gap-2">
               {items.map(it => {
                 const Icon = it.icon
@@ -108,12 +108,12 @@ export function CategorySidebar({ categories }: { categories: Category[] }) {
                   <button key={it.slug ?? 'all'} onClick={() => go(it.slug)}
                     className="flex items-center gap-1.5 pl-2.5 pr-3.5 py-2 rounded-full text-xs font-semibold transition-all btn-press"
                     style={{
-                      background: isActive ? '#22d3ee' : '#f8fdfe',
-                      color: isActive ? '#05212a' : '#164e63',
-                      border: `1px solid ${isActive ? '#22d3ee' : 'rgba(8,145,178,0.18)'}`,
+                      background: isActive ? '#ff9a3d' : '#f8fdfe',
+                      color: isActive ? '#1a0d33' : '#2d1458',
+                      border: `1px solid ${isActive ? '#ff9a3d' : 'rgba(217,85,0,0.18)'}`,
                     }}>
                     <span className="w-5 h-5 rounded-full flex items-center justify-center shrink-0"
-                      style={{ background: isActive ? 'rgba(5,33,42,0.12)' : 'rgba(8,145,178,0.08)', color: isActive ? '#05212a' : '#0891b2' }}>
+                      style={{ background: isActive ? 'rgba(5,33,42,0.12)' : 'rgba(217,85,0,0.08)', color: isActive ? '#1a0d33' : '#d95500' }}>
                       <Icon className="w-3 h-3" />
                     </span>
                     {it.name}

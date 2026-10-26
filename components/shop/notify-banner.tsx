@@ -49,9 +49,9 @@ export function NotifyBanner() {
   // scorrendo la pagina finché non viene chiuso o attivato.
   return (
     <div className="fixed left-4 right-4 z-[60] animate-slide-in-up" style={{ bottom: 'calc(262px + env(safe-area-inset-bottom, 0px))' }}>
-      <div className="neon-glow mx-auto flex max-w-sm items-center gap-3 rounded-[24px] border border-cyan-300/15 bg-[#071a22] p-3.5 shadow-2xl">
-        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl border border-cyan-300/20 bg-cyan-300/10">
-          <Bell className="h-5 w-5 text-cyan-300" />
+      <div className="neon-glow mx-auto flex max-w-sm items-center gap-3 rounded-[24px] border border-zucca-300/15 bg-[#160b29] p-3.5 shadow-2xl">
+        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl border border-zucca-300/20 bg-zucca-300/10">
+          <Bell className="h-5 w-5 text-zucca-300" />
         </div>
         <div className="min-w-0 flex-1">
           <p className="text-sm font-black text-white">Non perderti le offerte!</p>
@@ -59,7 +59,7 @@ export function NotifyBanner() {
         </div>
         <button onClick={activate} disabled={loading}
           className="shrink-0 rounded-2xl px-4 py-2.5 text-xs font-black transition-transform active:scale-95 disabled:opacity-60"
-          style={{ background: '#22d3ee', color: '#05212a' }}>
+          style={{ background: '#ff9a3d', color: '#1a0d33' }}>
           {loading ? '...' : 'Attiva'}
         </button>
         <button onClick={dismiss} className="shrink-0 p-1 text-slate-500 hover:text-slate-300">

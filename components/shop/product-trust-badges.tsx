@@ -16,14 +16,14 @@ export function ProductTrustBadges() {
       {BADGES.map(({ icon: Icon, title, sub }) => (
         <div
           key={title}
-          className="flex items-center gap-3 rounded-2xl border border-cyan-100 bg-gradient-to-br from-white to-cyan-50 p-3 transition-all duration-300 hover:-translate-y-0.5 hover:border-cyan-300"
-          style={{ boxShadow: '0 8px 24px rgba(8,145,178,0.07)' }}
+          className="flex items-center gap-3 rounded-2xl border border-zucca-100 bg-gradient-to-br from-white to-zucca-50 p-3 transition-all duration-300 hover:-translate-y-0.5 hover:border-zucca-300"
+          style={{ boxShadow: '0 8px 24px rgba(217,85,0,0.07)' }}
         >
-          <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border border-cyan-200 bg-cyan-100/70">
-            <Icon className="h-[18px] w-[18px] text-cyan-700" />
+          <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border border-zucca-200 bg-zucca-100/70">
+            <Icon className="h-[18px] w-[18px] text-zucca-700" />
           </div>
           <div className="min-w-0">
-            <div className="text-xs font-black leading-tight text-cyan-950">{title}</div>
+            <div className="text-xs font-black leading-tight text-zucca-950">{title}</div>
             <div className="mt-0.5 text-[10px] leading-tight text-slate-500">{sub}</div>
           </div>
         </div>

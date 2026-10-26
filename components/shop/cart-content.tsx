@@ -335,7 +335,7 @@ export function CartContent({ scope = 'shop' }: { scope?: string }) {
 
   if (!mounted) return (
     <>
-      <PageHero icon={ShoppingBag} iconColor="#22d3ee" title="Carrello" subtitle="Rivedi i prodotti scelti e completa l'ordine." />
+      <PageHero icon={ShoppingBag} iconColor="#ff9a3d" title="Carrello" subtitle="Rivedi i prodotti scelti e completa l'ordine." />
       <div className="max-w-4xl mx-auto px-4 py-12 grid md:grid-cols-3 gap-6">
         <div className="md:col-span-2 space-y-3">
           {Array.from({ length: 3 }).map((_, i) => (
@@ -356,7 +356,7 @@ export function CartContent({ scope = 'shop' }: { scope?: string }) {
   if (submitted) return (
     <div className="max-w-md mx-auto px-4 py-20 text-center animate-scale-in">
       <div className="relative w-24 h-24 mx-auto mb-6">
-        {['#0891b2','#06b6d4','#22d3ee','#16a34a','#ef4444','#3b82f6'].map((color, i) => (
+        {['#d95500','#ff7a1a','#ff9a3d','#16a34a','#ef4444','#3b82f6'].map((color, i) => (
           <div key={i} className="confetti-piece"
             style={{
               left: `${50 + (i % 2 === 0 ? -1 : 1) * (10 + i * 6)}%`,
@@ -367,11 +367,11 @@ export function CartContent({ scope = 'shop' }: { scope?: string }) {
               animationDelay: `${i * 40}ms`,
             }} />
         ))}
-        <div className="w-24 h-24 rounded-full flex items-center justify-center animate-check-pop" style={{background:'#22d3ee',boxShadow:'0 20px 40px rgba(34,211,238,0.35)'}}>
-          <CheckCircle className="w-12 h-12" style={{color:'#05212a'}}/>
+        <div className="w-24 h-24 rounded-full flex items-center justify-center animate-check-pop" style={{background:'#ff9a3d',boxShadow:'0 20px 40px rgba(255,154,61,0.35)'}}>
+          <CheckCircle className="w-12 h-12" style={{color:'#1a0d33'}}/>
         </div>
       </div>
-      <h2 className="text-3xl font-black mb-3 tracking-[-.03em]" style={{color:'#083344'}}>Ordine inviato!</h2>
+      <h2 className="text-3xl font-black mb-3 tracking-[-.03em]" style={{color:'#1f0e3d'}}>Ordine inviato!</h2>
       <p className="text-slate-500 mb-2">Ti contatteremo presto su WhatsApp per confermare.</p>
       {whatsappLink && (
         <a href={whatsappLink} target="_blank" rel="noopener noreferrer"
@@ -390,16 +390,16 @@ export function CartContent({ scope = 'shop' }: { scope?: string }) {
           </div>
         </div>
       )}
-      <p className={`text-sm text-cyan-700 font-medium ${appliedReferralPercent > 0 || finalPaidTotal !== null ? 'mb-2' : 'mb-8'}`}>🎁 Riceverai i tuoi punti fedeltà via WhatsApp!</p>
+      <p className={`text-sm text-zucca-700 font-medium ${appliedReferralPercent > 0 || finalPaidTotal !== null ? 'mb-2' : 'mb-8'}`}>🎁 Riceverai i tuoi punti fedeltà via WhatsApp!</p>
       {appliedReferralPercent > 0 && (
         <p className={`text-sm text-green-600 font-medium ${finalPaidTotal !== null ? 'mb-2' : 'mb-8'}`}>🤝 Sconto invito del {appliedReferralPercent}% applicato su questo ordine!</p>
       )}
       {finalPaidTotal !== null && (
-        <p className="text-lg font-bold mb-8" style={{ color: '#0c2b36' }}>
-          Totale da pagare: <span style={{ color: '#0891b2' }}>€{finalPaidTotal.toFixed(2)}</span>
+        <p className="text-lg font-bold mb-8" style={{ color: '#2a1450' }}>
+          Totale da pagare: <span style={{ color: '#d95500' }}>€{finalPaidTotal.toFixed(2)}</span>
         </p>
       )}
-      <Link href="/shop" className="inline-flex items-center gap-2 font-bold px-8 py-4 rounded-2xl text-white btn-press" style={{background:'#0891b2',boxShadow:'0 12px 32px rgba(8,145,178,0.35)'}}>
+      <Link href="/shop" className="inline-flex items-center gap-2 font-bold px-8 py-4 rounded-2xl text-white btn-press" style={{background:'#d95500',boxShadow:'0 12px 32px rgba(217,85,0,0.35)'}}>
         <ShoppingBag className="w-5 h-5"/> Continua a fare shopping
       </Link>
     </div>
@@ -407,14 +407,14 @@ export function CartContent({ scope = 'shop' }: { scope?: string }) {
 
   if (items.length === 0) return (
     <>
-      <PageHero icon={ShoppingBag} iconColor="#22d3ee" title="Carrello" subtitle="Rivedi i prodotti scelti e completa l'ordine." />
+      <PageHero icon={ShoppingBag} iconColor="#ff9a3d" title="Carrello" subtitle="Rivedi i prodotti scelti e completa l'ordine." />
       <div className="max-w-md mx-auto px-4 py-20 text-center animate-scale-in">
-        <div className="w-24 h-24 rounded-full flex items-center justify-center mx-auto mb-6" style={{background:'rgba(8,145,178,0.08)',border:'2px dashed rgba(8,145,178,0.2)'}}>
-          <ShoppingCart className="w-12 h-12" style={{color:'rgba(8,145,178,0.4)'}}/>
+        <div className="w-24 h-24 rounded-full flex items-center justify-center mx-auto mb-6" style={{background:'rgba(217,85,0,0.08)',border:'2px dashed rgba(217,85,0,0.2)'}}>
+          <ShoppingCart className="w-12 h-12" style={{color:'rgba(217,85,0,0.4)'}}/>
         </div>
-        <h2 className="text-2xl font-black mb-2 tracking-[-.03em]" style={{color:'#083344'}}>Il carrello è vuoto</h2>
+        <h2 className="text-2xl font-black mb-2 tracking-[-.03em]" style={{color:'#1f0e3d'}}>Il carrello è vuoto</h2>
         <p className="text-slate-400 mb-8">Aggiungi qualche prodotto per iniziare.</p>
-        <Link href="/shop" className="inline-flex items-center gap-2 font-bold px-8 py-4 rounded-2xl text-white btn-press" style={{background:'#0891b2',boxShadow:'0 12px 32px rgba(8,145,178,0.35)'}}>Vai ai prodotti</Link>
+        <Link href="/shop" className="inline-flex items-center gap-2 font-bold px-8 py-4 rounded-2xl text-white btn-press" style={{background:'#d95500',boxShadow:'0 12px 32px rgba(217,85,0,0.35)'}}>Vai ai prodotti</Link>
         <div className="mt-10 text-left">
           <RecentlyViewed />
         </div>
@@ -424,18 +424,18 @@ export function CartContent({ scope = 'shop' }: { scope?: string }) {
 
   return (
     <>
-      <PageHero icon={ShoppingBag} iconColor="#22d3ee" title="Carrello" subtitle={`${items.length} ${items.length===1?'articolo':'articoli'} pronti per il checkout.`} />
+      <PageHero icon={ShoppingBag} iconColor="#ff9a3d" title="Carrello" subtitle={`${items.length} ${items.length===1?'articolo':'articoli'} pronti per il checkout.`} />
       <div className="w-full overflow-x-hidden max-w-5xl mx-auto px-4 py-6 sm:py-8">
-      <Link href="/shop" className="inline-flex items-center gap-2 text-sm font-medium mb-4 sm:mb-6 group transition-all hover:gap-3" style={{color:'#155e75'}}>
+      <Link href="/shop" className="inline-flex items-center gap-2 text-sm font-medium mb-4 sm:mb-6 group transition-all hover:gap-3" style={{color:'#3d1b73'}}>
         <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform"/> Continua lo shopping
       </Link>
-      <div className="mb-4 sm:mb-6 p-4 sm:p-5 rounded-[28px] flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4" style={{ background: 'linear-gradient(135deg, rgba(8,145,178,0.1), rgba(37,211,102,0.1))', border: '1px solid rgba(8,145,178,0.25)' }}>
+      <div className="mb-4 sm:mb-6 p-4 sm:p-5 rounded-[28px] flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4" style={{ background: 'linear-gradient(135deg, rgba(217,85,0,0.1), rgba(37,211,102,0.1))', border: '1px solid rgba(217,85,0,0.25)' }}>
         <div className="flex items-start gap-3 flex-1">
-          <div className="w-10 h-10 rounded-full flex items-center justify-center shrink-0" style={{ background: '#22d3ee', boxShadow: '0 8px 20px rgba(34,211,238,0.30)' }}>
-            <Phone className="w-5 h-5" style={{ color: '#05212a' }} />
+          <div className="w-10 h-10 rounded-full flex items-center justify-center shrink-0" style={{ background: '#ff9a3d', boxShadow: '0 8px 20px rgba(255,154,61,0.30)' }}>
+            <Phone className="w-5 h-5" style={{ color: '#1a0d33' }} />
           </div>
           <div>
-            <p className="font-black text-sm" style={{ color: '#164e63' }}>Hai difficoltà con il tuo ordine?</p>
+            <p className="font-black text-sm" style={{ color: '#2d1458' }}>Hai difficoltà con il tuo ordine?</p>
             <p className="text-xs text-slate-500">Nessun problema, scrivici al {WHATSAPP_NUMBER} oppure clicca sul tasto WhatsApp qui sotto per essere reindirizzato.</p>
           </div>
         </div>
@@ -452,27 +452,27 @@ export function CartContent({ scope = 'shop' }: { scope?: string }) {
             const price = unitPrice ?? product.price
             return (
             <div key={rowId} className="flex gap-3 sm:gap-4 rounded-[28px] p-3 sm:p-4 animate-fade-in-up"
-              style={{animationDelay:`${i*50}ms`,animationFillMode:'both',background:'white',border:'1px solid rgba(8,145,178,0.14)',boxShadow:'0 15px 50px rgba(15,23,42,0.06)'}}>
-              <div className="relative w-16 h-16 sm:w-20 sm:h-20 rounded-2xl overflow-hidden shrink-0" style={{background:'linear-gradient(135deg,#f0fbfd,#cffafe)'}}>
-                {product.cover_image ? <Image src={product.cover_image} alt={product.name} fill sizes="80px" className="object-cover"/> : <div className="w-full h-full flex items-center justify-center"><ImageIcon className="w-8 h-8" style={{color:'rgba(8,145,178,0.3)'}}/></div>}
+              style={{animationDelay:`${i*50}ms`,animationFillMode:'both',background:'white',border:'1px solid rgba(217,85,0,0.14)',boxShadow:'0 15px 50px rgba(15,23,42,0.06)'}}>
+              <div className="relative w-16 h-16 sm:w-20 sm:h-20 rounded-2xl overflow-hidden shrink-0" style={{background:'linear-gradient(135deg,#fff7ee,#ffe9d2)'}}>
+                {product.cover_image ? <Image src={product.cover_image} alt={product.name} fill sizes="80px" className="object-cover"/> : <div className="w-full h-full flex items-center justify-center"><ImageIcon className="w-8 h-8" style={{color:'rgba(217,85,0,0.3)'}}/></div>}
               </div>
               <div className="flex-1 min-w-0">
-                <p className="text-sm sm:text-base font-black truncate mb-1" style={{color:'#164e63'}}>{product.name}</p>
+                <p className="text-sm sm:text-base font-black truncate mb-1" style={{color:'#2d1458'}}>{product.name}</p>
                 {customization && customization.length > 0 && (
                   <div className="flex flex-wrap gap-1 mb-1.5">
                     {customization.map(c => (
                       <span key={c.option_id} className="text-[11px] font-semibold px-2 py-0.5 rounded-full"
-                        style={{background:'rgba(8,145,178,0.1)',color:'#0e7490',border:'1px solid rgba(8,145,178,0.2)'}}>
+                        style={{background:'rgba(217,85,0,0.1)',color:'#5b2a9e',border:'1px solid rgba(217,85,0,0.2)'}}>
                         {c.label}: {c.value}
                       </span>
                     ))}
                   </div>
                 )}
-                <p className="font-bold" style={{color:'#0891b2'}}>€{price.toFixed(2)}</p>
+                <p className="font-bold" style={{color:'#d95500'}}>€{price.toFixed(2)}</p>
                 <div className="flex items-center gap-2 mt-2">
-                  <button onClick={() => updateQuantity(rowId,quantity-1)} className="w-7 h-7 rounded-full flex items-center justify-center transition-all hover:scale-110 btn-press shrink-0" style={{border:'1px solid rgba(8,145,178,0.2)',background:'rgba(8,145,178,0.04)'}}><Minus className="w-3 h-3" style={{color:'#155e75'}}/></button>
-                  <span className="w-6 text-center text-sm font-bold shrink-0" style={{color:'#0c2b36'}}>{quantity}</span>
-                  <button onClick={() => updateQuantity(rowId,quantity+1)} className="w-7 h-7 rounded-full flex items-center justify-center transition-all hover:scale-110 btn-press shrink-0" style={{border:'1px solid rgba(8,145,178,0.2)',background:'rgba(8,145,178,0.04)'}}><Plus className="w-3 h-3" style={{color:'#155e75'}}/></button>
+                  <button onClick={() => updateQuantity(rowId,quantity-1)} className="w-7 h-7 rounded-full flex items-center justify-center transition-all hover:scale-110 btn-press shrink-0" style={{border:'1px solid rgba(217,85,0,0.2)',background:'rgba(217,85,0,0.04)'}}><Minus className="w-3 h-3" style={{color:'#3d1b73'}}/></button>
+                  <span className="w-6 text-center text-sm font-bold shrink-0" style={{color:'#2a1450'}}>{quantity}</span>
+                  <button onClick={() => updateQuantity(rowId,quantity+1)} className="w-7 h-7 rounded-full flex items-center justify-center transition-all hover:scale-110 btn-press shrink-0" style={{border:'1px solid rgba(217,85,0,0.2)',background:'rgba(217,85,0,0.04)'}}><Plus className="w-3 h-3" style={{color:'#3d1b73'}}/></button>
                   <button onClick={() => removeItem(rowId)} className="ml-auto w-8 h-8 rounded-lg flex items-center justify-center transition-all hover:scale-110 btn-press shrink-0" style={{background:'rgba(239,68,68,0.06)',border:'1px solid rgba(239,68,68,0.1)'}}><Trash2 className="w-4 h-4 text-red-400"/></button>
                 </div>
               </div>
@@ -484,17 +484,17 @@ export function CartContent({ scope = 'shop' }: { scope?: string }) {
         </div>
 
         <div className="rounded-[28px] p-4 sm:p-5 h-fit md:sticky md:top-20 animate-slide-in-right space-y-4 min-w-0 glass-card">
-          <h2 className="font-black tracking-[-.03em]" style={{color:'#083344'}}>Riepilogo ordine</h2>
+          <h2 className="font-black tracking-[-.03em]" style={{color:'#1f0e3d'}}>Riepilogo ordine</h2>
           {showNotifyReminder && (
-            <div className="flex items-center gap-3 p-3 rounded-xl" style={{ background: 'rgba(8,145,178,0.06)', border: '1px solid rgba(8,145,178,0.2)' }}>
-              <Bell className="w-5 h-5 shrink-0" style={{ color: '#0891b2' }} />
+            <div className="flex items-center gap-3 p-3 rounded-xl" style={{ background: 'rgba(217,85,0,0.06)', border: '1px solid rgba(217,85,0,0.2)' }}>
+              <Bell className="w-5 h-5 shrink-0" style={{ color: '#d95500' }} />
               <div className="flex-1 min-w-0">
-                <p className="text-xs font-bold" style={{ color: '#0c2b36' }}>Attiva le notifiche</p>
+                <p className="text-xs font-bold" style={{ color: '#2a1450' }}>Attiva le notifiche</p>
                 <p className="text-[11px] text-slate-500">Così, se lasci il carrello a metà, possiamo avvisarti per completare l&apos;ordine.</p>
               </div>
               <button type="button" onClick={activateCartNotify} disabled={notifyActivating}
                 className="shrink-0 text-xs font-black px-3.5 py-2 rounded-full transition-transform hover:scale-105 disabled:opacity-60"
-                style={{ background: '#22d3ee', color: '#05212a' }}>
+                style={{ background: '#ff9a3d', color: '#1a0d33' }}>
                 {notifyActivating ? '...' : 'Attiva'}
               </button>
             </div>
@@ -505,7 +505,7 @@ export function CartContent({ scope = 'shop' }: { scope?: string }) {
                 <span className="truncate mr-2">
                   {product.name} ×{quantity}
                   {customization && customization.length > 0 && (
-                    <span className="block text-[11px] text-cyan-700 font-medium truncate">
+                    <span className="block text-[11px] text-zucca-700 font-medium truncate">
                       {customization.map(c => `${c.label}: ${c.value}`).join(', ')}
                     </span>
                   )}
@@ -518,9 +518,9 @@ export function CartContent({ scope = 'shop' }: { scope?: string }) {
             <label className="flex items-center gap-2 cursor-pointer select-none">
               <input type="checkbox" checked={couponSectionOpen}
                 onChange={e => { if (!e.target.checked && couponData) removeCoupon(); setShowCoupon(e.target.checked) }}
-                className="rounded accent-cyan-600 shrink-0" style={{ width: 18, height: 18 }} />
-              <span className="flex items-center gap-1.5 text-sm font-medium" style={{ color: '#0c2b36' }}>
-                <Tag className="w-4 h-4 text-cyan-600" /> Ho un coupon sconto
+                className="rounded accent-zucca-600 shrink-0" style={{ width: 18, height: 18 }} />
+              <span className="flex items-center gap-1.5 text-sm font-medium" style={{ color: '#2a1450' }}>
+                <Tag className="w-4 h-4 text-zucca-600" /> Ho un coupon sconto
               </span>
             </label>
             {couponSectionOpen && (
@@ -528,25 +528,25 @@ export function CartContent({ scope = 'shop' }: { scope?: string }) {
                 <>
                   <div className="flex flex-wrap gap-2">
                     <div className="relative flex-1 min-w-[140px]">
-                      <Tag className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-cyan-400"/>
+                      <Tag className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-zucca-400"/>
                       <input value={couponInput} onChange={e => setCouponInput(e.target.value.toUpperCase())} onKeyDown={e => e.key==='Enter'&&handleApplyCoupon()} placeholder="Codice coupon"
-                        className="w-full h-10 pl-9 pr-3 rounded-xl text-base font-mono outline-none" style={{background:'rgba(8,145,178,0.05)',border:'1px solid rgba(8,145,178,0.15)',color:'#0c2b36'}}/>
+                        className="w-full h-10 pl-9 pr-3 rounded-xl text-base font-mono outline-none" style={{background:'rgba(217,85,0,0.05)',border:'1px solid rgba(217,85,0,0.15)',color:'#2a1450'}}/>
                     </div>
-                    <button onClick={handleApplyCoupon} disabled={couponLoading||!couponInput.trim()} className="shrink-0 px-4 py-2 rounded-full text-sm font-black disabled:opacity-50 transition-all hover:scale-105 btn-press" style={{background:'#22d3ee',color:'#05212a'}}>
+                    <button onClick={handleApplyCoupon} disabled={couponLoading||!couponInput.trim()} className="shrink-0 px-4 py-2 rounded-full text-sm font-black disabled:opacity-50 transition-all hover:scale-105 btn-press" style={{background:'#ff9a3d',color:'#1a0d33'}}>
                       {couponLoading?'...':'Applica'}
                     </button>
                   </div>
                   {couponError && <p className="text-red-500 text-xs">{couponError}</p>}
                 </>
               ) : (
-                <div className="flex items-center justify-between p-3 rounded-xl" style={{background:'rgba(8,145,178,0.06)',border:'1px solid rgba(8,145,178,0.2)'}}>
+                <div className="flex items-center justify-between p-3 rounded-xl" style={{background:'rgba(217,85,0,0.06)',border:'1px solid rgba(217,85,0,0.2)'}}>
                   <div>
-                    <p className="text-sm font-bold text-cyan-700">{couponData.code}</p>
+                    <p className="text-sm font-bold text-zucca-700">{couponData.code}</p>
                     <p className="text-xs text-slate-500">{couponData.discount_percent>0?`-${couponData.discount_percent}%`:`-€${couponData.discount_fixed}`}{couponData.scope==='promo' ? ' (solo prodotti in promo)' : ' (tutto il carrello)'}</p>
                     {welcomeCouponUsed && <p className="text-xs text-red-500 mt-1">Coupon già utilizzato: l'ordine verrà inviato a prezzo intero</p>}
                     {couponData.scope==='promo' && promoSubtotal===0 && <p className="text-xs text-red-500 mt-1">Nessun prodotto in promo nel carrello: sconto non applicato</p>}
                   </div>
-                  <button onClick={removeCoupon} className="p-1 hover:bg-cyan-100 rounded-lg"><X className="w-4 h-4 text-cyan-600"/></button>
+                  <button onClick={removeCoupon} className="p-1 hover:bg-zucca-100 rounded-lg"><X className="w-4 h-4 text-zucca-600"/></button>
                 </div>
               )
             )}
@@ -556,33 +556,33 @@ export function CartContent({ scope = 'shop' }: { scope?: string }) {
               <label className="flex items-center gap-2 cursor-pointer select-none">
                 <input type="checkbox" checked={lotterySectionOpen} disabled={ticketQtyInCart > 0}
                   onChange={e => setShowLottery(e.target.checked)}
-                  className="rounded accent-cyan-600 shrink-0" style={{ width: 18, height: 18 }} />
-                <span className="flex items-center gap-1.5 text-sm font-medium" style={{ color: '#0c2b36' }}>
-                  <Gift className="w-4 h-4 text-cyan-600" /> Voglio partecipare alla lotteria
+                  className="rounded accent-zucca-600 shrink-0" style={{ width: 18, height: 18 }} />
+                <span className="flex items-center gap-1.5 text-sm font-medium" style={{ color: '#2a1450' }}>
+                  <Gift className="w-4 h-4 text-zucca-600" /> Voglio partecipare alla lotteria
                 </span>
               </label>
               {lotterySectionOpen && (
-            <div className="p-3 rounded-xl" style={{ background: ticketQtyInCart > 0 ? 'rgba(8,145,178,0.08)' : 'rgba(8,145,178,0.03)', border: '1px solid rgba(8,145,178,0.15)' }}>
+            <div className="p-3 rounded-xl" style={{ background: ticketQtyInCart > 0 ? 'rgba(217,85,0,0.08)' : 'rgba(217,85,0,0.03)', border: '1px solid rgba(217,85,0,0.15)' }}>
               <span className="text-xs text-slate-400 block mb-2.5">{lotteryPrizeLabel ? `In palio: ${lotteryPrizeLabel}` : 'Ricevi un numero per l\'estrazione'} — €{ticketPrice.toFixed(2)} a biglietto, puoi prenderne più di uno.</span>
 
               {ticketQtyInCart > 0 ? (
                 <div className="space-y-2.5">
                   <div className="flex items-center gap-2">
-                    <button type="button" onClick={() => updateQuantity(LOTTERY_TICKET_PRODUCT_ID, ticketQtyInCart - 1)} className="w-7 h-7 rounded-full flex items-center justify-center bg-white" style={{ border: '1px solid rgba(8,145,178,0.2)' }}><Minus className="w-3 h-3 text-cyan-700" /></button>
-                    <span className="w-6 text-center text-sm font-bold text-cyan-700">{ticketQtyInCart}</span>
-                    <button type="button" onClick={() => updateQuantity(LOTTERY_TICKET_PRODUCT_ID, ticketQtyInCart + 1)} className="w-7 h-7 rounded-full flex items-center justify-center bg-white" style={{ border: '1px solid rgba(8,145,178,0.2)' }}><Plus className="w-3 h-3 text-cyan-700" /></button>
+                    <button type="button" onClick={() => updateQuantity(LOTTERY_TICKET_PRODUCT_ID, ticketQtyInCart - 1)} className="w-7 h-7 rounded-full flex items-center justify-center bg-white" style={{ border: '1px solid rgba(217,85,0,0.2)' }}><Minus className="w-3 h-3 text-zucca-700" /></button>
+                    <span className="w-6 text-center text-sm font-bold text-zucca-700">{ticketQtyInCart}</span>
+                    <button type="button" onClick={() => updateQuantity(LOTTERY_TICKET_PRODUCT_ID, ticketQtyInCart + 1)} className="w-7 h-7 rounded-full flex items-center justify-center bg-white" style={{ border: '1px solid rgba(217,85,0,0.2)' }}><Plus className="w-3 h-3 text-zucca-700" /></button>
                     <span className="text-xs text-slate-500 ml-1">bigliett{ticketQtyInCart > 1 ? 'i' : 'o'} nel carrello</span>
                   </div>
 
                   {participantsCount > 0 && (
                     <button type="button" onClick={() => setShowNumberPicker(v => !v)}
-                      className="text-xs font-semibold text-cyan-700 underline underline-offset-2">
+                      className="text-xs font-semibold text-zucca-700 underline underline-offset-2">
                       {showNumberPicker ? 'Nascondi la scelta dei numeri' : chosenNumbers.length > 0 ? `Numeri scelti: ${chosenNumbers.join(', ')} — modifica` : 'Vuoi scegliere tu i numeri? (facoltativo)'}
                     </button>
                   )}
 
                   {showNumberPicker && participantsCount > 0 && (
-                    <div className="p-2.5 rounded-lg bg-white" style={{ border: '1px solid rgba(8,145,178,0.15)' }}>
+                    <div className="p-2.5 rounded-lg bg-white" style={{ border: '1px solid rgba(217,85,0,0.15)' }}>
                       <p className="text-xs text-slate-500 mb-2">
                         Scegli fino a {ticketQtyInCart} numer{ticketQtyInCart > 1 ? 'i' : 'o'} ({chosenNumbers.length}/{ticketQtyInCart} scelt{chosenNumbers.length === 1 ? 'o' : 'i'}). I biglietti senza numero scelto vengono assegnati automaticamente.
                       </p>
@@ -597,8 +597,8 @@ export function CartContent({ scope = 'shop' }: { scope?: string }) {
                               style={isTaken
                                 ? { background: 'rgba(148,163,184,0.15)', color: 'rgba(100,116,139,0.5)', textDecoration: 'line-through' }
                                 : isChosen
-                                  ? { background: '#22d3ee', color: '#05212a' }
-                                  : { background: 'rgba(8,145,178,0.05)', border: '1px solid rgba(8,145,178,0.15)', color: '#0c2b36' }}>
+                                  ? { background: '#ff9a3d', color: '#1a0d33' }
+                                  : { background: 'rgba(217,85,0,0.05)', border: '1px solid rgba(217,85,0,0.15)', color: '#2a1450' }}>
                               {n}
                             </button>
                           )
@@ -609,14 +609,14 @@ export function CartContent({ scope = 'shop' }: { scope?: string }) {
                 </div>
               ) : (
                 <div className="flex items-center gap-2">
-                  <div className="flex items-center gap-1 bg-white rounded-lg border border-cyan-200 px-1">
-                    <button type="button" onClick={() => setTicketQtyToAdd(q => Math.max(1, q - 1))} className="w-7 h-7 flex items-center justify-center text-cyan-700"><Minus className="w-3 h-3" /></button>
+                  <div className="flex items-center gap-1 bg-white rounded-lg border border-zucca-200 px-1">
+                    <button type="button" onClick={() => setTicketQtyToAdd(q => Math.max(1, q - 1))} className="w-7 h-7 flex items-center justify-center text-zucca-700"><Minus className="w-3 h-3" /></button>
                     <span className="w-5 text-center text-sm font-bold text-slate-800">{ticketQtyToAdd}</span>
-                    <button type="button" onClick={() => setTicketQtyToAdd(q => Math.min(20, q + 1))} className="w-7 h-7 flex items-center justify-center text-cyan-700"><Plus className="w-3 h-3" /></button>
+                    <button type="button" onClick={() => setTicketQtyToAdd(q => Math.min(20, q + 1))} className="w-7 h-7 flex items-center justify-center text-zucca-700"><Plus className="w-3 h-3" /></button>
                   </div>
                   <button type="button" onClick={() => addLotteryTickets(ticketQtyToAdd)}
                     className="text-xs font-black px-3.5 py-2 rounded-full transition-transform hover:scale-105 active:scale-95"
-                    style={{ background: '#22d3ee', color: '#05212a' }}>
+                    style={{ background: '#ff9a3d', color: '#1a0d33' }}>
                     Aggiungi (€{(ticketQtyToAdd * ticketPrice).toFixed(2)})
                   </button>
                 </div>
@@ -625,7 +625,7 @@ export function CartContent({ scope = 'shop' }: { scope?: string }) {
               )}
             </div>
           )}
-          <div className="border-t border-cyan-100 pt-3 space-y-1.5">
+          <div className="border-t border-zucca-100 pt-3 space-y-1.5">
             <div className="flex justify-between text-sm text-slate-500"><span>Subtotale</span><span>€{subtotal.toFixed(2)}</span></div>
             {couponData&&discountAmount>0&&<div className="flex justify-between text-sm text-green-600 font-medium"><span>Sconto coupon</span><span>-€{discountAmount.toFixed(2)}</span></div>}
             {referralPreviewPercent>0&&(
@@ -634,23 +634,23 @@ export function CartContent({ scope = 'shop' }: { scope?: string }) {
                 <span>-€{referralPreviewAmount.toFixed(2)}</span>
               </div>
             )}
-            <div className="flex justify-between font-bold pt-1"><span style={{color:'#0c2b36'}}>Totale</span><span className="text-xl" style={{color:'#0891b2'}}>€{totalWithReferralPreview.toFixed(2)}</span></div>
+            <div className="flex justify-between font-bold pt-1"><span style={{color:'#2a1450'}}>Totale</span><span className="text-xl" style={{color:'#d95500'}}>€{totalWithReferralPreview.toFixed(2)}</span></div>
           </div>
           {!onlyLotteryInCart && (
             <div className="space-y-2.5">
               <div className="grid grid-cols-2 gap-2.5">
-                <label className="flex items-center gap-2 p-3 rounded-xl cursor-pointer select-none" style={{ background: deliveryMethod === 'consegna' ? 'rgba(8,145,178,0.06)' : 'rgba(8,145,178,0.02)', border: '1px solid rgba(8,145,178,0.15)' }}>
+                <label className="flex items-center gap-2 p-3 rounded-xl cursor-pointer select-none" style={{ background: deliveryMethod === 'consegna' ? 'rgba(217,85,0,0.06)' : 'rgba(217,85,0,0.02)', border: '1px solid rgba(217,85,0,0.15)' }}>
                   <input type="checkbox" checked={deliveryMethod === 'consegna'} onChange={e => setDeliveryMethod(e.target.checked ? 'consegna' : null)}
-                    className="w-4.5 h-4.5 rounded accent-cyan-600 shrink-0" style={{ width: 18, height: 18 }} />
-                  <span className="flex items-center gap-1.5 text-sm font-medium" style={{ color: '#0c2b36' }}>
-                    <Truck className="w-4 h-4 text-cyan-600" /> Consegna a domicilio
+                    className="w-4.5 h-4.5 rounded accent-zucca-600 shrink-0" style={{ width: 18, height: 18 }} />
+                  <span className="flex items-center gap-1.5 text-sm font-medium" style={{ color: '#2a1450' }}>
+                    <Truck className="w-4 h-4 text-zucca-600" /> Consegna a domicilio
                   </span>
                 </label>
-                <label className="flex items-center gap-2 p-3 rounded-xl cursor-pointer select-none" style={{ background: deliveryMethod === 'ritiro' ? 'rgba(8,145,178,0.06)' : 'rgba(8,145,178,0.02)', border: '1px solid rgba(8,145,178,0.15)' }}>
+                <label className="flex items-center gap-2 p-3 rounded-xl cursor-pointer select-none" style={{ background: deliveryMethod === 'ritiro' ? 'rgba(217,85,0,0.06)' : 'rgba(217,85,0,0.02)', border: '1px solid rgba(217,85,0,0.15)' }}>
                   <input type="checkbox" checked={deliveryMethod === 'ritiro'} onChange={e => setDeliveryMethod(e.target.checked ? 'ritiro' : null)}
-                    className="w-4.5 h-4.5 rounded accent-cyan-600 shrink-0" style={{ width: 18, height: 18 }} />
-                  <span className="flex items-center gap-1.5 text-sm font-medium" style={{ color: '#0c2b36' }}>
-                    <Store className="w-4 h-4 text-cyan-600" /> Vieni a ritirare
+                    className="w-4.5 h-4.5 rounded accent-zucca-600 shrink-0" style={{ width: 18, height: 18 }} />
+                  <span className="flex items-center gap-1.5 text-sm font-medium" style={{ color: '#2a1450' }}>
+                    <Store className="w-4 h-4 text-zucca-600" /> Vieni a ritirare
                   </span>
                 </label>
               </div>
@@ -662,24 +662,24 @@ export function CartContent({ scope = 'shop' }: { scope?: string }) {
 
               {deliveryMethod === 'consegna' && (
                 <input type="text" placeholder="Indirizzo di consegna (via, civico, città)" value={address} onChange={e => setAddress(e.target.value)}
-                  className="w-full h-11 px-4 rounded-2xl text-base outline-none" style={{ background: 'rgba(8,145,178,0.05)', border: '1px solid rgba(8,145,178,0.15)', color: '#0c2b36' }} />
+                  className="w-full h-11 px-4 rounded-2xl text-base outline-none" style={{ background: 'rgba(217,85,0,0.05)', border: '1px solid rgba(217,85,0,0.15)', color: '#2a1450' }} />
               )}
             </div>
           )}
 
           <form onSubmit={handleSubmit} className="space-y-3">
             <input type="tel" placeholder="Numero di telefono" value={phone} onChange={e=>handlePhoneChange(e.target.value)}
-              className="w-full h-11 px-4 rounded-2xl text-base outline-none" style={{background:'rgba(8,145,178,0.05)',border:'1px solid rgba(8,145,178,0.15)',color:'#0c2b36'}}/>
+              className="w-full h-11 px-4 rounded-2xl text-base outline-none" style={{background:'rgba(217,85,0,0.05)',border:'1px solid rgba(217,85,0,0.15)',color:'#2a1450'}}/>
             {!showReferralField ? (
               <button type="button" onClick={() => setShowReferralField(true)}
-                className="flex items-center gap-1.5 text-xs font-medium text-cyan-700 underline underline-offset-2">
+                className="flex items-center gap-1.5 text-xs font-medium text-zucca-700 underline underline-offset-2">
                 <Gift className="w-3.5 h-3.5" /> Ti ha consigliato un amico? Inserisci il suo numero e hai il 5% di sconto
               </button>
             ) : (
               <div className="space-y-1">
                 <label className="text-xs font-medium text-slate-500">Numero di telefono di chi ti ha invitato</label>
                 <input type="tel" placeholder="Es. 347 1234567" value={referredByPhone} onChange={e => setReferredByPhone(e.target.value)}
-                  className="w-full h-11 px-4 rounded-2xl text-base outline-none" style={{background:'rgba(22,163,74,0.05)',border:`1px solid ${referralPreviewSource==='invited'?'rgba(22,163,74,0.5)':referralPreviewError?'rgba(239,68,68,0.4)':'rgba(22,163,74,0.2)'}`,color:'#0c2b36'}}/>
+                  className="w-full h-11 px-4 rounded-2xl text-base outline-none" style={{background:'rgba(22,163,74,0.05)',border:`1px solid ${referralPreviewSource==='invited'?'rgba(22,163,74,0.5)':referralPreviewError?'rgba(239,68,68,0.4)':'rgba(22,163,74,0.2)'}`,color:'#2a1450'}}/>
                 {referralPreviewLoading && <p className="text-xs text-slate-400">Verifica in corso...</p>}
                 {!referralPreviewLoading && referralPreviewSource==='invited' && (
                   <p className="text-xs text-green-600 font-medium">✅ Numero verificato: avrai il {referralPreviewPercent}% di sconto su questo ordine!</p>
@@ -696,7 +696,7 @@ export function CartContent({ scope = 'shop' }: { scope?: string }) {
               <p className="text-xs text-green-600 font-medium">🎁 Hai un premio pronto: il {referralPreviewPercent}% di sconto è già applicato su questo ordine!</p>
             )}
             {error&&<p className="text-red-500 text-xs">{error}</p>}
-            <button type="submit" disabled={submitting || referralPreviewLoading || (showReferralField && !!referredByPhone.trim() && !!referralPreviewError)} className="w-full py-4 rounded-2xl font-black transition-all hover:-translate-y-0.5 btn-press disabled:opacity-60" style={{background:'#22d3ee',color:'#05212a',boxShadow:'0 15px 40px rgba(34,211,238,0.30)'}}>
+            <button type="submit" disabled={submitting || referralPreviewLoading || (showReferralField && !!referredByPhone.trim() && !!referralPreviewError)} className="w-full py-4 rounded-2xl font-black transition-all hover:-translate-y-0.5 btn-press disabled:opacity-60" style={{background:'#ff9a3d',color:'#1a0d33',boxShadow:'0 15px 40px rgba(255,154,61,0.30)'}}>
               {submitting?'Invio in corso...':'Invia ordine'}
             </button>
             <button type="button" onClick={handleWhatsAppOrder} disabled={submitting || referralPreviewLoading || (showReferralField && !!referredByPhone.trim() && !!referralPreviewError)}
@@ -708,10 +708,10 @@ export function CartContent({ scope = 'shop' }: { scope?: string }) {
           </form>
           <p className="text-xs text-center text-slate-400">Ti contatteremo su WhatsApp per confermare</p>
 
-          <div className="border-t border-cyan-100 pt-4 space-y-3">
+          <div className="border-t border-zucca-100 pt-4 space-y-3">
             <CodBanner />
             {!onlyLotteryInCart && (
-              <Link href="/consegne" className="flex items-center justify-center gap-1.5 text-xs text-cyan-700/70 hover:text-cyan-700 transition-colors underline underline-offset-2">
+              <Link href="/consegne" className="flex items-center justify-center gap-1.5 text-xs text-zucca-700/70 hover:text-zucca-700 transition-colors underline underline-offset-2">
                 <MapPin className="w-3.5 h-3.5" /> Vedi le zone di consegna e come funziona il ritiro
               </Link>
             )}

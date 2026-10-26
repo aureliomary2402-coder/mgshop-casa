@@ -22,8 +22,8 @@ export function SiteFooter() {
 
   return (
     <footer className="relative overflow-hidden pb-24"
-      style={{ background: '#06151c' }}>
-      <div className="pointer-events-none absolute left-1/2 top-[-160px] h-[320px] w-[600px] -translate-x-1/2 rounded-full bg-cyan-400/10 blur-[110px]" />
+      style={{ background: '#120a22' }}>
+      <div className="pointer-events-none absolute left-1/2 top-[-160px] h-[320px] w-[600px] -translate-x-1/2 rounded-full bg-zucca-400/10 blur-[110px]" />
       {/* Bolle decorative leggere, coerenti col resto del sito */}
       <div className="absolute inset-0 pointer-events-none opacity-60">
         {[
@@ -47,25 +47,25 @@ export function SiteFooter() {
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-8 sm:gap-6">
           <div>
             <div className="flex items-center gap-2 mb-3">
-              <div className="flex h-10 w-10 items-center justify-center rounded-2xl text-[#05212a]"
-                style={{ background: '#22d3ee', boxShadow: '0 0 30px rgba(34,211,238,.30)' }}>
+              <div className="flex h-10 w-10 items-center justify-center rounded-2xl text-[#1a0d33]"
+                style={{ background: '#ff9a3d', boxShadow: '0 0 30px rgba(255,154,61,.30)' }}>
                 <MGShopStamp size={20} />
               </div>
               <span className="text-lg font-black text-white tracking-[-0.03em]">
-                MG<span style={{ color: '#22d3ee' }}>Shop</span>
+                MG<span style={{ color: '#ff9a3d' }}>Shop</span>
               </span>
             </div>
-            <p className="text-sm text-cyan-100/70 leading-relaxed max-w-xs">
+            <p className="text-sm text-zucca-100/70 leading-relaxed max-w-xs">
               Il tuo negozio di fiducia per la casa.<br />Qualità, convenienza e servizio.
             </p>
           </div>
 
           <div>
-            <p className="text-[11px] font-black uppercase tracking-[0.2em] text-cyan-300 mb-4">Link utili</p>
+            <p className="text-[11px] font-black uppercase tracking-[0.2em] text-zucca-300 mb-4">Link utili</p>
             <ul className="grid grid-cols-2 gap-x-4 gap-y-2">
               {LINKS.map(l => (
                 <li key={l.href}>
-                  <Link href={l.href} className="text-sm text-cyan-100/80 hover:text-white transition-colors">
+                  <Link href={l.href} className="text-sm text-zucca-100/80 hover:text-white transition-colors">
                     {l.label}
                   </Link>
                 </li>
@@ -74,7 +74,7 @@ export function SiteFooter() {
           </div>
 
           <div>
-            <Link href="/social" className="inline-block text-[11px] font-black uppercase tracking-[0.2em] text-cyan-300 hover:text-white transition-colors mb-4">Seguici sui social →</Link>
+            <Link href="/social" className="inline-block text-[11px] font-black uppercase tracking-[0.2em] text-zucca-300 hover:text-white transition-colors mb-4">Seguici sui social →</Link>
             <div className="flex items-center gap-2.5">
               <a href={SOCIAL_LINKS.instagram} target="_blank" rel="noopener noreferrer" aria-label="Instagram"
                 className="w-10 h-10 rounded-full flex items-center justify-center transition-transform hover:scale-110 btn-press"

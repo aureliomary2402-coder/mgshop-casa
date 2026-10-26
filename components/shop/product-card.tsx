@@ -34,7 +34,7 @@ export function ProductCard({ product, index = 0 }: { product: Product; index?: 
     addItem(product, undefined, undefined, 'shop')
     toast.success(`${product.name} aggiunto!`, {
       duration: 2000,
-      style: { background: '#cffafe', border: '1px solid #0891b2', color: '#155e75' }
+      style: { background: '#ffe9d2', border: '1px solid #d95500', color: '#3d1b73' }
     })
   }
 
@@ -72,9 +72,9 @@ export function ProductCard({ product, index = 0 }: { product: Product; index?: 
       style={{
         animationDelay: `${Math.min(index * 40, 400)}ms`,
         animationFillMode: 'both',
-        borderColor: isHovered ? '#67e8f9' : 'rgba(8,145,178,0.16)',
+        borderColor: isHovered ? '#ffb877' : 'rgba(217,85,0,0.16)',
         boxShadow: isHovered
-          ? '0 30px 80px rgba(8,145,178,0.20)'
+          ? '0 30px 80px rgba(217,85,0,0.20)'
           : '0 15px 50px rgba(15,23,42,0.06)',
         transform: isHovered ? 'translateY(-6px)' : 'translateY(0)',
         transition: 'transform 0.4s cubic-bezier(0.22,1,0.36,1), box-shadow 0.4s ease, border-color 0.3s ease',
@@ -89,7 +89,7 @@ export function ProductCard({ product, index = 0 }: { product: Product; index?: 
           -{discountPercent}%
         </div>
       )}
-      <div className="relative aspect-square overflow-hidden" style={{ background: 'linear-gradient(135deg, #f0fbfd, #cffafe)' }}>
+      <div className="relative aspect-square overflow-hidden" style={{ background: 'linear-gradient(135deg, #fff7ee, #ffe9d2)' }}>
         {imgUrl && !imgError ? (
           <Image
             src={imgUrl}
@@ -104,7 +104,7 @@ export function ProductCard({ product, index = 0 }: { product: Product; index?: 
           />
         ) : (
           <div className="w-full h-full flex items-center justify-center">
-            <ImageIcon className="w-10 h-10" style={{ color: 'rgba(8,145,178,0.3)' }} />
+            <ImageIcon className="w-10 h-10" style={{ color: 'rgba(217,85,0,0.3)' }} />
           </div>
         )}
         {product.torna_presto && <TornaPrestoStamp />}
@@ -119,7 +119,7 @@ export function ProductCard({ product, index = 0 }: { product: Product; index?: 
           <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold transition-all duration-300"
             style={{
               background: 'rgba(240,251,253,0.95)',
-              color: '#155e75',
+              color: '#3d1b73',
               opacity: isHovered ? 1 : 0,
               transform: isHovered ? 'translateY(0) scale(1)' : 'translateY(6px) scale(0.9)',
             }}>
@@ -130,13 +130,13 @@ export function ProductCard({ product, index = 0 }: { product: Product; index?: 
 
       <div className="p-4">
         <h3 className="mb-3 line-clamp-2 text-sm font-black leading-snug tracking-[-0.01em] transition-colors"
-          style={{ color: isHovered ? '#0891b2' : '#164e63' }}>
+          style={{ color: isHovered ? '#d95500' : '#2d1458' }}>
           {product.name}
         </h3>
         <div className="flex items-center justify-between">
           <span className="flex items-baseline gap-1.5">
             {hasDiscount && <span className="text-xs text-slate-500 line-through">€{product.old_price!.toFixed(2)}</span>}
-            <span className="text-lg font-black tracking-[-0.02em]" style={{ color: hasDiscount ? '#dc2626' : '#0e7490' }}>{priceLabel}</span>
+            <span className="text-lg font-black tracking-[-0.02em]" style={{ color: hasDiscount ? '#dc2626' : '#5b2a9e' }}>{priceLabel}</span>
           </span>
           <button
             onClick={handleAddToCart}
@@ -144,7 +144,7 @@ export function ProductCard({ product, index = 0 }: { product: Product; index?: 
             className="flex items-center gap-1.5 rounded-2xl px-3.5 py-2 text-xs font-black btn-press transition-all hover:-translate-y-0.5 disabled:cursor-not-allowed"
             style={product.torna_presto
               ? { background: '#e2e8f0', color: '#475569', boxShadow: 'none' }
-              : { background: '#22d3ee', color: '#05212a', boxShadow: '0 10px 25px rgba(34,211,238,0.28)' }}>
+              : { background: '#ff9a3d', color: '#1a0d33', boxShadow: '0 10px 25px rgba(255,154,61,0.28)' }}>
             <ShoppingCart className="w-3.5 h-3.5" />
             <span className="hidden sm:inline">{product.torna_presto ? 'Non disponibile' : product.is_customizable ? 'Personalizza' : 'Aggiungi'}</span>
           </button>

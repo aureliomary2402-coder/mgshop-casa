@@ -39,7 +39,7 @@ export default function PreferitiPage() {
     if (p.torna_presto) return
     addItem(p, undefined, undefined, 'shop')
     toast.success(`${p.name} aggiunto al carrello!`, {
-      style: { background: '#cffafe', border: '1px solid #0891b2', color: '#155e75' }
+      style: { background: '#ffe9d2', border: '1px solid #d95500', color: '#3d1b73' }
     })
   }
 
@@ -67,7 +67,7 @@ export default function PreferitiPage() {
           </div>
           <p className="text-lg font-medium text-slate-600 mb-1">Nessun preferito ancora</p>
           <p className="text-sm text-slate-400 mb-6">Tocca il cuoricino su un prodotto per salvarlo qui.</p>
-          <Link href="/shop" className="inline-flex h-14 items-center justify-center gap-3 rounded-2xl bg-cyan-600 px-8 font-black text-white shadow-[0_12px_32px_rgba(8,145,178,.35)] transition duration-300 hover:-translate-y-1 hover:bg-cyan-500">
+          <Link href="/shop" className="inline-flex h-14 items-center justify-center gap-3 rounded-2xl bg-zucca-600 px-8 font-black text-white shadow-[0_12px_32px_rgba(217,85,0,.35)] transition duration-300 hover:-translate-y-1 hover:bg-zucca-500">
             Vai al negozio
           </Link>
         </div>
@@ -77,14 +77,14 @@ export default function PreferitiPage() {
             const imgUrl = optimizeImage(p.card_image || p.cover_image, 300)
             return (
               <div key={p.id} className="mg-premium-product-card rounded-[28px] overflow-hidden animate-fade-in-up"
-                style={{ background: 'white', border: '1px solid rgba(8,145,178,0.08)' }}>
-                <div className="relative aspect-square cursor-pointer" style={{ background: 'linear-gradient(135deg, #f0fbfd, #cffafe)' }}
+                style={{ background: 'white', border: '1px solid rgba(217,85,0,0.08)' }}>
+                <div className="relative aspect-square cursor-pointer" style={{ background: 'linear-gradient(135deg, #fff7ee, #ffe9d2)' }}
                   onClick={() => openDetail(p.id)}>
                   {imgUrl ? (
                     <Image src={imgUrl} alt={p.name} fill sizes="(max-width: 640px) 50vw, (max-width: 768px) 33vw, 25vw" className="object-cover" />
                   ) : (
                     <div className="w-full h-full flex items-center justify-center">
-                      <ImageIcon className="w-8 h-8" style={{ color: 'rgba(8,145,178,0.3)' }} />
+                      <ImageIcon className="w-8 h-8" style={{ color: 'rgba(217,85,0,0.3)' }} />
                     </div>
                   )}
                   <button onClick={(e) => { e.stopPropagation(); removeFromWishlist(p.id) }}
@@ -100,12 +100,12 @@ export default function PreferitiPage() {
                     {p.name}
                   </h3>
                   <div className="flex items-center justify-between">
-                    <span className="font-bold text-base" style={{ color: '#0891b2' }}>€{p.price.toFixed(2)}</span>
+                    <span className="font-bold text-base" style={{ color: '#d95500' }}>€{p.price.toFixed(2)}</span>
                     <button onClick={() => handleAdd(p)} disabled={p.torna_presto}
                       className="flex h-9 w-9 items-center justify-center rounded-full btn-press transition-all disabled:cursor-not-allowed"
                       style={p.torna_presto
                         ? { background: '#e2e8f0', color: '#94a3b8' }
-                        : { background: '#22d3ee', color: '#05212a', boxShadow: '0 8px 20px rgba(34,211,238,.30)' }}>
+                        : { background: '#ff9a3d', color: '#1a0d33', boxShadow: '0 8px 20px rgba(255,154,61,.30)' }}>
                       <ShoppingCart className="w-3.5 h-3.5" />
                     </button>
                   </div>

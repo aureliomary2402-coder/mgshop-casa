@@ -37,7 +37,7 @@ export function PageHero({ icon, title, subtitle, badge, cart, children }: PageH
               <ShoppingBag className="h-4 w-4" />
               Carrello
               {cart.count > 0 && (
-                <span className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-cyan-400 text-xs font-black text-[#062029]">
+                <span className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-zucca-400 text-xs font-black text-[#062029]">
                   {cart.count}
                 </span>
               )}

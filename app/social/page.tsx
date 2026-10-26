@@ -72,10 +72,10 @@ export default function SocialPage() {
   const openChat = useUIPanelsStore(s => s.openChat)
 
   return (
-    <div className="min-h-screen" style={{ background: 'linear-gradient(180deg,#03131a 0%,#071e27 45%,#03131a 100%)' }}>
+    <div className="min-h-screen" style={{ background: 'linear-gradient(180deg,#0d0618 0%,#071e27 45%,#0d0618 100%)' }}>
       <PageHero
         icon={Share2}
-        iconColor="#22d3ee"
+        iconColor="#ff9a3d"
         badge={{ icon: Share2, text: 'Resta connesso' }}
         title="Seguici sui social"
         subtitle="Tutti i nostri canali in un unico posto: novità, promo e curiosità di MGShop Casa."
@@ -84,18 +84,18 @@ export default function SocialPage() {
       <div className="mg-page-shell relative max-w-4xl mx-auto px-4 pb-20 -mt-4">
         <button
           onClick={openChat}
-          className="group relative mb-5 flex w-full items-center gap-4 rounded-[28px] border border-cyan-300/15 bg-[#071a22] p-5 text-left transition-transform hover:-translate-y-1 neon-glow"
+          className="group relative mb-5 flex w-full items-center gap-4 rounded-[28px] border border-zucca-300/15 bg-[#160b29] p-5 text-left transition-transform hover:-translate-y-1 neon-glow"
         >
           <span
-            className="flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl text-[#05212a]"
-            style={{ background: '#22d3ee' }}
+            className="flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl text-[#1a0d33]"
+            style={{ background: '#ff9a3d' }}
           >
             <MessageCircle className="w-7 h-7" />
           </span>
 
           <div className="flex-1 min-w-0">
             <p className="text-base font-bold text-white">Scrivici in chat</p>
-            <p className="text-xs font-medium mb-1" style={{ color: '#67e8f9' }}>Risposta rapida</p>
+            <p className="text-xs font-medium mb-1" style={{ color: '#ffb877' }}>Risposta rapida</p>
             <p className="text-xs leading-snug" style={{ color: 'rgba(224,247,250,0.65)' }}>Hai una domanda? Parla subito con noi, senza uscire dal sito.</p>
           </div>
 
@@ -112,7 +112,7 @@ export default function SocialPage() {
               href={href}
               target="_blank"
               rel="noopener noreferrer"
-              className={`group relative flex items-center gap-4 rounded-[28px] border border-cyan-300/15 bg-[#071a22] p-5 transition-transform hover:-translate-y-1 ${neonClass}`}
+              className={`group relative flex items-center gap-4 rounded-[28px] border border-zucca-300/15 bg-[#160b29] p-5 transition-transform hover:-translate-y-1 ${neonClass}`}
             >
               <span
                 className="w-16 h-16 shrink-0 rounded-2xl flex items-center justify-center text-white"
@@ -123,7 +123,7 @@ export default function SocialPage() {
 
               <div className="flex-1 min-w-0">
                 <p className="text-base font-bold text-white">{name}</p>
-                <p className="text-xs font-medium mb-1" style={{ color: '#67e8f9' }}>{handle}</p>
+                <p className="text-xs font-medium mb-1" style={{ color: '#ffb877' }}>{handle}</p>
                 <p className="text-xs leading-snug" style={{ color: 'rgba(224,247,250,0.65)' }}>{description}</p>
               </div>
 

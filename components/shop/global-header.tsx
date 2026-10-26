@@ -19,7 +19,7 @@ function HighlightedText({ text, query }: { text: string; query: string }) {
   return (
     <>
       {text.slice(0, idx)}
-      <span style={{ color: '#0891b2', fontWeight: 700 }}>{text.slice(idx, idx + query.length)}</span>
+      <span style={{ color: '#d95500', fontWeight: 700 }}>{text.slice(idx, idx + query.length)}</span>
       {text.slice(idx + query.length)}
     </>
   )
@@ -103,7 +103,7 @@ export function GlobalHeader({ categories = [] }: { categories?: Category[] }) {
   // della pagina corrente evidenziata in ciano (come gli accenti della landing).
   const navCls = (active: boolean, accent = false) =>
     `hidden lg:flex items-center gap-1.5 px-3.5 py-2 rounded-full text-sm font-bold transition-all btn-press ${
-      active ? 'bg-cyan-100 text-cyan-800' : accent ? 'text-cyan-700 hover:bg-cyan-50' : 'text-slate-600 hover:bg-slate-100 hover:text-slate-950'
+      active ? 'bg-zucca-100 text-zucca-800' : accent ? 'text-zucca-700 hover:bg-zucca-50' : 'text-slate-600 hover:bg-slate-100 hover:text-slate-950'
     }`
 
   const handleSearch = (value: string) => {
@@ -200,7 +200,7 @@ export function GlobalHeader({ categories = [] }: { categories?: Category[] }) {
         <div className={`flex items-center gap-2 ${searchOpen ? "flex-1 min-w-0 sm:flex-none" : ""}`}>
           <div ref={searchBoxRef} className={`transition-all duration-300 min-w-0 ${searchOpen ? 'flex flex-1 sm:flex-none sm:w-64' : 'hidden md:flex md:flex-1 md:max-w-[10rem]'} ${searchFocused ? 'sm:w-72' : ''}`}>
             <div className="relative w-full">
-              <Search className={`absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 pointer-events-none transition-colors duration-300 ${searchFocused ? 'text-cyan-500' : 'text-cyan-400'}`} />
+              <Search className={`absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 pointer-events-none transition-colors duration-300 ${searchFocused ? 'text-zucca-500' : 'text-zucca-400'}`} />
               <input ref={inputRef} type="search" placeholder="Cerca prodotti..." value={searchValue}
                 onChange={e => handleSearch(e.target.value)}
                 onFocus={() => { setSearchFocused(true); if (searchValue.trim()) setDropdownOpen(true) }}
@@ -208,18 +208,18 @@ export function GlobalHeader({ categories = [] }: { categories?: Category[] }) {
                 className="w-full h-10 pl-9 pr-9 rounded-full text-base outline-none transition-all duration-300"
                 style={{
                   background: searchFocused ? '#ffffff' : 'rgba(15,23,42,0.04)',
-                  border: searchFocused ? '1px solid #22d3ee' : '1px solid rgba(15,23,42,0.08)',
-                  color: '#0c2b36',
-                  boxShadow: searchFocused ? '0 0 0 4px rgba(34,211,238,0.18)' : 'none',
+                  border: searchFocused ? '1px solid #ff9a3d' : '1px solid rgba(15,23,42,0.08)',
+                  color: '#2a1450',
+                  boxShadow: searchFocused ? '0 0 0 4px rgba(255,154,61,0.18)' : 'none',
                 }} />
               {searchLoading && (
-                <span className="absolute right-9 top-1/2 -translate-y-1/2 w-3.5 h-3.5 rounded-full border-2 border-cyan-300 border-t-cyan-600 animate-spin" />
+                <span className="absolute right-9 top-1/2 -translate-y-1/2 w-3.5 h-3.5 rounded-full border-2 border-zucca-300 border-t-zucca-600 animate-spin" />
               )}
-              {searchValue && <button onClick={handleClearSearch} className="absolute right-3 top-1/2 -translate-y-1/2 text-cyan-400 hover:text-cyan-600 transition-colors"><X className="w-4 h-4" /></button>}
+              {searchValue && <button onClick={handleClearSearch} className="absolute right-3 top-1/2 -translate-y-1/2 text-zucca-400 hover:text-zucca-600 transition-colors"><X className="w-4 h-4" /></button>}
 
               {dropdownOpen && searchValue.trim() && (
                 <div className="fixed left-3 right-3 top-[7.4rem] sm:absolute sm:top-full sm:left-0 sm:right-auto sm:mt-2 sm:w-auto sm:min-w-[300px] rounded-2xl overflow-hidden shadow-xl animate-scale-in z-50"
-                  style={{ background: 'white', border: '1px solid rgba(8,145,178,0.15)', boxShadow: '0 20px 60px rgba(0,0,0,0.15)' }}>
+                  style={{ background: 'white', border: '1px solid rgba(217,85,0,0.15)', boxShadow: '0 20px 60px rgba(0,0,0,0.15)' }}>
                   {searchResults.length > 0 ? (
                     <>
                       <div className="max-h-96 overflow-y-auto p-1.5">
@@ -227,23 +227,23 @@ export function GlobalHeader({ categories = [] }: { categories?: Category[] }) {
                           const imgUrl = optimizeImage(product.card_image || product.cover_image, 160)
                           return (
                             <button key={product.id} onClick={() => handleSelectProduct(product)}
-                              className="w-full flex items-center gap-3 p-2 rounded-xl text-left hover:bg-cyan-50 transition-colors">
-                              <div className="relative w-12 h-12 rounded-lg shrink-0 overflow-hidden" style={{ background: 'linear-gradient(135deg, #f0fbfd, #cffafe)' }}>
-                                {imgUrl ? <Image src={imgUrl} alt={product.name} fill sizes="48px" className="object-cover" /> : <ImageIcon className="w-4 h-4 text-cyan-300" />}
+                              className="w-full flex items-center gap-3 p-2 rounded-xl text-left hover:bg-zucca-50 transition-colors">
+                              <div className="relative w-12 h-12 rounded-lg shrink-0 overflow-hidden" style={{ background: 'linear-gradient(135deg, #fff7ee, #ffe9d2)' }}>
+                                {imgUrl ? <Image src={imgUrl} alt={product.name} fill sizes="48px" className="object-cover" /> : <ImageIcon className="w-4 h-4 text-zucca-300" />}
                               </div>
                               <div className="flex-1 min-w-0">
-                                <div className="text-sm font-medium leading-snug line-clamp-2" style={{ color: '#0c2b36' }}>
+                                <div className="text-sm font-medium leading-snug line-clamp-2" style={{ color: '#2a1450' }}>
                                   <HighlightedText text={product.name} query={searchValue} />
                                 </div>
-                                <div className="text-sm font-bold mt-0.5" style={{ color: '#0891b2' }}>€{product.price.toFixed(2)}</div>
+                                <div className="text-sm font-bold mt-0.5" style={{ color: '#d95500' }}>€{product.price.toFixed(2)}</div>
                               </div>
                             </button>
                           )
                         })}
                       </div>
                       <button onClick={handleSeeAllResults}
-                        className="w-full flex items-center justify-center gap-1.5 py-3 text-sm font-semibold border-t transition-colors hover:bg-cyan-50"
-                        style={{ borderColor: 'rgba(8,145,178,0.12)', color: '#0891b2' }}>
+                        className="w-full flex items-center justify-center gap-1.5 py-3 text-sm font-semibold border-t transition-colors hover:bg-zucca-50"
+                        style={{ borderColor: 'rgba(217,85,0,0.12)', color: '#d95500' }}>
                         Vedi tutti i risultati{searchCount > 0 ? ` (${searchCount})` : ''}
                         <ChevronDown className="w-3.5 h-3.5 -rotate-90" />
                       </button>
@@ -271,11 +271,11 @@ export function GlobalHeader({ categories = [] }: { categories?: Category[] }) {
             )}
           </Link>
           <Link href="/carrello" aria-label="Carrello" className="relative flex h-10 w-10 items-center justify-center rounded-full transition-all hover:scale-105 btn-press group"
-            style={{ background: '#22d3ee', color: '#05212a', boxShadow: '0 8px 22px rgba(34,211,238,0.35)' }}>
+            style={{ background: '#ff9a3d', color: '#1a0d33', boxShadow: '0 8px 22px rgba(255,154,61,0.35)' }}>
             <ShoppingBag className={`w-5 h-5 group-hover:scale-110 transition-transform ${cartBump ? 'animate-cart-bounce' : ''}`} />
             {itemCount > 0 && (
               <span className={`absolute -top-1 -right-1 w-5 h-5 text-white text-xs rounded-full flex items-center justify-center font-bold ${cartBump ? 'animate-badge-pop' : ''}`}
-                style={{ background: '#0c2b36' }}>
+                style={{ background: '#2a1450' }}>
                 {itemCount > 9 ? '9+' : itemCount}
               </span>
             )}

@@ -23,19 +23,19 @@ export function LotteryBanner() {
   if (!data || !data.is_active) return null
 
   return (
-    <Link href="/lotteria" className="group relative block overflow-hidden rounded-[28px] border border-cyan-300/15 bg-[#071a22] neon-glow transition-transform hover:-translate-y-0.5">
-      <div className="pointer-events-none absolute -right-16 -top-20 h-56 w-56 rounded-full bg-cyan-400/15 blur-3xl" />
+    <Link href="/lotteria" className="group relative block overflow-hidden rounded-[28px] border border-zucca-300/15 bg-[#160b29] neon-glow transition-transform hover:-translate-y-0.5">
+      <div className="pointer-events-none absolute -right-16 -top-20 h-56 w-56 rounded-full bg-zucca-400/15 blur-3xl" />
       <AmbientBubbles count={4} theme="dark" />
 
       <div className="relative z-10 flex items-center gap-4 px-5 py-5 sm:px-7 sm:py-6">
         <div className="shrink-0 animate-float">
-          <div className="flex h-14 w-14 items-center justify-center rounded-2xl border border-cyan-300/20 bg-cyan-300/10">
-            <Gift className="h-6 w-6 text-cyan-300" />
+          <div className="flex h-14 w-14 items-center justify-center rounded-2xl border border-zucca-300/20 bg-zucca-300/10">
+            <Gift className="h-6 w-6 text-zucca-300" />
           </div>
         </div>
 
         <div className="min-w-0 flex-1">
-          <p className="text-[11px] font-black uppercase tracking-[0.2em] text-cyan-300">Lotteria a premi</p>
+          <p className="text-[11px] font-black uppercase tracking-[0.2em] text-zucca-300">Lotteria a premi</p>
           <p className="mb-1.5 mt-0.5 text-base font-black tracking-[-0.02em] text-white">{data.title || 'Partecipa e vinci'}</p>
           <p className="text-sm leading-relaxed text-slate-400">
             {data.prize_label && <>In palio: <strong className="text-white">{data.prize_label}</strong>. </>}
@@ -46,7 +46,7 @@ export function LotteryBanner() {
           </p>
         </div>
 
-        <ArrowRight className="hidden h-5 w-5 shrink-0 text-cyan-300 transition-transform group-hover:translate-x-1 sm:block" />
+        <ArrowRight className="hidden h-5 w-5 shrink-0 text-zucca-300 transition-transform group-hover:translate-x-1 sm:block" />
       </div>
     </Link>
   )

@@ -8,7 +8,7 @@ import { LandingHero } from './landing-hero'
 import { SOCIAL_LINKS, WHATSAPP_NUMBER, WhatsAppIcon } from './social-icons'
 
 const ARROW =
-  'rounded-full border border-white/15 bg-white/10 p-2 text-cyan-200 backdrop-blur-md transition hover:bg-white/15'
+  'rounded-full border border-white/15 bg-white/10 p-2 text-zucca-200 backdrop-blur-md transition hover:bg-white/15'
 
 export function HeroBanner({ banners }: { banners: Banner[]; categories?: Category[] }) {
   const [currentIndex, setCurrentIndex] = useState(0)
@@ -34,7 +34,7 @@ export function HeroBanner({ banners }: { banners: Banner[]; categories?: Catego
           <>
             <a
               href="#prodotti-grid"
-              className="group inline-flex h-14 items-center justify-center gap-3 rounded-2xl bg-cyan-400 px-7 font-black text-[#05212a] shadow-[0_15px_50px_rgba(34,211,238,.22)] transition duration-300 hover:-translate-y-1 hover:bg-cyan-300"
+              className="group inline-flex h-14 items-center justify-center gap-3 rounded-2xl bg-zucca-400 px-7 font-black text-[#1a0d33] shadow-[0_15px_50px_rgba(255,154,61,.22)] transition duration-300 hover:-translate-y-1 hover:bg-zucca-300"
             >
               Sfoglia il catalogo
               <ArrowRight className="h-5 w-5 transition-transform group-hover:translate-x-1" />
@@ -66,7 +66,7 @@ export function HeroBanner({ banners }: { banners: Banner[]; categories?: Catego
               {banners.map((_, i) => (
                 <button key={i} onClick={() => setCurrentIndex(i)} aria-label={`Banner ${i + 1}`}
                   className="h-1.5 rounded-full transition-all"
-                  style={{ width: i === currentIndex ? 20 : 6, background: i === currentIndex ? '#22d3ee' : 'rgba(255,255,255,0.3)' }} />
+                  style={{ width: i === currentIndex ? 20 : 6, background: i === currentIndex ? '#ff9a3d' : 'rgba(255,255,255,0.3)' }} />
               ))}
             </div>
             <button onClick={() => setCurrentIndex((prev) => (prev + 1) % banners.length)}
@@ -77,7 +77,7 @@ export function HeroBanner({ banners }: { banners: Banner[]; categories?: Catego
         )}
       </LandingHero>
 
-      <div className="bg-[#f0fbfd] px-5 py-5 sm:px-8">
+      <div className="bg-[#fff7ee] px-5 py-5 sm:px-8">
         <a
           href={SOCIAL_LINKS.whatsappChat}
           target="_blank"

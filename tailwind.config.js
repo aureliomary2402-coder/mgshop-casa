@@ -10,6 +10,10 @@ module.exports = {
   theme: {
     extend: {
       colors: {
+        zucca: {
+          50: '#fff7ee', 100: '#ffe9d2', 200: '#ffd0a1', 300: '#ffb066', 400: '#ff8f33',
+          500: '#ff7a1a', 600: '#d95500', 700: '#5b2a9e', 800: '#3d1b73', 900: '#2a1450', 950: '#150b26',
+        },
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",

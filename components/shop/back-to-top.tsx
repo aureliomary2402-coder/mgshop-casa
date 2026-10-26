@@ -27,13 +27,13 @@ export function BackToTop() {
       className="fixed bottom-[calc(7.5rem+env(safe-area-inset-bottom,0px))] lg:bottom-[5.5rem] left-5 z-40 w-11 h-11 rounded-full flex items-center justify-center btn-press transition-all duration-300"
       style={{
         background: 'white',
-        border: '1px solid rgba(8,145,178,0.15)',
-        boxShadow: '0 4px 16px rgba(8,145,178,0.2)',
+        border: '1px solid rgba(217,85,0,0.15)',
+        boxShadow: '0 4px 16px rgba(217,85,0,0.2)',
         opacity: visible ? 1 : 0,
         transform: visible ? 'translateY(0) scale(1)' : 'translateY(12px) scale(0.85)',
         pointerEvents: visible ? 'auto' : 'none',
       }}>
-      <ArrowUp className="w-5 h-5" style={{ color: '#0891b2' }} />
+      <ArrowUp className="w-5 h-5" style={{ color: '#d95500' }} />
     </button>
   )
 }

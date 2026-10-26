@@ -24,11 +24,11 @@ const ZONES = [
 export default function ConsegnePage() {
   const openChat = useUIPanelsStore(s => s.openChat)
   return (
-    <div className="min-h-screen" style={{ background: 'linear-gradient(180deg,#e9fbff 0%,#f5fdff 38%,#ffffff 100%)' }}>
+    <div className="min-h-screen" style={{ background: 'linear-gradient(180deg,#fff0e0 0%,#fffaf4 38%,#ffffff 100%)' }}>
       {/* Hero */}
       <PageHero
         icon={MapPin}
-        iconColor="#22d3ee"
+        iconColor="#ff9a3d"
         badge={{ icon: Truck, text: 'Consegna e ritiro' }}
         title="Consegna o ritiro"
         subtitle={<span className="block max-w-xl mx-auto">Siamo un negozio online: consegniamo direttamente a casa tua nelle zone qui sotto, oppure puoi scegliere di venire a ritirare il tuo ordine di persona.</span>}
@@ -46,11 +46,11 @@ export default function ConsegnePage() {
                     border: z.highlight ? '1px solid rgba(22,163,74,0.25)' : undefined,
                   }}>
                   <div className="w-11 h-11 rounded-2xl flex items-center justify-center mb-4"
-                    style={{ background: z.highlight ? 'rgba(22,163,74,0.1)' : 'rgba(8,145,178,0.1)' }}>
-                    <MapPin className="w-5 h-5" style={{ color: z.highlight ? '#16a34a' : '#0891b2' }} />
+                    style={{ background: z.highlight ? 'rgba(22,163,74,0.1)' : 'rgba(217,85,0,0.1)' }}>
+                    <MapPin className="w-5 h-5" style={{ color: z.highlight ? '#16a34a' : '#d95500' }} />
                   </div>
                   <h3 className="text-lg font-black mb-1 tracking-[-.03em]" style={{ color: '#020617' }}>{z.title}</h3>
-                  <p className="text-xl font-extrabold mb-2" style={{ color: z.highlight ? '#16a34a' : '#0891b2' }}>{z.price}</p>
+                  <p className="text-xl font-extrabold mb-2" style={{ color: z.highlight ? '#16a34a' : '#d95500' }}>{z.price}</p>
                   <p className="text-sm text-slate-500 leading-relaxed">{z.note}</p>
                 </div>
               ))}
@@ -58,12 +58,12 @@ export default function ConsegnePage() {
           </Reveal>
 
           <Reveal delay={80}>
-            <div className="rounded-[32px] border border-slate-200 bg-white p-6 shadow-[0_15px_50px_rgba(15,23,42,.06)]" style={{ border: '1px solid rgba(8,145,178,0.2)' }}>
-              <div className="w-11 h-11 rounded-2xl flex items-center justify-center mb-4" style={{ background: 'rgba(8,145,178,0.1)' }}>
-                <Store className="w-5 h-5" style={{ color: '#0891b2' }} />
+            <div className="rounded-[32px] border border-slate-200 bg-white p-6 shadow-[0_15px_50px_rgba(15,23,42,.06)]" style={{ border: '1px solid rgba(217,85,0,0.2)' }}>
+              <div className="w-11 h-11 rounded-2xl flex items-center justify-center mb-4" style={{ background: 'rgba(217,85,0,0.1)' }}>
+                <Store className="w-5 h-5" style={{ color: '#d95500' }} />
               </div>
               <h3 className="text-lg font-black mb-1 tracking-[-.03em]" style={{ color: '#020617' }}>Vieni a ritirare</h3>
-              <p className="text-xl font-extrabold mb-2" style={{ color: '#0891b2' }}>Nessun costo</p>
+              <p className="text-xl font-extrabold mb-2" style={{ color: '#d95500' }}>Nessun costo</p>
               <p className="text-sm text-slate-500 leading-relaxed">
                 Non vuoi la consegna a casa? Nessun problema: puoi scegliere il ritiro al momento dell&apos;ordine. Come per la consegna, ci mettiamo d&apos;accordo su WhatsApp per orario e dettagli del ritiro.
               </p>
@@ -85,14 +85,14 @@ export default function ConsegnePage() {
             </p>
             <div className="text-center mt-3">
               <button onClick={openChat}
-                className="inline-flex h-12 items-center justify-center gap-2 rounded-2xl border border-cyan-200 bg-cyan-50 px-6 text-sm font-black text-cyan-700 transition hover:-translate-y-0.5 hover:bg-cyan-100">
+                className="inline-flex h-12 items-center justify-center gap-2 rounded-2xl border border-zucca-200 bg-zucca-50 px-6 text-sm font-black text-zucca-700 transition hover:-translate-y-0.5 hover:bg-zucca-100">
                 <MessageCircle className="w-4 h-4" /> Scrivici in chat
               </button>
             </div>
           </Reveal>
 
           <Reveal delay={200} className="text-center pt-4">
-            <Link href="/shop" className="inline-flex h-14 items-center justify-center gap-3 rounded-2xl bg-cyan-600 px-8 font-black text-white shadow-[0_12px_32px_rgba(8,145,178,.35)] transition duration-300 hover:-translate-y-1 hover:bg-cyan-500">
+            <Link href="/shop" className="inline-flex h-14 items-center justify-center gap-3 rounded-2xl bg-zucca-600 px-8 font-black text-white shadow-[0_12px_32px_rgba(217,85,0,.35)] transition duration-300 hover:-translate-y-1 hover:bg-zucca-500">
               <ShoppingBag className="w-5 h-5" /> Vai al negozio
             </Link>
           </Reveal>

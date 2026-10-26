@@ -36,10 +36,10 @@ function Countdown({ remaining }: { remaining: number }) {
       {[{ v: d, l: 'Giorni' }, { v: h, l: 'Ore' }, { v: m, l: 'Min' }, { v: s, l: 'Sec' }].map(({ v, l }, i) => (
         <div key={l} className="flex items-center gap-3">
           <div className="text-center">
-            <div className="grid h-14 w-14 place-items-center rounded-2xl border border-cyan-300/20 bg-cyan-300/10 text-2xl font-black tabular-nums text-cyan-200 backdrop-blur-md">{String(v).padStart(2, '0')}</div>
+            <div className="grid h-14 w-14 place-items-center rounded-2xl border border-zucca-300/20 bg-zucca-300/10 text-2xl font-black tabular-nums text-zucca-200 backdrop-blur-md">{String(v).padStart(2, '0')}</div>
             <p className="text-xs mt-1" style={{ color: 'rgba(224,247,250,0.65)' }}>{l}</p>
           </div>
-          {i < 3 && <span className="text-cyan-500 font-bold text-xl mb-4">:</span>}
+          {i < 3 && <span className="text-zucca-500 font-bold text-xl mb-4">:</span>}
         </div>
       ))}
     </div>
@@ -100,7 +100,7 @@ export default function LotteryPage() {
   }, [phase])
 
   if (loading) return (
-    <div className="min-h-screen" style={{ background: 'linear-gradient(180deg,#e9fbff 0%,#f5fdff 38%,#ffffff 100%)' }}>
+    <div className="min-h-screen" style={{ background: 'linear-gradient(180deg,#fff0e0 0%,#fffaf4 38%,#ffffff 100%)' }}>
       <div className="max-w-4xl mx-auto px-4 py-12 space-y-6">
         <div className="skeleton h-40 rounded-3xl" />
         <div className="skeleton h-10 w-2/3 mx-auto rounded-lg" />
@@ -109,12 +109,12 @@ export default function LotteryPage() {
   )
 
   if (!data || !data.is_active) return (
-    <div className="min-h-screen flex items-center justify-center px-4" style={{ background: 'linear-gradient(180deg,#e9fbff 0%,#f5fdff 38%,#ffffff 100%)' }}>
+    <div className="min-h-screen flex items-center justify-center px-4" style={{ background: 'linear-gradient(180deg,#fff0e0 0%,#fffaf4 38%,#ffffff 100%)' }}>
       <div className="text-center max-w-md">
-        <div className="w-24 h-24 rounded-full flex items-center justify-center mx-auto mb-6" style={{ background: 'rgba(8,145,178,0.08)', border: '2px dashed rgba(8,145,178,0.2)' }}><Gift className="w-12 h-12" style={{ color: 'rgba(8,145,178,0.4)' }} /></div>
+        <div className="w-24 h-24 rounded-full flex items-center justify-center mx-auto mb-6" style={{ background: 'rgba(217,85,0,0.08)', border: '2px dashed rgba(217,85,0,0.2)' }}><Gift className="w-12 h-12" style={{ color: 'rgba(217,85,0,0.4)' }} /></div>
         <h1 className="text-2xl font-black mb-2 tracking-[-.03em]" style={{ color: '#020617' }}>Nessuna lotteria attiva</h1>
         <p className="text-slate-400 mb-8">Torna presto per partecipare alle nostre estrazioni!</p>
-        <Link href="/shop" className="inline-flex h-14 items-center justify-center gap-3 rounded-2xl bg-cyan-600 px-8 font-black text-white shadow-[0_12px_32px_rgba(8,145,178,.35)] transition duration-300 hover:-translate-y-1 hover:bg-cyan-500"><ArrowLeft className="w-4 h-4" /> Vai al negozio</Link>
+        <Link href="/shop" className="inline-flex h-14 items-center justify-center gap-3 rounded-2xl bg-zucca-600 px-8 font-black text-white shadow-[0_12px_32px_rgba(217,85,0,.35)] transition duration-300 hover:-translate-y-1 hover:bg-zucca-500"><ArrowLeft className="w-4 h-4" /> Vai al negozio</Link>
       </div>
     </div>
   )
@@ -124,7 +124,7 @@ export default function LotteryPage() {
   const revealPhase = phase !== 'idle'
 
   return (
-    <div className="min-h-screen" style={{ background: 'linear-gradient(180deg,#e9fbff 0%,#f5fdff 38%,#ffffff 100%)' }}>
+    <div className="min-h-screen" style={{ background: 'linear-gradient(180deg,#fff0e0 0%,#fffaf4 38%,#ffffff 100%)' }}>
       {/* Hero */}
       <PageHero
         icon={Ticket}
@@ -135,13 +135,13 @@ export default function LotteryPage() {
       >
         {data.ends_at && !revealPhase && (
           <div className="mb-2">
-            <div className="flex items-center justify-center gap-2 text-sm mb-3" style={{ color: '#67e8f9' }}><Clock className="w-4 h-4" /> Estrazione tra:</div>
+            <div className="flex items-center justify-center gap-2 text-sm mb-3" style={{ color: '#ffb877' }}><Clock className="w-4 h-4" /> Estrazione tra:</div>
             <Countdown remaining={remaining} />
           </div>
         )}
         {revealPhase && (
           <div className="mt-2 animate-scale-in">
-            <div className="inline-flex items-center gap-2 rounded-2xl px-6 py-3 text-xl font-black" style={{ background: '#22d3ee', color: '#05212a', boxShadow: '0 12px 32px rgba(34,211,238,.40)' }}>
+            <div className="inline-flex items-center gap-2 rounded-2xl px-6 py-3 text-xl font-black" style={{ background: '#ff9a3d', color: '#1a0d33', boxShadow: '0 12px 32px rgba(255,154,61,.40)' }}>
               <PartyPopper className="w-6 h-6" /> Numero vincente: #{winnerNumber}
             </div>
           </div>
@@ -158,8 +158,8 @@ export default function LotteryPage() {
             {data.prize_label && (
               <div className="flex items-center">
                 <div className="w-full rounded-[32px] border border-slate-200 bg-white p-6 shadow-[0_15px_50px_rgba(15,23,42,.06)]">
-                  <p className="mb-1 flex items-center gap-1 text-xs font-black uppercase tracking-[0.2em] text-cyan-600"><Gift className="w-3.5 h-3.5" /> In palio</p>
-                  <p className="text-lg font-bold" style={{ color: '#0c2b36' }}>{data.prize_label}</p>
+                  <p className="mb-1 flex items-center gap-1 text-xs font-black uppercase tracking-[0.2em] text-zucca-600"><Gift className="w-3.5 h-3.5" /> In palio</p>
+                  <p className="text-lg font-bold" style={{ color: '#2a1450' }}>{data.prize_label}</p>
                 </div>
               </div>
             )}
@@ -182,8 +182,8 @@ export default function LotteryPage() {
                 { icon: Hash, title: 'Scegli il numero (o no)', text: 'Al checkout puoi scegliere tu il numero, se è ancora libero. Se non lo spunti, te ne viene assegnato uno in automatico tra quelli liberi.' },
                 { icon: Sparkles, title: 'Scopri se hai vinto', text: 'Allo scadere del countdown le bolle scoppiano tutte tranne quella vincente.' },
               ].map((step, i) => (
-                <div key={step.title} className="group px-5 py-7 transition hover:bg-cyan-50/60 sm:px-7">
-                  <div className="mb-4 flex items-start justify-between"><step.icon size={23} className="text-cyan-600 transition-transform duration-300 group-hover:-translate-y-1" /><span className="bg-gradient-to-br from-cyan-400 to-sky-600 bg-clip-text text-4xl font-black leading-none tracking-[-.05em] text-transparent">{i + 1}</span></div>
+                <div key={step.title} className="group px-5 py-7 transition hover:bg-zucca-50/60 sm:px-7">
+                  <div className="mb-4 flex items-start justify-between"><step.icon size={23} className="text-zucca-600 transition-transform duration-300 group-hover:-translate-y-1" /><span className="bg-gradient-to-br from-zucca-400 to-sky-600 bg-clip-text text-4xl font-black leading-none tracking-[-.05em] text-transparent">{i + 1}</span></div>
                   <h3 className="text-sm font-black text-slate-900">{step.title}</h3>
                   <p className="mt-1 text-xs leading-5 text-slate-500">{step.text}</p>
                 </div>
@@ -194,8 +194,8 @@ export default function LotteryPage() {
 
         {/* Bolle */}
         <Reveal delay={100}>
-          <div className="relative overflow-hidden rounded-[32px] border border-cyan-300/15 bg-[#071a22] px-5 py-8 shadow-[0_30px_80px_rgba(6,21,28,.20)] sm:px-8">
-          <div className="pointer-events-none absolute -right-20 -top-24 h-64 w-64 rounded-full bg-cyan-400/15 blur-3xl" />
+          <div className="relative overflow-hidden rounded-[32px] border border-zucca-300/15 bg-[#160b29] px-5 py-8 shadow-[0_30px_80px_rgba(18,10,34,.20)] sm:px-8">
+          <div className="pointer-events-none absolute -right-20 -top-24 h-64 w-64 rounded-full bg-zucca-400/15 blur-3xl" />
           <h2 className="relative mb-2 text-center text-2xl font-black tracking-[-.03em] text-white">{count} bolle in gioco</h2>
           <p className="relative mb-6 text-center text-sm text-slate-400">
             {revealPhase ? 'Tutte le bolle sono scoppiate tranne quella vincente!' : 'Allo scadere del tempo, tutte le bolle scoppieranno tranne quella vincente'}
@@ -214,10 +214,10 @@ export default function LotteryPage() {
                     width: size, height: size, borderRadius: '9999px',
                     display: 'flex', alignItems: 'center', justifyContent: 'center',
                     fontSize: Math.max(9, size * 0.32), fontWeight: 700,
-                    color: winnerGlow ? '#05212a' : '#a5f3fc',
-                    background: winnerGlow ? '#22d3ee' : 'rgba(103,232,249,0.10)',
-                    boxShadow: winnerGlow ? '0 0 28px rgba(34,211,238,0.7)' : 'none',
-                    border: winnerGlow ? '1px solid #67e8f9' : '1px solid rgba(103,232,249,0.25)',
+                    color: winnerGlow ? '#1a0d33' : '#a5f3fc',
+                    background: winnerGlow ? '#ff9a3d' : 'rgba(255,184,119,0.10)',
+                    boxShadow: winnerGlow ? '0 0 28px rgba(255,154,61,0.7)' : 'none',
+                    border: winnerGlow ? '1px solid #ffb877' : '1px solid rgba(255,184,119,0.25)',
                     animation: popped
                       ? `bubblePop 0.6s ease-in ${delay}s both`
                       : winnerGlow && phase === 'popping'
@@ -243,7 +243,7 @@ export default function LotteryPage() {
                 <div key={w.id} className="flex items-center gap-3 rounded-2xl border border-slate-200 bg-white p-3">
                   {w.prize_image_url
                     ? <Image src={w.prize_image_url} alt="" width={48} height={48} className="rounded-xl object-cover shrink-0" />
-                    : <div className="w-12 h-12 rounded-xl flex items-center justify-center shrink-0" style={{ background: 'rgba(8,145,178,0.08)' }}><ImageIcon className="w-5 h-5" style={{ color: 'rgba(8,145,178,0.3)' }} /></div>}
+                    : <div className="w-12 h-12 rounded-xl flex items-center justify-center shrink-0" style={{ background: 'rgba(217,85,0,0.08)' }}><ImageIcon className="w-5 h-5" style={{ color: 'rgba(217,85,0,0.3)' }} /></div>}
                   <div className="flex-1 min-w-0">
                     <p className="text-sm font-semibold text-slate-800 truncate">{w.lottery_title}</p>
                     <p className="text-xs text-slate-400 truncate">{w.prize_label} · Numero vincente #{w.winner_number} su {w.participants_count}</p>
@@ -256,7 +256,7 @@ export default function LotteryPage() {
         )}
 
         <Reveal delay={200} className="text-center py-6">
-          <Link href="/shop" className="inline-flex h-14 items-center justify-center gap-3 rounded-2xl bg-cyan-600 px-8 font-black text-white shadow-[0_12px_32px_rgba(8,145,178,.35)] transition duration-300 hover:-translate-y-1 hover:bg-cyan-500">
+          <Link href="/shop" className="inline-flex h-14 items-center justify-center gap-3 rounded-2xl bg-zucca-600 px-8 font-black text-white shadow-[0_12px_32px_rgba(217,85,0,.35)] transition duration-300 hover:-translate-y-1 hover:bg-zucca-500">
             <ArrowLeft className="w-5 h-5" /> Vai al negozio
           </Link>
         </Reveal>

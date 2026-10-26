@@ -17,7 +17,7 @@ function HighlightedText({ text, query }: { text: string; query: string }) {
   return (
     <>
       {text.slice(0, idx)}
-      <span style={{ color: '#0891b2', fontWeight: 700 }}>{text.slice(idx, idx + query.length)}</span>
+      <span style={{ color: '#d95500', fontWeight: 700 }}>{text.slice(idx, idx + query.length)}</span>
       {text.slice(idx + query.length)}
     </>
   )
@@ -141,7 +141,7 @@ export function ShopHeader({ categories }: { categories: Category[] }) {
 
   return (
     <header className={`sticky top-0 z-50 transition-all duration-300 liquid-glass-header ${scrolled ? 'shadow-lg' : ''}`}
-      style={{ background: scrolled ? 'rgba(240,251,253,0.97)' : 'rgba(240,251,253,0.98)', backdropFilter: 'blur(16px)', borderBottom: '2px solid #22d3ee' }}>
+      style={{ background: scrolled ? 'rgba(240,251,253,0.97)' : 'rgba(240,251,253,0.98)', backdropFilter: 'blur(16px)', borderBottom: '2px solid #ff9a3d' }}>
       <div className="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between gap-3">
         <Link href="/" className="flex items-center gap-2 shrink-0 group">
           <Image src="/logo/mgshop-logo-orizzontale-scuro.png" alt="MGShop Casa" width={900} height={240} priority
@@ -151,23 +151,23 @@ export function ShopHeader({ categories }: { categories: Category[] }) {
         <div className="flex items-center gap-1">
           <div className="relative" ref={catRef}>
             <button onClick={() => setCatOpen(v => !v)}
-              className="flex items-center gap-1.5 px-3 py-2 rounded-xl text-sm font-medium transition-all hover:bg-cyan-50 btn-press"
-              style={{ color: catOpen || activeCategory ? '#0891b2' : '#44403c' }}>
+              className="flex items-center gap-1.5 px-3 py-2 rounded-xl text-sm font-medium transition-all hover:bg-zucca-50 btn-press"
+              style={{ color: catOpen || activeCategory ? '#d95500' : '#44403c' }}>
               <Tag className="w-4 h-4" />
               <span className="hidden sm:inline">{activeCategoryName || 'Categorie'}</span>
               <ChevronDown className={`w-3.5 h-3.5 transition-transform duration-200 ${catOpen ? 'rotate-180' : ''}`} />
             </button>
             {catOpen && (
               <div className="absolute top-full left-0 mt-2 w-56 rounded-2xl overflow-hidden shadow-xl animate-scale-in z-50"
-                style={{ background: 'white', border: '1px solid rgba(8,145,178,0.1)', boxShadow: '0 20px 60px rgba(0,0,0,0.12)' }}>
+                style={{ background: 'white', border: '1px solid rgba(217,85,0,0.1)', boxShadow: '0 20px 60px rgba(0,0,0,0.12)' }}>
                 <div className="p-2">
                   <button onClick={() => handleCategorySelect(null)}
-                    className={`w-full text-left px-3 py-2.5 rounded-xl text-sm font-medium transition-all hover:bg-cyan-50 ${!activeCategory ? 'bg-cyan-50 text-cyan-700' : 'text-slate-700'}`}>
+                    className={`w-full text-left px-3 py-2.5 rounded-xl text-sm font-medium transition-all hover:bg-zucca-50 ${!activeCategory ? 'bg-zucca-50 text-zucca-700' : 'text-slate-700'}`}>
                     Tutti i prodotti
                   </button>
                   {categories.map(cat => (
                     <button key={cat.id} onClick={() => handleCategorySelect(cat.slug)}
-                      className={`w-full text-left px-3 py-2.5 rounded-xl text-sm font-medium transition-all hover:bg-cyan-50 ${activeCategory === cat.slug ? 'bg-cyan-50 text-cyan-700' : 'text-slate-700'}`}>
+                      className={`w-full text-left px-3 py-2.5 rounded-xl text-sm font-medium transition-all hover:bg-zucca-50 ${activeCategory === cat.slug ? 'bg-zucca-50 text-zucca-700' : 'text-slate-700'}`}>
                       {cat.name}
                     </button>
                   ))}
@@ -177,28 +177,28 @@ export function ShopHeader({ categories }: { categories: Category[] }) {
           </div>
 
           {promoActive && (
-            <Link href="/promo" className={`${searchOpen ? 'hidden' : 'flex'} items-center gap-1.5 px-2 sm:px-3 py-2 rounded-xl text-sm font-medium transition-all hover:bg-cyan-50 btn-press`} style={{ color: '#0891b2' }}>
+            <Link href="/promo" className={`${searchOpen ? 'hidden' : 'flex'} items-center gap-1.5 px-2 sm:px-3 py-2 rounded-xl text-sm font-medium transition-all hover:bg-zucca-50 btn-press`} style={{ color: '#d95500' }}>
               <Sparkles className="w-4 h-4" /> <span className="hidden sm:inline">Promo</span>
             </Link>
           )}
           {volantinoActive && (
-            <Link href="/volantino" className={`${searchOpen ? 'hidden' : 'flex'} items-center gap-1.5 px-2 sm:px-3 py-2 rounded-xl text-sm font-medium transition-all hover:bg-cyan-50 btn-press`} style={{ color: '#0891b2' }}>
+            <Link href="/volantino" className={`${searchOpen ? 'hidden' : 'flex'} items-center gap-1.5 px-2 sm:px-3 py-2 rounded-xl text-sm font-medium transition-all hover:bg-zucca-50 btn-press`} style={{ color: '#d95500' }}>
               <Newspaper className="w-4 h-4" /> <span className="hidden sm:inline">Volantino</span>
             </Link>
           )}
 
           {/* Solo desktop: su mobile questi collegamenti restano nella tab bar
               in basso, qui servirebbero solo a duplicarla. */}
-          <Link href="/lotteria" className="hidden lg:flex items-center gap-1.5 px-3 py-2 rounded-xl text-sm font-medium transition-all hover:bg-cyan-50 btn-press" style={{ color: '#44403c' }}>
+          <Link href="/lotteria" className="hidden lg:flex items-center gap-1.5 px-3 py-2 rounded-xl text-sm font-medium transition-all hover:bg-zucca-50 btn-press" style={{ color: '#44403c' }}>
             <Ticket className="w-4 h-4" /> Lotteria
           </Link>
-          <Link href="/consegne" className="hidden lg:flex items-center gap-1.5 px-3 py-2 rounded-xl text-sm font-medium transition-all hover:bg-cyan-50 btn-press" style={{ color: '#44403c' }}>
+          <Link href="/consegne" className="hidden lg:flex items-center gap-1.5 px-3 py-2 rounded-xl text-sm font-medium transition-all hover:bg-zucca-50 btn-press" style={{ color: '#44403c' }}>
             <MapPin className="w-4 h-4" /> Consegne
           </Link>
-          <button onClick={openChat} className="hidden lg:flex items-center gap-1.5 px-3 py-2 rounded-xl text-sm font-medium transition-all hover:bg-cyan-50 btn-press" style={{ color: '#44403c' }}>
+          <button onClick={openChat} className="hidden lg:flex items-center gap-1.5 px-3 py-2 rounded-xl text-sm font-medium transition-all hover:bg-zucca-50 btn-press" style={{ color: '#44403c' }}>
             <MessageCircle className="w-4 h-4" /> Contatti
           </button>
-          <button onClick={openPoints} className="hidden lg:flex items-center gap-1.5 px-3 py-2 rounded-xl text-sm font-medium transition-all hover:bg-cyan-50 btn-press" style={{ color: '#44403c' }}>
+          <button onClick={openPoints} className="hidden lg:flex items-center gap-1.5 px-3 py-2 rounded-xl text-sm font-medium transition-all hover:bg-zucca-50 btn-press" style={{ color: '#44403c' }}>
             <User className="w-4 h-4" /> Account
           </button>
         </div>
@@ -206,26 +206,26 @@ export function ShopHeader({ categories }: { categories: Category[] }) {
         <div className="flex items-center gap-2">
           <div ref={searchBoxRef} className={`transition-all duration-300 ${searchOpen ? 'flex w-56 sm:w-64' : 'hidden md:flex md:w-40'} ${searchFocused ? '!w-64 sm:!w-72' : ''}`}>
             <div className="relative w-full">
-              <Search className={`absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 pointer-events-none transition-colors duration-300 ${searchFocused ? 'text-cyan-500' : 'text-cyan-400'}`} />
+              <Search className={`absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 pointer-events-none transition-colors duration-300 ${searchFocused ? 'text-zucca-500' : 'text-zucca-400'}`} />
               <input ref={inputRef} type="search" placeholder="Cerca prodotti..." value={searchValue}
                 onChange={e => handleSearch(e.target.value)}
                 onFocus={() => { setSearchFocused(true); if (searchValue.trim()) setDropdownOpen(true) }}
                 onBlur={() => setSearchFocused(false)}
                 className="search-glow w-full h-9 pl-9 pr-9 rounded-xl text-base outline-none transition-all duration-300"
                 style={{
-                  background: searchFocused ? '#ffffff' : 'rgba(8,145,178,0.06)',
-                  border: searchFocused ? '1px solid rgba(8,145,178,0.5)' : '1px solid rgba(8,145,178,0.15)',
-                  color: '#0c2b36',
-                  boxShadow: searchFocused ? '0 0 0 4px rgba(34,211,238,0.15), 0 4px 16px rgba(8,145,178,0.18)' : 'none',
+                  background: searchFocused ? '#ffffff' : 'rgba(217,85,0,0.06)',
+                  border: searchFocused ? '1px solid rgba(217,85,0,0.5)' : '1px solid rgba(217,85,0,0.15)',
+                  color: '#2a1450',
+                  boxShadow: searchFocused ? '0 0 0 4px rgba(255,154,61,0.15), 0 4px 16px rgba(217,85,0,0.18)' : 'none',
                 }} />
               {searchLoading && (
-                <span className="absolute right-9 top-1/2 -translate-y-1/2 w-3.5 h-3.5 rounded-full border-2 border-cyan-300 border-t-cyan-600 animate-spin" />
+                <span className="absolute right-9 top-1/2 -translate-y-1/2 w-3.5 h-3.5 rounded-full border-2 border-zucca-300 border-t-zucca-600 animate-spin" />
               )}
-              {searchValue && <button onClick={handleClearSearch} className="absolute right-3 top-1/2 -translate-y-1/2 text-cyan-400 hover:text-cyan-600 transition-colors"><X className="w-4 h-4" /></button>}
+              {searchValue && <button onClick={handleClearSearch} className="absolute right-3 top-1/2 -translate-y-1/2 text-zucca-400 hover:text-zucca-600 transition-colors"><X className="w-4 h-4" /></button>}
 
               {dropdownOpen && searchValue.trim() && (
                 <div className="fixed left-3 right-3 top-[7.4rem] sm:absolute sm:top-full sm:left-0 sm:right-auto sm:mt-2 sm:w-full sm:min-w-[280px] rounded-2xl overflow-hidden shadow-xl animate-scale-in z-50"
-                  style={{ background: 'white', border: '1px solid rgba(8,145,178,0.15)', boxShadow: '0 20px 60px rgba(0,0,0,0.15)' }}>
+                  style={{ background: 'white', border: '1px solid rgba(217,85,0,0.15)', boxShadow: '0 20px 60px rgba(0,0,0,0.15)' }}>
                   {searchResults.length > 0 ? (
                     <>
                       <div className="max-h-96 overflow-y-auto p-1.5">
@@ -233,21 +233,21 @@ export function ShopHeader({ categories }: { categories: Category[] }) {
                           const imgUrl = optimizeImage(product.card_image || product.cover_image, 80)
                           return (
                             <button key={product.id} onClick={() => handleSelectProduct(product)}
-                              className="w-full flex items-center gap-3 p-2 rounded-xl text-left hover:bg-cyan-50 transition-colors">
-                              <div className="relative w-10 h-10 rounded-lg flex items-center justify-center shrink-0 overflow-hidden" style={{ background: 'rgba(8,145,178,0.06)' }}>
-                                {imgUrl ? <img src={imgUrl} alt={product.name} className="w-full h-full object-cover" /> : <ImageIcon className="w-4 h-4 text-cyan-300" />}
+                              className="w-full flex items-center gap-3 p-2 rounded-xl text-left hover:bg-zucca-50 transition-colors">
+                              <div className="relative w-10 h-10 rounded-lg flex items-center justify-center shrink-0 overflow-hidden" style={{ background: 'rgba(217,85,0,0.06)' }}>
+                                {imgUrl ? <img src={imgUrl} alt={product.name} className="w-full h-full object-cover" /> : <ImageIcon className="w-4 h-4 text-zucca-300" />}
                               </div>
-                              <span className="flex-1 min-w-0 text-sm font-medium truncate" style={{ color: '#0c2b36' }}>
+                              <span className="flex-1 min-w-0 text-sm font-medium truncate" style={{ color: '#2a1450' }}>
                                 <HighlightedText text={product.name} query={searchValue} />
                               </span>
-                              <span className="text-sm font-bold shrink-0" style={{ color: '#0891b2' }}>€{product.price.toFixed(2)}</span>
+                              <span className="text-sm font-bold shrink-0" style={{ color: '#d95500' }}>€{product.price.toFixed(2)}</span>
                             </button>
                           )
                         })}
                       </div>
                       <button onClick={handleSeeAllResults}
-                        className="w-full flex items-center justify-center gap-1.5 py-3 text-sm font-semibold border-t transition-colors hover:bg-cyan-50"
-                        style={{ borderColor: 'rgba(8,145,178,0.12)', color: '#0891b2' }}>
+                        className="w-full flex items-center justify-center gap-1.5 py-3 text-sm font-semibold border-t transition-colors hover:bg-zucca-50"
+                        style={{ borderColor: 'rgba(217,85,0,0.12)', color: '#d95500' }}>
                         Vedi tutti i risultati{searchCount > 0 ? ` (${searchCount})` : ''}
                         <ChevronDown className="w-3.5 h-3.5 -rotate-90" />
                       </button>
@@ -261,12 +261,12 @@ export function ShopHeader({ categories }: { categories: Category[] }) {
               )}
             </div>
           </div>
-          <button className="md:hidden w-9 h-9 flex items-center justify-center rounded-lg hover:bg-cyan-50 text-cyan-700"
+          <button className="md:hidden w-9 h-9 flex items-center justify-center rounded-lg hover:bg-zucca-50 text-zucca-700"
             onClick={() => { searchOpen ? handleClearSearch() : setSearchOpen(true) }}>
             {searchOpen ? <X className="w-5 h-5" /> : <Search className="w-5 h-5" />}
           </button>
-          <Link href="/preferiti" className={`${searchOpen ? 'hidden sm:flex' : 'flex'} relative items-center gap-2 px-2 sm:px-3 py-2 rounded-xl transition-all hover:bg-cyan-50 btn-press group`}>
-            <Heart className="w-5 h-5 text-cyan-700 group-hover:scale-110 transition-transform" />
+          <Link href="/preferiti" className={`${searchOpen ? 'hidden sm:flex' : 'flex'} relative items-center gap-2 px-2 sm:px-3 py-2 rounded-xl transition-all hover:bg-zucca-50 btn-press group`}>
+            <Heart className="w-5 h-5 text-zucca-700 group-hover:scale-110 transition-transform" />
             {mounted && wishlistCount > 0 && (
               <span className="absolute -top-1 -right-1 w-5 h-5 text-white text-xs rounded-full flex items-center justify-center font-bold"
                 style={{ background: '#ef4444' }}>
@@ -274,11 +274,11 @@ export function ShopHeader({ categories }: { categories: Category[] }) {
               </span>
             )}
           </Link>
-          <Link href="/carrello" className="relative flex items-center gap-2 px-3 py-2 rounded-xl transition-all hover:bg-cyan-50 btn-press group">
-            <ShoppingBag className={`w-5 h-5 text-cyan-700 group-hover:scale-110 transition-transform ${cartBump ? 'animate-cart-bounce' : ''}`} />
+          <Link href="/carrello" className="relative flex items-center gap-2 px-3 py-2 rounded-xl transition-all hover:bg-zucca-50 btn-press group">
+            <ShoppingBag className={`w-5 h-5 text-zucca-700 group-hover:scale-110 transition-transform ${cartBump ? 'animate-cart-bounce' : ''}`} />
             {itemCount > 0 && (
               <span className={`absolute -top-1 -right-1 w-5 h-5 text-white text-xs rounded-full flex items-center justify-center font-bold ${cartBump ? 'animate-badge-pop' : ''}`}
-                style={{ background: 'linear-gradient(135deg, #0891b2, #06b6d4)' }}>
+                style={{ background: 'linear-gradient(135deg, #d95500, #ff7a1a)' }}>
                 {itemCount > 9 ? '9+' : itemCount}
               </span>
             )}

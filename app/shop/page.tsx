@@ -136,15 +136,15 @@ export default async function ShopPage({ searchParams }: { searchParams: Promise
           </div>
         </section>
 
-        <section className="relative mt-16 overflow-hidden rounded-[34px] border border-cyan-100 bg-gradient-to-br from-white to-cyan-50 p-7 sm:p-12">
-          <div className="pointer-events-none absolute right-[-100px] top-[-100px] h-[300px] w-[300px] rounded-full bg-cyan-200/30 blur-[80px]" />
+        <section className="relative mt-16 overflow-hidden rounded-[34px] border border-zucca-100 bg-gradient-to-br from-white to-zucca-50 p-7 sm:p-12">
+          <div className="pointer-events-none absolute right-[-100px] top-[-100px] h-[300px] w-[300px] rounded-full bg-zucca-200/30 blur-[80px]" />
           <div className="relative flex flex-col items-start justify-between gap-8 md:flex-row md:items-center">
             <div>
-              <div className="flex items-center gap-2 text-xs font-black uppercase tracking-[.22em] text-cyan-700">
+              <div className="flex items-center gap-2 text-xs font-black uppercase tracking-[.22em] text-zucca-700">
                 <Truck size={17} />
                 Consegna locale
               </div>
-              <h2 className="mt-4 text-3xl font-black tracking-[-.04em] text-cyan-950 sm:text-4xl">
+              <h2 className="mt-4 text-3xl font-black tracking-[-.04em] text-zucca-950 sm:text-4xl">
                 Tu ordini.
                 <br />
                 Noi te lo portiamo a casa.
@@ -155,7 +155,7 @@ export default async function ShopPage({ searchParams }: { searchParams: Promise
             </div>
             <Link
               href="/consegne"
-              className="group inline-flex shrink-0 items-center gap-3 rounded-2xl bg-cyan-600 px-6 py-4 text-sm font-black text-white shadow-[0_12px_32px_rgba(8,145,178,.35)] transition hover:-translate-y-0.5 hover:bg-cyan-500"
+              className="group inline-flex shrink-0 items-center gap-3 rounded-2xl bg-zucca-600 px-6 py-4 text-sm font-black text-white shadow-[0_12px_32px_rgba(217,85,0,.35)] transition hover:-translate-y-0.5 hover:bg-zucca-500"
             >
               Scopri la consegna
               <ArrowRight size={18} className="transition-transform group-hover:translate-x-1" />

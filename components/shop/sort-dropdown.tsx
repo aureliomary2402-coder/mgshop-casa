@@ -38,7 +38,7 @@ export function SortDropdown() {
     <div className="relative shrink-0" ref={ref}>
       <button onClick={() => setOpen(v => !v)}
         className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-medium transition-all border"
-        style={{ background: open ? 'rgba(8,145,178,0.08)' : 'white', borderColor: 'rgba(8,145,178,0.15)', color: '#0891b2' }}>
+        style={{ background: open ? 'rgba(217,85,0,0.08)' : 'white', borderColor: 'rgba(217,85,0,0.15)', color: '#d95500' }}>
         <ArrowUpDown className="w-3.5 h-3.5" />
         <span className="hidden sm:inline">{activeLabel}</span>
         <span className="sm:hidden">Ordina</span>
@@ -46,11 +46,11 @@ export function SortDropdown() {
       </button>
       {open && (
         <div className="absolute top-full right-0 mt-2 w-56 rounded-2xl overflow-hidden shadow-xl animate-scale-in z-30"
-          style={{ background: 'white', border: '1px solid rgba(8,145,178,0.1)', boxShadow: '0 20px 60px rgba(0,0,0,0.12)' }}>
+          style={{ background: 'white', border: '1px solid rgba(217,85,0,0.1)', boxShadow: '0 20px 60px rgba(0,0,0,0.12)' }}>
           <div className="p-2">
             {OPTIONS.map(opt => (
               <button key={opt.value} onClick={() => select(opt.value)}
-                className={`w-full flex items-center justify-between text-left px-3 py-2.5 rounded-xl text-sm font-medium transition-all hover:bg-cyan-50 ${active === opt.value ? 'bg-cyan-50 text-cyan-700' : 'text-slate-700'}`}>
+                className={`w-full flex items-center justify-between text-left px-3 py-2.5 rounded-xl text-sm font-medium transition-all hover:bg-zucca-50 ${active === opt.value ? 'bg-zucca-50 text-zucca-700' : 'text-slate-700'}`}>
                 {opt.label}
                 {active === opt.value && <Check className="w-3.5 h-3.5" />}
               </button>

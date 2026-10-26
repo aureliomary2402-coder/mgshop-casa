@@ -66,19 +66,19 @@ type Tone = 'dark' | 'light'
 // chiare: il testo resta sempre leggibile e la barra non pesa.
 const TONES = {
   dark: {
-    background: '#06151c',
-    borderTop: '1px solid rgba(103,232,249,0.25)',
-    boxShadow: '0 -3px 18px rgba(34,211,238,0.18)',
-    text: '#cffafe',
+    background: '#120a22',
+    borderTop: '1px solid rgba(255,184,119,0.25)',
+    boxShadow: '0 -3px 18px rgba(255,154,61,0.18)',
+    text: '#ffe9d2',
     close: 'rgba(255,255,255,0.9)',
     shine: 'rgba(255,255,255,0.4)',
   },
   light: {
     background: 'rgba(207,250,254,0.94)',
-    borderTop: '1px solid rgba(8,145,178,0.28)',
-    boxShadow: '0 -3px 16px rgba(8,145,178,0.14)',
-    text: '#164e63',
-    close: '#155e75',
+    borderTop: '1px solid rgba(217,85,0,0.28)',
+    boxShadow: '0 -3px 16px rgba(217,85,0,0.14)',
+    text: '#2d1458',
+    close: '#3d1b73',
     shine: 'rgba(255,255,255,0.75)',
   },
 } as const
@@ -266,9 +266,9 @@ export function SiteTicker() {
               width: 18,
               height: 18,
               borderRadius: '50%',
-              background: 'radial-gradient(circle at 30% 26%, rgba(255,255,255,0.98) 0%, rgba(255,255,255,0.78) 16%, rgba(224,247,250,0.45) 40%, rgba(103,212,231,0.22) 68%, rgba(8,145,178,0.08) 92%, transparent 100%)',
+              background: 'radial-gradient(circle at 30% 26%, rgba(255,255,255,0.98) 0%, rgba(255,255,255,0.78) 16%, rgba(224,247,250,0.45) 40%, rgba(103,212,231,0.22) 68%, rgba(217,85,0,0.08) 92%, transparent 100%)',
               border: '1px solid rgba(255,255,255,0.6)',
-              boxShadow: 'inset -1.5px -1.5px 3px rgba(8,145,178,0.1), inset 1.5px 1.5px 4px rgba(255,255,255,0.85)',
+              boxShadow: 'inset -1.5px -1.5px 3px rgba(217,85,0,0.1), inset 1.5px 1.5px 4px rgba(255,255,255,0.85)',
               opacity: 0,
               willChange: 'transform, opacity',
             }}

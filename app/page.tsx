@@ -72,18 +72,18 @@ const benefits = [
 
 export default function HomePage() {
   return (
-    <main className="min-h-screen overflow-x-hidden bg-[#f0fbfd] text-slate-900">
+    <main className="min-h-screen overflow-x-hidden bg-[#fff7ee] text-slate-900">
 
       {/* =========================================================
           HERO
       ========================================================= */}
-      <section className="relative min-h-[760px] overflow-hidden bg-[#06151c] sm:min-h-[820px]">
+      <section className="relative min-h-[760px] overflow-hidden bg-[#120a22] sm:min-h-[820px]">
 
         {/* glow ambientali */}
         <div className="pointer-events-none absolute inset-0">
-          <div className="absolute left-[-180px] top-[80px] h-[420px] w-[420px] rounded-full bg-cyan-400/15 blur-[110px]" />
+          <div className="absolute left-[-180px] top-[80px] h-[420px] w-[420px] rounded-full bg-zucca-400/15 blur-[110px]" />
           <div className="absolute right-[-160px] top-[160px] h-[500px] w-[500px] rounded-full bg-sky-500/10 blur-[130px]" />
-          <div className="absolute bottom-[-250px] left-1/2 h-[500px] w-[700px] -translate-x-1/2 rounded-full bg-cyan-300/10 blur-[120px]" />
+          <div className="absolute bottom-[-250px] left-1/2 h-[500px] w-[700px] -translate-x-1/2 rounded-full bg-zucca-300/10 blur-[120px]" />
         </div>
 
         {/* griglia 3D */}
@@ -91,7 +91,7 @@ export default function HomePage() {
           className="pointer-events-none absolute inset-0 opacity-[0.13]"
           style={{
             backgroundImage:
-              "linear-gradient(rgba(103,232,249,.35) 1px, transparent 1px), linear-gradient(90deg, rgba(103,232,249,.35) 1px, transparent 1px)",
+              "linear-gradient(rgba(255,184,119,.35) 1px, transparent 1px), linear-gradient(90deg, rgba(255,184,119,.35) 1px, transparent 1px)",
             backgroundSize: "70px 70px",
             transform: "perspective(500px) rotateX(62deg) scale(1.8)",
             transformOrigin: "center bottom",
@@ -140,8 +140,8 @@ export default function HomePage() {
             {/* testo */}
             <div className="max-w-2xl">
 
-              <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-cyan-300/20 bg-cyan-300/10 px-4 py-2 text-xs font-bold uppercase tracking-[0.18em] text-cyan-200 backdrop-blur-md">
-                <span className="h-2 w-2 animate-pulse rounded-full bg-cyan-300" />
+              <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-zucca-300/20 bg-zucca-300/10 px-4 py-2 text-xs font-bold uppercase tracking-[0.18em] text-zucca-200 backdrop-blur-md">
+                <span className="h-2 w-2 animate-pulse rounded-full bg-zucca-300" />
                 Il tuo shop locale
               </div>
 
@@ -149,7 +149,7 @@ export default function HomePage() {
                 TUTTO PER
                 <br />
                 LA TUA{" "}
-                <span className="bg-gradient-to-r from-cyan-200 via-cyan-400 to-sky-300 bg-clip-text text-transparent">
+                <span className="bg-gradient-to-r from-zucca-200 via-zucca-400 to-sky-300 bg-clip-text text-transparent">
                   CASA.
                 </span>
               </h1>
@@ -162,7 +162,7 @@ export default function HomePage() {
               <div className="mt-9 flex flex-col gap-3 sm:flex-row">
                 <Link
                   href="/shop"
-                  className="group inline-flex h-14 items-center justify-center gap-3 rounded-2xl bg-cyan-400 px-7 font-black text-[#05212a] shadow-[0_15px_50px_rgba(34,211,238,.22)] transition duration-300 hover:-translate-y-1 hover:bg-cyan-300"
+                  className="group inline-flex h-14 items-center justify-center gap-3 rounded-2xl bg-zucca-400 px-7 font-black text-[#1a0d33] shadow-[0_15px_50px_rgba(255,154,61,.22)] transition duration-300 hover:-translate-y-1 hover:bg-zucca-300"
                 >
                   Vai allo shop
                   <ArrowRight
@@ -182,11 +182,11 @@ export default function HomePage() {
 
               <div className="mt-8 flex flex-wrap gap-x-6 gap-y-3 text-sm text-slate-400">
                 <span className="flex items-center gap-2">
-                  <Check size={16} className="text-cyan-300" />
+                  <Check size={16} className="text-zucca-300" />
                   Pagamento alla consegna
                 </span>
                 <span className="flex items-center gap-2">
-                  <Check size={16} className="text-cyan-300" />
+                  <Check size={16} className="text-zucca-300" />
                   Consegna locale
                 </span>
               </div>
@@ -196,19 +196,19 @@ export default function HomePage() {
             <div className="relative mx-auto h-[390px] w-full max-w-[470px] sm:h-[470px]">
 
               {/* anello */}
-              <div className="absolute left-1/2 top-1/2 h-[290px] w-[290px] -translate-x-1/2 -translate-y-1/2 rounded-full border border-cyan-300/20 shadow-[0_0_100px_rgba(34,211,238,.12)] sm:h-[370px] sm:w-[370px]" />
+              <div className="absolute left-1/2 top-1/2 h-[290px] w-[290px] -translate-x-1/2 -translate-y-1/2 rounded-full border border-zucca-300/20 shadow-[0_0_100px_rgba(255,154,61,.12)] sm:h-[370px] sm:w-[370px]" />
 
-              <div className="absolute left-1/2 top-1/2 h-[225px] w-[225px] -translate-x-1/2 -translate-y-1/2 rounded-full border border-cyan-200/10 sm:h-[300px] sm:w-[300px]" />
+              <div className="absolute left-1/2 top-1/2 h-[225px] w-[225px] -translate-x-1/2 -translate-y-1/2 rounded-full border border-zucca-200/10 sm:h-[300px] sm:w-[300px]" />
 
               {/* card principale */}
               <div className="absolute left-1/2 top-1/2 w-[270px] -translate-x-1/2 -translate-y-1/2 rotate-[-5deg] rounded-[34px] border border-white/20 bg-white/[0.09] p-5 shadow-[0_40px_100px_rgba(0,0,0,.45)] backdrop-blur-xl sm:w-[320px] sm:p-6">
 
                 <div className="mb-5 flex items-center justify-between">
-                  <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-cyan-300/15 text-2xl">
+                  <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-zucca-300/15 text-2xl">
                     🛒
                   </div>
 
-                  <span className="rounded-full border border-cyan-200/15 bg-cyan-200/10 px-3 py-1 text-[10px] font-bold uppercase tracking-widest text-cyan-200">
+                  <span className="rounded-full border border-zucca-200/15 bg-zucca-200/10 px-3 py-1 text-[10px] font-bold uppercase tracking-widest text-zucca-200">
                     MGShop
                   </span>
                 </div>
@@ -221,14 +221,14 @@ export default function HomePage() {
                   ORDINA.
                 </div>
 
-                <div className="text-3xl font-black text-cyan-300">
+                <div className="text-3xl font-black text-zucca-300">
                   RICEVI.
                 </div>
 
                 <div className="mt-6 space-y-2">
                   <div className="h-3 rounded-full bg-white/10" />
                   <div className="h-3 w-[75%] rounded-full bg-white/10" />
-                  <div className="h-3 w-[55%] rounded-full bg-cyan-300/30" />
+                  <div className="h-3 w-[55%] rounded-full bg-zucca-300/30" />
                 </div>
 
                 <div className="mt-7 flex items-center justify-between rounded-2xl border border-white/10 bg-black/15 p-3">
@@ -244,8 +244,8 @@ export default function HomePage() {
               {/* mini card fluttuante */}
               <div className="absolute bottom-[13%] left-[-2%] rotate-[6deg] rounded-2xl border border-white/15 bg-white/10 px-4 py-3 shadow-2xl backdrop-blur-xl sm:left-[1%]">
                 <div className="flex items-center gap-3">
-                  <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-cyan-300/15">
-                    <Truck size={19} className="text-cyan-200" />
+                  <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-zucca-300/15">
+                    <Truck size={19} className="text-zucca-200" />
                   </div>
                   <div>
                     <div className="text-[10px] text-slate-400">
@@ -261,8 +261,8 @@ export default function HomePage() {
               {/* mini card punti */}
               <div className="absolute right-[-2%] top-[14%] rotate-[5deg] rounded-2xl border border-white/15 bg-white/10 px-4 py-3 shadow-2xl backdrop-blur-xl sm:right-[1%]">
                 <div className="flex items-center gap-3">
-                  <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-cyan-300/15">
-                    <Gift size={19} className="text-cyan-200" />
+                  <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-zucca-300/15">
+                    <Gift size={19} className="text-zucca-200" />
                   </div>
                   <div>
                     <div className="text-[10px] text-slate-400">
@@ -282,7 +282,7 @@ export default function HomePage() {
         {/* indicatore scroll */}
         <div className="absolute bottom-6 left-1/2 z-10 flex -translate-x-1/2 flex-col items-center gap-2 text-[9px] font-bold uppercase tracking-[.3em] text-slate-500">
           <span>Scopri</span>
-          <div className="h-9 w-px bg-gradient-to-b from-cyan-300/60 to-transparent" />
+          <div className="h-9 w-px bg-gradient-to-b from-zucca-300/60 to-transparent" />
         </div>
       </section>
 
@@ -297,11 +297,11 @@ export default function HomePage() {
             return (
               <div
                 key={item.title}
-                className="group px-5 py-7 transition hover:bg-cyan-50/60 sm:px-7"
+                className="group px-5 py-7 transition hover:bg-zucca-50/60 sm:px-7"
               >
                 <Icon
                   size={23}
-                  className="mb-4 text-cyan-600 transition-transform duration-300 group-hover:-translate-y-1"
+                  className="mb-4 text-zucca-600 transition-transform duration-300 group-hover:-translate-y-1"
                 />
                 <h2 className="text-sm font-black text-slate-900">
                   {item.title}
@@ -322,19 +322,19 @@ export default function HomePage() {
 
       <section className="relative overflow-hidden px-5 py-20 sm:px-8 sm:py-28">
 
-        <div className="pointer-events-none absolute right-[-150px] top-[20%] h-[350px] w-[350px] rounded-full bg-cyan-200/30 blur-[100px]" />
+        <div className="pointer-events-none absolute right-[-150px] top-[20%] h-[350px] w-[350px] rounded-full bg-zucca-200/30 blur-[100px]" />
 
         <div className="relative mx-auto max-w-7xl">
 
           <div className="max-w-2xl">
-            <span className="text-xs font-black uppercase tracking-[.25em] text-cyan-600">
+            <span className="text-xs font-black uppercase tracking-[.25em] text-zucca-600">
               Esplora MGShop
             </span>
 
             <h2 className="mt-3 text-4xl font-black tracking-[-.04em] text-slate-950 sm:text-5xl">
               Quello che cerchi,
               <br />
-              <span className="text-cyan-600">a portata di click.</span>
+              <span className="text-zucca-600">a portata di click.</span>
             </h2>
 
             <p className="mt-5 text-base leading-7 text-slate-500">
@@ -348,13 +348,13 @@ export default function HomePage() {
               <Link
                 href={category.href}
                 key={category.title}
-                className={`group relative min-h-[230px] overflow-hidden rounded-[28px] border border-slate-200 bg-white p-5 shadow-[0_15px_50px_rgba(15,23,42,.06)] transition-all duration-500 [transform-style:preserve-3d] hover:-translate-y-3 hover:[transform:perspective(900px)_rotateX(2deg)_rotateY(-2deg)_translateY(-12px)] hover:border-cyan-300 hover:shadow-[0_30px_80px_rgba(8,145,178,.18)] sm:min-h-[270px] sm:p-7 ${
+                className={`group relative min-h-[230px] overflow-hidden rounded-[28px] border border-slate-200 bg-white p-5 shadow-[0_15px_50px_rgba(15,23,42,.06)] transition-all duration-500 [transform-style:preserve-3d] hover:-translate-y-3 hover:[transform:perspective(900px)_rotateX(2deg)_rotateY(-2deg)_translateY(-12px)] hover:border-zucca-300 hover:shadow-[0_30px_80px_rgba(217,85,0,.18)] sm:min-h-[270px] sm:p-7 ${
                   index === 0
-                    ? "hover:shadow-[0_30px_80px_rgba(8,145,178,.20)]"
+                    ? "hover:shadow-[0_30px_80px_rgba(217,85,0,.20)]"
                     : index === 1
                       ? "hover:border-orange-300 hover:shadow-[0_30px_80px_rgba(249,115,22,.18)]"
                       : index === 2
-                        ? "hover:border-cyan-300"
+                        ? "hover:border-zucca-300"
                         : "hover:border-emerald-300 hover:shadow-[0_30px_80px_rgba(16,185,129,.16)]"
                 }`}
               >
@@ -364,11 +364,11 @@ export default function HomePage() {
                       ? "bg-orange-100"
                       : index === 3
                         ? "bg-emerald-50"
-                        : "bg-cyan-50"
+                        : "bg-zucca-50"
                   }`}
                 />
 
-                <div className="absolute bottom-[-70px] left-[-70px] h-36 w-36 rounded-full bg-cyan-100/30 blur-2xl transition duration-700 group-hover:scale-150" />
+                <div className="absolute bottom-[-70px] left-[-70px] h-36 w-36 rounded-full bg-zucca-100/30 blur-2xl transition duration-700 group-hover:scale-150" />
 
                 <div className="relative z-10 h-full [transform:translateZ(18px)]">
                   <div
@@ -377,7 +377,7 @@ export default function HomePage() {
                         ? "group-hover:bg-orange-50"
                         : index === 3
                           ? "group-hover:bg-emerald-50"
-                          : "group-hover:bg-cyan-50"
+                          : "group-hover:bg-zucca-50"
                     }`}
                   >
                     <span className="transition-transform duration-500 group-hover:scale-110">
@@ -388,7 +388,7 @@ export default function HomePage() {
                   <div className="mt-12">
                     <div
                       className={`mb-1 text-[10px] font-black uppercase tracking-[.2em] ${
-                        index === 1 ? "text-orange-500" : "text-cyan-600"
+                        index === 1 ? "text-orange-500" : "text-zucca-600"
                       }`}
                     >
                       0{index + 1}
@@ -409,7 +409,7 @@ export default function HomePage() {
                         ? "group-hover:bg-orange-500"
                         : index === 3
                           ? "group-hover:bg-emerald-500"
-                          : "group-hover:bg-cyan-500"
+                          : "group-hover:bg-zucca-500"
                     }`}
                   >
                     <ChevronRight size={18} className="transition-transform duration-300 group-hover:translate-x-0.5" />
@@ -427,14 +427,14 @@ export default function HomePage() {
           PROMO 3D
       ========================================================= */}
       <section className="px-5 pb-20 sm:px-8 sm:pb-28">
-        <div className="relative mx-auto max-w-7xl overflow-hidden rounded-[36px] bg-[#071a22] px-6 py-14 shadow-[0_30px_100px_rgba(6,21,28,.18)] sm:px-12 sm:py-20">
+        <div className="relative mx-auto max-w-7xl overflow-hidden rounded-[36px] bg-[#160b29] px-6 py-14 shadow-[0_30px_100px_rgba(18,10,34,.18)] sm:px-12 sm:py-20">
 
-          <div className="absolute right-[-100px] top-[-120px] h-[350px] w-[350px] rounded-full bg-cyan-400/15 blur-[80px]" />
+          <div className="absolute right-[-100px] top-[-120px] h-[350px] w-[350px] rounded-full bg-zucca-400/15 blur-[80px]" />
 
           <div className="relative grid items-center gap-12 lg:grid-cols-[1fr_.7fr]">
 
             <div>
-              <div className="mb-5 inline-flex items-center gap-2 rounded-full bg-cyan-300/10 px-4 py-2 text-xs font-bold uppercase tracking-[.2em] text-cyan-200">
+              <div className="mb-5 inline-flex items-center gap-2 rounded-full bg-zucca-300/10 px-4 py-2 text-xs font-bold uppercase tracking-[.2em] text-zucca-200">
                 <Zap size={14} />
                 Occasioni da non perdere
               </div>
@@ -461,11 +461,11 @@ export default function HomePage() {
 
             <div className="relative mx-auto h-[250px] w-full max-w-[350px]">
 
-              <div className="absolute left-1/2 top-1/2 h-[190px] w-[190px] -translate-x-1/2 -translate-y-1/2 rounded-[38px] border border-cyan-200/20 bg-gradient-to-br from-cyan-300/20 to-white/5 shadow-[0_30px_80px_rgba(0,0,0,.35)] backdrop-blur-xl [transform:translate(-50%,-50%)_rotate(8deg)]" />
+              <div className="absolute left-1/2 top-1/2 h-[190px] w-[190px] -translate-x-1/2 -translate-y-1/2 rounded-[38px] border border-zucca-200/20 bg-gradient-to-br from-zucca-300/20 to-white/5 shadow-[0_30px_80px_rgba(0,0,0,.35)] backdrop-blur-xl [transform:translate(-50%,-50%)_rotate(8deg)]" />
 
               <div className="absolute left-1/2 top-1/2 flex h-[160px] w-[160px] -translate-x-1/2 -translate-y-1/2 flex-col items-center justify-center rounded-[32px] border border-white/15 bg-white/10 text-center shadow-2xl backdrop-blur-xl [transform:translate(-50%,-50%)_rotate(-5deg)]">
-                <Gift size={35} className="mb-3 text-cyan-300" />
-                <span className="text-xs font-black uppercase tracking-widest text-cyan-200">
+                <Gift size={35} className="mb-3 text-zucca-300" />
+                <span className="text-xs font-black uppercase tracking-widest text-zucca-200">
                   Promo
                 </span>
                 <span className="mt-1 text-2xl font-black text-white">
@@ -474,7 +474,7 @@ export default function HomePage() {
               </div>
 
               <div className="absolute left-[5%] top-[10%] text-2xl">✦</div>
-              <div className="absolute bottom-[10%] right-[5%] text-xl text-cyan-300">✦</div>
+              <div className="absolute bottom-[10%] right-[5%] text-xl text-zucca-300">✦</div>
             </div>
 
           </div>
@@ -488,7 +488,7 @@ export default function HomePage() {
         <div className="mx-auto max-w-7xl">
 
           <div className="text-center">
-            <span className="text-xs font-black uppercase tracking-[.25em] text-cyan-600">
+            <span className="text-xs font-black uppercase tracking-[.25em] text-zucca-600">
               Semplice davvero
             </span>
 
@@ -504,7 +504,7 @@ export default function HomePage() {
 
           <div className="relative mt-14 grid gap-5 md:grid-cols-3">
 
-            <div className="hidden absolute left-[27%] right-[27%] top-[45px] h-px bg-gradient-to-r from-transparent via-cyan-200 to-transparent md:block" />
+            <div className="hidden absolute left-[27%] right-[27%] top-[45px] h-px bg-gradient-to-r from-transparent via-zucca-200 to-transparent md:block" />
 
             {[
               {
@@ -533,11 +533,11 @@ export default function HomePage() {
                   key={step.n}
                   className="relative rounded-[28px] border border-slate-200 bg-[#f8fdfe] p-7 text-center"
                 >
-                  <div className="mx-auto flex h-[90px] w-[90px] items-center justify-center rounded-full border border-cyan-200 bg-white shadow-[0_15px_40px_rgba(8,145,178,.10)]">
-                    <Icon size={30} className="text-cyan-600" />
+                  <div className="mx-auto flex h-[90px] w-[90px] items-center justify-center rounded-full border border-zucca-200 bg-white shadow-[0_15px_40px_rgba(217,85,0,.10)]">
+                    <Icon size={30} className="text-zucca-600" />
                   </div>
 
-                  <div className="mt-6 text-[10px] font-black tracking-[.25em] text-cyan-600">
+                  <div className="mt-6 text-[10px] font-black tracking-[.25em] text-zucca-600">
                     {step.n}
                   </div>
 
@@ -561,9 +561,9 @@ export default function HomePage() {
       <section className="px-5 py-20 sm:px-8 sm:py-28">
         <div className="mx-auto grid max-w-7xl gap-5 lg:grid-cols-2">
 
-          <div className="relative overflow-hidden rounded-[32px] bg-cyan-500 p-8 sm:p-10">
+          <div className="relative overflow-hidden rounded-[32px] bg-zucca-500 p-8 sm:p-10">
             <div className="absolute right-[-60px] top-[-60px] h-52 w-52 rounded-full bg-white/10" />
-            <div className="absolute bottom-[-100px] left-[-50px] h-64 w-64 rounded-full bg-cyan-700/15 blur-3xl" />
+            <div className="absolute bottom-[-100px] left-[-50px] h-64 w-64 rounded-full bg-zucca-700/15 blur-3xl" />
 
             <div className="relative">
               <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-white/15">
@@ -576,24 +576,24 @@ export default function HomePage() {
                 può diventare un vantaggio.
               </h2>
 
-              <p className="mt-4 max-w-md text-sm leading-6 text-cyan-50/80">
+              <p className="mt-4 max-w-md text-sm leading-6 text-zucca-50/80">
                 Accumula punti con i tuoi acquisti e scopri i vantaggi
                 della fedeltà MGShop.
               </p>
 
-              <div className="mt-7 inline-flex items-center gap-3 rounded-2xl bg-white px-5 py-4 text-sm font-black text-cyan-700">
+              <div className="mt-7 inline-flex items-center gap-3 rounded-2xl bg-white px-5 py-4 text-sm font-black text-zucca-700">
                 <Sparkles size={18} />
                 1 punto ogni €10 di spesa
               </div>
             </div>
           </div>
 
-          <div className="relative overflow-hidden rounded-[32px] bg-[#071a22] p-8 sm:p-10">
-            <div className="absolute right-[-80px] top-[-80px] h-64 w-64 rounded-full bg-cyan-400/10 blur-3xl" />
+          <div className="relative overflow-hidden rounded-[32px] bg-[#160b29] p-8 sm:p-10">
+            <div className="absolute right-[-80px] top-[-80px] h-64 w-64 rounded-full bg-zucca-400/10 blur-3xl" />
 
             <div className="relative">
-              <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-cyan-300/10">
-                <MessageCircle size={27} className="text-cyan-300" />
+              <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-zucca-300/10">
+                <MessageCircle size={27} className="text-zucca-300" />
               </div>
 
               <h2 className="mt-8 text-3xl font-black tracking-[-.03em] text-white sm:text-4xl">
@@ -609,7 +609,7 @@ export default function HomePage() {
 
               <Link
                 href="https://wa.me/393522209558"
-                className="mt-7 inline-flex items-center gap-3 rounded-2xl bg-cyan-400 px-5 py-4 text-sm font-black text-[#05212a] transition hover:-translate-y-1 hover:bg-cyan-300"
+                className="mt-7 inline-flex items-center gap-3 rounded-2xl bg-zucca-400 px-5 py-4 text-sm font-black text-[#1a0d33] transition hover:-translate-y-1 hover:bg-zucca-300"
               >
                 <MessageCircle size={18} />
                 352 220 9558
@@ -624,14 +624,14 @@ export default function HomePage() {
           DELIVERY
       ========================================================= */}
       <section className="px-5 pb-20 sm:px-8 sm:pb-28">
-        <div className="relative mx-auto max-w-7xl overflow-hidden rounded-[34px] border border-cyan-100 bg-gradient-to-br from-white to-cyan-50 p-7 sm:p-12">
+        <div className="relative mx-auto max-w-7xl overflow-hidden rounded-[34px] border border-zucca-100 bg-gradient-to-br from-white to-zucca-50 p-7 sm:p-12">
 
-          <div className="absolute right-[-100px] top-[-100px] h-[300px] w-[300px] rounded-full bg-cyan-200/30 blur-[80px]" />
+          <div className="absolute right-[-100px] top-[-100px] h-[300px] w-[300px] rounded-full bg-zucca-200/30 blur-[80px]" />
 
           <div className="relative flex flex-col items-start justify-between gap-8 md:flex-row md:items-center">
 
             <div>
-              <div className="flex items-center gap-2 text-xs font-black uppercase tracking-[.22em] text-cyan-700">
+              <div className="flex items-center gap-2 text-xs font-black uppercase tracking-[.22em] text-zucca-700">
                 <Truck size={17} />
                 Consegna locale
               </div>
@@ -651,7 +651,7 @@ export default function HomePage() {
 
             <Link
               href="/consegne"
-              className="group inline-flex shrink-0 items-center gap-3 rounded-2xl bg-cyan-600 px-6 py-4 text-sm font-black text-white shadow-[0_12px_32px_rgba(8,145,178,.35)] transition hover:-translate-y-0.5 hover:bg-cyan-500"
+              className="group inline-flex shrink-0 items-center gap-3 rounded-2xl bg-zucca-600 px-6 py-4 text-sm font-black text-white shadow-[0_12px_32px_rgba(217,85,0,.35)] transition hover:-translate-y-0.5 hover:bg-zucca-500"
             >
               Scopri la consegna
               <ArrowRight
@@ -667,10 +667,10 @@ export default function HomePage() {
       {/* =========================================================
           CTA FINALE
       ========================================================= */}
-      <section className="relative overflow-hidden bg-[#06151c] px-5 py-24 sm:px-8 sm:py-32">
+      <section className="relative overflow-hidden bg-[#120a22] px-5 py-24 sm:px-8 sm:py-32">
 
         <div className="pointer-events-none absolute inset-0">
-          <div className="absolute left-1/2 top-1/2 h-[400px] w-[600px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-cyan-400/10 blur-[120px]" />
+          <div className="absolute left-1/2 top-1/2 h-[400px] w-[600px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-zucca-400/10 blur-[120px]" />
 
           <div className="soap-bubble-rise soap-bubble-dark absolute left-[10%] top-[20%] h-12 w-12" />
           <div className="soap-bubble-rise soap-bubble-dark absolute right-[12%] bottom-[20%] h-20 w-20 [animation-delay:-4s]" />
@@ -678,14 +678,14 @@ export default function HomePage() {
 
         <div className="relative mx-auto max-w-3xl text-center">
 
-          <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl border border-cyan-300/20 bg-cyan-300/10">
-            <Heart size={28} className="text-cyan-300" />
+          <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl border border-zucca-300/20 bg-zucca-300/10">
+            <Heart size={28} className="text-zucca-300" />
           </div>
 
           <h2 className="mt-7 text-4xl font-black leading-tight tracking-[-.04em] text-white sm:text-6xl">
             La tua spesa.
             <br />
-            <span className="text-cyan-300">Più semplice.</span>
+            <span className="text-zucca-300">Più semplice.</span>
           </h2>
 
           <p className="mx-auto mt-5 max-w-xl text-base leading-7 text-slate-400">
@@ -695,7 +695,7 @@ export default function HomePage() {
 
           <Link
             href="/shop"
-            className="group mt-9 inline-flex h-14 items-center gap-3 rounded-2xl bg-cyan-400 px-8 font-black text-[#05212a] shadow-[0_15px_60px_rgba(34,211,238,.2)] transition hover:-translate-y-1 hover:bg-cyan-300"
+            className="group mt-9 inline-flex h-14 items-center gap-3 rounded-2xl bg-zucca-400 px-8 font-black text-[#1a0d33] shadow-[0_15px_60px_rgba(255,154,61,.2)] transition hover:-translate-y-1 hover:bg-zucca-300"
           >
             Inizia a fare acquisti
             <ArrowRight

@@ -44,16 +44,16 @@ export function RecentlyViewed({ excludeId, title = 'Visti di recente' }: { excl
           type="button"
           onClick={() => setExpanded(!expanded)}
           aria-expanded={expanded}
-          className="inline-flex items-center gap-2 rounded-full border border-cyan-100 bg-white px-3.5 py-2 text-[11px] font-black uppercase tracking-[0.14em] text-cyan-950 transition-colors hover:border-cyan-300 btn-press"
-          style={{ boxShadow: '0 6px 18px rgba(8,145,178,0.07)' }}
+          className="inline-flex items-center gap-2 rounded-full border border-zucca-100 bg-white px-3.5 py-2 text-[11px] font-black uppercase tracking-[0.14em] text-zucca-950 transition-colors hover:border-zucca-300 btn-press"
+          style={{ boxShadow: '0 6px 18px rgba(217,85,0,0.07)' }}
         >
-          <History className="h-4 w-4 text-cyan-600" />
+          <History className="h-4 w-4 text-zucca-600" />
           {title}
-          <span className="rounded-full bg-cyan-100 px-1.5 py-0.5 text-[10px] leading-none text-cyan-800">{relevantIds.length}</span>
-          <ChevronDown className="h-3.5 w-3.5 text-cyan-700 transition-transform duration-300" style={{ transform: expanded ? 'rotate(180deg)' : 'none' }} />
+          <span className="rounded-full bg-zucca-100 px-1.5 py-0.5 text-[10px] leading-none text-zucca-800">{relevantIds.length}</span>
+          <ChevronDown className="h-3.5 w-3.5 text-zucca-700 transition-transform duration-300" style={{ transform: expanded ? 'rotate(180deg)' : 'none' }} />
         </button>
         {expanded && (
-          <button type="button" onClick={clear} className="text-[11px] font-bold text-slate-500 underline-offset-2 hover:text-cyan-700 hover:underline">
+          <button type="button" onClick={clear} className="text-[11px] font-bold text-slate-500 underline-offset-2 hover:text-zucca-700 hover:underline">
             Svuota
           </button>
         )}
@@ -72,11 +72,11 @@ export function RecentlyViewed({ excludeId, title = 'Visti di recente' }: { excl
               return (
                 <button key={p.id} onClick={() => openDetail(p.id)} tabIndex={expanded ? 0 : -1}
                   className="shrink-0 w-28 text-left group">
-                  <div className="relative mb-2 h-28 w-28 overflow-hidden rounded-[22px] border border-slate-200 bg-cyan-50 transition-transform group-hover:-translate-y-1">
+                  <div className="relative mb-2 h-28 w-28 overflow-hidden rounded-[22px] border border-slate-200 bg-zucca-50 transition-transform group-hover:-translate-y-1">
                     {imgUrl && <Image src={imgUrl} alt={p.name} fill sizes="112px" className="object-cover" />}
                   </div>
                   <p className="line-clamp-2 text-xs font-bold leading-snug text-slate-900">{p.name}</p>
-                  <p className="text-sm font-black text-cyan-700">€{p.price.toFixed(2)}</p>
+                  <p className="text-sm font-black text-zucca-700">€{p.price.toFixed(2)}</p>
                 </button>
               )
             })}

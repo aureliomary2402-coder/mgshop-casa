@@ -89,8 +89,8 @@ export function RouteProgress() {
       style={{
         position: 'fixed', top: 0, left: 0, right: 0, height: 3, zIndex: 9999,
         pointerEvents: 'none', opacity: 0, transform: 'scaleX(0)', transformOrigin: 'left',
-        background: 'linear-gradient(90deg, #0891b2, #22d3ee 60%, #67e8f9)',
-        boxShadow: '0 0 10px rgba(34,211,238,0.7), 0 0 4px rgba(103,232,249,0.9)',
+        background: 'linear-gradient(90deg, #d95500, #ff9a3d 60%, #ffb877)',
+        boxShadow: '0 0 10px rgba(255,154,61,0.7), 0 0 4px rgba(255,184,119,0.9)',
       }}
     />
   )

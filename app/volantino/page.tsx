@@ -55,10 +55,10 @@ export default function VolantinoPage() {
   // Più volantini attivi contemporaneamente: mostra un selettore.
   if (list.length > 1) {
     return (
-      <div className="min-h-screen" style={{ background: 'linear-gradient(180deg,#eafbff 0%,#f5fdff 45%,#ffffff 100%)' }}>
+      <div className="min-h-screen" style={{ background: 'linear-gradient(180deg,#fff3e6 0%,#fffaf4 45%,#ffffff 100%)' }}>
         <PageHero
           icon={Newspaper}
-          iconColor="#2563eb"
+          iconColor="#7c3aed"
           badge={{ icon: Newspaper, text: 'Volantino digitale' }}
           title="Scegli il volantino"
           subtitle="Ci sono più volantini attivi: scegli quello che vuoi sfogliare."
@@ -68,22 +68,22 @@ export default function VolantinoPage() {
           <div className="overflow-hidden rounded-[32px] border border-slate-200 bg-white shadow-[0_15px_50px_rgba(15,23,42,.06)]">
             {list.map(item => (
               <Link key={item.id} href={`/volantino/${item.slug || item.id}`}
-                className="group flex items-center gap-4 border-b border-slate-100 p-5 transition-colors last:border-b-0 hover:bg-cyan-50/60">
-                <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-[#06151c]">
-                  <Newspaper className="h-6 w-6 text-cyan-300" />
+                className="group flex items-center gap-4 border-b border-slate-100 p-5 transition-colors last:border-b-0 hover:bg-zucca-50/60">
+                <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-[#120a22]">
+                  <Newspaper className="h-6 w-6 text-zucca-300" />
                 </div>
                 <div className="min-w-0 flex-1">
-                  <p className="truncate text-lg font-black tracking-[-.02em] text-slate-950 transition-colors group-hover:text-cyan-700">{item.title || 'Volantino'}</p>
+                  <p className="truncate text-lg font-black tracking-[-.02em] text-slate-950 transition-colors group-hover:text-zucca-700">{item.title || 'Volantino'}</p>
                   {item.subtitle && <p className="truncate text-sm text-slate-600">{item.subtitle}</p>}
                 </div>
-                <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-[#22d3ee] text-[#05212a] shadow-[0_10px_25px_rgba(34,211,238,.30)] transition-transform duration-300 group-hover:translate-x-1">
+                <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-[#ff9a3d] text-[#1a0d33] shadow-[0_10px_25px_rgba(255,154,61,.30)] transition-transform duration-300 group-hover:translate-x-1">
                   <ChevronRight className="h-5 w-5" />
                 </div>
               </Link>
             ))}
           </div>
           <div className="pt-10 text-center">
-            <Link href="/shop" className="group inline-flex h-14 items-center justify-center gap-3 rounded-2xl bg-cyan-600 px-7 font-black text-white shadow-[0_12px_32px_rgba(8,145,178,.35)] transition duration-300 hover:-translate-y-1 hover:bg-cyan-500">
+            <Link href="/shop" className="group inline-flex h-14 items-center justify-center gap-3 rounded-2xl bg-zucca-600 px-7 font-black text-white shadow-[0_12px_32px_rgba(217,85,0,.35)] transition duration-300 hover:-translate-y-1 hover:bg-zucca-500">
               <ArrowLeft className="h-5 w-5 transition-transform group-hover:-translate-x-1" /> Vai al negozio
             </Link>
           </div>

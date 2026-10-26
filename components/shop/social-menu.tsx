@@ -43,11 +43,11 @@ export function SocialMenu({ variant = 'light', className = 'flex' }: { variant?
   }
 
   const btnCls = variant === 'dark'
-    ? `${className} h-11 w-11 items-center justify-center rounded-full bg-cyan-400 text-[#062029] shadow-[0_0_30px_rgba(34,211,238,.35)] transition hover:scale-105`
+    ? `${className} h-11 w-11 items-center justify-center rounded-full bg-zucca-400 text-[#062029] shadow-[0_0_30px_rgba(255,154,61,.35)] transition hover:scale-105`
     : `${className} items-center gap-1.5 px-2 sm:px-3 py-2 rounded-xl text-sm font-medium transition-all btn-press`
   const btnStyle = variant === 'dark'
     ? undefined
-    : { color: '#0e7490', background: 'rgba(34,211,238,0.12)', border: '1px solid rgba(8,145,178,0.3)' }
+    : { color: '#5b2a9e', background: 'rgba(255,154,61,0.12)', border: '1px solid rgba(217,85,0,0.3)' }
 
   return (
     <>
@@ -73,7 +73,7 @@ export function SocialMenu({ variant = 'light', className = 'flex' }: { variant?
               </a>
             ))}
             <Link href="/social" onClick={() => setOpen(false)}
-              className="mt-1 flex items-center justify-center gap-1.5 rounded-xl py-2.5 text-sm font-black text-cyan-700 hover:bg-cyan-50">
+              className="mt-1 flex items-center justify-center gap-1.5 rounded-xl py-2.5 text-sm font-black text-zucca-700 hover:bg-zucca-50">
               Vedi tutti i social <ArrowUpRight size={15} />
             </Link>
           </div>

@@ -54,7 +54,7 @@ export function HomeHeader() {
   }
 
   return (
-    <header className="sticky top-0 z-50 border-b border-cyan-900/20 liquid-glass-header"
+    <header className="sticky top-0 z-50 border-b border-zucca-900/20 liquid-glass-header"
       style={{ background: 'rgba(3,19,26,0.75)', backdropFilter: 'blur(16px)', WebkitBackdropFilter: 'blur(16px)' }}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between gap-4">
         {/* Logo */}
@@ -68,12 +68,12 @@ export function HomeHeader() {
           {NAV_ITEMS.map(item => (
             'href' in item ? (
               <Link key={item.label} href={item.href}
-                className="text-sm font-medium whitespace-nowrap transition-colors text-cyan-100/70 hover:text-cyan-300">
+                className="text-sm font-medium whitespace-nowrap transition-colors text-zucca-100/70 hover:text-zucca-300">
                 {item.label}
               </Link>
             ) : (
               <button key={item.label} onClick={() => runAction(item)}
-                className="text-sm font-medium whitespace-nowrap transition-colors text-cyan-100/70 hover:text-cyan-300">
+                className="text-sm font-medium whitespace-nowrap transition-colors text-zucca-100/70 hover:text-zucca-300">
                 {item.label}
               </button>
             )
@@ -83,22 +83,22 @@ export function HomeHeader() {
         {/* Hamburger, solo mobile/tablet */}
         <div className="relative lg:hidden" ref={menuRef}>
           <button onClick={() => setMenuOpen(v => !v)} aria-label="Apri menu"
-            className="w-9 h-9 flex items-center justify-center rounded-lg hover:bg-white/10 text-cyan-300 btn-press">
+            className="w-9 h-9 flex items-center justify-center rounded-lg hover:bg-white/10 text-zucca-300 btn-press">
             {menuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
           </button>
           {menuOpen && (
             <div className="absolute top-full left-0 mt-2 w-64 rounded-2xl overflow-hidden shadow-xl animate-scale-in z-50"
-              style={{ background: 'white', border: '1px solid rgba(8,145,178,0.1)', boxShadow: '0 20px 60px rgba(0,0,0,0.12)' }}>
+              style={{ background: 'white', border: '1px solid rgba(217,85,0,0.1)', boxShadow: '0 20px 60px rgba(0,0,0,0.12)' }}>
               <div className="p-2 max-h-[70vh] overflow-y-auto">
                 {NAV_ITEMS.map(item => (
                   'href' in item ? (
                     <Link key={item.label} href={item.href} onClick={() => setMenuOpen(false)}
-                      className="block px-3 py-2.5 rounded-xl text-sm font-medium text-slate-700 hover:bg-cyan-50 hover:text-cyan-700 transition-colors">
+                      className="block px-3 py-2.5 rounded-xl text-sm font-medium text-slate-700 hover:bg-zucca-50 hover:text-zucca-700 transition-colors">
                       {item.label}
                     </Link>
                   ) : (
                     <button key={item.label} onClick={() => runAction(item)}
-                      className="w-full text-left px-3 py-2.5 rounded-xl text-sm font-medium text-slate-700 hover:bg-cyan-50 hover:text-cyan-700 transition-colors">
+                      className="w-full text-left px-3 py-2.5 rounded-xl text-sm font-medium text-slate-700 hover:bg-zucca-50 hover:text-zucca-700 transition-colors">
                       {item.label}
                     </button>
                   )
@@ -111,15 +111,15 @@ export function HomeHeader() {
         {/* Account + carrello */}
         <div className="flex items-center gap-1 shrink-0">
           <button onClick={openPoints} aria-label="Il mio account"
-            className="w-9 h-9 flex items-center justify-center rounded-lg hover:bg-white/10 text-cyan-300 btn-press">
+            className="w-9 h-9 flex items-center justify-center rounded-lg hover:bg-white/10 text-zucca-300 btn-press">
             <User className="w-5 h-5" />
           </button>
           <Link href="/carrello" aria-label="Vai al carrello"
-            className="relative w-9 h-9 flex items-center justify-center rounded-lg hover:bg-white/10 text-cyan-300 btn-press">
+            className="relative w-9 h-9 flex items-center justify-center rounded-lg hover:bg-white/10 text-zucca-300 btn-press">
             <ShoppingBag className="w-5 h-5" />
             {itemCount > 0 && (
               <span className="absolute top-0 right-0 w-4 h-4 text-white text-[10px] rounded-full flex items-center justify-center font-bold"
-                style={{ background: 'linear-gradient(135deg,#0891b2,#06b6d4)' }}>
+                style={{ background: 'linear-gradient(135deg,#d95500,#ff7a1a)' }}>
                 {itemCount > 9 ? '9+' : itemCount}
               </span>
             )}
