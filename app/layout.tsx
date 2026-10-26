@@ -67,6 +67,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <FloatingMenu />
         <Suspense><BackToTop /></Suspense>
         <ProductDetailModal />
+        <HalloweenDecor />
         <SiteTicker />
         <Toaster position="bottom-center" richColors />
         <Analytics />
