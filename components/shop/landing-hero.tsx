@@ -22,7 +22,7 @@ export function LandingHero({ icon: Icon, badge, title, subtitle, topBar, childr
   const BadgeIcon = badge?.icon
 
   return (
-    <section className="relative overflow-hidden bg-[linear-gradient(160deg,#c24a00,#a23800_55%,#6e2400)]">
+    <section className="relative overflow-hidden bg-[linear-gradient(160deg,#2e0d57,#4c1a8a_35%,#a23800_78%,#5a1c00)]">
       <HeroBackdrop />
 
       <div className="relative z-10 mx-auto max-w-7xl px-5 pb-16 pt-6 sm:px-8 sm:pb-24">

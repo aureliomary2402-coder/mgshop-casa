@@ -12,15 +12,15 @@ export function HeroBackdrop() {
       <span aria-hidden="true" className="pointer-events-none absolute right-2 top-24 select-none text-3xl leading-none rotate-6 sm:text-5xl">🎃</span>
       <div className="pointer-events-none absolute inset-0">
         <div className="absolute left-[-180px] top-[80px] h-[420px] w-[420px] rounded-full bg-zucca-400/15 blur-[110px]" />
-        <div className="absolute right-[-160px] top-[160px] h-[500px] w-[500px] rounded-full bg-purple-900/30 blur-[130px]" />
-        <div className="absolute bottom-[-250px] left-1/2 h-[500px] w-[700px] -translate-x-1/2 rounded-full bg-zucca-300/10 blur-[120px]" />
+        <div className="absolute right-[-160px] top-[160px] h-[500px] w-[500px] rounded-full bg-purple-500/30 blur-[130px]" />
+        <div className="absolute bottom-[-250px] left-1/2 h-[500px] w-[700px] -translate-x-1/2 rounded-full bg-lime-400/15 blur-[120px]" />
       </div>
       <div className="pointer-events-none absolute inset-0 overflow-hidden">
         <div
           className="absolute inset-0 opacity-[0.13]"
           style={{
             backgroundImage:
-              'linear-gradient(rgba(255,184,119,.35) 1px, transparent 1px), linear-gradient(90deg, rgba(255,184,119,.35) 1px, transparent 1px)',
+              'linear-gradient(rgba(190,242,100,.35) 1px, transparent 1px), linear-gradient(90deg, rgba(190,242,100,.35) 1px, transparent 1px)',
             backgroundSize: '70px 70px',
             transform: 'perspective(500px) rotateX(62deg) scale(1.8)',
             transformOrigin: 'center bottom',
