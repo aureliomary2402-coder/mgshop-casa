@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect } from 'react'
-import { Package, Tag, Image, ShoppingBag, LogOut, Lock, LayoutDashboard, Megaphone, Ticket, Menu, X, ExternalLink, Users, Gift, MessageCircle, Newspaper, PartyPopper, Hash, TrendingUp, Eye, AlertTriangle, Rss, Star, Terminal, Heart, Link2 } from 'lucide-react'
+import { Package, Tag, Image, ShoppingBag, LogOut, Lock, LayoutDashboard, Megaphone, Ticket, Menu, X, ExternalLink, Users, Gift, MessageCircle, Newspaper, PartyPopper, Hash, TrendingUp, Eye, AlertTriangle, Rss, Star, Terminal, Heart, Link2, MessageSquareText } from 'lucide-react'
 import { GestionalePanel } from './gestionale/GestionalePanel'
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
@@ -25,11 +25,12 @@ import { VisitLogManager } from '@/components/admin/visit-log-manager'
 import { AbandonedCartsManager } from '@/components/admin/abandoned-carts-manager'
 import { WishlistManager } from '@/components/admin/wishlist-manager'
 import { TickerManager } from '@/components/admin/ticker-manager'
+import { PopupsManager } from '@/components/admin/popups-manager'
 import { CustomerPushNotify } from '@/components/admin/customer-push-notify'
 import { ReviewsManager } from '@/components/admin/reviews-manager'
 import { LinksManager } from '@/components/admin/links-manager'
 
-type Tab = 'dashboard' | 'products' | 'categories' | 'banners' | 'orders' | 'promo' | 'volantino' | 'coupons' | 'clienti' | 'fedelta' | 'chat' | 'lottery' | 'biglietti' | 'statistiche' | 'visite' | 'carrelli' | 'preferiti' | 'ticker' | 'notifiche' | 'recensioni' | 'gestionale' | 'link'
+type Tab = 'dashboard' | 'products' | 'categories' | 'banners' | 'orders' | 'promo' | 'volantino' | 'coupons' | 'clienti' | 'fedelta' | 'chat' | 'lottery' | 'biglietti' | 'statistiche' | 'visite' | 'carrelli' | 'preferiti' | 'ticker' | 'popup' | 'notifiche' | 'recensioni' | 'gestionale' | 'link'
 type Group = 'generale' | 'ordini' | 'catalogo'
 
 const GROUP_LABELS: Record<Group, string> = {
@@ -42,6 +43,7 @@ const TABS: { id: Tab; label: string; icon: typeof Package; color: string; group
   { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard, color: 'text-blue-600 bg-blue-50', group: 'generale' },
   { id: 'visite', label: 'Visite', icon: Eye, color: 'text-cyan-600 bg-cyan-50', group: 'generale' },
   { id: 'ticker', label: 'Striscia messaggi', icon: Rss, color: 'text-cyan-600 bg-cyan-50', group: 'generale' },
+  { id: 'popup', label: 'Pop up messaggi', icon: MessageSquareText, color: 'text-cyan-600 bg-cyan-50', group: 'generale' },
   { id: 'notifiche', label: 'Notifiche clienti', icon: Megaphone, color: 'text-cyan-600 bg-cyan-50', group: 'generale' },
   { id: 'gestionale', label: 'Gestionale', icon: Terminal, color: 'text-slate-600 bg-slate-100', group: 'generale' },
   { id: 'link', label: 'Link del sito', icon: Link2, color: 'text-cyan-600 bg-cyan-50', group: 'generale' },
@@ -202,6 +204,7 @@ export default function AdminPage() {
         {activeTab === 'dashboard' && <DashboardStats />}
         {activeTab === 'visite' && <VisitLogManager />}
         {activeTab === 'ticker' && <TickerManager />}
+        {activeTab === 'popup' && <PopupsManager />}
         {activeTab === 'notifiche' && <CustomerPushNotify />}
         {activeTab === 'products' && <ProductsManager />}
         {activeTab === 'categories' && <CategoriesManager />}

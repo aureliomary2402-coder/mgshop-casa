@@ -11,6 +11,7 @@ import { BackToTop } from '@/components/shop/back-to-top'
 import { ServiceWorkerRegister } from '@/components/sw-register'
 import { SiteTicker } from '@/components/shop/site-ticker'
 import { HalloweenDecor } from '@/components/shop/halloween-decor'
+import { SitePopup } from '@/components/shop/site-popup'
 import { SiteFooter } from '@/components/shop/site-footer'
 import { BottomNav } from '@/components/shop/bottom-nav'
 import { FloatingCart } from '@/components/shop/floating-cart'
@@ -69,6 +70,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <ProductDetailModal />
         <SiteTicker />
         <HalloweenDecor />
+        <SitePopup />
         <Toaster position="bottom-center" richColors />
         <Analytics />
       </body>
