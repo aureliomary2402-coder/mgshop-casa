@@ -50,6 +50,8 @@ export function CartContent({ scope = 'shop' }: { scope?: string }) {
   const [welcomeCouponUsed, setWelcomeCouponUsed] = useState(false)
   const [slotOrderId, setSlotOrderId] = useState<string | null>(null)
   const [appliedSlotPercent, setAppliedSlotPercent] = useState(0)
+  // Dopo l'invio dell'ordine la pagina torna in cima: si vede subito la slot.
+  useEffect(() => { if (submitted) window.scrollTo({ top: 0 }) }, [submitted])
   const [showNotifyReminder, setShowNotifyReminder] = useState(false)
   const [notifyActivating, setNotifyActivating] = useState(false)
   const [whatsappLink, setWhatsappLink] = useState('')

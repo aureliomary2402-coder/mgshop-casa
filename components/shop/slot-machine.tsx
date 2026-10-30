@@ -1,6 +1,7 @@
 "use client"
 
 import { useEffect, useRef, useState } from 'react'
+import { createPortal } from 'react-dom'
 import { X } from 'lucide-react'
 import { ACTIVE_POPUP_THEME, POPUP_THEMES } from '@/lib/popup-theme'
 import { SLOT_SYMBOLS } from '@/lib/slot-theme'
@@ -58,7 +59,9 @@ export function SlotMachine({ orderId }: { orderId: string }) {
 
   if (!enabled || !open) return null
 
-  return (
+  // Portale su <body>: cosi il popup resta fisso sullo schermo anche se un
+  // contenitore genitore ha animazioni/transform (che lo spostavano in cima pagina).
+  return createPortal(
     <div className="fixed inset-0 z-[100] flex items-center justify-center p-4" style={{ background: theme.backdrop }}>
       <div className="relative w-full max-w-sm rounded-3xl px-5 pt-10 pb-6 text-center" style={{ background: theme.cardBg, border: theme.border, boxShadow: theme.glow }}>
         <div className="absolute -top-7 left-1/2 -translate-x-1/2 text-5xl leading-none">{theme.badge}</div>
@@ -98,6 +101,7 @@ export function SlotMachine({ orderId }: { orderId: string }) {
           </button>
         )}
       </div>
-    </div>
+    </div>,
+    document.body
   )
 }
