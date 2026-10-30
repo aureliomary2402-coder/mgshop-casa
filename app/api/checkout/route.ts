@@ -117,9 +117,28 @@ export async function POST(request: NextRequest) {
       }
     }
 
+    // Sconto vinto alla slot: si applica in automatico al primo ordine
+    // successivo dello stesso numero di telefono (una vincita per ordine).
+    let slotDiscountPercent = 0
+    let slotSpinId: string | null = null
+    const { data: slotWin } = await supabase
+      .from('slot_spins')
+      .select('id, discount_percent')
+      .eq('phone_number', normalizedPhone)
+      .eq('won', true)
+      .is('used_order_id', null)
+      .order('created_at', { ascending: true })
+      .limit(1)
+      .maybeSingle()
+    if (slotWin && Number(slotWin.discount_percent) > 0) {
+      slotDiscountPercent = Number(slotWin.discount_percent)
+      slotSpinId = slotWin.id
+    }
+
     const referralDiscountAmount = referralDiscountPercent > 0 ? baseTotal * (referralDiscountPercent / 100) : 0
     const rewardDiscountAmount = rewardDiscountPercent > 0 ? baseTotal * (rewardDiscountPercent / 100) : 0
-    const finalTotal = Math.max(0, baseTotal - referralDiscountAmount - rewardDiscountAmount)
+    const slotDiscountAmount = slotDiscountPercent > 0 ? baseTotal * (slotDiscountPercent / 100) : 0
+    const finalTotal = Math.max(0, baseTotal - referralDiscountAmount - rewardDiscountAmount - slotDiscountAmount)
 
     // Il "biglietto lotteria" è una voce speciale nel carrello: non è un
     // prodotto vero (niente magazzino, niente riga in order_items). Che il
@@ -246,6 +265,11 @@ export async function POST(request: NextRequest) {
       }
     }
 
+    // La vincita slot e consumata solo ora che l'ordine esiste davvero.
+    if (slotSpinId) {
+      await supabase.from('slot_spins').update({ used_order_id: order.id, used_at: new Date().toISOString() }).eq('id', slotSpinId).is('used_order_id', null)
+    }
+
     if (realItems.length > 0) {
       const orderItems = realItems.map((item: { product: { id: string; name: string; price: number; card_image?: string | null; cover_image?: string | null }; quantity: number; customization?: { option_id: string; label: string; value: string; price?: number }[]; unitPrice?: number; source?: string }) => ({
         order_id: order.id,
@@ -301,9 +325,10 @@ export async function POST(request: NextRequest) {
       i.customization && i.customization.length > 0 && !i.customization.some(c => typeof c.price === 'number'))
     const customizedSuffix = needsManualPricing ? ' 🎨 con personalizzazioni: contatta il cliente per confermare il prezzo' : (hasCustomized ? ' 🎨 con personalizzazioni' : '')
     const referralSuffix = referralDiscountPercent > 0 ? ' 🤝 primo ordine da invito (-5%)' : (rewardDiscountPercent > 0 ? ' 🤝 sconto invita un amico (-10%)' : '')
+    const slotSuffix = slotDiscountPercent > 0 ? ` 🎰 sconto slot (-${slotDiscountPercent}%)` : ''
     const notifBody = ticketQty > 0
-      ? `${phone_number} — ${itemsCount} articoli + ${ticketQty} bigliett${ticketQty > 1 ? 'i' : 'o'} lotteria — €${finalTotal.toFixed(2)}${customizedSuffix}${referralSuffix}`
-      : `${phone_number} — ${itemsCount} articoli — €${finalTotal.toFixed(2)}${customizedSuffix}${referralSuffix}`
+      ? `${phone_number} — ${itemsCount} articoli + ${ticketQty} bigliett${ticketQty > 1 ? 'i' : 'o'} lotteria — €${finalTotal.toFixed(2)}${customizedSuffix}${referralSuffix}${slotSuffix}`
+      : `${phone_number} — ${itemsCount} articoli — €${finalTotal.toFixed(2)}${customizedSuffix}${referralSuffix}${slotSuffix}`
     try {
       await sendPushToAdmin('Nuovo ordine ricevuto!', notifBody, '/mgadmin-panel')
     } catch (e) {
@@ -316,6 +341,7 @@ export async function POST(request: NextRequest) {
       ticket_numbers: ticketNumbers,
       referral_discount_percent: referralDiscountPercent || rewardDiscountPercent || 0,
       referral_error: referralError,
+      slot_discount_percent: slotDiscountPercent,
       final_total: finalTotal,
       coupon_error: welcomeCouponRejected ? 'Coupon già utilizzato' : null,
     })

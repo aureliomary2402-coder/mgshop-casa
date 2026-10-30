@@ -12,6 +12,7 @@ import { RecentlyViewed } from './recently-viewed'
 import { PageHero } from './page-hero'
 import { subscribeToPush } from '@/lib/push-subscribe'
 import { WHATSAPP_NUMBER, SOCIAL_LINKS, WhatsAppIcon } from './social-icons'
+import { SlotMachine } from './slot-machine'
 
 export function CartContent({ scope = 'shop' }: { scope?: string }) {
   const [mounted, setMounted] = useState(false)
@@ -47,6 +48,8 @@ export function CartContent({ scope = 'shop' }: { scope?: string }) {
   const [appliedReferralPercent, setAppliedReferralPercent] = useState(0)
   const [finalPaidTotal, setFinalPaidTotal] = useState<number | null>(null)
   const [welcomeCouponUsed, setWelcomeCouponUsed] = useState(false)
+  const [slotOrderId, setSlotOrderId] = useState<string | null>(null)
+  const [appliedSlotPercent, setAppliedSlotPercent] = useState(0)
   const [showNotifyReminder, setShowNotifyReminder] = useState(false)
   const [notifyActivating, setNotifyActivating] = useState(false)
   const [whatsappLink, setWhatsappLink] = useState('')
@@ -264,6 +267,8 @@ export function CartContent({ scope = 'shop' }: { scope?: string }) {
       }
       if (data.ticket_numbers?.length) setTicketNumbers(data.ticket_numbers)
       setAppliedReferralPercent(data.referral_discount_percent || 0)
+      setAppliedSlotPercent(data.slot_discount_percent || 0)
+      setSlotOrderId(data.order?.id ? String(data.order.id) : null)
       setFinalPaidTotal(typeof data.final_total === 'number' ? data.final_total : null)
       setChosenNumbers([])
       setDeliveryMethod(null); setAddress(''); setReferredByPhone(''); setShowReferralField(false)
@@ -318,6 +323,8 @@ export function CartContent({ scope = 'shop' }: { scope?: string }) {
       setWhatsappLink(`${SOCIAL_LINKS.whatsappChat}?text=${encodeURIComponent(msg)}`)
       if (data.ticket_numbers?.length) setTicketNumbers(data.ticket_numbers)
       setAppliedReferralPercent(data.referral_discount_percent || 0)
+      setAppliedSlotPercent(data.slot_discount_percent || 0)
+      setSlotOrderId(data.order?.id ? String(data.order.id) : null)
       setFinalPaidTotal(typeof data.final_total === 'number' ? data.final_total : null)
       setChosenNumbers([])
       setDeliveryMethod(null); setAddress(''); setReferredByPhone(''); setShowReferralField(false)
@@ -355,6 +362,7 @@ export function CartContent({ scope = 'shop' }: { scope?: string }) {
 
   if (submitted) return (
     <div className="max-w-md mx-auto px-4 py-20 text-center animate-scale-in">
+      {slotOrderId && <SlotMachine orderId={slotOrderId} />}
       <div className="relative w-24 h-24 mx-auto mb-6">
         {['#d95500','#ff7a1a','#ff9a3d','#16a34a','#ef4444','#3b82f6'].map((color, i) => (
           <div key={i} className="confetti-piece"
@@ -393,6 +401,9 @@ export function CartContent({ scope = 'shop' }: { scope?: string }) {
       <p className={`text-sm text-zucca-700 font-medium ${appliedReferralPercent > 0 || finalPaidTotal !== null ? 'mb-2' : 'mb-8'}`}>🎁 Riceverai i tuoi punti fedeltà via WhatsApp!</p>
       {appliedReferralPercent > 0 && (
         <p className={`text-sm text-green-600 font-medium ${finalPaidTotal !== null ? 'mb-2' : 'mb-8'}`}>🤝 Sconto invito del {appliedReferralPercent}% applicato su questo ordine!</p>
+      )}
+      {appliedSlotPercent > 0 && (
+        <p className={`text-sm text-orange-600 font-medium ${finalPaidTotal !== null ? 'mb-2' : 'mb-8'}`}>🎰 Sconto slot del {appliedSlotPercent}% applicato su questo ordine!</p>
       )}
       {finalPaidTotal !== null && (
         <p className="text-lg font-bold mb-8" style={{ color: '#2a1450' }}>

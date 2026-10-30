@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect } from 'react'
-import { Package, Tag, Image, ShoppingBag, LogOut, Lock, LayoutDashboard, Megaphone, Ticket, Menu, X, ExternalLink, Users, Gift, MessageCircle, Newspaper, PartyPopper, Hash, TrendingUp, Eye, AlertTriangle, Rss, Star, Terminal, Heart, Link2, MessageSquareText } from 'lucide-react'
+import { Package, Tag, Image, ShoppingBag, LogOut, Lock, LayoutDashboard, Megaphone, Ticket, Menu, X, ExternalLink, Users, Gift, MessageCircle, Newspaper, PartyPopper, Hash, TrendingUp, Eye, AlertTriangle, Rss, Star, Terminal, Heart, Link2, MessageSquareText, Dices } from 'lucide-react'
 import { GestionalePanel } from './gestionale/GestionalePanel'
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
@@ -29,8 +29,9 @@ import { PopupsManager } from '@/components/admin/popups-manager'
 import { CustomerPushNotify } from '@/components/admin/customer-push-notify'
 import { ReviewsManager } from '@/components/admin/reviews-manager'
 import { LinksManager } from '@/components/admin/links-manager'
+import { SlotManager } from '@/components/admin/slot-manager'
 
-type Tab = 'dashboard' | 'products' | 'categories' | 'banners' | 'orders' | 'promo' | 'volantino' | 'coupons' | 'clienti' | 'fedelta' | 'chat' | 'lottery' | 'biglietti' | 'statistiche' | 'visite' | 'carrelli' | 'preferiti' | 'ticker' | 'popup' | 'notifiche' | 'recensioni' | 'gestionale' | 'link'
+type Tab = 'dashboard' | 'products' | 'categories' | 'banners' | 'orders' | 'promo' | 'volantino' | 'coupons' | 'clienti' | 'fedelta' | 'chat' | 'lottery' | 'biglietti' | 'statistiche' | 'visite' | 'carrelli' | 'preferiti' | 'ticker' | 'popup' | 'notifiche' | 'recensioni' | 'gestionale' | 'link' | 'slot'
 type Group = 'generale' | 'ordini' | 'catalogo'
 
 const GROUP_LABELS: Record<Group, string> = {
@@ -62,6 +63,7 @@ const TABS: { id: Tab; label: string; icon: typeof Package; color: string; group
   { id: 'promo', label: 'Promo', icon: Megaphone, color: 'text-rose-600 bg-rose-50', group: 'catalogo' },
   { id: 'volantino', label: 'Volantino', icon: Newspaper, color: 'text-red-600 bg-red-50', group: 'catalogo' },
   { id: 'lottery', label: 'Lotteria', icon: PartyPopper, color: 'text-amber-600 bg-amber-50', group: 'catalogo' },
+  { id: 'slot', label: 'Slot', icon: Dices, color: 'text-orange-600 bg-orange-50', group: 'catalogo' },
   { id: 'statistiche', label: 'Statistiche', icon: TrendingUp, color: 'text-orange-600 bg-orange-50', group: 'catalogo' },
 ]
 
@@ -216,6 +218,7 @@ export default function AdminPage() {
         {activeTab === 'promo' && <PromoManager />}
         {activeTab === 'volantino' && <VolantinoManager />}
         {activeTab === 'lottery' && <LotteryManager />}
+        {activeTab === 'slot' && <SlotManager />}
         {activeTab === 'coupons' && <CouponsManager />}
         {activeTab === 'clienti' && <ClientiManager />}
         {activeTab === 'fedelta' && <LoyaltySettingsManager />}
