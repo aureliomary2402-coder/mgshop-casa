@@ -4,6 +4,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { SocialSection } from "@/components/shop/social-section";
 import { SocialMenu } from "@/components/shop/social-menu";
+import { BenefitsCarousel } from "@/components/shop/benefits-carousel";
 import {
   ArrowRight,
   Check,
@@ -317,6 +318,8 @@ export default function HomePage() {
           })}
         </div>
       </section>
+
+      <BenefitsCarousel />
 
       {/* =========================================================
           CATEGORIE
