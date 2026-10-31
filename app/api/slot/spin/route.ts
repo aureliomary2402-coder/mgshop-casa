@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { randomInt } from 'crypto'
 import { createAdminClient } from '@/lib/supabase/admin'
 import { ACTIVE_POPUP_THEME } from '@/lib/popup-theme'
-import { SLOT_SYMBOLS } from '@/lib/slot-theme'
+import { SLOT_SYMBOLS, symbolForDiscount } from '@/lib/slot-theme'
 
 export const dynamic = 'force-dynamic'
 export const fetchCache = 'force-no-store'
@@ -73,7 +73,8 @@ export async function POST(request: NextRequest) {
     const pick = () => pool[randomInt(0, pool.length)]
     let symbols: string[]
     if (prize) {
-      const s = pick()
+      // Il simbolo dipende dalla % di sconto (es. 🕸️ 5%, 🦇 10%, 🎃 20%)
+      const s = symbolForDiscount(ACTIVE_POPUP_THEME, prize.discount_percent) ?? pick()
       symbols = [s, s, s]
     } else {
       symbols = [pick(), pick(), pick()]

@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { X } from 'lucide-react'
 import { ACTIVE_POPUP_THEME, POPUP_THEMES } from '@/lib/popup-theme'
-import { SLOT_SYMBOLS } from '@/lib/slot-theme'
+import { SLOT_SYMBOLS, SLOT_PRIZE_SYMBOLS } from '@/lib/slot-theme'
 
 interface SpinResult { enabled: boolean; won: boolean; symbols: string[]; label: string | null; discount_percent: number }
 
@@ -88,6 +88,10 @@ export function SlotMachine({ orderId }: { orderId: string }) {
             </div>
           ))}
         </div>
+
+        <p className="text-xs mb-4" style={{ color: theme.text, opacity: 0.85 }}>
+          {Object.entries(SLOT_PRIZE_SYMBOLS[ACTIVE_POPUP_THEME]).map(([pct, sym]) => `${sym} ${pct}%`).join('  ·  ')}
+        </p>
 
         {error && <p className="text-sm mb-3" style={{ color: '#ff9a9a' }}>{error}</p>}
 
