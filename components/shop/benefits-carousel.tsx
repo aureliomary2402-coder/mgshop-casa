@@ -25,7 +25,7 @@ export interface Slide {
 export const GRADIENTS: Record<GradientKey, { label: string; css: string }> = {
   viola: { label: 'Viola', css: 'linear-gradient(150deg,var(--c-4c1a8a) 0%,var(--c-2e0d57) 60%,var(--c-a23800) 130%)' },
   arancio: { label: 'Arancio', css: 'linear-gradient(150deg,var(--c-a23800) 0%,var(--c-5a1c00) 60%,var(--c-2e0d57) 130%)' },
-  notte: { label: 'Notte', css: 'linear-gradient(150deg,var(--c-2e0d57) 0%,var(--c-4c1a8a) 55%,#7a2fd0 130%)' },
+  notte: { label: 'Notte', css: 'linear-gradient(150deg,var(--c-2e0d57) 0%,var(--c-4c1a8a) 55%,var(--c-7a2fd0) 130%)' },
   zucca: { label: 'Zucca', css: 'linear-gradient(150deg,var(--c-5a1c00) 0%,var(--c-a23800) 50%,var(--c-4c1a8a) 130%)' },
   mix: { label: 'Mix', css: 'linear-gradient(150deg,var(--c-2e0d57) 0%,var(--c-a23800) 120%)' },
 }

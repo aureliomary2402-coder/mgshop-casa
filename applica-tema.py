@@ -25,6 +25,8 @@ PALETTES = {
         '1a0d33': '0c2b36', '2a1450': '164e63', '3d1b73': '155e75', '160b29': '0a2733',
         '120a22': '08222c', '5b2a9e': '0e7490', '2d1458': '164e63', '2e0d57': '0c3a4a',
         '4c1a8a': '0e7490', '1f0e3d': '0c2b36', '7c3aed': '0ea5e9',
+        'fef9c3': 'cffafe', 'fde047': '67e8f9', 'fef08a': 'a5f3fc', 'a3e635': '67e8f9', 'bef264': 'a5f3fc',
+        '0d0618': '031a22', '7a2fd0': '0ea5e9',
         'ffe6cf': 'd5f5fa', 'ffeedd': 'e3f9fc', 'ffbe78': '67e8f9', 'ff9646': '22d3ee', 'ffd2a0': 'a5f3fc',
     },
 }
@@ -87,18 +89,67 @@ s2 = s2.replace('MODALITA VELOCE (Halloween): toglie', 'MODALITA VELOCE (tutti i
 write_if_changed(p, s2, s)
 
 # 3) colori fissi -> variabili
-hex_re = re.compile(r'#(' + '|'.join(KEYS) + r')\b', re.I)
+hex_re = re.compile(r'#(' + '|'.join(KEYS) + r')(?![0-9a-fA-F])', re.I)
 cls_re = re.compile(r'-\[#(' + '|'.join(KEYS) + r')\]', re.I)
 rgb_res = []
 for k in KEYS:
     r, g, b = rgb(k)
     rgb_res.append((re.compile(r'(?<![A-Za-z])rgba?\(\s*%d\s*,\s*%d\s*,\s*%d\s*(,|\))' % (r, g, b)), k))
 
+# classi Tailwind con colori fissi di Halloween -> variabili
+TEXT_REPLACE = [
+    ('from-yellow-100 via-yellow-300 to-yellow-100', 'from-[color:var(--c-fef9c3)] via-[color:var(--c-fde047)] to-[color:var(--c-fef9c3)]'),
+    ('text-yellow-200', 'text-[color:var(--c-fef08a)]'),
+    ('bg-purple-500/30', 'bg-[rgba(var(--c-7c3aed-rgb),.3)]'),
+    ('bg-lime-400/15', 'bg-[rgba(var(--c-a3e635-rgb),.15)]'),
+]
+
+PUMPKINS = '''"use client"
+
+import { useSiteTheme } from '@/components/site-theme-provider'
+
+// Le tre zucche dell'hero: si vedono solo con il tema Halloween.
+export function HeroPumpkins() {
+  const theme = useSiteTheme()
+  if (theme !== 'halloween') return null
+  return (
+    <>
+      <span aria-hidden="true" className="pointer-events-none absolute bottom-2 right-3 select-none text-5xl leading-none -rotate-6 sm:text-7xl">🎃</span>
+      <span aria-hidden="true" className="pointer-events-none absolute left-1 top-[46%] select-none text-4xl leading-none rotate-12 sm:text-6xl">🎃</span>
+      <span aria-hidden="true" className="pointer-events-none absolute right-2 top-24 select-none text-3xl leading-none rotate-6 sm:text-5xl">🎃</span>
+    </>
+  )
+}
+'''
+PUMPKIN_FILES = ['app/page.tsx', 'components/shop/hero-backdrop.tsx']
+
+def fix_pumpkins():
+    pp = 'components/shop/hero-pumpkins.tsx'
+    if not os.path.exists(pp):
+        open(pp, 'w', encoding='utf-8').write(PUMPKINS); changed.append(pp)
+    for path in PUMPKIN_FILES:
+        old = open(path, encoding='utf-8').read()
+        if 'HeroPumpkins' in old: continue
+        lines = old.split('\n'); out = []; first = True
+        for ln in lines:
+            if '🎃</span>' in ln and 'pointer-events-none' in ln:
+                if first:
+                    out.append(ln[:len(ln) - len(ln.lstrip())] + '<HeroPumpkins />'); first = False
+                continue
+            out.append(ln)
+        new = '\n'.join(out)
+        if first: continue
+        imp = "import { HeroPumpkins } from '@/components/shop/hero-pumpkins'\n"
+        m = re.search(r"^import .*\n", new, re.M)
+        new = new[:m.end()] + imp + new[m.end():]
+        write_if_changed(path, new, old)
+
 SKIP_DIRS = {'api', 'mgadmin-panel', 'admin', 'ui', 'node_modules', '.next'}
 SKIP_FILES = {'halloween-decor.tsx'}
 warn = []
 
 def convert(text):
+    for a, b in TEXT_REPLACE: text = text.replace(a, b)
     text = cls_re.sub(lambda m: f'-[color:var(--c-{m.group(1).lower()})]', text)
     text = hex_re.sub(lambda m: f'var(--c-{m.group(1).lower()})', text)
     for rx, k in rgb_res:
@@ -121,6 +172,7 @@ for root in ('app', 'components'):
             if re.search(r'-\[var\(--c-[0-9a-f]{6}\)\]/', new): warn.append(path)
             write_if_changed(path, new, old)
 
+fix_pumpkins()
 changed = list(dict.fromkeys(changed))
 print(f'Fatto. File modificati: {len(changed)}')
 for c in changed: print('  ' + c)

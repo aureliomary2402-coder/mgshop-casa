@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { HeroPumpkins } from '@/components/shop/hero-pumpkins'
 import Image from "next/image";
 import { SocialSection } from "@/components/shop/social-section";
 import { SocialMenu } from "@/components/shop/social-menu";
@@ -78,16 +79,14 @@ export default function HomePage() {
       {/* =========================================================
           HERO
       ========================================================= */}
-      <section className="relative min-h-[760px] overflow-hidden bg-[linear-gradient(160deg,var(--c-2e0d57),#4c1a8a_35%,#a23800_78%,var(--c-5a1c00))] sm:min-h-[820px]">
+      <section className="relative min-h-[760px] overflow-hidden bg-[linear-gradient(160deg,var(--c-2e0d57),var(--c-4c1a8a)_35%,var(--c-a23800)_78%,var(--c-5a1c00))] sm:min-h-[820px]">
 
-        <span aria-hidden="true" className="pointer-events-none absolute bottom-2 right-3 select-none text-5xl leading-none -rotate-6 sm:text-7xl">🎃</span>
-        <span aria-hidden="true" className="pointer-events-none absolute left-1 top-[46%] select-none text-4xl leading-none rotate-12 sm:text-6xl">🎃</span>
-        <span aria-hidden="true" className="pointer-events-none absolute right-2 top-24 select-none text-3xl leading-none rotate-6 sm:text-5xl">🎃</span>
+        <HeroPumpkins />
         {/* glow ambientali */}
         <div className="pointer-events-none absolute inset-0">
           <div className="absolute left-[-180px] top-[80px] h-[420px] w-[420px] rounded-full bg-zucca-400/15 blur-[110px]" />
-          <div className="absolute right-[-160px] top-[160px] h-[500px] w-[500px] rounded-full bg-purple-500/30 blur-[130px]" />
-          <div className="absolute bottom-[-250px] left-1/2 h-[500px] w-[700px] -translate-x-1/2 rounded-full bg-lime-400/15 blur-[120px]" />
+          <div className="absolute right-[-160px] top-[160px] h-[500px] w-[500px] rounded-full bg-[rgba(var(--c-7c3aed-rgb),.3)] blur-[130px]" />
+          <div className="absolute bottom-[-250px] left-1/2 h-[500px] w-[700px] -translate-x-1/2 rounded-full bg-[rgba(var(--c-a3e635-rgb),.15)] blur-[120px]" />
         </div>
 
         {/* griglia 3D */}
@@ -95,7 +94,7 @@ export default function HomePage() {
           className="pointer-events-none absolute inset-0 opacity-[0.13]"
           style={{
             backgroundImage:
-              "linear-gradient(rgba(190,242,100,.35) 1px, transparent 1px), linear-gradient(90deg, rgba(190,242,100,.35) 1px, transparent 1px)",
+              "linear-gradient(rgba(var(--c-bef264-rgb),.35) 1px, transparent 1px), linear-gradient(90deg, rgba(var(--c-bef264-rgb),.35) 1px, transparent 1px)",
             backgroundSize: "70px 70px",
             transform: "perspective(500px) rotateX(62deg) scale(1.8)",
             transformOrigin: "center bottom",
@@ -153,7 +152,7 @@ export default function HomePage() {
                 TUTTO PER
                 <br />
                 LA TUA{" "}
-                <span className="bg-gradient-to-r from-yellow-100 via-yellow-300 to-yellow-100 bg-clip-text text-transparent">
+                <span className="bg-gradient-to-r from-[color:var(--c-fef9c3)] via-[color:var(--c-fde047)] to-[color:var(--c-fef9c3)] bg-clip-text text-transparent">
                   CASA.
                 </span>
               </h1>
@@ -225,7 +224,7 @@ export default function HomePage() {
                   ORDINA.
                 </div>
 
-                <div className="text-3xl font-black text-yellow-200">
+                <div className="text-3xl font-black text-[color:var(--c-fef08a)]">
                   RICEVI.
                 </div>
 

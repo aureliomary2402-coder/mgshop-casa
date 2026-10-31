@@ -72,7 +72,7 @@ export default function SocialPage() {
   const openChat = useUIPanelsStore(s => s.openChat)
 
   return (
-    <div className="min-h-screen" style={{ background: 'linear-gradient(180deg,#0d0618 0%,#071e27 45%,#0d0618 100%)' }}>
+    <div className="min-h-screen" style={{ background: 'linear-gradient(180deg,var(--c-0d0618) 0%,#071e27 45%,var(--c-0d0618) 100%)' }}>
       <PageHero
         icon={Share2}
         iconColor="var(--c-ff9a3d)"
