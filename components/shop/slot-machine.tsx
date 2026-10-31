@@ -89,9 +89,11 @@ export function SlotMachine({ orderId }: { orderId: string }) {
           ))}
         </div>
 
-        <p className="text-xs mb-4" style={{ color: theme.text, opacity: 0.85 }}>
-          {Object.entries(SLOT_PRIZE_SYMBOLS[ACTIVE_POPUP_THEME]).map(([pct, sym]) => `${sym} ${pct}%`).join('  ·  ')}
-        </p>
+        <div className="mb-5 space-y-1 text-sm font-semibold" style={{ color: theme.text }}>
+          {Object.entries(SLOT_PRIZE_SYMBOLS[ACTIVE_POPUP_THEME]).map(([pct, sym]) => (
+            <p key={pct}><span className="text-xl align-middle mr-1.5">{sym}</span>sconto del {pct}%</p>
+          ))}
+        </div>
 
         {error && <p className="text-sm mb-3" style={{ color: '#ff9a9a' }}>{error}</p>}
 
