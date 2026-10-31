@@ -88,7 +88,7 @@ export function HomeHeader() {
           </button>
           {menuOpen && (
             <div className="absolute top-full left-0 mt-2 w-64 rounded-2xl overflow-hidden shadow-xl animate-scale-in z-50"
-              style={{ background: 'white', border: '1px solid rgba(217,85,0,0.1)', boxShadow: '0 20px 60px rgba(0,0,0,0.12)' }}>
+              style={{ background: 'white', border: '1px solid rgba(var(--c-d95500-rgb),0.1)', boxShadow: '0 20px 60px rgba(0,0,0,0.12)' }}>
               <div className="p-2 max-h-[70vh] overflow-y-auto">
                 {NAV_ITEMS.map(item => (
                   'href' in item ? (
@@ -119,7 +119,7 @@ export function HomeHeader() {
             <ShoppingBag className="w-5 h-5" />
             {itemCount > 0 && (
               <span className="absolute top-0 right-0 w-4 h-4 text-white text-[10px] rounded-full flex items-center justify-center font-bold"
-                style={{ background: 'linear-gradient(135deg,#d95500,#ff7a1a)' }}>
+                style={{ background: 'linear-gradient(135deg,var(--c-d95500),var(--c-ff7a1a))' }}>
                 {itemCount > 9 ? '9+' : itemCount}
               </span>
             )}

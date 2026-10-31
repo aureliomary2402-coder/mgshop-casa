@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from 'react'
 import Link from 'next/link'
 import { ArrowRight } from 'lucide-react'
-import { ACTIVE_POPUP_THEME } from '@/lib/popup-theme'
+import { useSiteTheme } from '@/components/site-theme-provider'
 import { SLOT_SYMBOLS } from '@/lib/slot-theme'
 
 // Carosello dei vantaggi nella landing. Le slide si gestiscono dal pannello
@@ -23,11 +23,11 @@ export interface Slide {
 }
 
 export const GRADIENTS: Record<GradientKey, { label: string; css: string }> = {
-  viola: { label: 'Viola', css: 'linear-gradient(150deg,#4c1a8a 0%,#2e0d57 60%,#a23800 130%)' },
-  arancio: { label: 'Arancio', css: 'linear-gradient(150deg,#a23800 0%,#5a1c00 60%,#2e0d57 130%)' },
-  notte: { label: 'Notte', css: 'linear-gradient(150deg,#2e0d57 0%,#4c1a8a 55%,#7a2fd0 130%)' },
-  zucca: { label: 'Zucca', css: 'linear-gradient(150deg,#5a1c00 0%,#a23800 50%,#4c1a8a 130%)' },
-  mix: { label: 'Mix', css: 'linear-gradient(150deg,#2e0d57 0%,#a23800 120%)' },
+  viola: { label: 'Viola', css: 'linear-gradient(150deg,var(--c-4c1a8a) 0%,var(--c-2e0d57) 60%,var(--c-a23800) 130%)' },
+  arancio: { label: 'Arancio', css: 'linear-gradient(150deg,var(--c-a23800) 0%,var(--c-5a1c00) 60%,var(--c-2e0d57) 130%)' },
+  notte: { label: 'Notte', css: 'linear-gradient(150deg,var(--c-2e0d57) 0%,var(--c-4c1a8a) 55%,#7a2fd0 130%)' },
+  zucca: { label: 'Zucca', css: 'linear-gradient(150deg,var(--c-5a1c00) 0%,var(--c-a23800) 50%,var(--c-4c1a8a) 130%)' },
+  mix: { label: 'Mix', css: 'linear-gradient(150deg,var(--c-2e0d57) 0%,var(--c-a23800) 120%)' },
 }
 
 const DEFAULT_SLIDES: Slide[] = [
@@ -40,12 +40,13 @@ const DEFAULT_SLIDES: Slide[] = [
 
 // Card di una slide. Usata sia dal carosello sia dall'anteprima nel pannello admin.
 export function SlideCard({ slide, index = 0, preview = false, className = '' }: { slide: Slide; index?: number; preview?: boolean; className?: string }) {
-  const pool = SLOT_SYMBOLS[ACTIVE_POPUP_THEME]
+  const siteTheme = useSiteTheme()
+  const pool = SLOT_SYMBOLS[siteTheme]
   const decor1 = pool[(index + 1) % pool.length]
   const decor2 = pool[(index + 3) % pool.length]
   const bg = (GRADIENTS[slide.gradient as GradientKey] || GRADIENTS.viola).css
   const hasCta = !!(slide.cta_label && slide.cta_link)
-  const ctaClass = 'group relative mt-5 inline-flex h-12 items-center justify-center gap-2 rounded-2xl bg-zucca-400 px-5 text-sm font-black text-[#1a0d33] shadow-[0_10px_30px_rgba(255,154,61,.25)] transition hover:bg-zucca-300'
+  const ctaClass = 'group relative mt-5 inline-flex h-12 items-center justify-center gap-2 rounded-2xl bg-zucca-400 px-5 text-sm font-black text-[color:var(--c-1a0d33)] shadow-[0_10px_30px_rgba(var(--c-ff9a3d-rgb),.25)] transition hover:bg-zucca-300'
 
   return (
     <article className={`relative flex flex-col overflow-hidden rounded-3xl border border-white/10 p-6 ${className}`} style={{ background: bg, minHeight: 360 }}>
@@ -132,11 +133,11 @@ export function BenefitsCarousel() {
   const pause = () => { pausedUntil.current = Date.now() + 9000 }
 
   // In attesa dei dati: spazio riservato; senza slide la sezione non compare
-  if (slides === null) return <section className="bg-[#120a22]" style={{ minHeight: 520 }} aria-hidden="true" />
+  if (slides === null) return <section className="bg-[color:var(--c-120a22)]" style={{ minHeight: 520 }} aria-hidden="true" />
   if (slides.length === 0) return null
 
   return (
-    <section className="relative overflow-hidden bg-[#120a22] py-16 sm:py-24">
+    <section className="relative overflow-hidden bg-[color:var(--c-120a22)] py-16 sm:py-24">
       <div className="pointer-events-none absolute inset-0">
         <div className="absolute left-1/2 top-1/2 h-[380px] w-[620px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-zucca-400/10 blur-[120px]" />
       </div>
@@ -176,7 +177,7 @@ export function BenefitsCarousel() {
                 aria-label={`Vai a ${s.title}`}
                 onClick={() => { pause(); goTo(i) }}
                 className="h-2 rounded-full transition-all"
-                style={{ width: i === active ? 24 : 8, background: i === active ? '#ffb066' : 'rgba(255,255,255,0.25)' }}
+                style={{ width: i === active ? 24 : 8, background: i === active ? 'var(--c-ffb066)' : 'rgba(255,255,255,0.25)' }}
               />
             ))}
           </div>

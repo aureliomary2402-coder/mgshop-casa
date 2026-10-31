@@ -27,9 +27,9 @@ export function ProductCustomizeForm({ options, values, onChange, note }: Props)
   if (!options || options.length === 0) return null
 
   return (
-    <div className="space-y-4 rounded-2xl p-4" style={{ background: 'rgba(217,85,0,0.05)', border: '1px solid rgba(217,85,0,0.16)' }}>
+    <div className="space-y-4 rounded-2xl p-4" style={{ background: 'rgba(var(--c-d95500-rgb),0.05)', border: '1px solid rgba(var(--c-d95500-rgb),0.16)' }}>
       {note && note.trim() && (
-        <p className="text-sm leading-relaxed" style={{ color: '#2d1458' }}>{note}</p>
+        <p className="text-sm leading-relaxed" style={{ color: 'var(--c-2d1458)' }}>{note}</p>
       )}
       {options.map(opt => {
         const selectedValues = Array.isArray(values[opt.id]) ? (values[opt.id] as string[]) : []
@@ -63,11 +63,11 @@ export function ProductCustomizeForm({ options, values, onChange, note }: Props)
         return (
         <div key={opt.id}>
           <div className="flex items-center justify-between gap-2 mb-2">
-            <label className="text-sm font-semibold" style={{ color: '#2a1450' }}>
+            <label className="text-sm font-semibold" style={{ color: 'var(--c-2a1450)' }}>
               {opt.label}{opt.required && <span className="text-zucca-600 ml-0.5">*</span>}
             </label>
             {opt.type === 'select' && choices.length > 1 && (
-              <label className="flex items-center gap-1.5 text-[11px] font-medium cursor-pointer select-none shrink-0" style={{ color: '#5b2a9e' }}>
+              <label className="flex items-center gap-1.5 text-[11px] font-medium cursor-pointer select-none shrink-0" style={{ color: 'var(--c-5b2a9e)' }}>
                 <input
                   type="checkbox"
                   checked={isMulti}
@@ -90,8 +90,8 @@ export function ProductCustomizeForm({ options, values, onChange, note }: Props)
                       onClick={() => handleChoiceClick(choice.value)}
                       className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-full text-sm font-medium transition-all btn-press"
                       style={selected
-                        ? { background: '#ff9a3d', color: '#1a0d33', boxShadow: '0 8px 20px rgba(255,154,61,0.28)' }
-                        : { background: 'white', border: '1px solid rgba(217,85,0,0.25)', color: '#2d1458' }}>
+                        ? { background: 'var(--c-ff9a3d)', color: 'var(--c-1a0d33)', boxShadow: '0 8px 20px rgba(var(--c-ff9a3d-rgb),0.28)' }
+                        : { background: 'white', border: '1px solid rgba(var(--c-d95500-rgb),0.25)', color: 'var(--c-2d1458)' }}>
                       {selected && <Check className="w-3.5 h-3.5" />}
                       {choice.value}{typeof choice.price === 'number' && ` – €${choice.price.toFixed(2)}`}
                     </button>
@@ -99,7 +99,7 @@ export function ProductCustomizeForm({ options, values, onChange, note }: Props)
                 })}
               </div>
               {isMulti && (
-                <p className="text-[11px] mt-1.5" style={{ color: '#5b2a9e' }}>Ogni scelta selezionata verrà aggiunta al carrello separatamente</p>
+                <p className="text-[11px] mt-1.5" style={{ color: 'var(--c-5b2a9e)' }}>Ogni scelta selezionata verrà aggiunta al carrello separatamente</p>
               )}
             </>
           ) : (
@@ -109,7 +109,7 @@ export function ProductCustomizeForm({ options, values, onChange, note }: Props)
               placeholder={opt.placeholder || ''}
               rows={2}
               className="w-full rounded-xl p-3 text-sm outline-none resize-none"
-              style={{ background: 'white', border: '1px solid rgba(217,85,0,0.25)', color: '#2a1450' }}
+              style={{ background: 'white', border: '1px solid rgba(var(--c-d95500-rgb),0.25)', color: 'var(--c-2a1450)' }}
             />
           )}
         </div>

@@ -130,7 +130,7 @@ export function ProductGrid({
       {hasMore && (
         <div ref={sentinelRef} className="flex items-center justify-center py-10">
           {loading && (
-            <div className="w-8 h-8 rounded-full border-2 border-zucca-200 animate-spin" style={{ borderTopColor: '#d95500' }} />
+            <div className="w-8 h-8 rounded-full border-2 border-zucca-200 animate-spin" style={{ borderTopColor: 'var(--c-d95500)' }} />
           )}
         </div>
       )}

@@ -11,8 +11,17 @@ module.exports = {
     extend: {
       colors: {
         zucca: {
-          50: '#fff7ee', 100: '#ffe9d2', 200: '#ffd0a1', 300: '#ffb066', 400: '#ff8f33',
-          500: '#ff7a1a', 600: '#d95500', 700: '#5b2a9e', 800: '#3d1b73', 900: '#2a1450', 950: '#150b26',
+          50: 'rgb(var(--z-50) / <alpha-value>)',
+          100: 'rgb(var(--z-100) / <alpha-value>)',
+          200: 'rgb(var(--z-200) / <alpha-value>)',
+          300: 'rgb(var(--z-300) / <alpha-value>)',
+          400: 'rgb(var(--z-400) / <alpha-value>)',
+          500: 'rgb(var(--z-500) / <alpha-value>)',
+          600: 'rgb(var(--z-600) / <alpha-value>)',
+          700: 'rgb(var(--z-700) / <alpha-value>)',
+          800: 'rgb(var(--z-800) / <alpha-value>)',
+          900: 'rgb(var(--z-900) / <alpha-value>)',
+          950: 'rgb(var(--z-950) / <alpha-value>)',
         },
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",

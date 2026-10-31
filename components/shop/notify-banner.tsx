@@ -86,7 +86,7 @@ export function NotifyBanner() {
       <div className="fixed inset-0 z-[70] flex items-end justify-center bg-black/60 p-4 backdrop-blur-sm sm:items-center" onClick={dismiss}>
         <div role="dialog" aria-modal="true"
           onClick={e => e.stopPropagation()}
-          className="neon-glow animate-slide-in-up relative w-full max-w-sm rounded-[28px] border border-zucca-300/15 bg-[#160b29] p-6 text-center shadow-2xl"
+          className="neon-glow animate-slide-in-up relative w-full max-w-sm rounded-[28px] border border-zucca-300/15 bg-[color:var(--c-160b29)] p-6 text-center shadow-2xl"
           style={{ marginBottom: 'env(safe-area-inset-bottom, 0px)' }}>
           <button onClick={dismiss} aria-label="Chiudi" className="absolute right-3 top-3 p-1 text-slate-500 hover:text-slate-300">
             <X className="h-5 w-5" />
@@ -101,7 +101,7 @@ export function NotifyBanner() {
               <p className="mt-2 text-sm text-slate-400">Attiva le notifiche: ti avvisiamo su promozioni, volantino e novità del negozio.</p>
               <button onClick={activate} disabled={loading}
                 className="mt-5 w-full rounded-2xl px-4 py-3 text-sm font-black transition-transform active:scale-95 disabled:opacity-60"
-                style={{ background: '#ff9a3d', color: '#1a0d33' }}>
+                style={{ background: 'var(--c-ff9a3d)', color: 'var(--c-1a0d33)' }}>
                 {loading ? '...' : 'Attiva le notifiche'}
               </button>
               <button onClick={dismiss} className="mt-3 w-full py-2 text-xs font-semibold text-slate-500 hover:text-slate-300">Non ora</button>
@@ -126,7 +126,7 @@ export function NotifyBanner() {
               </ol>
               <button onClick={dismiss}
                 className="mt-5 w-full rounded-2xl px-4 py-3 text-sm font-black transition-transform active:scale-95"
-                style={{ background: '#ff9a3d', color: '#1a0d33' }}>
+                style={{ background: 'var(--c-ff9a3d)', color: 'var(--c-1a0d33)' }}>
                 Ho capito
               </button>
             </>
@@ -141,7 +141,7 @@ export function NotifyBanner() {
   // scorciatoia carrello; z-index più alto degli altri elementi fissi.
   return (
     <div className="fixed left-4 right-4 z-[60] animate-slide-in-up" style={{ bottom: 'calc(262px + env(safe-area-inset-bottom, 0px))' }}>
-      <div className="neon-glow mx-auto flex max-w-sm items-center gap-3 rounded-[24px] border border-zucca-300/15 bg-[#160b29] p-3.5 shadow-2xl">
+      <div className="neon-glow mx-auto flex max-w-sm items-center gap-3 rounded-[24px] border border-zucca-300/15 bg-[color:var(--c-160b29)] p-3.5 shadow-2xl">
         <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl border border-zucca-300/20 bg-zucca-300/10">
           <Bell className="h-5 w-5 text-zucca-300" />
         </div>
@@ -151,7 +151,7 @@ export function NotifyBanner() {
         </div>
         <button onClick={activate} disabled={loading}
           className="shrink-0 rounded-2xl px-4 py-2.5 text-xs font-black transition-transform active:scale-95 disabled:opacity-60"
-          style={{ background: '#ff9a3d', color: '#1a0d33' }}>
+          style={{ background: 'var(--c-ff9a3d)', color: 'var(--c-1a0d33)' }}>
           {loading ? '...' : 'Attiva'}
         </button>
         <button onClick={dismiss} className="shrink-0 p-1 text-slate-500 hover:text-slate-300">

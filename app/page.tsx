@@ -73,12 +73,12 @@ const benefits = [
 
 export default function HomePage() {
   return (
-    <main className="min-h-screen overflow-x-hidden bg-[#fff7ee] text-slate-900">
+    <main className="min-h-screen overflow-x-hidden bg-[color:var(--c-fff7ee)] text-slate-900">
 
       {/* =========================================================
           HERO
       ========================================================= */}
-      <section className="relative min-h-[760px] overflow-hidden bg-[linear-gradient(160deg,#2e0d57,#4c1a8a_35%,#a23800_78%,#5a1c00)] sm:min-h-[820px]">
+      <section className="relative min-h-[760px] overflow-hidden bg-[linear-gradient(160deg,var(--c-2e0d57),#4c1a8a_35%,#a23800_78%,var(--c-5a1c00))] sm:min-h-[820px]">
 
         <span aria-hidden="true" className="pointer-events-none absolute bottom-2 right-3 select-none text-5xl leading-none -rotate-6 sm:text-7xl">🎃</span>
         <span aria-hidden="true" className="pointer-events-none absolute left-1 top-[46%] select-none text-4xl leading-none rotate-12 sm:text-6xl">🎃</span>
@@ -166,7 +166,7 @@ export default function HomePage() {
               <div className="mt-9 flex flex-col gap-3 sm:flex-row">
                 <Link
                   href="/shop"
-                  className="group inline-flex h-14 items-center justify-center gap-3 rounded-2xl bg-[#fff7ee] px-7 font-black text-[#1a0d33] shadow-[0_15px_50px_rgba(255,154,61,.22)] transition duration-300 hover:-translate-y-1 hover:bg-white"
+                  className="group inline-flex h-14 items-center justify-center gap-3 rounded-2xl bg-[color:var(--c-fff7ee)] px-7 font-black text-[color:var(--c-1a0d33)] shadow-[0_15px_50px_rgba(var(--c-ff9a3d-rgb),.22)] transition duration-300 hover:-translate-y-1 hover:bg-white"
                 >
                   Vai allo shop
                   <ArrowRight
@@ -200,7 +200,7 @@ export default function HomePage() {
             <div className="relative mx-auto h-[390px] w-full max-w-[470px] sm:h-[470px]">
 
               {/* anello */}
-              <div className="absolute left-1/2 top-1/2 h-[290px] w-[290px] -translate-x-1/2 -translate-y-1/2 rounded-full border border-zucca-300/20 shadow-[0_0_100px_rgba(255,154,61,.12)] sm:h-[370px] sm:w-[370px]" />
+              <div className="absolute left-1/2 top-1/2 h-[290px] w-[290px] -translate-x-1/2 -translate-y-1/2 rounded-full border border-zucca-300/20 shadow-[0_0_100px_rgba(var(--c-ff9a3d-rgb),.12)] sm:h-[370px] sm:w-[370px]" />
 
               <div className="absolute left-1/2 top-1/2 h-[225px] w-[225px] -translate-x-1/2 -translate-y-1/2 rounded-full border border-zucca-200/10 sm:h-[300px] sm:w-[300px]" />
 
@@ -354,9 +354,9 @@ export default function HomePage() {
               <Link
                 href={category.href}
                 key={category.title}
-                className={`group relative min-h-[230px] overflow-hidden rounded-[28px] border border-slate-200 bg-white p-5 shadow-[0_15px_50px_rgba(15,23,42,.06)] transition-all duration-500 [transform-style:preserve-3d] hover:-translate-y-3 hover:[transform:perspective(900px)_rotateX(2deg)_rotateY(-2deg)_translateY(-12px)] hover:border-zucca-300 hover:shadow-[0_30px_80px_rgba(217,85,0,.18)] sm:min-h-[270px] sm:p-7 ${
+                className={`group relative min-h-[230px] overflow-hidden rounded-[28px] border border-slate-200 bg-white p-5 shadow-[0_15px_50px_rgba(15,23,42,.06)] transition-all duration-500 [transform-style:preserve-3d] hover:-translate-y-3 hover:[transform:perspective(900px)_rotateX(2deg)_rotateY(-2deg)_translateY(-12px)] hover:border-zucca-300 hover:shadow-[0_30px_80px_rgba(var(--c-d95500-rgb),.18)] sm:min-h-[270px] sm:p-7 ${
                   index === 0
-                    ? "hover:shadow-[0_30px_80px_rgba(217,85,0,.20)]"
+                    ? "hover:shadow-[0_30px_80px_rgba(var(--c-d95500-rgb),.20)]"
                     : index === 1
                       ? "hover:border-orange-300 hover:shadow-[0_30px_80px_rgba(249,115,22,.18)]"
                       : index === 2
@@ -433,7 +433,7 @@ export default function HomePage() {
           PROMO 3D
       ========================================================= */}
       <section className="px-5 pb-20 sm:px-8 sm:pb-28">
-        <div className="relative mx-auto max-w-7xl overflow-hidden rounded-[36px] bg-[#160b29] px-6 py-14 shadow-[0_30px_100px_rgba(18,10,34,.18)] sm:px-12 sm:py-20">
+        <div className="relative mx-auto max-w-7xl overflow-hidden rounded-[36px] bg-[color:var(--c-160b29)] px-6 py-14 shadow-[0_30px_100px_rgba(var(--c-120a22-rgb),.18)] sm:px-12 sm:py-20">
 
           <div className="absolute right-[-100px] top-[-120px] h-[350px] w-[350px] rounded-full bg-zucca-400/15 blur-[80px]" />
 
@@ -539,7 +539,7 @@ export default function HomePage() {
                   key={step.n}
                   className="relative rounded-[28px] border border-slate-200 bg-[#f8fdfe] p-7 text-center"
                 >
-                  <div className="mx-auto flex h-[90px] w-[90px] items-center justify-center rounded-full border border-zucca-200 bg-white shadow-[0_15px_40px_rgba(217,85,0,.10)]">
+                  <div className="mx-auto flex h-[90px] w-[90px] items-center justify-center rounded-full border border-zucca-200 bg-white shadow-[0_15px_40px_rgba(var(--c-d95500-rgb),.10)]">
                     <Icon size={30} className="text-zucca-600" />
                   </div>
 
@@ -594,7 +594,7 @@ export default function HomePage() {
             </div>
           </div>
 
-          <div className="relative overflow-hidden rounded-[32px] bg-[#160b29] p-8 sm:p-10">
+          <div className="relative overflow-hidden rounded-[32px] bg-[color:var(--c-160b29)] p-8 sm:p-10">
             <div className="absolute right-[-80px] top-[-80px] h-64 w-64 rounded-full bg-zucca-400/10 blur-3xl" />
 
             <div className="relative">
@@ -615,7 +615,7 @@ export default function HomePage() {
 
               <Link
                 href="https://wa.me/393522209558"
-                className="mt-7 inline-flex items-center gap-3 rounded-2xl bg-zucca-400 px-5 py-4 text-sm font-black text-[#1a0d33] transition hover:-translate-y-1 hover:bg-zucca-300"
+                className="mt-7 inline-flex items-center gap-3 rounded-2xl bg-zucca-400 px-5 py-4 text-sm font-black text-[color:var(--c-1a0d33)] transition hover:-translate-y-1 hover:bg-zucca-300"
               >
                 <MessageCircle size={18} />
                 352 220 9558
@@ -657,7 +657,7 @@ export default function HomePage() {
 
             <Link
               href="/consegne"
-              className="group inline-flex shrink-0 items-center gap-3 rounded-2xl bg-zucca-600 px-6 py-4 text-sm font-black text-white shadow-[0_12px_32px_rgba(217,85,0,.35)] transition hover:-translate-y-0.5 hover:bg-zucca-500"
+              className="group inline-flex shrink-0 items-center gap-3 rounded-2xl bg-zucca-600 px-6 py-4 text-sm font-black text-white shadow-[0_12px_32px_rgba(var(--c-d95500-rgb),.35)] transition hover:-translate-y-0.5 hover:bg-zucca-500"
             >
               Scopri la consegna
               <ArrowRight
@@ -673,7 +673,7 @@ export default function HomePage() {
       {/* =========================================================
           CTA FINALE
       ========================================================= */}
-      <section className="relative overflow-hidden bg-[#120a22] px-5 py-24 sm:px-8 sm:py-32">
+      <section className="relative overflow-hidden bg-[color:var(--c-120a22)] px-5 py-24 sm:px-8 sm:py-32">
 
         <div className="pointer-events-none absolute inset-0">
           <div className="absolute left-1/2 top-1/2 h-[400px] w-[600px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-zucca-400/10 blur-[120px]" />
@@ -701,7 +701,7 @@ export default function HomePage() {
 
           <Link
             href="/shop"
-            className="group mt-9 inline-flex h-14 items-center gap-3 rounded-2xl bg-zucca-400 px-8 font-black text-[#1a0d33] shadow-[0_15px_60px_rgba(255,154,61,.2)] transition hover:-translate-y-1 hover:bg-zucca-300"
+            className="group mt-9 inline-flex h-14 items-center gap-3 rounded-2xl bg-zucca-400 px-8 font-black text-[color:var(--c-1a0d33)] shadow-[0_15px_60px_rgba(var(--c-ff9a3d-rgb),.2)] transition hover:-translate-y-1 hover:bg-zucca-300"
           >
             Inizia a fare acquisti
             <ArrowRight

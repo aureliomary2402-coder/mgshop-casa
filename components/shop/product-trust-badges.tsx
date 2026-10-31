@@ -17,7 +17,7 @@ export function ProductTrustBadges() {
         <div
           key={title}
           className="flex items-center gap-3 rounded-2xl border border-zucca-100 bg-gradient-to-br from-white to-zucca-50 p-3 transition-all duration-300 hover:-translate-y-0.5 hover:border-zucca-300"
-          style={{ boxShadow: '0 8px 24px rgba(217,85,0,0.07)' }}
+          style={{ boxShadow: '0 8px 24px rgba(var(--c-d95500-rgb),0.07)' }}
         >
           <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border border-zucca-200 bg-zucca-100/70">
             <Icon className="h-[18px] w-[18px] text-zucca-700" />

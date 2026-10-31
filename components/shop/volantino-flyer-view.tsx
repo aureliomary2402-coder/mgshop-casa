@@ -60,7 +60,7 @@ function useOfferActions(product: Product, salePrice: number) {
     addItem({ ...product, price: salePrice }, undefined, undefined, 'volantino')
     setAdded(true)
     setTimeout(() => setAdded(false), 1500)
-    toast.success(`${product.name} aggiunto!`, { style: { background: '#ffe9d2', border: '1px solid #d95500', color: '#3d1b73' } })
+    toast.success(`${product.name} aggiunto!`, { style: { background: 'var(--c-ffe9d2)', border: '1px solid var(--c-d95500)', color: 'var(--c-3d1b73)' } })
   }
 
   return { added, handleAdd, open: () => openDetail(product.id) }
@@ -72,7 +72,7 @@ function OfferImage({ product, width, sizes, soldOut }: { product: Product; widt
     <>
       {src
         ? <Image src={optimizeImage(src, width) || src} alt={product.name} fill draggable={false} sizes={sizes} className="select-none object-cover" style={soldOut ? { filter: 'grayscale(1)' } : undefined} />
-        : <div className="flex h-full w-full items-center justify-center"><ImageIcon className="h-8 w-8" style={{ color: 'rgba(217,85,0,0.3)' }} /></div>}
+        : <div className="flex h-full w-full items-center justify-center"><ImageIcon className="h-8 w-8" style={{ color: 'rgba(var(--c-d95500-rgb),0.3)' }} /></div>}
       {soldOut && <TornaPrestoStamp />}
     </>
   )
@@ -86,7 +86,7 @@ function FeaturedOffer({ product, salePrice }: { product: Product; salePrice: nu
   return (
     <div onClick={open} role="button" tabIndex={0}
       onKeyDown={e => { if (e.key === 'Enter') open() }}
-      className="relative cursor-pointer overflow-hidden rounded-[32px] border border-zucca-300/15 bg-[#120a22] p-5 text-white shadow-[0_30px_80px_rgba(18,10,34,.30)] sm:p-8">
+      className="relative cursor-pointer overflow-hidden rounded-[32px] border border-zucca-300/15 bg-[color:var(--c-120a22)] p-5 text-white shadow-[0_30px_80px_rgba(var(--c-120a22-rgb),.30)] sm:p-8">
       <div className="pointer-events-none absolute -right-24 -top-24 h-72 w-72 rounded-full bg-zucca-400/20 blur-3xl" />
       <div className="relative grid grid-cols-[128px_1fr] items-center gap-4 sm:grid-cols-[250px_1fr] sm:gap-9">
         <div className="relative aspect-square overflow-hidden rounded-3xl border border-white/10" style={{ background: 'linear-gradient(135deg,#0b2a35,#0e4a5c)' }}>
@@ -114,7 +114,7 @@ function FeaturedOffer({ product, salePrice }: { product: Product; salePrice: nu
           ? { background: '#334155', color: '#cbd5e1' }
           : added
             ? { background: '#4ade80', color: '#052e16' }
-            : { background: '#ff9a3d', color: '#1a0d33', boxShadow: '0 12px 32px rgba(255,154,61,.30)' }}>
+            : { background: 'var(--c-ff9a3d)', color: 'var(--c-1a0d33)', boxShadow: '0 12px 32px rgba(var(--c-ff9a3d-rgb),.30)' }}>
         {added ? <Check className="h-5 w-5" /> : <ShoppingBag className="h-5 w-5" />}
         {info.soldOut ? 'Non disponibile' : info.hasVariablePricing ? 'Personalizza' : added ? 'Aggiunto!' : 'Aggiungi al carrello'}
       </button>
@@ -132,7 +132,7 @@ function OfferRow({ product, salePrice, index }: { product: Product; salePrice: 
       onKeyDown={e => { if (e.key === 'Enter') open() }}
       className="group flex cursor-pointer items-center gap-3 border-b border-slate-100 p-3.5 transition-colors hover:bg-zucca-50/60 sm:gap-4 sm:p-4 md:odd:border-r animate-fade-in-up"
       style={{ animationDelay: `${Math.min(index * 40, 400)}ms`, animationFillMode: 'both' }}>
-      <div className="relative h-24 w-24 shrink-0 overflow-hidden rounded-2xl sm:h-28 sm:w-28" style={{ background: 'linear-gradient(135deg,#fff7ee,#ffe9d2)' }}>
+      <div className="relative h-24 w-24 shrink-0 overflow-hidden rounded-2xl sm:h-28 sm:w-28" style={{ background: 'linear-gradient(135deg,var(--c-fff7ee),var(--c-ffe9d2))' }}>
         <OfferImage product={product} width={300} sizes="112px" soldOut={info.soldOut} />
         {info.showDiscount && (
           <span className="absolute left-1.5 top-1.5 z-10 rounded-full bg-red-600 px-2 py-0.5 text-[11px] font-black text-white shadow-md">-{info.percentOff}%</span>
@@ -141,7 +141,7 @@ function OfferRow({ product, salePrice, index }: { product: Product; salePrice: 
       <div className="min-w-0 flex-1">
         <h3 className="line-clamp-2 text-[15px] font-black leading-snug tracking-[-0.01em] text-slate-950 transition-colors group-hover:text-zucca-700">{product.name}</h3>
         <div className="mt-1.5 flex flex-wrap items-baseline gap-x-2">
-          <span className="text-2xl font-black leading-none tracking-[-0.02em]" style={{ color: info.showDiscount ? '#dc2626' : '#5b2a9e' }}>{info.priceLabel}</span>
+          <span className="text-2xl font-black leading-none tracking-[-0.02em]" style={{ color: info.showDiscount ? '#dc2626' : 'var(--c-5b2a9e)' }}>{info.priceLabel}</span>
           {info.showDiscount && <span className="text-xs text-slate-400 line-through">€{info.fullPrice.toFixed(2)}</span>}
         </div>
       </div>
@@ -152,7 +152,7 @@ function OfferRow({ product, salePrice, index }: { product: Product; salePrice: 
           ? { background: '#e2e8f0', color: '#94a3b8' }
           : added
             ? { background: '#4ade80', color: '#052e16' }
-            : { background: '#ff9a3d', color: '#1a0d33', boxShadow: '0 10px 25px rgba(255,154,61,.30)' }}>
+            : { background: 'var(--c-ff9a3d)', color: 'var(--c-1a0d33)', boxShadow: '0 10px 25px rgba(var(--c-ff9a3d-rgb),.30)' }}>
         {added ? <Check className="h-5 w-5" /> : <Plus className="h-5 w-5" />}
       </button>
     </div>
@@ -203,10 +203,10 @@ export function VolantinoFlyerView({ data, products, backHref = '/volantino', sh
   const maxOff = offers.reduce((m, o) => (o.info.showDiscount ? Math.max(m, o.info.percentOff) : m), 0)
 
   return (
-    <div className="min-h-screen" style={{ background: 'linear-gradient(180deg,#fff3e6 0%,#fffaf4 45%,#ffffff 100%)' }}>
+    <div className="min-h-screen" style={{ background: 'linear-gradient(180deg,var(--c-fff3e6) 0%,var(--c-fffaf4) 45%,#ffffff 100%)' }}>
       <PageHero
         icon={Newspaper}
-        iconColor="#7c3aed"
+        iconColor="var(--c-7c3aed)"
         badge={{ icon: Newspaper, text: 'Volantino digitale' }}
         title={data.title || 'Offerte della settimana'}
         subtitle={data.subtitle}
@@ -252,7 +252,7 @@ export function VolantinoFlyerView({ data, products, backHref = '/volantino', sh
               <div className="fixed bottom-6 left-1/2 z-50 -translate-x-1/2 animate-scale-in">
                 <Link href="/carrello"
                   className="flex items-center gap-3 rounded-2xl px-8 py-4 font-black shadow-2xl transition-all hover:scale-105"
-                  style={{ background: '#ff9a3d', color: '#1a0d33', boxShadow: '0 16px 40px rgba(255,154,61,.40)' }}>
+                  style={{ background: 'var(--c-ff9a3d)', color: 'var(--c-1a0d33)', boxShadow: '0 16px 40px rgba(var(--c-ff9a3d-rgb),.40)' }}>
                   <ShoppingBag className="h-5 w-5" />
                   Vai al carrello ({cartCount})
                 </Link>
@@ -264,7 +264,7 @@ export function VolantinoFlyerView({ data, products, backHref = '/volantino', sh
         )}
 
         <div className="py-10 text-center">
-          <Link href="/shop" className="inline-flex h-14 items-center justify-center gap-3 rounded-2xl bg-zucca-600 px-8 font-black text-white shadow-[0_12px_32px_rgba(217,85,0,.35)] transition duration-300 hover:-translate-y-1 hover:bg-zucca-500">
+          <Link href="/shop" className="inline-flex h-14 items-center justify-center gap-3 rounded-2xl bg-zucca-600 px-8 font-black text-white shadow-[0_12px_32px_rgba(var(--c-d95500-rgb),.35)] transition duration-300 hover:-translate-y-1 hover:bg-zucca-500">
             <ShoppingBag className="h-5 w-5" /> Vai al negozio completo
           </Link>
         </div>
@@ -276,17 +276,17 @@ export function VolantinoFlyerView({ data, products, backHref = '/volantino', sh
 export function VolantinoEmptyState() {
   const cartCount = useCartStore(s => s.getTotalItems)()
   return (
-    <div className="min-h-screen bg-[#fff7ee]">
+    <div className="min-h-screen bg-[color:var(--c-fff7ee)]">
       <PageHero
         icon={Newspaper}
-        iconColor="#7c3aed"
+        iconColor="var(--c-7c3aed)"
         badge={{ icon: Newspaper, text: 'Volantino digitale' }}
         title="Nessun volantino attivo"
         subtitle="Torna presto per le nostre offerte!"
         cart={{ count: cartCount, href: '/carrello' }}
       />
       <div className="px-5 py-16 text-center sm:px-8">
-        <Link href="/shop" className="group inline-flex h-14 items-center justify-center gap-3 rounded-2xl bg-zucca-600 px-7 font-black text-white shadow-[0_12px_32px_rgba(217,85,0,.35)] transition duration-300 hover:-translate-y-1 hover:bg-zucca-500">
+        <Link href="/shop" className="group inline-flex h-14 items-center justify-center gap-3 rounded-2xl bg-zucca-600 px-7 font-black text-white shadow-[0_12px_32px_rgba(var(--c-d95500-rgb),.35)] transition duration-300 hover:-translate-y-1 hover:bg-zucca-500">
           <ArrowLeft className="h-5 w-5 transition-transform group-hover:-translate-x-1" /> Vai al negozio
         </Link>
       </div>
@@ -297,10 +297,10 @@ export function VolantinoEmptyState() {
 export function VolantinoLoadingState() {
   const cartCount = useCartStore(s => s.getTotalItems)()
   return (
-    <div className="min-h-screen bg-[#fff7ee]">
+    <div className="min-h-screen bg-[color:var(--c-fff7ee)]">
       <PageHero
         icon={Newspaper}
-        iconColor="#7c3aed"
+        iconColor="var(--c-7c3aed)"
         badge={{ icon: Newspaper, text: 'Volantino digitale' }}
         title="Volantino"
         subtitle="Sto caricando le offerte…"

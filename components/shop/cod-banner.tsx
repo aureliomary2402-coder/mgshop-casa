@@ -13,7 +13,7 @@ export function CodBanner({ variant = 'light' }: { variant?: 'light' | 'dark' })
   }
 
   return (
-    <div className="neon-glow flex items-center gap-3 rounded-2xl border border-zucca-300/15 bg-[#160b29] p-3.5">
+    <div className="neon-glow flex items-center gap-3 rounded-2xl border border-zucca-300/15 bg-[color:var(--c-160b29)] p-3.5">
       <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-zucca-300/20 bg-zucca-300/10">
         <Banknote className="h-5 w-5 text-zucca-300" />
       </div>

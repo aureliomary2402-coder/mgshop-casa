@@ -309,7 +309,7 @@ export function FloatingMenu() {
           aria-pressed={notifOn}
           aria-label="Attiva notifiche"
           className="relative w-11 h-6 rounded-full shrink-0 transition-colors disabled:opacity-60"
-          style={{ background: notifOn ? 'linear-gradient(135deg,#d95500,#ff7a1a)' : '#e2e8f0' }}
+          style={{ background: notifOn ? 'linear-gradient(135deg,var(--c-d95500),var(--c-ff7a1a))' : '#e2e8f0' }}
         >
           <span
             className="absolute top-0.5 left-0.5 w-5 h-5 rounded-full bg-white shadow transition-transform"
@@ -332,7 +332,7 @@ export function FloatingMenu() {
       <button
         onClick={() => (isOpen ? closeAll() : setMenuOpen(true))}
         className="fixed bottom-[calc(7.5rem+env(safe-area-inset-bottom,0px))] lg:bottom-[5.5rem] right-5 z-[45] w-14 h-14 rounded-full shadow-lg flex items-center justify-center text-white transition-transform hover:scale-105"
-        style={{ background: 'linear-gradient(135deg,#d95500,#ff7a1a)' }}
+        style={{ background: 'linear-gradient(135deg,var(--c-d95500),var(--c-ff7a1a))' }}
         aria-label="Apri menu"
       >
         {isOpen ? <X className="w-6 h-6" /> : <MenuIcon className="w-6 h-6" />}
@@ -346,11 +346,11 @@ export function FloatingMenu() {
         <Link
           href={cartHref}
           className="fixed bottom-[calc(11.5rem+env(safe-area-inset-bottom,0px))] lg:bottom-[9.5rem] right-5 z-[45] w-14 h-14 rounded-full shadow-lg flex items-center justify-center transition-transform hover:scale-105 animate-scale-in"
-          style={{ background: '#ff9a3d', color: '#1a0d33', boxShadow: '0 12px 30px rgba(255,154,61,0.40)' }}
+          style={{ background: 'var(--c-ff9a3d)', color: 'var(--c-1a0d33)', boxShadow: '0 12px 30px rgba(var(--c-ff9a3d-rgb),0.40)' }}
           aria-label="Vai al carrello"
         >
           <ShoppingBag className="w-6 h-6" />
-          <span className="absolute -top-1 -right-1 w-5 h-5 text-white text-xs rounded-full flex items-center justify-center font-bold" style={{ background: '#2a1450' }}>
+          <span className="absolute -top-1 -right-1 w-5 h-5 text-white text-xs rounded-full flex items-center justify-center font-bold" style={{ background: 'var(--c-2a1450)' }}>
             {cartCount}
           </span>
         </Link>
@@ -362,28 +362,28 @@ export function FloatingMenu() {
           <Link href="/consegne" onClick={() => setMenuOpen(false)}
             className="flex items-center gap-2.5 pl-4 pr-2 py-2 rounded-full shadow-lg bg-white text-sm font-medium text-slate-700 transition-transform hover:scale-105">
             Consegne
-            <span className="w-9 h-9 rounded-full flex items-center justify-center text-white shrink-0" style={{ background: 'linear-gradient(135deg,#d95500,#ff7a1a)' }}>
+            <span className="w-9 h-9 rounded-full flex items-center justify-center text-white shrink-0" style={{ background: 'linear-gradient(135deg,var(--c-d95500),var(--c-ff7a1a))' }}>
               <Truck size={17} />
             </span>
           </Link>
           <Link href="/recensioni" onClick={() => setMenuOpen(false)}
             className="flex items-center gap-2.5 pl-4 pr-2 py-2 rounded-full shadow-lg bg-white text-sm font-medium text-slate-700 transition-transform hover:scale-105">
             Recensioni
-            <span className="w-9 h-9 rounded-full flex items-center justify-center text-white shrink-0" style={{ background: 'linear-gradient(135deg,#d95500,#ff7a1a)' }}>
+            <span className="w-9 h-9 rounded-full flex items-center justify-center text-white shrink-0" style={{ background: 'linear-gradient(135deg,var(--c-d95500),var(--c-ff7a1a))' }}>
               <Star size={17} />
             </span>
           </Link>
           <Link href="/social" onClick={() => setMenuOpen(false)}
             className="flex items-center gap-2.5 pl-4 pr-2 py-2 rounded-full shadow-lg bg-white text-sm font-medium text-slate-700 transition-transform hover:scale-105">
             Social
-            <span className="w-9 h-9 rounded-full flex items-center justify-center text-white shrink-0" style={{ background: 'linear-gradient(135deg,#d95500,#ff7a1a)' }}>
+            <span className="w-9 h-9 rounded-full flex items-center justify-center text-white shrink-0" style={{ background: 'linear-gradient(135deg,var(--c-d95500),var(--c-ff7a1a))' }}>
               <Share2 size={17} />
             </span>
           </Link>
           <button onClick={openChat}
             className="flex items-center gap-2.5 pl-4 pr-2 py-2 rounded-full shadow-lg bg-white text-sm font-medium text-slate-700 transition-transform hover:scale-105">
             Scrivici in chat
-            <span className="w-9 h-9 rounded-full flex items-center justify-center text-white shrink-0" style={{ background: 'linear-gradient(135deg,#d95500,#ff7a1a)' }}>
+            <span className="w-9 h-9 rounded-full flex items-center justify-center text-white shrink-0" style={{ background: 'linear-gradient(135deg,var(--c-d95500),var(--c-ff7a1a))' }}>
               <MessageCircle size={17} />
             </span>
           </button>
@@ -394,7 +394,7 @@ export function FloatingMenu() {
           pulsante "Contatti"), su mobile resta sopra la bolla flottante. */}
       {chatOpen && (
         <div className={`fixed ${menuOffsetClass} lg:top-20 lg:bottom-auto right-5 z-[45] w-[90vw] max-w-sm h-[480px] max-h-[70vh] liquid-glass-card rounded-2xl flex flex-col overflow-hidden`}>
-          <div className="px-4 py-3 text-white font-semibold flex items-center gap-2" style={{ background: 'linear-gradient(135deg,#d95500,#ff7a1a)' }}>
+          <div className="px-4 py-3 text-white font-semibold flex items-center gap-2" style={{ background: 'linear-gradient(135deg,var(--c-d95500),var(--c-ff7a1a))' }}>
             <MessageCircle className="w-4 h-4" /> Scrivici
           </div>
 
@@ -418,7 +418,7 @@ export function FloatingMenu() {
                 onClick={startChat}
                 disabled={!nameInput.trim() || !phoneInput.trim()}
                 className="w-full py-2.5 rounded-lg text-sm font-bold text-white disabled:opacity-50"
-                style={{ background: 'linear-gradient(135deg,#d95500,#ff7a1a)' }}
+                style={{ background: 'linear-gradient(135deg,var(--c-d95500),var(--c-ff7a1a))' }}
               >
                 Inizia chat
               </button>
@@ -433,7 +433,7 @@ export function FloatingMenu() {
                   <div key={m.id} className={`flex ${m.sender === 'customer' ? 'justify-end' : 'justify-start'}`}>
                     <div
                       className={`max-w-[75%] px-3 py-2 rounded-2xl text-sm ${m.sender === 'customer' ? 'text-white rounded-br-sm' : 'bg-white text-slate-700 border border-slate-200 rounded-bl-sm'}`}
-                      style={m.sender === 'customer' ? { background: 'linear-gradient(135deg,#d95500,#ff7a1a)' } : undefined}
+                      style={m.sender === 'customer' ? { background: 'linear-gradient(135deg,var(--c-d95500),var(--c-ff7a1a))' } : undefined}
                     >
                       {m.message}
                     </div>
@@ -452,7 +452,7 @@ export function FloatingMenu() {
                   onClick={send}
                   disabled={sending || !text.trim()}
                   className="w-10 h-10 rounded-lg flex items-center justify-center text-white disabled:opacity-50 shrink-0"
-                  style={{ background: 'linear-gradient(135deg,#d95500,#ff7a1a)' }}
+                  style={{ background: 'linear-gradient(135deg,var(--c-d95500),var(--c-ff7a1a))' }}
                 >
                   <Send className="w-4 h-4" />
                 </button>
@@ -467,7 +467,7 @@ export function FloatingMenu() {
       {pointsOpen && (
         <div className={`fixed ${menuOffsetClass} lg:top-20 lg:bottom-auto right-5 z-[45] w-[90vw] max-w-sm lg:max-h-[75vh] liquid-glass-card rounded-2xl flex flex-col overflow-hidden`}>
           <div className="px-4 py-3 text-white font-semibold flex items-center gap-2"
-            style={{ background: 'linear-gradient(135deg,#d95500,#ff7a1a)' }}>
+            style={{ background: 'linear-gradient(135deg,var(--c-d95500),var(--c-ff7a1a))' }}>
             <Image src="/images/mgshop-stamp.png" alt="" width={16} height={16} className="object-contain" /> Il mio account
           </div>
 
@@ -487,7 +487,7 @@ export function FloatingMenu() {
                 onClick={checkPoints}
                 disabled={pointsChecking || !pointsPhone.trim()}
                 className="w-full py-2.5 rounded-lg text-sm font-bold text-white disabled:opacity-50"
-                style={{ background: 'linear-gradient(135deg,#d95500,#ff7a1a)' }}
+                style={{ background: 'linear-gradient(135deg,var(--c-d95500),var(--c-ff7a1a))' }}
               >
                 {pointsChecking ? 'Verifica in corso...' : 'Controlla i miei punti'}
               </button>

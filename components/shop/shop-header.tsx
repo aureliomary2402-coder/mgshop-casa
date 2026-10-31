@@ -17,7 +17,7 @@ function HighlightedText({ text, query }: { text: string; query: string }) {
   return (
     <>
       {text.slice(0, idx)}
-      <span style={{ color: '#d95500', fontWeight: 700 }}>{text.slice(idx, idx + query.length)}</span>
+      <span style={{ color: 'var(--c-d95500)', fontWeight: 700 }}>{text.slice(idx, idx + query.length)}</span>
       {text.slice(idx + query.length)}
     </>
   )
@@ -141,7 +141,7 @@ export function ShopHeader({ categories }: { categories: Category[] }) {
 
   return (
     <header className={`sticky top-0 z-50 transition-all duration-300 liquid-glass-header ${scrolled ? 'shadow-lg' : ''}`}
-      style={{ background: scrolled ? 'rgba(240,251,253,0.97)' : 'rgba(240,251,253,0.98)', backdropFilter: 'blur(16px)', borderBottom: '2px solid #ff9a3d' }}>
+      style={{ background: scrolled ? 'rgba(240,251,253,0.97)' : 'rgba(240,251,253,0.98)', backdropFilter: 'blur(16px)', borderBottom: '2px solid var(--c-ff9a3d)' }}>
       <div className="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between gap-3">
         <Link href="/" className="flex items-center gap-2 shrink-0 group">
           <Image src="/logo/mgshop-logo-orizzontale-scuro.png" alt="MGShop Casa" width={900} height={240} priority
@@ -152,14 +152,14 @@ export function ShopHeader({ categories }: { categories: Category[] }) {
           <div className="relative" ref={catRef}>
             <button onClick={() => setCatOpen(v => !v)}
               className="flex items-center gap-1.5 px-3 py-2 rounded-xl text-sm font-medium transition-all hover:bg-zucca-50 btn-press"
-              style={{ color: catOpen || activeCategory ? '#d95500' : '#44403c' }}>
+              style={{ color: catOpen || activeCategory ? 'var(--c-d95500)' : '#44403c' }}>
               <Tag className="w-4 h-4" />
               <span className="hidden sm:inline">{activeCategoryName || 'Categorie'}</span>
               <ChevronDown className={`w-3.5 h-3.5 transition-transform duration-200 ${catOpen ? 'rotate-180' : ''}`} />
             </button>
             {catOpen && (
               <div className="absolute top-full left-0 mt-2 w-56 rounded-2xl overflow-hidden shadow-xl animate-scale-in z-50"
-                style={{ background: 'white', border: '1px solid rgba(217,85,0,0.1)', boxShadow: '0 20px 60px rgba(0,0,0,0.12)' }}>
+                style={{ background: 'white', border: '1px solid rgba(var(--c-d95500-rgb),0.1)', boxShadow: '0 20px 60px rgba(0,0,0,0.12)' }}>
                 <div className="p-2">
                   <button onClick={() => handleCategorySelect(null)}
                     className={`w-full text-left px-3 py-2.5 rounded-xl text-sm font-medium transition-all hover:bg-zucca-50 ${!activeCategory ? 'bg-zucca-50 text-zucca-700' : 'text-slate-700'}`}>
@@ -177,12 +177,12 @@ export function ShopHeader({ categories }: { categories: Category[] }) {
           </div>
 
           {promoActive && (
-            <Link href="/promo" className={`${searchOpen ? 'hidden' : 'flex'} items-center gap-1.5 px-2 sm:px-3 py-2 rounded-xl text-sm font-medium transition-all hover:bg-zucca-50 btn-press`} style={{ color: '#d95500' }}>
+            <Link href="/promo" className={`${searchOpen ? 'hidden' : 'flex'} items-center gap-1.5 px-2 sm:px-3 py-2 rounded-xl text-sm font-medium transition-all hover:bg-zucca-50 btn-press`} style={{ color: 'var(--c-d95500)' }}>
               <Sparkles className="w-4 h-4" /> <span className="hidden sm:inline">Promo</span>
             </Link>
           )}
           {volantinoActive && (
-            <Link href="/volantino" className={`${searchOpen ? 'hidden' : 'flex'} items-center gap-1.5 px-2 sm:px-3 py-2 rounded-xl text-sm font-medium transition-all hover:bg-zucca-50 btn-press`} style={{ color: '#d95500' }}>
+            <Link href="/volantino" className={`${searchOpen ? 'hidden' : 'flex'} items-center gap-1.5 px-2 sm:px-3 py-2 rounded-xl text-sm font-medium transition-all hover:bg-zucca-50 btn-press`} style={{ color: 'var(--c-d95500)' }}>
               <Newspaper className="w-4 h-4" /> <span className="hidden sm:inline">Volantino</span>
             </Link>
           )}
@@ -213,10 +213,10 @@ export function ShopHeader({ categories }: { categories: Category[] }) {
                 onBlur={() => setSearchFocused(false)}
                 className="search-glow w-full h-9 pl-9 pr-9 rounded-xl text-base outline-none transition-all duration-300"
                 style={{
-                  background: searchFocused ? '#ffffff' : 'rgba(217,85,0,0.06)',
-                  border: searchFocused ? '1px solid rgba(217,85,0,0.5)' : '1px solid rgba(217,85,0,0.15)',
-                  color: '#2a1450',
-                  boxShadow: searchFocused ? '0 0 0 4px rgba(255,154,61,0.15), 0 4px 16px rgba(217,85,0,0.18)' : 'none',
+                  background: searchFocused ? '#ffffff' : 'rgba(var(--c-d95500-rgb),0.06)',
+                  border: searchFocused ? '1px solid rgba(var(--c-d95500-rgb),0.5)' : '1px solid rgba(var(--c-d95500-rgb),0.15)',
+                  color: 'var(--c-2a1450)',
+                  boxShadow: searchFocused ? '0 0 0 4px rgba(var(--c-ff9a3d-rgb),0.15), 0 4px 16px rgba(var(--c-d95500-rgb),0.18)' : 'none',
                 }} />
               {searchLoading && (
                 <span className="absolute right-9 top-1/2 -translate-y-1/2 w-3.5 h-3.5 rounded-full border-2 border-zucca-300 border-t-zucca-600 animate-spin" />
@@ -225,7 +225,7 @@ export function ShopHeader({ categories }: { categories: Category[] }) {
 
               {dropdownOpen && searchValue.trim() && (
                 <div className="fixed left-3 right-3 top-[7.4rem] sm:absolute sm:top-full sm:left-0 sm:right-auto sm:mt-2 sm:w-full sm:min-w-[280px] rounded-2xl overflow-hidden shadow-xl animate-scale-in z-50"
-                  style={{ background: 'white', border: '1px solid rgba(217,85,0,0.15)', boxShadow: '0 20px 60px rgba(0,0,0,0.15)' }}>
+                  style={{ background: 'white', border: '1px solid rgba(var(--c-d95500-rgb),0.15)', boxShadow: '0 20px 60px rgba(0,0,0,0.15)' }}>
                   {searchResults.length > 0 ? (
                     <>
                       <div className="max-h-96 overflow-y-auto p-1.5">
@@ -234,20 +234,20 @@ export function ShopHeader({ categories }: { categories: Category[] }) {
                           return (
                             <button key={product.id} onClick={() => handleSelectProduct(product)}
                               className="w-full flex items-center gap-3 p-2 rounded-xl text-left hover:bg-zucca-50 transition-colors">
-                              <div className="relative w-10 h-10 rounded-lg flex items-center justify-center shrink-0 overflow-hidden" style={{ background: 'rgba(217,85,0,0.06)' }}>
+                              <div className="relative w-10 h-10 rounded-lg flex items-center justify-center shrink-0 overflow-hidden" style={{ background: 'rgba(var(--c-d95500-rgb),0.06)' }}>
                                 {imgUrl ? <img src={imgUrl} alt={product.name} className="w-full h-full object-cover" /> : <ImageIcon className="w-4 h-4 text-zucca-300" />}
                               </div>
-                              <span className="flex-1 min-w-0 text-sm font-medium truncate" style={{ color: '#2a1450' }}>
+                              <span className="flex-1 min-w-0 text-sm font-medium truncate" style={{ color: 'var(--c-2a1450)' }}>
                                 <HighlightedText text={product.name} query={searchValue} />
                               </span>
-                              <span className="text-sm font-bold shrink-0" style={{ color: '#d95500' }}>€{product.price.toFixed(2)}</span>
+                              <span className="text-sm font-bold shrink-0" style={{ color: 'var(--c-d95500)' }}>€{product.price.toFixed(2)}</span>
                             </button>
                           )
                         })}
                       </div>
                       <button onClick={handleSeeAllResults}
                         className="w-full flex items-center justify-center gap-1.5 py-3 text-sm font-semibold border-t transition-colors hover:bg-zucca-50"
-                        style={{ borderColor: 'rgba(217,85,0,0.12)', color: '#d95500' }}>
+                        style={{ borderColor: 'rgba(var(--c-d95500-rgb),0.12)', color: 'var(--c-d95500)' }}>
                         Vedi tutti i risultati{searchCount > 0 ? ` (${searchCount})` : ''}
                         <ChevronDown className="w-3.5 h-3.5 -rotate-90" />
                       </button>
@@ -278,7 +278,7 @@ export function ShopHeader({ categories }: { categories: Category[] }) {
             <ShoppingBag className={`w-5 h-5 text-zucca-700 group-hover:scale-110 transition-transform ${cartBump ? 'animate-cart-bounce' : ''}`} />
             {itemCount > 0 && (
               <span className={`absolute -top-1 -right-1 w-5 h-5 text-white text-xs rounded-full flex items-center justify-center font-bold ${cartBump ? 'animate-badge-pop' : ''}`}
-                style={{ background: 'linear-gradient(135deg, #d95500, #ff7a1a)' }}>
+                style={{ background: 'linear-gradient(135deg, var(--c-d95500), var(--c-ff7a1a))' }}>
                 {itemCount > 9 ? '9+' : itemCount}
               </span>
             )}

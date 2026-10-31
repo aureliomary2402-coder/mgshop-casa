@@ -55,10 +55,10 @@ export default function VolantinoPage() {
   // Più volantini attivi contemporaneamente: mostra un selettore.
   if (list.length > 1) {
     return (
-      <div className="min-h-screen" style={{ background: 'linear-gradient(180deg,#fff3e6 0%,#fffaf4 45%,#ffffff 100%)' }}>
+      <div className="min-h-screen" style={{ background: 'linear-gradient(180deg,var(--c-fff3e6) 0%,var(--c-fffaf4) 45%,#ffffff 100%)' }}>
         <PageHero
           icon={Newspaper}
-          iconColor="#7c3aed"
+          iconColor="var(--c-7c3aed)"
           badge={{ icon: Newspaper, text: 'Volantino digitale' }}
           title="Scegli il volantino"
           subtitle="Ci sono più volantini attivi: scegli quello che vuoi sfogliare."
@@ -69,21 +69,21 @@ export default function VolantinoPage() {
             {list.map(item => (
               <Link key={item.id} href={`/volantino/${item.slug || item.id}`}
                 className="group flex items-center gap-4 border-b border-slate-100 p-5 transition-colors last:border-b-0 hover:bg-zucca-50/60">
-                <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-[#120a22]">
+                <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-[color:var(--c-120a22)]">
                   <Newspaper className="h-6 w-6 text-zucca-300" />
                 </div>
                 <div className="min-w-0 flex-1">
                   <p className="truncate text-lg font-black tracking-[-.02em] text-slate-950 transition-colors group-hover:text-zucca-700">{item.title || 'Volantino'}</p>
                   {item.subtitle && <p className="truncate text-sm text-slate-600">{item.subtitle}</p>}
                 </div>
-                <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-[#ff9a3d] text-[#1a0d33] shadow-[0_10px_25px_rgba(255,154,61,.30)] transition-transform duration-300 group-hover:translate-x-1">
+                <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-[color:var(--c-ff9a3d)] text-[color:var(--c-1a0d33)] shadow-[0_10px_25px_rgba(var(--c-ff9a3d-rgb),.30)] transition-transform duration-300 group-hover:translate-x-1">
                   <ChevronRight className="h-5 w-5" />
                 </div>
               </Link>
             ))}
           </div>
           <div className="pt-10 text-center">
-            <Link href="/shop" className="group inline-flex h-14 items-center justify-center gap-3 rounded-2xl bg-zucca-600 px-7 font-black text-white shadow-[0_12px_32px_rgba(217,85,0,.35)] transition duration-300 hover:-translate-y-1 hover:bg-zucca-500">
+            <Link href="/shop" className="group inline-flex h-14 items-center justify-center gap-3 rounded-2xl bg-zucca-600 px-7 font-black text-white shadow-[0_12px_32px_rgba(var(--c-d95500-rgb),.35)] transition duration-300 hover:-translate-y-1 hover:bg-zucca-500">
               <ArrowLeft className="h-5 w-5 transition-transform group-hover:-translate-x-1" /> Vai al negozio
             </Link>
           </div>

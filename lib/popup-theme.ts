@@ -1,6 +1,6 @@
-// Tema grafico dei pop up. Per cambiare stile a tutto il sito basta cambiare
-// ACTIVE_POPUP_THEME qui sotto (es. quando finisce Halloween: 'bolle').
-// Per un nuovo tema (Natale, Black Friday...) si aggiunge una voce in POPUP_THEMES.
+// Tema grafico dei pop up e della slot. Il tema in vigore si sceglie dal pannello
+// admin (scheda "Tema del sito"). Per un nuovo tema (Natale, Black Friday...)
+// si aggiunge una voce in POPUP_THEMES (vedi anche lib/site-theme.ts).
 
 export type PopupThemeName = 'halloween' | 'bolle'
 
@@ -52,5 +52,3 @@ export const POPUP_THEMES: Record<PopupThemeName, PopupTheme> = {
     buttonGlow: '0 8px 22px rgba(8,145,178,0.35)',
   },
 }
-
-export const ACTIVE_POPUP_THEME: PopupThemeName = 'halloween'

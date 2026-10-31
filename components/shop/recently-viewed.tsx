@@ -45,7 +45,7 @@ export function RecentlyViewed({ excludeId, title = 'Visti di recente' }: { excl
           onClick={() => setExpanded(!expanded)}
           aria-expanded={expanded}
           className="inline-flex items-center gap-2 rounded-full border border-zucca-100 bg-white px-3.5 py-2 text-[11px] font-black uppercase tracking-[0.14em] text-zucca-950 transition-colors hover:border-zucca-300 btn-press"
-          style={{ boxShadow: '0 6px 18px rgba(217,85,0,0.07)' }}
+          style={{ boxShadow: '0 6px 18px rgba(var(--c-d95500-rgb),0.07)' }}
         >
           <History className="h-4 w-4 text-zucca-600" />
           {title}

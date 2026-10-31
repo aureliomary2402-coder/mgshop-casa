@@ -3,16 +3,18 @@
 import { useEffect, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { X } from 'lucide-react'
-import { ACTIVE_POPUP_THEME, POPUP_THEMES } from '@/lib/popup-theme'
+import { POPUP_THEMES } from '@/lib/popup-theme'
+import { useSiteTheme } from '@/components/site-theme-provider'
 import { SLOT_SYMBOLS, SLOT_PRIZE_SYMBOLS } from '@/lib/slot-theme'
 
 interface SpinResult { enabled: boolean; won: boolean; symbols: string[]; label: string | null; discount_percent: number }
 
 // Slot mostrata dopo l'invio dell'ordine. Colori e simboli seguono il tema del
-// sito (ACTIVE_POPUP_THEME): ora Halloween. L'esito arriva dal server.
+// sito (scheda Tema del sito nel pannello admin). L'esito arriva dal server.
 export function SlotMachine({ orderId }: { orderId: string }) {
-  const theme = POPUP_THEMES[ACTIVE_POPUP_THEME]
-  const pool = SLOT_SYMBOLS[ACTIVE_POPUP_THEME]
+  const siteTheme = useSiteTheme()
+  const theme = POPUP_THEMES[siteTheme]
+  const pool = SLOT_SYMBOLS[siteTheme]
   const rand = () => pool[Math.floor(Math.random() * pool.length)]
 
   const [enabled, setEnabled] = useState(false)
@@ -90,7 +92,7 @@ export function SlotMachine({ orderId }: { orderId: string }) {
         </div>
 
         <div className="mb-5 space-y-1 text-sm font-semibold" style={{ color: theme.text }}>
-          {Object.entries(SLOT_PRIZE_SYMBOLS[ACTIVE_POPUP_THEME]).map(([pct, sym]) => (
+          {Object.entries(SLOT_PRIZE_SYMBOLS[siteTheme]).map(([pct, sym]) => (
             <p key={pct}><span className="text-xl align-middle mr-1.5">{sym}</span>sconto del {pct}%</p>
           ))}
         </div>

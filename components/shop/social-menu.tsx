@@ -43,11 +43,11 @@ export function SocialMenu({ variant = 'light', className = 'flex' }: { variant?
   }
 
   const btnCls = variant === 'dark'
-    ? `${className} h-11 w-11 items-center justify-center rounded-full bg-zucca-400 text-[#062029] shadow-[0_0_30px_rgba(255,154,61,.35)] transition hover:scale-105`
+    ? `${className} h-11 w-11 items-center justify-center rounded-full bg-zucca-400 text-[#062029] shadow-[0_0_30px_rgba(var(--c-ff9a3d-rgb),.35)] transition hover:scale-105`
     : `${className} items-center gap-1.5 px-2 sm:px-3 py-2 rounded-xl text-sm font-medium transition-all btn-press`
   const btnStyle = variant === 'dark'
     ? undefined
-    : { color: '#5b2a9e', background: 'rgba(255,154,61,0.12)', border: '1px solid rgba(217,85,0,0.3)' }
+    : { color: 'var(--c-5b2a9e)', background: 'rgba(var(--c-ff9a3d-rgb),0.12)', border: '1px solid rgba(var(--c-d95500-rgb),0.3)' }
 
   return (
     <>

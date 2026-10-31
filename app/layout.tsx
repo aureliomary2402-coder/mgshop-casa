@@ -10,6 +10,9 @@ import { ProductDetailModal } from '@/components/shop/product-detail-modal'
 import { BackToTop } from '@/components/shop/back-to-top'
 import { ServiceWorkerRegister } from '@/components/sw-register'
 import { SiteTicker } from '@/components/shop/site-ticker'
+import { SiteThemeProvider } from '@/components/site-theme-provider'
+import { getActiveTheme } from '@/lib/site-theme-server'
+import { THEME_COLORS } from '@/lib/site-theme'
 import { HalloweenDecor } from '@/components/shop/halloween-decor'
 import { SitePopup } from '@/components/shop/site-popup'
 import { SiteFooter } from '@/components/shop/site-footer'
@@ -43,18 +46,26 @@ export const metadata: Metadata = {
   },
 }
 
-export const viewport: Viewport = {
-  themeColor: '#d95500',
-  width: 'device-width',
-  initialScale: 1,
-  maximumScale: 1,
-  userScalable: false,
+// Il colore della barra del browser segue il tema del sito
+export async function generateViewport(): Promise<Viewport> {
+  const theme = await getActiveTheme()
+  return {
+    themeColor: THEME_COLORS[theme],
+    width: 'device-width',
+    initialScale: 1,
+    maximumScale: 1,
+    userScalable: false,
+  }
 }
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default async function RootLayout({ children }: { children: React.ReactNode }) {
+  // Tema scelto dal pannello admin (scheda "Tema del sito"): sta su <html data-theme>
+  // e le variabili CSS in globals.css cambiano tutti i colori del sito.
+  const theme = await getActiveTheme()
   return (
-    <html lang="it" className={inter.variable}>
+    <html lang="it" className={inter.variable} data-theme={theme} suppressHydrationWarning>
       <body className={inter.className}>
+        <SiteThemeProvider initial={theme}>
         <Suspense><AnalyticsTracker /></Suspense>
         <CartAbandonTracker />
         <WishlistTracker />
@@ -73,6 +84,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <SitePopup />
         <Toaster position="bottom-center" richColors />
         <Analytics />
+        </SiteThemeProvider>
       </body>
     </html>
   )

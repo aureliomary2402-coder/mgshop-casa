@@ -3,7 +3,7 @@ import { AmbientBubbles } from './ambient-bubbles'
 
 // Sfondo scuro condiviso da tutte le hero del sito: glow cyan, griglia in
 // prospettiva e bolle. Stesso look della landing (app/page.tsx).
-// Il contenitore che lo usa deve essere "relative overflow-hidden bg-[#120a22]".
+// Il contenitore che lo usa deve essere "relative overflow-hidden bg-[color:var(--c-120a22)]".
 export function HeroBackdrop() {
   return (
     <>

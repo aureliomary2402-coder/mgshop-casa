@@ -11,7 +11,7 @@ const ITEMS = [
 
 export function SocialSection() {
   return (
-    <section className="relative overflow-hidden bg-[#120a22] px-5 py-12 sm:px-8 sm:py-16">
+    <section className="relative overflow-hidden bg-[color:var(--c-120a22)] px-5 py-12 sm:px-8 sm:py-16">
       <div className="pointer-events-none absolute left-1/2 top-[-120px] h-[260px] w-[520px] -translate-x-1/2 rounded-full bg-zucca-400/15 blur-[100px]" />
       <div className="relative mx-auto max-w-3xl text-center">
         <span className="text-xs font-black uppercase tracking-[.25em] text-zucca-300">Resta connesso</span>
@@ -25,14 +25,14 @@ export function SocialSection() {
           {ITEMS.map(({ name, href, Icon, bg }) => (
             <a key={name} href={href} target="_blank" rel="noopener noreferrer" aria-label={name}
               className="flex h-14 w-14 items-center justify-center rounded-full text-white transition-transform hover:scale-110 active:scale-95 sm:h-16 sm:w-16"
-              style={{ background: bg, border: '1px solid rgba(255,255,255,.18)', boxShadow: '0 0 28px rgba(255,154,61,.25)' }}>
+              style={{ background: bg, border: '1px solid rgba(255,255,255,.18)', boxShadow: '0 0 28px rgba(var(--c-ff9a3d-rgb),.25)' }}>
               <Icon size={26} />
             </a>
           ))}
         </div>
         <Link href="/social"
-          className="mt-7 inline-flex items-center gap-2 rounded-full bg-zucca-400 px-6 py-3 text-sm font-black text-[#1a0d33] transition-transform hover:scale-105 active:scale-95"
-          style={{ boxShadow: '0 0 30px rgba(255,154,61,.35)' }}>
+          className="mt-7 inline-flex items-center gap-2 rounded-full bg-zucca-400 px-6 py-3 text-sm font-black text-[color:var(--c-1a0d33)] transition-transform hover:scale-105 active:scale-95"
+          style={{ boxShadow: '0 0 30px rgba(var(--c-ff9a3d-rgb),.35)' }}>
           Tutti i nostri canali <ArrowUpRight size={16} />
         </Link>
       </div>

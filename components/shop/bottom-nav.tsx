@@ -36,29 +36,29 @@ type RGBA = { r: number; g: number; b: number; a: number }
 const TONES = {
   dark: {
     box: {
-      background: 'rgba(18,10,34, 0.84)',
-      border: '1px solid rgba(255,184,119, 0.2)',
-      boxShadow: '0 20px 60px rgba(18,10,34, 0.38), 0 0 40px rgba(255,154,61, 0.10), inset 0 1px 0 rgba(255, 255, 255, 0.10)',
+      background: 'rgba(var(--c-120a22-rgb), 0.84)',
+      border: '1px solid rgba(var(--c-ffb877-rgb), 0.2)',
+      boxShadow: '0 20px 60px rgba(var(--c-120a22-rgb), 0.38), 0 0 40px rgba(var(--c-ff9a3d-rgb), 0.10), inset 0 1px 0 rgba(255, 255, 255, 0.10)',
     },
     pill: {
-      background: 'rgba(255,154,61, 0.14)',
-      border: '1px solid rgba(255,184,119, 0.28)',
-      boxShadow: '0 0 28px rgba(255,154,61, 0.18), inset 0 1px 0 rgba(255, 255, 255, 0.10)',
+      background: 'rgba(var(--c-ff9a3d-rgb), 0.14)',
+      border: '1px solid rgba(var(--c-ffb877-rgb), 0.28)',
+      boxShadow: '0 0 28px rgba(var(--c-ff9a3d-rgb), 0.18), inset 0 1px 0 rgba(255, 255, 255, 0.10)',
     },
-    idle: '#94a3b8', active: '#ffb877', activeLabel: '#ffffff', glow: 'drop-shadow(0 0 8px rgba(255,154,61,0.55))',
+    idle: '#94a3b8', active: 'var(--c-ffb877)', activeLabel: '#ffffff', glow: 'drop-shadow(0 0 8px rgba(var(--c-ff9a3d-rgb),0.55))',
   },
   light: {
     box: {
       background: 'rgba(255, 255, 255, 0.88)',
-      border: '1px solid rgba(217,85,0, 0.22)',
-      boxShadow: '0 20px 50px rgba(15, 23, 42, 0.16), 0 0 30px rgba(255,154,61, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.9)',
+      border: '1px solid rgba(var(--c-d95500-rgb), 0.22)',
+      boxShadow: '0 20px 50px rgba(15, 23, 42, 0.16), 0 0 30px rgba(var(--c-ff9a3d-rgb), 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.9)',
     },
     pill: {
-      background: 'rgba(255,154,61, 0.20)',
-      border: '1px solid rgba(217,85,0, 0.30)',
-      boxShadow: '0 6px 18px rgba(217,85,0, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.7)',
+      background: 'rgba(var(--c-ff9a3d-rgb), 0.20)',
+      border: '1px solid rgba(var(--c-d95500-rgb), 0.30)',
+      boxShadow: '0 6px 18px rgba(var(--c-d95500-rgb), 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.7)',
     },
-    idle: '#64748b', active: '#5b2a9e', activeLabel: '#1f0e3d', glow: 'drop-shadow(0 0 6px rgba(217,85,0,0.25))',
+    idle: '#64748b', active: 'var(--c-5b2a9e)', activeLabel: 'var(--c-1f0e3d)', glow: 'drop-shadow(0 0 6px rgba(var(--c-d95500-rgb),0.25))',
   },
 } as const
 

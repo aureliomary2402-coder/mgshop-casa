@@ -3,7 +3,8 @@
 import { useEffect, useState, useCallback } from 'react'
 import { usePathname } from 'next/navigation'
 import { X } from 'lucide-react'
-import { ACTIVE_POPUP_THEME, POPUP_THEMES, type PopupThemeName } from '@/lib/popup-theme'
+import { POPUP_THEMES, type PopupThemeName } from '@/lib/popup-theme'
+import { useSiteTheme } from '@/components/site-theme-provider'
 
 export interface SitePopupData {
   id: string
@@ -71,12 +72,13 @@ function BubblesCardDecor() {
 }
 
 // Solo grafica: usata sia dal sito sia dall'anteprima nel pannello admin.
-export function SitePopupView({ popup, onClose, theme = ACTIVE_POPUP_THEME }: {
+export function SitePopupView({ popup, onClose, theme }: {
   popup: Pick<SitePopupData, 'title' | 'message' | 'button_label' | 'button_link'>
   onClose: () => void
   theme?: PopupThemeName
 }) {
-  const t = POPUP_THEMES[theme]
+  const siteTheme = useSiteTheme()
+  const t = POPUP_THEMES[theme ?? siteTheme]
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') onClose() }

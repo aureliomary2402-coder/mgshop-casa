@@ -2,7 +2,7 @@ import type { ComponentType, CSSProperties, ReactNode } from 'react'
 import { Truck, Star, Ticket } from 'lucide-react'
 import { HeroBackdrop, AccentTitle } from './hero-backdrop'
 
-// Hero in stile landing (app/page.tsx): stesso fondo #120a22 con glow, griglia
+// Hero in stile landing (app/page.tsx): stesso fondo var(--c-120a22) con glow, griglia
 // 3D e bolle (HeroBackdrop), badge con puntino pulsante, titolo font-black in
 // maiuscolo con ultima parola sfumata cyan, testo slate-300 e, a destra,
 // l'oggetto 3D con anelli, card di vetro e due mini card flottanti.
@@ -22,7 +22,7 @@ export function LandingHero({ icon: Icon, badge, title, subtitle, topBar, childr
   const BadgeIcon = badge?.icon
 
   return (
-    <section className="relative overflow-hidden bg-[linear-gradient(160deg,#2e0d57,#4c1a8a_35%,#a23800_78%,#5a1c00)]">
+    <section className="relative overflow-hidden bg-[linear-gradient(160deg,var(--c-2e0d57),#4c1a8a_35%,#a23800_78%,var(--c-5a1c00))]">
       <HeroBackdrop />
 
       <div className="relative z-10 mx-auto max-w-7xl px-5 pb-16 pt-6 sm:px-8 sm:pb-24">
@@ -63,7 +63,7 @@ export function LandingHero({ icon: Icon, badge, title, subtitle, topBar, childr
           <div className="relative mx-auto h-[270px] w-full max-w-[470px] sm:h-[430px]" aria-hidden="true">
             <div className="absolute left-1/2 top-1/2 h-[430px] w-[470px] -translate-x-1/2 -translate-y-1/2 scale-[.62] sm:scale-100">
               {/* anelli */}
-              <div className="absolute left-1/2 top-1/2 h-[370px] w-[370px] -translate-x-1/2 -translate-y-1/2 rounded-full border border-zucca-300/20 shadow-[0_0_100px_rgba(255,154,61,.12)]" />
+              <div className="absolute left-1/2 top-1/2 h-[370px] w-[370px] -translate-x-1/2 -translate-y-1/2 rounded-full border border-zucca-300/20 shadow-[0_0_100px_rgba(var(--c-ff9a3d-rgb),.12)]" />
               <div className="absolute left-1/2 top-1/2 h-[300px] w-[300px] -translate-x-1/2 -translate-y-1/2 rounded-full border border-zucca-200/10" />
 
               {/* card principale */}

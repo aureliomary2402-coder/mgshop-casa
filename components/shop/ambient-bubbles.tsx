@@ -12,12 +12,12 @@ export function AmbientBubbles({ count = 10, theme = 'dark' }: AmbientBubblesPro
   }))
 
   const background = theme === 'dark'
-    ? 'radial-gradient(circle at 32% 28%, rgba(255,255,255,0.85), rgba(255,190,120,0.22) 45%, rgba(255,150,70,0.08) 72%, transparent 100%)'
-    : 'radial-gradient(circle at 32% 28%, rgba(255,255,255,0.9), rgba(217,85,0,0.15) 55%, transparent 100%)'
+    ? 'radial-gradient(circle at 32% 28%, rgba(255,255,255,0.85), rgba(var(--c-ffbe78-rgb),0.22) 45%, rgba(var(--c-ff9646-rgb),0.08) 72%, transparent 100%)'
+    : 'radial-gradient(circle at 32% 28%, rgba(255,255,255,0.9), rgba(var(--c-d95500-rgb),0.15) 55%, transparent 100%)'
   const boxShadow = theme === 'dark'
-    ? 'inset -4px -4px 10px rgba(255,255,255,0.35), inset 3px 3px 8px rgba(217,85,0,0.15), 0 0 14px rgba(255,210,160,0.15)'
-    : '0 2px 6px rgba(217,85,0,0.1)'
-  const border = theme === 'dark' ? '1px solid rgba(255,255,255,0.2)' : '1px solid rgba(217,85,0,0.15)'
+    ? 'inset -4px -4px 10px rgba(255,255,255,0.35), inset 3px 3px 8px rgba(var(--c-d95500-rgb),0.15), 0 0 14px rgba(var(--c-ffd2a0-rgb),0.15)'
+    : '0 2px 6px rgba(var(--c-d95500-rgb),0.1)'
+  const border = theme === 'dark' ? '1px solid rgba(255,255,255,0.2)' : '1px solid rgba(var(--c-d95500-rgb),0.15)'
 
   return (
     <div className="absolute inset-0 overflow-hidden pointer-events-none">

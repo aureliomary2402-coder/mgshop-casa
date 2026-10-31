@@ -155,7 +155,7 @@ export default async function ShopPage({ searchParams }: { searchParams: Promise
             </div>
             <Link
               href="/consegne"
-              className="group inline-flex shrink-0 items-center gap-3 rounded-2xl bg-zucca-600 px-6 py-4 text-sm font-black text-white shadow-[0_12px_32px_rgba(217,85,0,.35)] transition hover:-translate-y-0.5 hover:bg-zucca-500"
+              className="group inline-flex shrink-0 items-center gap-3 rounded-2xl bg-zucca-600 px-6 py-4 text-sm font-black text-white shadow-[0_12px_32px_rgba(var(--c-d95500-rgb),.35)] transition hover:-translate-y-0.5 hover:bg-zucca-500"
             >
               Scopri la consegna
               <ArrowRight size={18} className="transition-transform group-hover:translate-x-1" />

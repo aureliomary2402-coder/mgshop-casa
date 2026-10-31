@@ -24,11 +24,11 @@ const ZONES = [
 export default function ConsegnePage() {
   const openChat = useUIPanelsStore(s => s.openChat)
   return (
-    <div className="min-h-screen" style={{ background: 'linear-gradient(180deg,#fff0e0 0%,#fffaf4 38%,#ffffff 100%)' }}>
+    <div className="min-h-screen" style={{ background: 'linear-gradient(180deg,var(--c-fff0e0) 0%,var(--c-fffaf4) 38%,#ffffff 100%)' }}>
       {/* Hero */}
       <PageHero
         icon={MapPin}
-        iconColor="#ff9a3d"
+        iconColor="var(--c-ff9a3d)"
         badge={{ icon: Truck, text: 'Consegna e ritiro' }}
         title="Consegna o ritiro"
         subtitle={<span className="block max-w-xl mx-auto">Siamo un negozio online: consegniamo direttamente a casa tua nelle zone qui sotto, oppure puoi scegliere di venire a ritirare il tuo ordine di persona.</span>}
@@ -46,11 +46,11 @@ export default function ConsegnePage() {
                     border: z.highlight ? '1px solid rgba(22,163,74,0.25)' : undefined,
                   }}>
                   <div className="w-11 h-11 rounded-2xl flex items-center justify-center mb-4"
-                    style={{ background: z.highlight ? 'rgba(22,163,74,0.1)' : 'rgba(217,85,0,0.1)' }}>
-                    <MapPin className="w-5 h-5" style={{ color: z.highlight ? '#16a34a' : '#d95500' }} />
+                    style={{ background: z.highlight ? 'rgba(22,163,74,0.1)' : 'rgba(var(--c-d95500-rgb),0.1)' }}>
+                    <MapPin className="w-5 h-5" style={{ color: z.highlight ? '#16a34a' : 'var(--c-d95500)' }} />
                   </div>
                   <h3 className="text-lg font-black mb-1 tracking-[-.03em]" style={{ color: '#020617' }}>{z.title}</h3>
-                  <p className="text-xl font-extrabold mb-2" style={{ color: z.highlight ? '#16a34a' : '#d95500' }}>{z.price}</p>
+                  <p className="text-xl font-extrabold mb-2" style={{ color: z.highlight ? '#16a34a' : 'var(--c-d95500)' }}>{z.price}</p>
                   <p className="text-sm text-slate-500 leading-relaxed">{z.note}</p>
                 </div>
               ))}
@@ -58,12 +58,12 @@ export default function ConsegnePage() {
           </Reveal>
 
           <Reveal delay={80}>
-            <div className="rounded-[32px] border border-slate-200 bg-white p-6 shadow-[0_15px_50px_rgba(15,23,42,.06)]" style={{ border: '1px solid rgba(217,85,0,0.2)' }}>
-              <div className="w-11 h-11 rounded-2xl flex items-center justify-center mb-4" style={{ background: 'rgba(217,85,0,0.1)' }}>
-                <Store className="w-5 h-5" style={{ color: '#d95500' }} />
+            <div className="rounded-[32px] border border-slate-200 bg-white p-6 shadow-[0_15px_50px_rgba(15,23,42,.06)]" style={{ border: '1px solid rgba(var(--c-d95500-rgb),0.2)' }}>
+              <div className="w-11 h-11 rounded-2xl flex items-center justify-center mb-4" style={{ background: 'rgba(var(--c-d95500-rgb),0.1)' }}>
+                <Store className="w-5 h-5" style={{ color: 'var(--c-d95500)' }} />
               </div>
               <h3 className="text-lg font-black mb-1 tracking-[-.03em]" style={{ color: '#020617' }}>Vieni a ritirare</h3>
-              <p className="text-xl font-extrabold mb-2" style={{ color: '#d95500' }}>Nessun costo</p>
+              <p className="text-xl font-extrabold mb-2" style={{ color: 'var(--c-d95500)' }}>Nessun costo</p>
               <p className="text-sm text-slate-500 leading-relaxed">
                 Non vuoi la consegna a casa? Nessun problema: puoi scegliere il ritiro al momento dell&apos;ordine. Come per la consegna, ci mettiamo d&apos;accordo su WhatsApp per orario e dettagli del ritiro.
               </p>
@@ -92,7 +92,7 @@ export default function ConsegnePage() {
           </Reveal>
 
           <Reveal delay={200} className="text-center pt-4">
-            <Link href="/shop" className="inline-flex h-14 items-center justify-center gap-3 rounded-2xl bg-zucca-600 px-8 font-black text-white shadow-[0_12px_32px_rgba(217,85,0,.35)] transition duration-300 hover:-translate-y-1 hover:bg-zucca-500">
+            <Link href="/shop" className="inline-flex h-14 items-center justify-center gap-3 rounded-2xl bg-zucca-600 px-8 font-black text-white shadow-[0_12px_32px_rgba(var(--c-d95500-rgb),.35)] transition duration-300 hover:-translate-y-1 hover:bg-zucca-500">
               <ShoppingBag className="w-5 h-5" /> Vai al negozio
             </Link>
           </Reveal>

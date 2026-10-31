@@ -2,9 +2,10 @@
 
 import type { CSSProperties } from 'react'
 import { usePathname } from 'next/navigation'
+import { useSiteTheme } from '@/components/site-theme-provider'
 
 // Decorazioni di Halloween FISSE (nessuna animazione, nessun filtro): costo quasi zero.
-// Per toglierle basta rimuovere <HalloweenDecor /> da app/layout.tsx.
+// Compaiono solo quando il tema del sito e Halloween (pannello admin > Tema del sito).
 const CSS = `
 .hw-layer { position: fixed; inset: 0; z-index: 30; pointer-events: none; overflow: hidden; }
 .hw-item { position: absolute; line-height: 1; }
@@ -45,6 +46,8 @@ function Bat({ size, style }: { size: number; style: CSSProperties }) {
 
 export function HalloweenDecor() {
   const pathname = usePathname()
+  const theme = useSiteTheme()
+  if (theme !== 'halloween') return null
   if (pathname?.startsWith('/mgadmin-panel')) return null
   return (
     <div className="hw-layer" aria-hidden="true">

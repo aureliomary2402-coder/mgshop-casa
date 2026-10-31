@@ -108,7 +108,7 @@ export function ProductDetailModal() {
     }
     setAddedAnim(true)
     setTimeout(() => setAddedAnim(false), 600)
-    toast.success(multipleSelected ? `${cartCombinations.length} varianti di ${product.name} aggiunte!` : `${product.name} aggiunto!`, { style: { background: '#ffe9d2', border: '1px solid #d95500', color: '#3d1b73' } })
+    toast.success(multipleSelected ? `${cartCombinations.length} varianti di ${product.name} aggiunte!` : `${product.name} aggiunto!`, { style: { background: 'var(--c-ffe9d2)', border: '1px solid var(--c-d95500)', color: 'var(--c-3d1b73)' } })
   }
 
   return (
@@ -149,17 +149,17 @@ export function ProductDetailModal() {
                 {product.category && (
                   <Link href={`/shop?categoria=${product.category.slug}`} onClick={close}
                     className="inline-block text-xs font-semibold px-3 py-1.5 rounded-full hover:opacity-80 transition-opacity"
-                    style={{ background: 'rgba(217,85,0,0.1)', color: '#3d1b73', border: '1px solid rgba(217,85,0,0.2)' }}>
+                    style={{ background: 'rgba(var(--c-d95500-rgb),0.1)', color: 'var(--c-3d1b73)', border: '1px solid rgba(var(--c-d95500-rgb),0.2)' }}>
                     {product.category.name}
                   </Link>
                 )}
-                <h1 className="text-2xl md:text-3xl font-black leading-tight tracking-[-.03em]" style={{ color: '#2d1458' }}>{product.name}</h1>
+                <h1 className="text-2xl md:text-3xl font-black leading-tight tracking-[-.03em]" style={{ color: 'var(--c-2d1458)' }}>{product.name}</h1>
                 <div className="flex items-baseline gap-2">
                   {hasDiscount && <span className="text-lg text-slate-400 line-through">€{product.old_price!.toFixed(2)}</span>}
-                  <p className="text-4xl font-extrabold" style={{ color: hasDiscount ? '#dc2626' : '#d95500' }}>€{displayPrice.toFixed(2)}</p>
+                  <p className="text-4xl font-extrabold" style={{ color: hasDiscount ? '#dc2626' : 'var(--c-d95500)' }}>€{displayPrice.toFixed(2)}</p>
                 </div>
                 {multipleSelected && (
-                  <p className="text-sm -mt-3" style={{ color: '#d95500' }}>
+                  <p className="text-sm -mt-3" style={{ color: 'var(--c-d95500)' }}>
                     Totale per {cartCombinations.length} varianti selezionate
                   </p>
                 )}
@@ -181,8 +181,8 @@ export function ProductDetailModal() {
                     style={product.torna_presto
                       ? { background: '#cbd5e1', color: '#475569', boxShadow: 'none' }
                       : {
-                        background: '#ff9a3d', color: '#1a0d33',
-                        boxShadow: addedAnim ? '0 0 0 6px rgba(255,154,61,0.25)' : '0 15px 40px rgba(255,154,61,0.30)',
+                        background: 'var(--c-ff9a3d)', color: 'var(--c-1a0d33)',
+                        boxShadow: addedAnim ? '0 0 0 6px rgba(var(--c-ff9a3d-rgb),0.25)' : '0 15px 40px rgba(var(--c-ff9a3d-rgb),0.30)',
                         transform: addedAnim ? 'scale(0.97)' : undefined,
                         transition: 'all 0.2s ease'
                       }}>
@@ -191,8 +191,8 @@ export function ProductDetailModal() {
                   </button>
                   <button onClick={() => toggleWishlist(product.id)}
                     className="w-14 h-14 rounded-2xl flex items-center justify-center transition-all hover:scale-110 btn-press"
-                    style={{ background: isWishlisted ? 'rgba(239,68,68,0.1)' : 'rgba(217,85,0,0.06)', border: '1px solid', borderColor: isWishlisted ? 'rgba(239,68,68,0.2)' : 'rgba(217,85,0,0.15)' }}>
-                    <Heart className="w-5 h-5" style={{ color: isWishlisted ? '#ef4444' : '#d95500', fill: isWishlisted ? '#ef4444' : 'none' }} />
+                    style={{ background: isWishlisted ? 'rgba(239,68,68,0.1)' : 'rgba(var(--c-d95500-rgb),0.06)', border: '1px solid', borderColor: isWishlisted ? 'rgba(239,68,68,0.2)' : 'rgba(var(--c-d95500-rgb),0.15)' }}>
+                    <Heart className="w-5 h-5" style={{ color: isWishlisted ? '#ef4444' : 'var(--c-d95500)', fill: isWishlisted ? '#ef4444' : 'none' }} />
                   </button>
                 </div>
                 <ProductTrustBadges />

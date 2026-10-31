@@ -185,7 +185,7 @@ export default function RecensioniPage() {
   }
 
   return (
-    <div className="min-h-screen" style={{ background: 'linear-gradient(180deg,#fff0e0 0%,#fffaf4 38%,#ffffff 100%)' }}>
+    <div className="min-h-screen" style={{ background: 'linear-gradient(180deg,var(--c-fff0e0) 0%,var(--c-fffaf4) 38%,#ffffff 100%)' }}>
       <PageHero
         icon={Star}
         iconColor="#f59e0b"
@@ -217,9 +217,9 @@ export default function RecensioniPage() {
               {sent ? (
                 <div className="flex flex-col items-center text-center gap-2 py-6">
                   <CheckCircle2 className="w-10 h-10" style={{ color: '#16a34a' }} />
-                  <p className="font-semibold" style={{ color: '#2a1450' }}>Grazie per la tua recensione!</p>
+                  <p className="font-semibold" style={{ color: 'var(--c-2a1450)' }}>Grazie per la tua recensione!</p>
                   <p className="text-sm text-slate-500">È già visibile qui sotto insieme alle altre.</p>
-                  <button onClick={() => setSent(false)} className="text-sm font-semibold mt-2" style={{ color: '#d95500' }}>
+                  <button onClick={() => setSent(false)} className="text-sm font-semibold mt-2" style={{ color: 'var(--c-d95500)' }}>
                     Lascia un'altra recensione
                   </button>
                 </div>
@@ -289,7 +289,7 @@ export default function RecensioniPage() {
                     onClick={handleSubmit}
                     disabled={sending}
                     className="flex h-14 w-full items-center justify-center gap-2 rounded-2xl text-sm font-black disabled:opacity-50 btn-press"
-                    style={{ background: '#ff9a3d', color: '#1a0d33', boxShadow: '0 12px 32px rgba(255,154,61,.30)' }}
+                    style={{ background: 'var(--c-ff9a3d)', color: 'var(--c-1a0d33)', boxShadow: '0 12px 32px rgba(var(--c-ff9a3d-rgb),.30)' }}
                   >
                     <Send className="w-4 h-4" /> {sending ? 'Invio in corso...' : 'Invia recensione'}
                   </button>
@@ -309,7 +309,7 @@ export default function RecensioniPage() {
                 <div className="rounded-[32px] border border-slate-200 bg-white p-5 shadow-[0_15px_50px_rgba(15,23,42,.06)]">
                   <div className="flex items-start justify-between gap-3 mb-2">
                     <div>
-                      <p className="font-bold" style={{ color: '#2a1450' }}>{r.customer_name}</p>
+                      <p className="font-bold" style={{ color: 'var(--c-2a1450)' }}>{r.customer_name}</p>
                       <p className="text-xs text-slate-400">
                         {new Date(r.created_at).toLocaleDateString('it-IT', { day: '2-digit', month: 'long', year: 'numeric' })}
                       </p>
@@ -338,8 +338,8 @@ export default function RecensioniPage() {
                   )}
 
                   {r.admin_reply && (
-                    <div className="mt-3 rounded-2xl p-3" style={{ background: 'rgba(217,85,0,0.06)', border: '1px solid rgba(217,85,0,0.15)' }}>
-                      <p className="text-xs font-bold mb-1" style={{ color: '#d95500' }}>Risposta di MGShop Casa</p>
+                    <div className="mt-3 rounded-2xl p-3" style={{ background: 'rgba(var(--c-d95500-rgb),0.06)', border: '1px solid rgba(var(--c-d95500-rgb),0.15)' }}>
+                      <p className="text-xs font-bold mb-1" style={{ color: 'var(--c-d95500)' }}>Risposta di MGShop Casa</p>
                       <p className="text-sm text-slate-600 leading-relaxed">{r.admin_reply}</p>
                     </div>
                   )}

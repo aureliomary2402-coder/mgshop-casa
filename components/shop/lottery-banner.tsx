@@ -23,7 +23,7 @@ export function LotteryBanner() {
   if (!data || !data.is_active) return null
 
   return (
-    <Link href="/lotteria" className="group relative block overflow-hidden rounded-[28px] border border-zucca-300/15 bg-[#160b29] neon-glow transition-transform hover:-translate-y-0.5">
+    <Link href="/lotteria" className="group relative block overflow-hidden rounded-[28px] border border-zucca-300/15 bg-[color:var(--c-160b29)] neon-glow transition-transform hover:-translate-y-0.5">
       <div className="pointer-events-none absolute -right-16 -top-20 h-56 w-56 rounded-full bg-zucca-400/15 blur-3xl" />
       <AmbientBubbles count={4} theme="dark" />
 

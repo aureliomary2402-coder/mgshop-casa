@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react'
 import { Save, ToggleLeft, ToggleRight, Trash2, Plus } from 'lucide-react'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
-import { ACTIVE_POPUP_THEME } from '@/lib/popup-theme'
+import { useSiteTheme } from '@/components/site-theme-provider'
 import { SLOT_PRIZE_SYMBOLS, symbolForDiscount } from '@/lib/slot-theme'
 
 interface Settings { is_active: boolean; win_probability: number }
@@ -12,6 +12,7 @@ interface Prize { id: string; label: string; discount_percent: number; weight: n
 interface Spin { id: string; phone_number: string; won: boolean; prize_label: string | null; discount_percent: number; used_order_id: string | null; created_at: string }
 
 export function SlotManager() {
+  const siteTheme = useSiteTheme()
   const [settings, setSettings] = useState<Settings | null>(null)
   const [prizes, setPrizes] = useState<Prize[]>([])
   const [spins, setSpins] = useState<Spin[]>([])
@@ -100,7 +101,7 @@ export function SlotManager() {
         <p className="font-semibold text-slate-800">Premi (sconto sul prossimo ordine)</p>
         <div className="rounded-xl bg-orange-50 border border-orange-100 p-3 text-sm text-slate-700">
           <p className="text-xs font-semibold text-orange-700 mb-1">Simboli vincenti (tema attuale)</p>
-          {Object.entries(SLOT_PRIZE_SYMBOLS[ACTIVE_POPUP_THEME]).map(([pct, sym]) => `${sym} = ${pct}%`).join('   ·   ')}
+          {Object.entries(SLOT_PRIZE_SYMBOLS[siteTheme]).map(([pct, sym]) => `${sym} = ${pct}%`).join('   ·   ')}
         </div>
         <p className="text-xs text-slate-400">Quando un cliente vince, il premio viene scelto tra quelli attivi in base al &quot;peso&quot;: più è alto, più esce spesso.</p>
         {prizes.length === 0 && <p className="text-sm text-slate-400">Nessun premio: finché non ne aggiungi uno la slot non assegna vincite.</p>}
@@ -113,10 +114,10 @@ export function SlotManager() {
             <div className="flex items-center gap-2 text-xs text-slate-500">
               <span>Sconto %</span><Input type="number" min={1} max={100} className="w-20" value={pz.discount_percent} onChange={e => patchPrize(pz.id, { discount_percent: parseFloat(e.target.value) || 0 })} />
               <span>Peso</span><Input type="number" min={1} className="w-16" value={pz.weight} onChange={e => patchPrize(pz.id, { weight: parseInt(e.target.value) || 1 })} />
-              <span className="text-base">{symbolForDiscount(ACTIVE_POPUP_THEME, pz.discount_percent) ?? '🎲'}</span>
+              <span className="text-base">{symbolForDiscount(siteTheme, pz.discount_percent) ?? '🎲'}</span>
               {pz.is_active && totalWeight > 0 && <span className="text-slate-400">≈ {Math.round((pz.weight / totalWeight) * 100)}% delle vincite</span>}
             </div>
-            {!symbolForDiscount(ACTIVE_POPUP_THEME, pz.discount_percent) && <p className="text-xs text-amber-600">Per questa percentuale non c&apos;è un simbolo dedicato: uscirà un simbolo a caso.</p>}
+            {!symbolForDiscount(siteTheme, pz.discount_percent) && <p className="text-xs text-amber-600">Per questa percentuale non c&apos;è un simbolo dedicato: uscirà un simbolo a caso.</p>}
             <div className="flex items-center justify-between">
               <button onClick={() => { patchPrize(pz.id, { is_active: !pz.is_active }); savePrize({ ...pz, is_active: !pz.is_active }) }} className="text-xs font-medium text-slate-600">
                 {pz.is_active ? '✅ Attivo' : '❌ Disattivato'} (tocca per cambiare)

@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect } from 'react'
-import { Package, Tag, Image, ShoppingBag, LogOut, Lock, LayoutDashboard, Megaphone, Ticket, Menu, X, ExternalLink, Users, Gift, MessageCircle, Newspaper, PartyPopper, Hash, TrendingUp, Eye, AlertTriangle, Rss, Star, Terminal, Heart, Link2, MessageSquareText, Dices, GalleryHorizontal } from 'lucide-react'
+import { Package, Tag, Image, ShoppingBag, LogOut, Lock, LayoutDashboard, Megaphone, Ticket, Menu, X, ExternalLink, Users, Gift, MessageCircle, Newspaper, PartyPopper, Hash, TrendingUp, Eye, AlertTriangle, Rss, Star, Terminal, Heart, Link2, MessageSquareText, Dices, GalleryHorizontal, Palette } from 'lucide-react'
 import { GestionalePanel } from './gestionale/GestionalePanel'
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
@@ -30,9 +30,10 @@ import { CustomerPushNotify } from '@/components/admin/customer-push-notify'
 import { ReviewsManager } from '@/components/admin/reviews-manager'
 import { LinksManager } from '@/components/admin/links-manager'
 import { SlotManager } from '@/components/admin/slot-manager'
+import { ThemeManager } from '@/components/admin/theme-manager'
 import { LandingSlidesManager } from '@/components/admin/landing-slides-manager'
 
-type Tab = 'dashboard' | 'products' | 'categories' | 'banners' | 'orders' | 'promo' | 'volantino' | 'coupons' | 'clienti' | 'fedelta' | 'chat' | 'lottery' | 'biglietti' | 'statistiche' | 'visite' | 'carrelli' | 'preferiti' | 'ticker' | 'popup' | 'notifiche' | 'recensioni' | 'gestionale' | 'link' | 'slot' | 'carosello'
+type Tab = 'dashboard' | 'products' | 'categories' | 'banners' | 'orders' | 'promo' | 'volantino' | 'coupons' | 'clienti' | 'fedelta' | 'chat' | 'lottery' | 'biglietti' | 'statistiche' | 'visite' | 'carrelli' | 'preferiti' | 'ticker' | 'popup' | 'notifiche' | 'recensioni' | 'gestionale' | 'link' | 'slot' | 'carosello' | 'tema'
 type Group = 'generale' | 'ordini' | 'catalogo'
 
 const GROUP_LABELS: Record<Group, string> = {
@@ -43,6 +44,7 @@ const GROUP_LABELS: Record<Group, string> = {
 
 const TABS: { id: Tab; label: string; icon: typeof Package; color: string; group: Group }[] = [
   { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard, color: 'text-blue-600 bg-blue-50', group: 'generale' },
+  { id: 'tema', label: 'Tema del sito', icon: Palette, color: 'text-violet-600 bg-violet-50', group: 'generale' },
   { id: 'visite', label: 'Visite', icon: Eye, color: 'text-cyan-600 bg-cyan-50', group: 'generale' },
   { id: 'ticker', label: 'Striscia messaggi', icon: Rss, color: 'text-cyan-600 bg-cyan-50', group: 'generale' },
   { id: 'popup', label: 'Pop up messaggi', icon: MessageSquareText, color: 'text-cyan-600 bg-cyan-50', group: 'generale' },
@@ -221,6 +223,7 @@ export default function AdminPage() {
         {activeTab === 'volantino' && <VolantinoManager />}
         {activeTab === 'lottery' && <LotteryManager />}
         {activeTab === 'slot' && <SlotManager />}
+        {activeTab === 'tema' && <ThemeManager />}
         {activeTab === 'carosello' && <LandingSlidesManager />}
         {activeTab === 'coupons' && <CouponsManager />}
         {activeTab === 'clienti' && <ClientiManager />}

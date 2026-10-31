@@ -8,7 +8,7 @@ export default async function ShopLayout({ children }: { children: React.ReactNo
   const { data: categories } = await supabase.from('categories').select('*').order('name')
 
   return (
-    <div className="min-h-screen bg-[#fff7ee]">
+    <div className="min-h-screen bg-[color:var(--c-fff7ee)]">
       <Suspense><GlobalHeader categories={(categories || []) as Category[]} /></Suspense>
       <Suspense>{children}</Suspense>
     </div>

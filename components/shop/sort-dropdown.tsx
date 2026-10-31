@@ -38,7 +38,7 @@ export function SortDropdown() {
     <div className="relative shrink-0" ref={ref}>
       <button onClick={() => setOpen(v => !v)}
         className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-medium transition-all border"
-        style={{ background: open ? 'rgba(217,85,0,0.08)' : 'white', borderColor: 'rgba(217,85,0,0.15)', color: '#d95500' }}>
+        style={{ background: open ? 'rgba(var(--c-d95500-rgb),0.08)' : 'white', borderColor: 'rgba(var(--c-d95500-rgb),0.15)', color: 'var(--c-d95500)' }}>
         <ArrowUpDown className="w-3.5 h-3.5" />
         <span className="hidden sm:inline">{activeLabel}</span>
         <span className="sm:hidden">Ordina</span>
@@ -46,7 +46,7 @@ export function SortDropdown() {
       </button>
       {open && (
         <div className="absolute top-full right-0 mt-2 w-56 rounded-2xl overflow-hidden shadow-xl animate-scale-in z-30"
-          style={{ background: 'white', border: '1px solid rgba(217,85,0,0.1)', boxShadow: '0 20px 60px rgba(0,0,0,0.12)' }}>
+          style={{ background: 'white', border: '1px solid rgba(var(--c-d95500-rgb),0.1)', boxShadow: '0 20px 60px rgba(0,0,0,0.12)' }}>
           <div className="p-2">
             {OPTIONS.map(opt => (
               <button key={opt.value} onClick={() => select(opt.value)}

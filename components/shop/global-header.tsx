@@ -19,7 +19,7 @@ function HighlightedText({ text, query }: { text: string; query: string }) {
   return (
     <>
       {text.slice(0, idx)}
-      <span style={{ color: '#d95500', fontWeight: 700 }}>{text.slice(idx, idx + query.length)}</span>
+      <span style={{ color: 'var(--c-d95500)', fontWeight: 700 }}>{text.slice(idx, idx + query.length)}</span>
       {text.slice(idx + query.length)}
     </>
   )
@@ -208,9 +208,9 @@ export function GlobalHeader({ categories = [] }: { categories?: Category[] }) {
                 className="w-full h-10 pl-9 pr-9 rounded-full text-base outline-none transition-all duration-300"
                 style={{
                   background: searchFocused ? '#ffffff' : 'rgba(15,23,42,0.04)',
-                  border: searchFocused ? '1px solid #ff9a3d' : '1px solid rgba(15,23,42,0.08)',
-                  color: '#2a1450',
-                  boxShadow: searchFocused ? '0 0 0 4px rgba(255,154,61,0.18)' : 'none',
+                  border: searchFocused ? '1px solid var(--c-ff9a3d)' : '1px solid rgba(15,23,42,0.08)',
+                  color: 'var(--c-2a1450)',
+                  boxShadow: searchFocused ? '0 0 0 4px rgba(var(--c-ff9a3d-rgb),0.18)' : 'none',
                 }} />
               {searchLoading && (
                 <span className="absolute right-9 top-1/2 -translate-y-1/2 w-3.5 h-3.5 rounded-full border-2 border-zucca-300 border-t-zucca-600 animate-spin" />
@@ -219,7 +219,7 @@ export function GlobalHeader({ categories = [] }: { categories?: Category[] }) {
 
               {dropdownOpen && searchValue.trim() && (
                 <div className="fixed left-3 right-3 top-[7.4rem] sm:absolute sm:top-full sm:left-0 sm:right-auto sm:mt-2 sm:w-auto sm:min-w-[300px] rounded-2xl overflow-hidden shadow-xl animate-scale-in z-50"
-                  style={{ background: 'white', border: '1px solid rgba(217,85,0,0.15)', boxShadow: '0 20px 60px rgba(0,0,0,0.15)' }}>
+                  style={{ background: 'white', border: '1px solid rgba(var(--c-d95500-rgb),0.15)', boxShadow: '0 20px 60px rgba(0,0,0,0.15)' }}>
                   {searchResults.length > 0 ? (
                     <>
                       <div className="max-h-96 overflow-y-auto p-1.5">
@@ -228,14 +228,14 @@ export function GlobalHeader({ categories = [] }: { categories?: Category[] }) {
                           return (
                             <button key={product.id} onClick={() => handleSelectProduct(product)}
                               className="w-full flex items-center gap-3 p-2 rounded-xl text-left hover:bg-zucca-50 transition-colors">
-                              <div className="relative w-12 h-12 rounded-lg shrink-0 overflow-hidden" style={{ background: 'linear-gradient(135deg, #fff7ee, #ffe9d2)' }}>
+                              <div className="relative w-12 h-12 rounded-lg shrink-0 overflow-hidden" style={{ background: 'linear-gradient(135deg, var(--c-fff7ee), var(--c-ffe9d2))' }}>
                                 {imgUrl ? <Image src={imgUrl} alt={product.name} fill sizes="48px" className="object-cover" /> : <ImageIcon className="w-4 h-4 text-zucca-300" />}
                               </div>
                               <div className="flex-1 min-w-0">
-                                <div className="text-sm font-medium leading-snug line-clamp-2" style={{ color: '#2a1450' }}>
+                                <div className="text-sm font-medium leading-snug line-clamp-2" style={{ color: 'var(--c-2a1450)' }}>
                                   <HighlightedText text={product.name} query={searchValue} />
                                 </div>
-                                <div className="text-sm font-bold mt-0.5" style={{ color: '#d95500' }}>€{product.price.toFixed(2)}</div>
+                                <div className="text-sm font-bold mt-0.5" style={{ color: 'var(--c-d95500)' }}>€{product.price.toFixed(2)}</div>
                               </div>
                             </button>
                           )
@@ -243,7 +243,7 @@ export function GlobalHeader({ categories = [] }: { categories?: Category[] }) {
                       </div>
                       <button onClick={handleSeeAllResults}
                         className="w-full flex items-center justify-center gap-1.5 py-3 text-sm font-semibold border-t transition-colors hover:bg-zucca-50"
-                        style={{ borderColor: 'rgba(217,85,0,0.12)', color: '#d95500' }}>
+                        style={{ borderColor: 'rgba(var(--c-d95500-rgb),0.12)', color: 'var(--c-d95500)' }}>
                         Vedi tutti i risultati{searchCount > 0 ? ` (${searchCount})` : ''}
                         <ChevronDown className="w-3.5 h-3.5 -rotate-90" />
                       </button>
@@ -271,11 +271,11 @@ export function GlobalHeader({ categories = [] }: { categories?: Category[] }) {
             )}
           </Link>
           <Link href="/carrello" aria-label="Carrello" className="relative flex h-10 w-10 items-center justify-center rounded-full transition-all hover:scale-105 btn-press group"
-            style={{ background: '#ff9a3d', color: '#1a0d33', boxShadow: '0 8px 22px rgba(255,154,61,0.35)' }}>
+            style={{ background: 'var(--c-ff9a3d)', color: 'var(--c-1a0d33)', boxShadow: '0 8px 22px rgba(var(--c-ff9a3d-rgb),0.35)' }}>
             <ShoppingBag className={`w-5 h-5 group-hover:scale-110 transition-transform ${cartBump ? 'animate-cart-bounce' : ''}`} />
             {itemCount > 0 && (
               <span className={`absolute -top-1 -right-1 w-5 h-5 text-white text-xs rounded-full flex items-center justify-center font-bold ${cartBump ? 'animate-badge-pop' : ''}`}
-                style={{ background: '#2a1450' }}>
+                style={{ background: 'var(--c-2a1450)' }}>
                 {itemCount > 9 ? '9+' : itemCount}
               </span>
             )}

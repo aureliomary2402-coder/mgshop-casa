@@ -22,7 +22,7 @@ export function SiteFooter() {
 
   return (
     <footer className="relative overflow-hidden pb-24"
-      style={{ background: '#120a22' }}>
+      style={{ background: 'var(--c-120a22)' }}>
       <div className="pointer-events-none absolute left-1/2 top-[-160px] h-[320px] w-[600px] -translate-x-1/2 rounded-full bg-zucca-400/10 blur-[110px]" />
       {/* Bolle decorative leggere, coerenti col resto del sito */}
       <div className="absolute inset-0 pointer-events-none opacity-60">
@@ -47,12 +47,12 @@ export function SiteFooter() {
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-8 sm:gap-6">
           <div>
             <div className="flex items-center gap-2 mb-3">
-              <div className="flex h-10 w-10 items-center justify-center rounded-2xl text-[#1a0d33]"
-                style={{ background: '#ff9a3d', boxShadow: '0 0 30px rgba(255,154,61,.30)' }}>
+              <div className="flex h-10 w-10 items-center justify-center rounded-2xl text-[color:var(--c-1a0d33)]"
+                style={{ background: 'var(--c-ff9a3d)', boxShadow: '0 0 30px rgba(var(--c-ff9a3d-rgb),.30)' }}>
                 <MGShopStamp size={20} />
               </div>
               <span className="text-lg font-black text-white tracking-[-0.03em]">
-                MG<span style={{ color: '#ff9a3d' }}>Shop</span>
+                MG<span style={{ color: 'var(--c-ff9a3d)' }}>Shop</span>
               </span>
             </div>
             <p className="text-sm text-zucca-100/70 leading-relaxed max-w-xs">

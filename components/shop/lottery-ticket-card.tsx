@@ -68,7 +68,7 @@ export function LotteryTicketCard({ hideDetailsLink = false, strip = false }: { 
   // Striscia sottile (shop): una riga chiara con il tasto per prendere subito un biglietto.
   if (strip) return (
     <div className="mg-glow-card flex flex-wrap items-center gap-3 rounded-2xl border border-zucca-100 bg-gradient-to-br from-white to-zucca-50 px-4 py-3"
-      style={{ boxShadow: '0 8px 24px rgba(217,85,0,0.07)' }}>
+      style={{ boxShadow: '0 8px 24px rgba(var(--c-d95500-rgb),0.07)' }}>
       <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-zucca-200 bg-zucca-100/70">
         <Gift className="h-5 w-5 text-zucca-700" />
       </div>
@@ -85,7 +85,7 @@ export function LotteryTicketCard({ hideDetailsLink = false, strip = false }: { 
           className="inline-flex h-10 items-center gap-1.5 rounded-xl px-4 text-xs font-black transition-all active:scale-[0.97]"
           style={added
             ? { background: '#4ade80', color: '#052e16' }
-            : { background: '#ff9a3d', color: '#1a0d33', boxShadow: '0 8px 20px rgba(255,154,61,.28)' }}>
+            : { background: 'var(--c-ff9a3d)', color: 'var(--c-1a0d33)', boxShadow: '0 8px 20px rgba(var(--c-ff9a3d-rgb),.28)' }}>
           {added ? <><Ticket className="h-3.5 w-3.5" /> Aggiunto!</> : <><ShoppingCart className="h-3.5 w-3.5" /> Biglietto €{ticketPrice.toFixed(2)}</>}
         </button>
       </div>
@@ -93,7 +93,7 @@ export function LotteryTicketCard({ hideDetailsLink = false, strip = false }: { 
   )
 
   return (
-    <div className="relative overflow-hidden rounded-[32px] border border-zucca-300/15 bg-[#160b29] neon-glow">
+    <div className="relative overflow-hidden rounded-[32px] border border-zucca-300/15 bg-[color:var(--c-160b29)] neon-glow">
       <div className="pointer-events-none absolute -right-20 -top-24 h-64 w-64 rounded-full bg-zucca-400/15 blur-3xl" />
       <AmbientBubbles count={4} theme="dark" />
 
@@ -123,7 +123,7 @@ export function LotteryTicketCard({ hideDetailsLink = false, strip = false }: { 
               className="inline-flex h-12 items-center gap-2 rounded-2xl px-6 text-sm font-black transition-all active:scale-[0.98]"
               style={added
                 ? { background: '#4ade80', color: '#052e16' }
-                : { background: '#ff9a3d', color: '#1a0d33', boxShadow: '0 12px 32px rgba(255,154,61,.30)' }}>
+                : { background: 'var(--c-ff9a3d)', color: 'var(--c-1a0d33)', boxShadow: '0 12px 32px rgba(var(--c-ff9a3d-rgb),.30)' }}>
               {added ? <><Ticket className="h-4 w-4" /> Aggiunto!</> : <><ShoppingCart className="h-4 w-4" /> Aggiungi al carrello (€{(qty * ticketPrice).toFixed(2)})</>}
             </button>
 

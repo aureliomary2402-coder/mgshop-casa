@@ -52,13 +52,13 @@ export function FloatingCart() {
     >
       <div
         className={`flex items-center gap-3 pl-4 pr-2 py-2 rounded-2xl w-full max-w-sm btn-press ${bump ? 'animate-cart-bounce' : ''}`}
-        style={{ background: 'linear-gradient(135deg, #d95500, #ff7a1a)', boxShadow: '0 10px 30px rgba(217,85,0,0.45)' }}
+        style={{ background: 'linear-gradient(135deg, var(--c-d95500), var(--c-ff7a1a))', boxShadow: '0 10px 30px rgba(var(--c-d95500-rgb),0.45)' }}
       >
         <div className="relative shrink-0">
           <ShoppingBag className="w-5 h-5 text-white" />
           <span
             className={`absolute -top-2 -right-2 rounded-full bg-white text-xs font-bold flex items-center justify-center ${bump ? 'animate-badge-pop' : ''}`}
-            style={{ color: '#d95500', minWidth: 18, height: 18, padding: '0 4px' }}
+            style={{ color: 'var(--c-d95500)', minWidth: 18, height: 18, padding: '0 4px' }}
           >
             {itemCount > 9 ? '9+' : itemCount}
           </span>

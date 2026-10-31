@@ -25,7 +25,7 @@ export function LoyaltyBanner({ compact = false, strip = false }: { compact?: bo
   // Striscia sottile (shop): una riga chiara, per non occupare spazio prima dei prodotti.
   if (strip) return (
     <div className="mg-glow-card flex items-center gap-3 rounded-2xl border border-zucca-100 bg-gradient-to-br from-white to-zucca-50 px-4 py-3"
-      style={{ boxShadow: '0 8px 24px rgba(217,85,0,0.07)' }}>
+      style={{ boxShadow: '0 8px 24px rgba(var(--c-d95500-rgb),0.07)' }}>
       <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-zucca-200 bg-zucca-100/70">
         <Sparkles className="h-5 w-5 text-zucca-700" />
       </div>
@@ -53,7 +53,7 @@ export function LoyaltyBanner({ compact = false, strip = false }: { compact?: bo
   )
 
   return (
-    <div className="relative overflow-hidden rounded-[28px] border border-zucca-300/15 bg-[#160b29] neon-glow">
+    <div className="relative overflow-hidden rounded-[28px] border border-zucca-300/15 bg-[color:var(--c-160b29)] neon-glow">
       <div className="pointer-events-none absolute -right-16 -top-20 h-56 w-56 rounded-full bg-zucca-400/15 blur-3xl" />
       <AmbientBubbles count={4} theme="dark" />
 
